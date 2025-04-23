@@ -370,7 +370,7 @@ const ChatPanel: React.FC = () => {
         ) : messages.length === 0 ? (
            <div className="text-gray-500 text-center py-4">
              {isConnected
-               ? 'チャットが開始されました。メッセージを入力してください！'
+               ? '表示中のドキュメントについて質問や意見を入力してください。または「こんにちは」と挨拶してみましょう！'
                : 'チャットを開始するにはサーバーに接続してください。'}
            </div>
         ) : (
