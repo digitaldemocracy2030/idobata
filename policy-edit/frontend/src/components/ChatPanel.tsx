@@ -90,11 +90,11 @@ const ChatPanel: React.FC = () => {
 
           if (isActiveMd && pathForMessage) {
             if (connectedAfterAttempt) {
-              addMessageToThread(pathForMessage, { text: 'GitHub Contribution MCPサーバーに自動接続しました。', sender: 'bot' });
+              addMessageToThread(pathForMessage, { text: 'サーバーに自動接続しました。', sender: 'bot' });
             } else {
               // Use the error state which should have been set by connectToGithubContributionServer
               const currentError = error; // Capture error state after connect attempt
-              addMessageToThread(pathForMessage, { text: `エラー：MCPサーバーへの自動接続に失敗しました。${currentError || '接続試行に失敗しました。'}`.trim(), sender: 'bot' });
+              addMessageToThread(pathForMessage, { text: `エラー：サーバーへの自動接続に失敗しました。${currentError || '接続試行に失敗しました。'}`.trim(), sender: 'bot' });
             }
           } else if (!connectedAfterAttempt) {
              console.warn("自動接続に失敗しましたが、メッセージを表示するアクティブなMDファイルがありません。");
@@ -194,7 +194,7 @@ const ChatPanel: React.FC = () => {
         setIsConnected(true);
         // Message added in the .then block below
       } else {
-        setError(data.error || 'MCPサーバーへの接続に失敗しました');
+        setError(data.error || 'サーバーへの接続に失敗しました');
         // Error message added in the .then block below
       }
     } catch (err) {
@@ -351,12 +351,12 @@ const ChatPanel: React.FC = () => {
             disabled={isLoading}
             className="bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
           >
-            {isLoading ? '接続中...' : 'GitHub MCPに接続'}
+            {isLoading ? '接続中...' : 'サーバーに接続'}
           </button>
         )}
         {isConnected && (
           <span className="text-sm text-green-600 font-medium">
-            ✓ MCP接続済み
+            ✓ 接続済み
           </span>
         )}
       </div>
@@ -370,8 +370,8 @@ const ChatPanel: React.FC = () => {
         ) : messages.length === 0 ? (
            <div className="text-gray-500 text-center py-4">
              {isConnected
-               ? 'チャットスレッドが開始されました。GitHub Contribution MCPサーバーと対話してください！'
-               : 'チャットを開始するにはMCPサーバーに接続してください。'}
+               ? 'チャットが開始されました。メッセージを入力してください！'
+               : 'チャットを開始するにはサーバーに接続してください。'}
            </div>
         ) : (
           // Render messages from the current thread
