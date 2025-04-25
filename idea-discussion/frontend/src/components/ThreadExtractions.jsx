@@ -20,7 +20,7 @@ const ThreadExtractions = ({ threadId }) => {
             setError(null);
             try {
                 // Construct the correct API URL using the backend port (default 3000)
-                const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+                const apiUrl = import.meta.env.VITE_API_BASE_URL;
                 const response = await fetch(`${apiUrl}/api/chat/threads/${threadId}/extractions`);
 
                 if (!response.ok) {

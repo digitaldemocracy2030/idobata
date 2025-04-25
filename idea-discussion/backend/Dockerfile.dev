@@ -1,0 +1,20 @@
+# Use a recent Node LTS version
+FROM node:20-alpine
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy package files and install dependencies
+# Copy only package files first to leverage Docker cache
+COPY package.json package-lock.json ./
+RUN npm install
+
+# Copy the rest of the application code
+# Note: In docker-compose, this will be overlayed by the volume mount for development
+COPY . .
+
+# Expose the port the backend will run on (as defined in docker-compose.yml)
+EXPOSE 3000
+
+# Default command to run the development server (will be overridden in docker-compose)
+CMD ["npm", "run", "dev"]

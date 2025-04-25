@@ -28,7 +28,7 @@ function AppLayout({ userId, setUserId }) {
     setMessages(prevMessages => [...prevMessages, newUserMessage]);
 
     try {
-      const backendUrl = 'http://localhost:3000/api/chat/messages';
+      const backendUrl = `${import.meta.env.VITE_API_BASE_URL}/api/chat/messages`;
       const response = await fetch(backendUrl, {
         method: 'POST',
         headers: {
@@ -84,7 +84,7 @@ function AppLayout({ userId, setUserId }) {
     if (!currentThreadId) return;
   
     try {
-      const response = await fetch(`http://localhost:3000/api/chat/threads/${currentThreadId}/extractions`);
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chat/threads/${currentThreadId}/extractions`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -180,7 +180,7 @@ function AppLayout({ userId, setUserId }) {
       
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:3000/api/chat/threads/${currentThreadId}/messages`);
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chat/threads/${currentThreadId}/messages`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

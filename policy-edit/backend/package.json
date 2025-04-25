@@ -6,8 +6,9 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "build:mcp": "cd ../mcp && npm run build",
     "start": "node build/index.js",
-    "dev": "nodemon --exec ts-node --esm src/index.ts",
+    "dev": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

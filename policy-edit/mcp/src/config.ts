@@ -6,7 +6,6 @@ dotenv.config();
 const envSchema = z.object({
     LOG_LEVEL: z.string().optional(),
     GITHUB_APP_ID: z.string(),
-    GITHUB_APP_PRIVATE_KEY: z.string(), // PEM文字列またはファイルパス
     GITHUB_INSTALLATION_ID: z.string(),
     GITHUB_TARGET_OWNER: z.string(),
     GITHUB_TARGET_REPO: z.string(),

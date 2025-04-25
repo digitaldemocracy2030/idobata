@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const API_BASE_URL = 'http://localhost:3000/api'; // Adjust if your backend runs elsewhere
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`; // Adjust if your backend runs elsewhere
 
 function DataList() {
   const [problems, setProblems] = useState([]);

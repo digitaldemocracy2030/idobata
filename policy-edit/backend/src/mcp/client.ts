@@ -78,10 +78,38 @@ export class McpClient {
                 ? process.platform === 'win32' ? 'python' : 'python3'
                 : process.execPath; // Use node executable path for .js
 
+            // Prepare the environment for the transport
+            const transportEnv: Record<string, string> = Object.entries(process.env).reduce(
+                (acc, [key, value]) => {
+                    if (typeof value === 'string') {
+                        acc[key] = value;
+                    }
+                    return acc;
+                },
+                {} as Record<string, string>
+            );
+
+            // Validate and add required GitHub variables
+            const requiredEnvVars = [
+                'GITHUB_APP_ID',
+                'GITHUB_INSTALLATION_ID',
+                'GITHUB_TARGET_OWNER',
+                'GITHUB_TARGET_REPO'
+            ];
+            for (const key of requiredEnvVars) {
+                const value = process.env[key];
+                if (typeof value !== 'string' || value.trim() === '') {
+                    // Throw error *before* creating transport if required vars are missing
+                    throw new Error(`Missing or invalid required environment variable: ${key}`);
+                }
+                transportEnv[key] = value; // Add validated variable to the prepared env object
+            }
+
+            // Create the transport with the fully prepared environment
             this.transport = new StdioClientTransport({
                 command,
                 args: [serverScriptPath],
-                // Environment variables from process.env should be inherited by the child process
+                env: transportEnv
             });
 
             await this.mcp.connect(this.transport); // Connect might be async
