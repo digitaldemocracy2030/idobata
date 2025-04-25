@@ -7,10 +7,12 @@ function AdminPanel() {
   const [solutions, setSolutions] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [policyDrafts, setPolicyDrafts] = useState([]);
+  const [digestDrafts, setDigestDrafts] = useState([]);
   const [isLoadingProblems, setIsLoadingProblems] = useState(false);
   const [isLoadingSolutions, setIsLoadingSolutions] = useState(false);
   const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
   const [isLoadingPolicyDrafts, setIsLoadingPolicyDrafts] = useState(false);
+  const [isLoadingDigestDrafts, setIsLoadingDigestDrafts] = useState(false);
   const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false);
   const [activeTab, setActiveTab] = useState('questions');
   const [error, setError] = useState(null);
@@ -20,6 +22,7 @@ function AdminPanel() {
   useEffect(() => {
     fetchQuestions();
     fetchPolicyDrafts();
+    fetchDigestDrafts();
   }, []);
 
   // Fetch problems and solutions when those tabs are selected
@@ -100,6 +103,24 @@ function AdminPanel() {
       setError('政策ドラフトの読み込みに失敗しました。');
     } finally {
       setIsLoadingPolicyDrafts(false);
+    }
+  };
+  
+  const fetchDigestDrafts = async () => {
+    setIsLoadingDigestDrafts(true);
+    setError(null);
+    try {
+      const response = await fetch(`${API_BASE_URL}/digest-drafts`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setDigestDrafts(data);
+    } catch (e) {
+      console.error("Failed to fetch digest drafts:", e);
+      setError('ダイジェストの読み込みに失敗しました。');
+    } finally {
+      setIsLoadingDigestDrafts(false);
     }
   };
 
@@ -246,6 +267,18 @@ function AdminPanel() {
               }`}
             >
               政策ドラフト
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveTab('digests')}
+              className={`inline-block p-4 rounded-t-lg ${
+                activeTab === 'digests'
+                  ? 'text-success border-b-2 border-success'
+                  : 'text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+              }`}
+            >
+              一般向けダイジェスト
             </button>
           </li>
         </ul>
@@ -412,6 +445,46 @@ function AdminPanel() {
               <div className="p-6 text-center text-neutral-500 text-sm border border-dashed border-neutral-300 rounded-lg">
                 <p>まだ政策ドラフトが生成されていません</p>
                 <p className="mt-2 text-xs">可視化エリアで問いを選択し、政策ドラフト生成ボタンを使用してください</p>
+              </div>
+            )}
+          </div>
+        )}
+        
+        {/* Digest Drafts Tab */}
+        {activeTab === 'digests' && (
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-success">一般向けダイジェスト一覧 ({digestDrafts.length})</h3>
+            {isLoadingDigestDrafts ? (
+              <div className="flex items-center justify-center p-8">
+                <div className="animate-pulse-slow flex space-x-2">
+                  <div className="w-2 h-2 bg-success rounded-full"></div>
+                  <div className="w-2 h-2 bg-success rounded-full"></div>
+                  <div className="w-2 h-2 bg-success rounded-full"></div>
+                </div>
+              </div>
+            ) : digestDrafts.length > 0 ? (
+              <div className="space-y-4">
+                {digestDrafts.map((draft) => (
+                  <div key={draft._id} className="p-4 border border-success/30 rounded-lg hover:shadow-md transition-all duration-200 bg-success/5">
+                    <h4 className="font-semibold text-success text-lg mb-2">{draft.title}</h4>
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="bg-success text-white text-xs px-2 py-1 rounded-full">v{draft.version || '1'}</span>
+                      <span className="text-xs text-neutral-500">{formatDate(draft.createdAt)}</span>
+                    </div>
+                    <p className="text-sm text-neutral-700 mb-3">{truncateText(draft.content, 200)}</p>
+                    <details className="text-sm">
+                      <summary className="cursor-pointer text-success hover:text-success/80">全文を表示</summary>
+                      <div className="mt-3 p-4 bg-white rounded-lg border border-success/20">
+                        <p className="whitespace-pre-wrap">{draft.content}</p>
+                      </div>
+                    </details>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-6 text-center text-neutral-500 text-sm border border-dashed border-success/30 rounded-lg">
+                <p>まだダイジェストが生成されていません</p>
+                <p className="mt-2 text-xs">可視化エリアで問いを選択し、ダイジェスト生成ボタンを使用してください</p>
               </div>
             )}
           </div>

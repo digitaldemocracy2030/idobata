@@ -7,12 +7,16 @@ function VisualizationArea() {
   const [selectedQuestionId, setSelectedQuestionId] = useState(null);
   const [questionDetails, setQuestionDetails] = useState(null);
   const [policyDrafts, setPolicyDrafts] = useState([]);
+  const [digestDrafts, setDigestDrafts] = useState([]);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [isLoadingDrafts, setIsLoadingDrafts] = useState(false);
+  const [isLoadingDigestDrafts, setIsLoadingDigestDrafts] = useState(false);
   const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
   const [isGeneratingPolicy, setIsGeneratingPolicy] = useState(false);
+  const [isGeneratingDigest, setIsGeneratingDigest] = useState(false);
   const [error, setError] = useState(null);
   const [generationStatus, setGenerationStatus] = useState('');
+  const [digestGenerationStatus, setDigestGenerationStatus] = useState('');
 
   // Fetch all questions on component mount
   useEffect(() => {
@@ -100,6 +104,35 @@ function VisualizationArea() {
 
     fetchDrafts();
   }, [selectedQuestionId]);
+  
+  // Fetch digest drafts when a question is selected
+  useEffect(() => {
+    if (!selectedQuestionId) {
+      setDigestDrafts([]);
+      return;
+    }
+
+    const fetchDigestDrafts = async () => {
+      setIsLoadingDigestDrafts(true);
+      setError(null);
+      try {
+        const response = await fetch(`${API_BASE_URL}/digest-drafts?questionId=${selectedQuestionId}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setDigestDrafts(data);
+      } catch (e) {
+        console.error("Failed to fetch digest drafts:", e);
+        setError(`問い (${selectedQuestionId}) のダイジェスト読み込みに失敗しました。 ${e.message}`);
+        setDigestDrafts([]);
+      } finally {
+        setIsLoadingDigestDrafts(false);
+      }
+    };
+
+    fetchDigestDrafts();
+  }, [selectedQuestionId]);
 
   const handleQuestionSelect = (questionId) => {
     setSelectedQuestionId(prevId => (prevId === questionId ? null : questionId));
@@ -145,6 +178,49 @@ function VisualizationArea() {
       setGenerationStatus('');
     } finally {
       setIsGeneratingPolicy(false);
+    }
+  };
+  
+  // Handle digest generation request
+  const handleGenerateDigest = async () => {
+    if (!selectedQuestionId) return;
+
+    setIsGeneratingDigest(true);
+    setError(null);
+    setDigestGenerationStatus('ダイジェストを生成中...');
+    try {
+      const response = await fetch(`${API_BASE_URL}/questions/${selectedQuestionId}/generate-digest`, {
+        method: 'POST',
+      });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'ダイジェスト生成の開始に失敗しました。' }));
+        throw new Error(`HTTP error! status: ${response.status}. ${errorData.message}`);
+      }
+      setDigestGenerationStatus('ダイジェスト生成を開始しました。準備ができ次第、ダイジェストが以下に表示されます（更新が必要な場合や、しばらくお待ちいただく場合があります）。');
+      setTimeout(() => {
+           if (selectedQuestionId) {
+                const fetchDigestDrafts = async () => {
+                  setIsLoadingDigestDrafts(true);
+                  try {
+                    const response = await fetch(`${API_BASE_URL}/digest-drafts?questionId=${selectedQuestionId}`);
+                    if (!response.ok) throw new Error('ダイジェストの取得に失敗しました');
+                    const data = await response.json();
+                    setDigestDrafts(data);
+                  } catch (e) {
+                    console.error("Delayed digest fetch failed:", e);
+                  } finally {
+                    setIsLoadingDigestDrafts(false);
+                  }
+                };
+                fetchDigestDrafts();
+           }
+      }, 10000);
+    } catch (e) {
+      console.error("Failed to trigger digest generation:", e);
+      setError(`ダイジェスト生成の開始に失敗しました: ${e.message}`);
+      setDigestGenerationStatus('');
+    } finally {
+      setIsGeneratingDigest(false);
     }
   };
 
@@ -306,9 +382,39 @@ function VisualizationArea() {
                     </div>
                   )}
                 </div>
+                
+                {/* Digest Generation Button & Status */}
+                <div className="mb-6 p-4 bg-neutral-50 rounded-lg border border-neutral-200">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <h4 className="text-md font-semibold text-success mb-1">一般向けダイジェスト生成</h4>
+                      <p className="text-sm text-neutral-600">この問いと政策ドラフトから一般向けの読みやすいダイジェストを生成します</p>
+                    </div>
+                    <button
+                      onClick={handleGenerateDigest}
+                      disabled={isGeneratingDigest || isLoadingDetails || policyDrafts.length === 0}
+                      className="btn bg-success text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm whitespace-nowrap hover:bg-success/90"
+                    >
+                      {isGeneratingDigest ? (
+                        <span className="flex items-center">
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          生成中...
+                        </span>
+                      ) : 'ダイジェスト生成'}
+                    </button>
+                  </div>
+                  {digestGenerationStatus && (
+                    <div className="mt-3 p-3 bg-success/10 border border-success/30 rounded-lg text-sm text-success/90">
+                      {digestGenerationStatus}
+                    </div>
+                  )}
+                </div>
 
                 {/* Policy Drafts Display */}
-                <div>
+                <div className="mb-8">
                   <h4 className="text-lg font-semibold mb-4 text-primary-dark border-b border-neutral-200 pb-2 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-primary-dark inline-block"></span>
                     政策ドラフト ({policyDrafts.length})
@@ -342,6 +448,48 @@ function VisualizationArea() {
                     <div className="p-6 text-center text-neutral-500 text-sm border border-dashed border-neutral-300 rounded-lg">
                       <p>この問いに対する政策ドラフトはまだ生成されていません</p>
                       <p className="mt-2 text-xs">上のボタンから生成を開始できます</p>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Digest Drafts Display */}
+                <div>
+                  <h4 className="text-lg font-semibold mb-4 text-success border-b border-neutral-200 pb-2 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-success inline-block"></span>
+                    一般向けダイジェスト ({digestDrafts.length})
+                  </h4>
+                  {isLoadingDigestDrafts ? (
+                    <div className="flex items-center justify-center p-8">
+                      <div className="animate-pulse-slow flex space-x-2">
+                        <div className="w-2 h-2 bg-success rounded-full"></div>
+                        <div className="w-2 h-2 bg-success rounded-full"></div>
+                        <div className="w-2 h-2 bg-success rounded-full"></div>
+                      </div>
+                    </div>
+                  ) : digestDrafts.length > 0 ? (
+                    <div className="space-y-4 overflow-y-auto max-h-[400px] pr-2">
+                      {digestDrafts.map(draft => (
+                        <div key={draft._id} className="card p-4 border border-success/30 bg-success/5 shadow-sm hover:shadow-md transition-all duration-200">
+                          <h5 className="font-semibold text-success text-lg mb-2">{draft.title}</h5>
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="bg-success text-white text-xs px-2 py-1 rounded-full">v{draft.version || '1'}</span>
+                            <span className="text-xs text-neutral-500">
+                              {new Date(draft.createdAt).toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="prose prose-sm max-w-none text-neutral-700 bg-white p-4 rounded-lg border border-success/20">
+                            <p className="whitespace-pre-wrap">{draft.content}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-6 text-center text-neutral-500 text-sm border border-dashed border-success/30 rounded-lg">
+                      <p>この問いに対するダイジェストはまだ生成されていません</p>
+                      <p className="mt-2 text-xs">上のボタンから生成を開始できます</p>
+                      {policyDrafts.length === 0 && (
+                        <p className="mt-2 text-xs text-amber-600">※ダイジェスト生成には政策ドラフトが必要です</p>
+                      )}
                     </div>
                   )}
                 </div>
