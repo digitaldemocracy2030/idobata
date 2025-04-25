@@ -8,6 +8,7 @@ import chatRoutes from './routes/chatRoutes.js'; // Import chat routes
 import adminRoutes from './routes/adminRoutes.js'; // Import admin routes
 import questionRoutes from './routes/questionRoutes.js'; // Import question routes
 import policyRoutes from './routes/policyRoutes.js'; // Import policy routes
+import digestRoutes from './routes/digestRoutes.js'; // Import digest routes
 import importRoutes from './routes/importRoutes.js'; // Import import routes
 
 // Get __dirname equivalent in ES modules
@@ -55,6 +56,7 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes); // Use admin routes
 app.use('/api/questions', questionRoutes); // Use question routes
 app.use('/api/policy-drafts', policyRoutes); // Use policy routes
+app.use('/api/digest-drafts', digestRoutes); // Use digest routes
 app.use('/api/import', importRoutes); // Use import routes
 
 // --- Serve static files in production ---

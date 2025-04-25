@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllQuestions, getQuestionDetails, triggerPolicyGeneration } from '../controllers/questionController.js'; // Import the new controller
+import { getAllQuestions, getQuestionDetails, triggerPolicyGeneration, triggerDigestGeneration } from '../controllers/questionController.js'; // Import the new controller
 
 const router = express.Router();
 
@@ -11,5 +11,8 @@ router.get('/:questionId/details', getQuestionDetails);
 
 // POST /api/questions/:questionId/generate-policy - Trigger policy draft generation
 router.post('/:questionId/generate-policy', triggerPolicyGeneration);
+
+// POST /api/questions/:questionId/generate-digest - Trigger digest draft generation
+router.post('/:questionId/generate-digest', triggerDigestGeneration);
 
 export default router;
