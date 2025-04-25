@@ -4,6 +4,7 @@ import Problem from '../models/Problem.js';
 import Solution from '../models/Solution.js';
 import mongoose from 'mongoose';
 import { generatePolicyDraft } from '../workers/policyGenerator.js'; // Import the worker function
+import { generateDigestDraft } from '../workers/digestGenerator.js'; // Import the digest worker function
 // GET /api/questions - Fetch all sharp questions
 export const getAllQuestions = async (req, res) => {
     try {
@@ -102,5 +103,37 @@ export const triggerPolicyGeneration = async (req, res) => {
     } catch (error) {
         console.error(`Error triggering policy generation for question ${questionId}:`, error);
         res.status(500).json({ message: 'Error triggering policy generation', error: error.message });
+    }
+};
+
+// POST /api/questions/:questionId/generate-digest - Trigger digest draft generation
+export const triggerDigestGeneration = async (req, res) => {
+    const { questionId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(questionId)) {
+        return res.status(400).json({ message: 'Invalid question ID format' });
+    }
+
+    try {
+        // Check if the question exists (optional but good practice)
+        const question = await SharpQuestion.findById(questionId);
+        if (!question) {
+            return res.status(404).json({ message: 'Question not found' });
+        }
+
+        // Trigger the generation asynchronously (using setTimeout for simplicity)
+        // In production, use a proper job queue (BullMQ, Agenda, etc.)
+        setTimeout(() => {
+            generateDigestDraft(questionId).catch(err => {
+                console.error(`[API Trigger] Error during background digest generation for ${questionId}:`, err);
+            });
+        }, 0);
+
+        console.log(`[API Trigger] Digest generation triggered for questionId: ${questionId}`);
+        res.status(202).json({ message: `Digest draft generation started for question ${questionId}` });
+
+    } catch (error) {
+        console.error(`Error triggering digest generation for question ${questionId}:`, error);
+        res.status(500).json({ message: 'Error triggering digest generation', error: error.message });
     }
 };
