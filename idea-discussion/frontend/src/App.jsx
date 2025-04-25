@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import DataPage from './pages/DataPage';
 import AppLayout from './components/AppLayout';
@@ -17,15 +17,24 @@ function App() {
     }
   }, [userId]);
 
-  return (
-    <Routes>
-      <Route element={<AppLayout userId={userId} setUserId={setUserId} />}>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/data" element={<DataPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Route>
-    </Routes>
-  );
+  return <Outlet context={{ userId, setUserId }} />;
 }
+
+export const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />,
+    children: [
+      {
+        element: <AppLayout />,
+        children: [
+          { index: true, element: <MainPage /> },
+          { path: 'data', element: <DataPage /> },
+          { path: '*', element: <Navigate to="/" replace /> },
+        ],
+      },
+    ],
+  },
+]);
 
 export default App;
