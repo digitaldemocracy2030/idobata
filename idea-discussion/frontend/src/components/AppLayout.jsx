@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useOutletContext } from 'react-router-dom';
 import ChatInput from './ChatInput';
 import ChatHistory from './ChatHistory';
 import ThreadExtractions from './ThreadExtractions';
 import Notification from './Notification';
 
-function AppLayout({ userId, setUserId }) {
+function AppLayout() {
+  const { userId, setUserId } = useOutletContext();
+  
   // Initialize currentThreadId from localStorage if available
   const [messages, setMessages] = useState([]);
   const [currentThreadId, setCurrentThreadId] = useState(
