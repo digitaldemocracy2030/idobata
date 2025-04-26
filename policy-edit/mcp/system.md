@@ -36,7 +36,6 @@ OKです。`github-contribution-mcp` サーバーの実装にフォーカスし�
 | 環境変数名                 | 説明                                                                 | 必須 | 例                                      |
 | :------------------------- | :------------------------------------------------------------------- | :--- | :-------------------------------------- |
 | `GITHUB_APP_ID`            | GitHub App の ID                                                     | Yes  | `123456`                                |
-| `GITHUB_APP_PRIVATE_KEY`   | GitHub App の秘密鍵 (PEM形式の文字列、改行は `\n` に置換推奨)          | Yes  | `"-----BEGIN RSA PRIVATE KEY-----\n..."` |
 | `GITHUB_INSTALLATION_ID`   | GitHub App をインストールしたリポジトリの Installation ID                | Yes  | `98765432`                              |
 | `GITHUB_TARGET_OWNER`      | 操作対象リポジトリのオーナー名 (ユーザー名 or Organization名)          | Yes  | `my-org`                                |
 | `GITHUB_TARGET_REPO`       | 操作対象リポジトリ名                                                 | Yes  | `policy-proposals`                      |
@@ -170,7 +169,7 @@ tsconfig.json
 #### 5.2. GitHub クライアント (`github/client.ts`)
 
 *   `getAuthenticatedOctokit()`:
-    *   環境変数から `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY`, `GITHUB_INSTALLATION_ID` を読み込む。
+    *   `/app/secrets/github-key.pem`から秘密鍵を読み込み、環境変数から `GITHUB_APP_ID`, `GITHUB_INSTALLATION_ID` を読み込む。
     *   `@octokit/app` を使用して GitHub App として認証。
     *   指定された `GITHUB_INSTALLATION_ID` に対する Installation Token を取得。
     *   取得したトークンで認証された `@octokit/rest` インスタンスを生成して返す。
