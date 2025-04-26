@@ -376,3 +376,38 @@ export default [
 - Architect モードでは直接 tsconfig.json ファイルを編集できないため、必要な変更点を記録しました
 - 次のステップでは、Code モードに切り替えて実際に tsconfig.json ファイルを更新する必要があります
 - 主な変更点は、型チェックを緩和するための設定（`strict: false`, `noImplicitAny: false`, `strictNullChecks: false`）の追加です
+
+### 3. ファイル拡張子の変更 (2025/4/27)
+
+以下のファイルの拡張子を`.jsx`から`.tsx`に変更しました：
+
+1. `src/App.jsx` → `src/App.tsx`（すでに変更済みでした）
+2. `src/main.jsx` → `src/main.tsx`
+3. `src/components/AdminPanel.jsx` → `src/components/AdminPanel.tsx`
+4. `src/components/AppLayout.jsx` → `src/components/AppLayout.tsx`
+5. `src/components/ChatHistory.jsx` → `src/components/ChatHistory.tsx`
+6. `src/components/ChatInput.jsx` → `src/components/ChatInput.tsx`
+7. `src/components/DataList.jsx` → `src/components/DataList.tsx`
+8. `src/components/Notification.jsx` → `src/components/Notification.tsx`
+9. `src/components/ThreadExtractions.jsx` → `src/components/ThreadExtractions.tsx`
+10. `src/components/VisualizationArea.jsx` → `src/components/VisualizationArea.tsx`
+11. `src/pages/DataPage.jsx` → `src/pages/DataPage.tsx`
+12. `src/pages/MainPage.jsx` → `src/pages/MainPage.tsx`
+
+また、`main.tsx`のインポート文を更新しました：
+
+```typescript
+// 変更前
+import { router } from './App.jsx'
+
+// 変更後
+import { router } from './App'
+```
+
+他のファイルのインポート文は拡張子が含まれていなかったため、更新は不要でした。
+
+#### ファイル拡張子の変更結果
+
+- すべてのファイルの拡張子を`.jsx`から`.tsx`に変更することができました
+- `main.tsx`のインポート文を更新しました
+- TypeScriptのエラーが発生していますが、これは作業4「最小限の型定義の追加」で対応する予定です
