@@ -521,3 +521,52 @@ import { router } from './App'
    - `Message`インターフェースを`types.ts`からインポート
 
 また、`types.ts`の`Message`インターフェースも更新して、`timestamp`の型を`Date`から`string | Date`に変更しました。これにより、すべてのコンポーネントで一貫した型定義を使用できるようになりました。
+
+### Prettier と ESLint の設定 (2025/4/27)
+
+コードの品質と一貫性を確保するために、Prettier と ESLint を設定し、保存時に自動フォーマットされるようにしました。
+
+#### 実施内容
+
+1. 必要なパッケージのインストール
+   ```bash
+   npm install --save-dev prettier eslint-config-prettier
+   ```
+
+2. Prettier の設定ファイル (.prettierrc) の作成
+   ```json
+   {
+     "semi": true,
+     "singleQuote": true,
+     "tabWidth": 2,
+     "trailingComma": "es5",
+     "printWidth": 100,
+     "bracketSpacing": true,
+     "arrowParens": "avoid"
+   }
+   ```
+
+3. ESLint の設定ファイル (eslint.config.js) の更新
+   - TypeScript ESLint の設定を追加
+   - Prettier との競合を避けるための設定を追加
+   - TypeScript 関連のルールを一時的に緩和
+
+4. VSCode の設定ファイル (.vscode/settings.json) の作成
+   - 保存時に自動フォーマットするように設定
+   - ESLint の自動修正を有効化
+
+5. package.json にフォーマットコマンドを追加
+   ```json
+   "scripts": {
+     "lint:fix": "eslint . --fix",
+     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css}\""
+   }
+   ```
+
+#### 設定結果
+
+- 保存時に自動的にコードがフォーマットされるようになりました
+- ESLint によるコード品質のチェックが行われるようになりました
+- コマンドラインからも簡単にフォーマットできるようになりました
+  - `npm run format` でコードをフォーマット
+  - `npm run lint:fix` で ESLint の自動修正を実行
