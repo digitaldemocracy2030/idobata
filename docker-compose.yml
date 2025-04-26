@@ -85,6 +85,24 @@ services:
     # Run the production start command
     command: npm start
 
+  # --- Unified Frontend ---
+  frontend:
+    container_name: frontend-dev
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      # Add node_modules volume
+      - /app/node_modules
+    ports:
+      - "5175:5175" # 新しいポート
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - VITE_API_BASE_URL=${IDEA_FRONTEND_API_BASE_URL} # 初期段階ではidea-discussionのAPIを使用
+
   # --- Database ---
   mongo:
     container_name: mongo-dev

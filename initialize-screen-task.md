@@ -323,6 +323,13 @@ flowchart LR
   - React Refreshの推奨ルール
   - JSX対応のパーサーオプション
   - カスタムルール（未使用変数の警告など）
+- 作業6完了: docker-compose.ymlを更新しました。以下の設定を持つ新しいfrontendサービスを追加:
+  - コンテナ名: frontend-dev
+  - ポート: 5175:5175
+  - ボリュームマウント: ./frontend:/app
+  - 環境変数: idea-discussionのAPIを使用するよう設定
+- 作業7完了: .envファイルを更新しました。以下の環境変数を追加:
+  - FRONTEND_API_BASE_URL=http://localhost:3000
 
 ## 作業時の注意
 - ユーザーからの指示への返答はかならず日本語で行ってください。
