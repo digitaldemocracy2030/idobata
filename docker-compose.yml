@@ -40,7 +40,6 @@ services:
       - MONGODB_URI=mongodb://mongo:27017/idea_discussion_db # Use service name 'mongo'
       # Explicitly pass GitHub and OpenRouter variables from .env
       - GITHUB_APP_ID=${GITHUB_APP_ID}
-      - GITHUB_APP_PRIVATE_KEY=${GITHUB_APP_PRIVATE_KEY}
       - GITHUB_INSTALLATION_ID=${GITHUB_INSTALLATION_ID}
       - GITHUB_TARGET_OWNER=${GITHUB_TARGET_OWNER}
       - GITHUB_TARGET_REPO=${GITHUB_TARGET_REPO}
