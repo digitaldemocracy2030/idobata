@@ -10,7 +10,7 @@ export interface OutletContext {
 export interface Message {
   role: string;
   content: string;
-  timestamp: Date;
+  timestamp: string | Date;
 }
 
 // 通知関連の型定義

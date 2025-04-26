@@ -1,16 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
-interface Problem {
-    _id: string;
-    statement: string;
-    version?: number;
-}
-
-interface Solution {
-    _id: string;
-    statement: string;
-    version?: number;
-}
+import { Problem, Solution } from '../types';
 
 interface ThreadExtractionsProps {
     threadId: string | null;

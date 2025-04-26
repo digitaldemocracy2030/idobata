@@ -1,10 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-
-interface Message {
-  role: string;
-  content: string;
-  timestamp: string | Date;
-}
+import { Message } from '../types';
 
 interface ChatHistoryProps {
   messages: Message[];

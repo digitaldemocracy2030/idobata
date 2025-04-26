@@ -506,3 +506,18 @@ import { router } from './App'
 - プロトタイピング段階でデータ構造が変更された場合、一箇所を修正するだけで済むようになりました
 - DRY原則に従い、同じインターフェースを複数の場所で定義することを避けられるようになりました
 - 将来的な拡張や変更に対して、より柔軟に対応できるようになりました
+
+#### 追加の修正 (2025/4/27)
+
+さらに、以下のファイルも修正して、共通ドメインオブジェクトのインターフェースを`types.ts`からインポートするようにしました：
+
+1. `frontend/src/components/ThreadExtractions.tsx`
+   - `Problem`と`Solution`のインターフェースを`types.ts`からインポート
+
+2. `frontend/src/components/AppLayout.tsx`
+   - `OutletContext`, `Message`, `Problem`, `Solution`, `NotificationType`, `PreviousExtractions`のインターフェースを`types.ts`からインポート
+
+3. `frontend/src/components/ChatHistory.tsx`
+   - `Message`インターフェースを`types.ts`からインポート
+
+また、`types.ts`の`Message`インターフェースも更新して、`timestamp`の型を`Date`から`string | Date`に変更しました。これにより、すべてのコンポーネントで一貫した型定義を使用できるようになりました。

@@ -1,40 +1,6 @@
-import React, { useState, useEffect, useCallback, Dispatch, SetStateAction } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, Outlet, useOutletContext } from 'react-router-dom';
-
-// 型定義
-interface OutletContext {
-  userId: string | null;
-  setUserId: Dispatch<SetStateAction<string | null>>;
-}
-
-interface Message {
-  role: string;
-  content: string;
-  timestamp: Date;
-}
-
-interface Problem {
-  _id: string;
-  statement: string;
-  version?: number;
-}
-
-interface Solution {
-  _id: string;
-  statement: string;
-  version?: number;
-}
-
-interface NotificationType {
-  message: string;
-  type: string;
-  id: string;
-}
-
-interface PreviousExtractions {
-  problems: Problem[];
-  solutions: Solution[];
-}
+import { OutletContext, Message, Problem, Solution, NotificationType, PreviousExtractions } from '../types';
 import ChatInput from './ChatInput';
 import ChatHistory from './ChatHistory';
 import ThreadExtractions from './ThreadExtractions';
