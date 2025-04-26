@@ -1,24 +1,59 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Dispatch, SetStateAction } from 'react';
 import { Link, Outlet, useOutletContext } from 'react-router-dom';
+
+// 型定義
+interface OutletContext {
+  userId: string | null;
+  setUserId: Dispatch<SetStateAction<string | null>>;
+}
+
+interface Message {
+  role: string;
+  content: string;
+  timestamp: Date;
+}
+
+interface Problem {
+  _id: string;
+  statement: string;
+  version?: number;
+}
+
+interface Solution {
+  _id: string;
+  statement: string;
+  version?: number;
+}
+
+interface NotificationType {
+  message: string;
+  type: string;
+  id: string;
+}
+
+interface PreviousExtractions {
+  problems: Problem[];
+  solutions: Solution[];
+}
 import ChatInput from './ChatInput';
 import ChatHistory from './ChatHistory';
 import ThreadExtractions from './ThreadExtractions';
 import Notification from './Notification';
 
 function AppLayout() {
-  const { userId, setUserId } = useOutletContext();
-  
+  const { userId, setUserId } = useOutletContext<OutletContext>();
+
   // Initialize currentThreadId from localStorage if available
-  const [messages, setMessages] = useState([]);
-  const [currentThreadId, setCurrentThreadId] = useState(
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [currentThreadId, setCurrentThreadId] = useState<string | null>(
     localStorage.getItem('currentThreadId') || null
   );
-  const [showExtractions, setShowExtractions] = useState(false);
-  const [notification, setNotification] = useState(null);
-  const [previousExtractions, setPreviousExtractions] = useState({ problems: [], solutions: [] });
-  const [isLoading, setIsLoading] = useState(false);
+  const [showExtractions, setShowExtractions] = useState<boolean>(false);
+  const [notification, setNotification] = useState<NotificationType | null>(null);
+  const [previousExtractions, setPreviousExtractions] = useState<PreviousExtractions>({ problems: [], solutions: [] });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleSendMessage = async (newMessageContent) => {
+  const handleSendMessage = async (newMessageContent: string): Promise<void> => {
     const currentUserId = userId;
 
     const newUserMessage = {
@@ -70,7 +105,7 @@ function AppLayout() {
         setUserId(responseData.userId);
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to send message:", error);
       const errorMessage = {
         role: 'assistant',
@@ -80,25 +115,25 @@ function AppLayout() {
       setMessages(prevMessages => [...prevMessages, errorMessage]);
     }
   };
-  
+
   // Function to check for new extractions and show notifications
-  const checkForNewExtractions = useCallback(async () => {
+  const checkForNewExtractions = useCallback(async (): Promise<void> => {
     if (!currentThreadId) return;
-  
+
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chat/threads/${currentThreadId}/extractions`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       const currentProblems = data.problems || [];
       const currentSolutions = data.solutions || [];
-      
+
       // Check for new problems
       for (const problem of currentProblems) {
         const existingProblem = previousExtractions.problems.find(p => p._id === problem._id);
-        
+
         if (!existingProblem) {
           // New problem added
           setNotification({
@@ -117,12 +152,12 @@ function AppLayout() {
           break;
         }
       }
-      
+
       // If no new/updated problems, check for new solutions
       if (!notification) {
         for (const solution of currentSolutions) {
           const existingSolution = previousExtractions.solutions.find(s => s._id === solution._id);
-          
+
           if (!existingSolution) {
             // New solution added
             setNotification({
@@ -142,11 +177,11 @@ function AppLayout() {
           }
         }
       }
-      
+
       // Update previous extractions for next comparison
       setPreviousExtractions({ problems: currentProblems, solutions: currentSolutions });
-      
-    } catch (error) {
+
+    } catch (error: any) {
       console.error("Failed to check for new extractions:", error);
     }
   }, [currentThreadId, previousExtractions, notification]);
@@ -157,7 +192,7 @@ function AppLayout() {
       const timer = setTimeout(() => {
         setNotification(null);
       }, 5000); // Slightly longer than the component's internal timer to ensure it's removed
-      
+
       return () => clearTimeout(timer);
     }
   }, [notification]);
@@ -165,33 +200,33 @@ function AppLayout() {
   // Check for new extractions periodically
   useEffect(() => {
     if (!currentThreadId) return;
-    
+
     // Initial check
     checkForNewExtractions();
-    
+
     // Set up interval for periodic checks
     const intervalId = setInterval(checkForNewExtractions, 5000); // Check every 5 seconds
-    
+
     return () => clearInterval(intervalId);
   }, [currentThreadId, checkForNewExtractions]);
 
   // Load thread messages when component mounts or currentThreadId changes
   useEffect(() => {
-    const loadThreadMessages = async () => {
+    const loadThreadMessages = async (): Promise<void> => {
       if (!currentThreadId) return;
-      
+
       setIsLoading(true);
       try {
         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chat/threads/${currentThreadId}/messages`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         if (data.messages && data.messages.length > 0) {
           setMessages(data.messages);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Failed to load thread messages:", error);
         // If there's an error loading the thread (e.g., it was deleted), clear the stored threadId
         if (error.message.includes('404')) {
@@ -202,7 +237,7 @@ function AppLayout() {
         setIsLoading(false);
       }
     };
-    
+
     loadThreadMessages();
   }, [currentThreadId]);
 
@@ -216,7 +251,7 @@ function AppLayout() {
           </div>
         </div>
       )}
-      
+
       {/* Header */}
       <header className="absolute top-0 left-0 right-0 z-20 border-b border-neutral-200 bg-white py-2 px-4 shadow-sm">
         <div className="container mx-auto flex justify-between items-center">
@@ -252,7 +287,7 @@ function AppLayout() {
               duration={4000}
             />
           )}
-          
+
           {/* Control Buttons */}
           <div className="absolute top-2 left-2 z-10 flex space-x-2">
             {/* Extraction Toggle Button */}
@@ -270,7 +305,7 @@ function AppLayout() {
             >
               抽出された課題/解決策を表示
             </button>
-            
+
             {/* New Conversation Button */}
             {currentThreadId && (
               <button
@@ -288,7 +323,7 @@ function AppLayout() {
               </button>
             )}
           </div>
-          
+
           <div className="h-full overflow-y-auto px-2 pt-10 pb-2 custom-scrollbar">
             <ChatHistory messages={messages} />
           </div>

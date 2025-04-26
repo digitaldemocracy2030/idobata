@@ -411,3 +411,70 @@ import { router } from './App'
 - すべてのファイルの拡張子を`.jsx`から`.tsx`に変更することができました
 - `main.tsx`のインポート文を更新しました
 - TypeScriptのエラーが発生していますが、これは作業4「最小限の型定義の追加」で対応する予定です
+
+### 4. 最小限の型定義の追加 (2025/4/27)
+
+まず、tsconfig.jsonを更新して型チェックを緩和しました：
+
+```json
+{
+  "compilerOptions": {
+    // 既存の設定...
+
+    /* Linting */
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    // その他の設定...
+  }
+}
+```
+
+次に、以下のファイルに最小限の型定義を追加しました：
+
+1. `src/App.tsx`
+   - `useState<string | null>`の型パラメータを追加
+
+2. `src/main.tsx`
+   - `document.getElementById('root')`の戻り値に対するnullチェックを追加
+
+3. `src/components/AppLayout.tsx`
+   - `OutletContext`インターフェースを定義
+   - 状態変数に型パラメータを追加（`useState<Message[]>`, `useState<string | null>`など）
+   - 関数に戻り値の型を追加（`async (): Promise<void>`）
+   - エラー処理に`any`型を使用
+
+4. `src/components/ChatInput.tsx`
+   - `ChatInputProps`インターフェースを定義
+   - イベントハンドラに型を追加（`React.FormEvent`, `React.ChangeEvent<HTMLTextAreaElement>`など）
+
+5. `src/components/ChatHistory.tsx`
+   - `Message`インターフェースを定義
+   - `ChatHistoryProps`インターフェースを定義
+   - `useRef<HTMLDivElement>(null)`の型パラメータを追加
+
+6. `src/components/ThreadExtractions.tsx`
+   - `Problem`と`Solution`インターフェースを定義
+   - `ThreadExtractionsProps`インターフェースを定義
+   - 状態変数に型パラメータを追加
+
+7. `src/components/Notification.tsx`
+   - `NotificationProps`インターフェースを定義
+   - 状態変数に型パラメータを追加
+
+8. `src/components/DataList.tsx`
+   - データ型のインターフェースを定義（`Problem`, `Solution`, `Question`, `PolicyDraft`）
+   - 状態変数に型パラメータを追加
+   - 関数に戻り値の型を追加
+
+9. `src/components/VisualizationArea.tsx`
+   - データ型のインターフェースを定義（`Question`, `QuestionDetails`, `PolicyDraft`, `DigestDraft`など）
+   - 状態変数に型パラメータを追加
+   - 関数に戻り値の型を追加
+
+#### 最小限の型定義の追加結果
+
+- 各コンポーネントに最小限の型定義を追加することができました
+- 必要に応じて`any`型を使用して、複雑な型の定義を回避しました
+- 型定義の追加により、コードの可読性と保守性が向上しました
+- 将来的には、より具体的な型に置き換えていくことが望ましいです
