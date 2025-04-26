@@ -4,6 +4,15 @@
 
 このドキュメントでは、現在JavaScriptで書かれているフロントエンドコードをTypeScriptに移行するための手順を説明します。この移行計画では、まずはファイル拡張子を`.jsx`から`.tsx`に変更し、最小限の型定義を追加することに焦点を当てます。厳密な型安全性は後のフェーズで対応するため、必要に応じて`any`型を使用します。
 
+## 作業時の注意
+- ユーザーからの指示への返答はかならず日本語で行ってください。
+- 基本的にコマンドの標準出力は取得できないので、commandResult.txt ファイルにパイプで出力してその結果をファイルから読み取ってください。
+- コマンドの結果が不明です、という状態で次の作業に進まないでください。
+- 必要になるまでファイルは実装しないでください。空の ts ファイルなどは作らないでください。
+- コメントや Doc は記載しないでコードのみを記載してください。
+- その時点では必要のない網羅性のためのメソッドは実装せず、その作業時点で明らかに必要なメソッドのみを実装する方針としてください。
+- 仕様が変わりやすいプロトタイピングなので、unittest は最小限にしたいです。指示されるまでテストは記載しないでください。
+
 ## 前提条件
 
 - TypeScriptの基本的な設定はすでに完了しています（tsconfig.json、tsconfig.node.jsonが存在）
@@ -241,15 +250,6 @@ export default [
 - `any`型を使用することで、TypeScriptの型チェックの恩恵を一部失いますが、段階的な移行を可能にします
 - 将来的には、`any`型を具体的な型に置き換えていくことをお勧めします
 
-## 作業時の注意
-- ユーザーからの指示への返答はかならず日本語で行ってください。
-- 基本的にコマンドの標準出力は取得できないので、commandResult.txt ファイルにパイプで出力してその結果をファイルから読み取ってください。
-- コマンドの結果が不明です、という状態で次の作業に進まないでください。
-- 必要になるまでファイルは実装しないでください。空の ts ファイルなどは作らないでください。
-- コメントや Doc は記載しないでコードのみを記載してください。
-- その時点では必要のない網羅性のためのメソッドは実装せず、その作業時点で明らかに必要なメソッドのみを実装する方針としてください。
-- 仕様が変わりやすいプロトタイピングなので、unittest は最小限にしたいです。指示されるまでテストは記載しないでください。
-
 ## 作業ログ
 
 ### 1. 現状の確認 (2025/4/27)
@@ -326,3 +326,53 @@ export default [
 - `allowJs: true`と`checkJs: false`の設定が既に含まれています
 - 現在は`strict: true`が設定されていますが、移行中は一時的に緩和する必要があるかもしれません
 - 移行が必要なJavaScriptファイルは12個あります
+
+### 2. TypeScript設定の調整 (2025/4/27)
+
+現在のtsconfig.jsonファイルには、以下の変更が必要です：
+
+1. `strict: true`を`strict: false`に変更
+2. `noImplicitAny: false`を追加
+3. `strictNullChecks: false`を追加
+
+**変更後のtsconfig.json（推奨設定）**
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Allow JS files */
+    "allowJs": true,
+    "checkJs": false
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
+```
+
+#### TypeScript設定の調整結果
+
+- Architect モードでは直接 tsconfig.json ファイルを編集できないため、必要な変更点を記録しました
+- 次のステップでは、Code モードに切り替えて実際に tsconfig.json ファイルを更新する必要があります
+- 主な変更点は、型チェックを緩和するための設定（`strict: false`, `noImplicitAny: false`, `strictNullChecks: false`）の追加です
