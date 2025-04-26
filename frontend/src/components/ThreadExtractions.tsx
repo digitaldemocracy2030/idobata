@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Problem, Solution } from '../types';
 
 interface ThreadExtractionsProps {
@@ -8,7 +8,6 @@ interface ThreadExtractionsProps {
 const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
     const [problems, setProblems] = useState<Problem[]>([]);
     const [solutions, setSolutions] = useState<Solution[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {

@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link, Outlet, useOutletContext } from 'react-router-dom';
-import { OutletContext, Message, Problem, Solution, NotificationType, PreviousExtractions } from '../types';
+import { OutletContext, Message, NotificationType, PreviousExtractions } from '../types';
 import ChatInput from './ChatInput';
 import ChatHistory from './ChatHistory';
 import ThreadExtractions from './ThreadExtractions';

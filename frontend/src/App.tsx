@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import DataPage from './pages/DataPage';
@@ -6,7 +6,9 @@ import AppLayout from './components/AppLayout';
 import './App.css';
 
 function App() {
-  const [userId, setUserId] = useState<string | null>(localStorage.getItem('policyChatUserId') || null);
+  const [userId, setUserId] = useState<string | null>(
+    localStorage.getItem('policyChatUserId') || null
+  );
 
   useEffect(() => {
     if (userId) {

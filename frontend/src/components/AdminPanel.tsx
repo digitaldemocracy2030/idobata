@@ -135,7 +135,7 @@ function AdminPanel() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json();
+      const _data = await response.json();
       setSuccessMessage(
         'シャープな問いの生成を開始しました。しばらくすると問いリストに表示されます。'
       );

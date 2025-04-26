@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Question,
-  RelatedProblem,
-  RelatedSolution,
   QuestionDetails,
   PolicyDraft,
   DigestDraft
