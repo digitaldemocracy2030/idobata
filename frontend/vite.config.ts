@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 5175, // 既存のサービスと競合しないポート
+    port: 5173, // idea-discussion/backendのCORS設定に合わせたポート
     host: '0.0.0.0'
   }
 })
