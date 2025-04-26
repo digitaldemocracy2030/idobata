@@ -567,6 +567,40 @@ import { router } from './App'
 
 - 保存時に自動的にコードがフォーマットされるようになりました
 - ESLint によるコード品質のチェックが行われるようになりました
+- 未使用のインポートが自動的に削除されるようになりました
 - コマンドラインからも簡単にフォーマットできるようになりました
   - `npm run format` でコードをフォーマット
   - `npm run lint:fix` で ESLint の自動修正を実行
+
+#### 追加設定: 未使用インポートの自動削除
+
+フォーマット時に未使用のインポートを自動的に削除するために、以下の設定を追加しました：
+
+1. eslint-plugin-unused-imports のインストール
+   ```bash
+   npm install --save-dev eslint-plugin-unused-imports
+   ```
+
+2. ESLint の設定ファイルに未使用インポート削除のルールを追加
+   ```javascript
+   // eslint.config.js
+   import unusedImports from 'eslint-plugin-unused-imports';
+
+   export default [
+     // 他の設定...
+     unusedImports.configs.recommended,
+     {
+       rules: {
+         // 未使用のインポートを自動的に削除
+         'unused-imports/no-unused-imports': 'error',
+         'unused-imports/no-unused-vars': [
+           'warn',
+           { 'vars': 'all', 'varsIgnorePattern': '^_', 'args': 'after-used', 'argsIgnorePattern': '^_' }
+         ],
+         // その他のルール...
+       }
+     }
+   ];
+   ```
+
+これにより、保存時やフォーマット実行時に未使用のインポートが自動的に削除されるようになり、コードの整理が容易になりました。

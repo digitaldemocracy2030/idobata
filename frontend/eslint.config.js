@@ -2,6 +2,7 @@ import js from '@eslint/js';
 import { FlatCompat } from '@eslint/eslintrc';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+import unusedImports from 'eslint-plugin-unused-imports';
 
 const compat = new FlatCompat();
 
@@ -11,6 +12,7 @@ export default [
   ...compat.extends('plugin:react-hooks/recommended'),
   ...compat.extends('plugin:react-refresh/recommended'),
   ...compat.extends('prettier'),
+  unusedImports.configs.recommended,
   {
     languageOptions: {
       globals: {
@@ -26,7 +28,21 @@ export default [
       }
     },
     rules: {
-      'no-unused-vars': 'warn',
+      // 未使用の変数に関するルール
+      'no-unused-vars': 'off', // 基本のルールをオフにして、TypeScriptのルールを使用
+      '@typescript-eslint/no-unused-vars': ['warn', {
+        'vars': 'all',
+        'args': 'after-used',
+        'ignoreRestSiblings': true,
+        'argsIgnorePattern': '^_',
+        'varsIgnorePattern': '^_'
+      }],
+      // 未使用のインポートを自動的に削除
+      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-vars': [
+        'warn',
+        { 'vars': 'all', 'varsIgnorePattern': '^_', 'args': 'after-used', 'argsIgnorePattern': '^_' }
+      ],
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true }
