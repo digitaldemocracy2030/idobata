@@ -302,6 +302,11 @@ flowchart LR
 
 ### 2025/4/26
 - 作業1完了: frontendディレクトリを作成し、その下にsrcとpublicディレクトリを作成しました。
+- 作業2完了: TypeScript設定ファイルを追加しました。以下のファイルを作成:
+  - frontend/tsconfig.json
+  - frontend/tsconfig.node.json
+  - frontend/vite.config.ts
+  - frontend/src/vite-env.d.ts
 
 ## 作業時の注意
 - ユーザーからの指示への返答はかならず日本語で行ってください。
