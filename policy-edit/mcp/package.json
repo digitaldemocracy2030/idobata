@@ -6,7 +6,10 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/main.js",
-    "dev": "nodemon --watch src --exec \"node --loader ts-node/esm src/main.ts\" | pino-pretty"
+    "test": "echo 'not implemented yet'",
+    "dev": "nodemon --watch src --exec \"node --loader ts-node/esm src/main.ts\" | pino-pretty",
+    "lint": "biome check .",
+    "format": "biome check --write ."
   },
   "keywords": [],
   "author": "",
