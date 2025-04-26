@@ -330,6 +330,9 @@ flowchart LR
   - 環境変数: idea-discussionのAPIを使用するよう設定
 - 作業7完了: .envファイルを更新しました。以下の環境変数を追加:
   - FRONTEND_API_BASE_URL=http://localhost:3000
+- 作業8完了: ビルドと実行テストを行いました:
+  - Dockerを使用してfrontendサービスを起動
+  - http://localhost:5175 でアクセス可能
 
 ## 作業時の注意
 - ユーザーからの指示への返答はかならず日本語で行ってください。
