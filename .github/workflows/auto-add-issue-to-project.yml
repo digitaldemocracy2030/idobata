@@ -1,0 +1,47 @@
+name: Add new issue to project
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  add-to-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add issue to project
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.ISSUE_TO_PROJECT_AUTOMATION_KEY }}
+          script: |
+            const issueNodeId = context.payload.issue.node_id;
+
+            const projectNumber = 1;
+            const org = 'digitaldemocracy2030';
+
+            const {
+              organization: { projectV2 }
+            } = await github.graphql(`
+              query($org: String!, $number: Int!) {
+                organization(login: $org) {
+                  projectV2(number: $number) {
+                    id
+                  }
+                }
+              }
+            `, {
+              org: org,
+              number: projectNumber
+            });
+
+            await github.graphql(`
+              mutation($projectId: ID!, $contentId: ID!) {
+                addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
+                  item {
+                    id
+                  }
+                }
+              }
+            `, {
+              projectId: projectV2.id,
+              contentId: issueNodeId
+            });
