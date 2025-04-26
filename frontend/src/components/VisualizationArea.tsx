@@ -1,44 +1,12 @@
 import React, { useState, useEffect } from 'react';
-
-// 型定義
-interface Question {
-  _id: string;
-  questionText: string;
-}
-
-interface RelatedProblem {
-  _id: string;
-  statement: string;
-  relevanceScore: number;
-}
-
-interface RelatedSolution {
-  _id: string;
-  statement: string;
-  relevanceScore: number;
-}
-
-interface QuestionDetails {
-  question: Question;
-  relatedProblems: RelatedProblem[];
-  relatedSolutions: RelatedSolution[];
-}
-
-interface PolicyDraft {
-  _id: string;
-  title: string;
-  content: string;
-  version?: number;
-  createdAt: string;
-}
-
-interface DigestDraft {
-  _id: string;
-  title: string;
-  content: string;
-  version?: number;
-  createdAt: string;
-}
+import {
+  Question,
+  RelatedProblem,
+  RelatedSolution,
+  QuestionDetails,
+  PolicyDraft,
+  DigestDraft
+} from '../types';
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`; // Adjust if your backend runs elsewhere
 

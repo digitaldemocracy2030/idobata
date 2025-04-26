@@ -1,35 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
-// 型定義
-interface Problem {
-  _id: string;
-  statement: string;
-  sourceType: string;
-  createdAt: string;
-}
-
-interface Solution {
-  _id: string;
-  statement: string;
-  sourceType: string;
-  createdAt: string;
-}
-
-interface Question {
-  _id: string;
-  questionText: string;
-  createdAt: string;
-}
-
-interface PolicyDraft {
-  _id: string;
-  title: string;
-  content: string;
-  version?: number;
-  createdAt: string;
-}
-
-type TabType = 'questions' | 'problems' | 'solutions' | 'policies';
+import { Problem, Solution, Question, PolicyDraft, TabType } from '../types';
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`; // Adjust if your backend runs elsewhere
 
