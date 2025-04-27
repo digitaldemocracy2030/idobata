@@ -4,12 +4,6 @@ import mongoose from 'mongoose';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { callLLM } from './services/llmService.js'; // Import LLM service
-import chatRoutes from './routes/chatRoutes.js'; // Import chat routes
-import adminRoutes from './routes/adminRoutes.js'; // Import admin routes
-import questionRoutes from './routes/questionRoutes.js'; // Import question routes
-import policyRoutes from './routes/policyRoutes.js'; // Import policy routes
-import digestRoutes from './routes/digestRoutes.js'; // Import digest routes
-import importRoutes from './routes/importRoutes.js'; // Import import routes
 import themeRoutes from './routes/themeRoutes.js'; // Import theme routes
 
 // Get __dirname equivalent in ES modules
@@ -61,14 +55,6 @@ import themePolicyRoutes from './routes/themePolicyRoutes.js';
 import themeDigestRoutes from './routes/themeDigestRoutes.js';
 import themeImportRoutes from './routes/themeImportRoutes.js';
 import themeChatRoutes from './routes/themeChatRoutes.js';
-
-// Legacy routes - commented out as per user request
-// app.use('/api/chat', chatRoutes);
-// app.use('/api/admin', adminRoutes);
-// app.use('/api/questions', questionRoutes);
-// app.use('/api/policy-drafts', policyRoutes);
-// app.use('/api/digest-drafts', digestRoutes);
-// app.use('/api/import', importRoutes);
 
 // Theme management routes
 app.use('/api/themes', themeRoutes);
