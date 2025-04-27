@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import DataPage from './pages/DataPage';
+import Top from './pages/Top';
 import AppLayout from './components/AppLayout';
 
 function App() {
@@ -33,6 +34,10 @@ export const router = createBrowserRouter([
           { path: 'data', element: <DataPage /> },
           { path: '*', element: <Navigate to="/" replace /> },
         ],
+      },
+      {
+        path: 'top',
+        element: <Top />,
       },
     ],
   },
