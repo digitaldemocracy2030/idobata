@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface BreadcrumbItem {
   label: string;
   href: string;

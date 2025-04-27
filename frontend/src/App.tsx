@@ -31,12 +31,14 @@ export const router = createBrowserRouter([
     path: '/',
     element: <App />,
     children: [
+      { index: true, element: <Navigate to="/top" replace /> },
       {
+        path: 'old',
         element: <AppLayout />,
         children: [
           { index: true, element: <MainPage /> },
           { path: 'data', element: <DataPage /> },
-          { path: '*', element: <Navigate to="/" replace /> },
+          { path: '*', element: <Navigate to="/old" replace /> },
         ],
       },
       {
