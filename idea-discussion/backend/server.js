@@ -52,18 +52,35 @@ app.get('/api/health', (req, res) => {
     res.json({ status: "ok", timestamp: new Date() });
 });
 
-// Import theme question routes
+// Import theme-based routes
 import themeQuestionRoutes from './routes/themeQuestionRoutes.js';
+import themeProblemRoutes from './routes/themeProblemRoutes.js';
+import themeSolutionRoutes from './routes/themeSolutionRoutes.js';
+import themeGenerateQuestionsRoutes from './routes/themeGenerateQuestionsRoutes.js';
+import themePolicyRoutes from './routes/themePolicyRoutes.js';
+import themeDigestRoutes from './routes/themeDigestRoutes.js';
+import themeImportRoutes from './routes/themeImportRoutes.js';
+import themeChatRoutes from './routes/themeChatRoutes.js';
 
-// Placeholder for future routes
-app.use('/api/chat', chatRoutes);
-app.use('/api/admin', adminRoutes); // Use admin routes
-// app.use('/api/questions', questionRoutes); // Old route - removed as per user request
-app.use('/api/policy-drafts', policyRoutes); // Use policy routes
-app.use('/api/digest-drafts', digestRoutes); // Use digest routes
-app.use('/api/import', importRoutes); // Use import routes
-app.use('/api/themes', themeRoutes); // Use theme routes
-app.use('/api/themes/:themeId/questions', themeQuestionRoutes); // New theme-based question routes
+// Legacy routes - commented out as per user request
+// app.use('/api/chat', chatRoutes);
+// app.use('/api/admin', adminRoutes);
+// app.use('/api/questions', questionRoutes);
+// app.use('/api/policy-drafts', policyRoutes);
+// app.use('/api/digest-drafts', digestRoutes);
+// app.use('/api/import', importRoutes);
+
+// Theme management routes
+app.use('/api/themes', themeRoutes);
+
+app.use('/api/themes/:themeId/questions', themeQuestionRoutes);
+app.use('/api/themes/:themeId/problems', themeProblemRoutes);
+app.use('/api/themes/:themeId/solutions', themeSolutionRoutes);
+app.use('/api/themes/:themeId/generate-questions', themeGenerateQuestionsRoutes);
+app.use('/api/themes/:themeId/policy-drafts', themePolicyRoutes);
+app.use('/api/themes/:themeId/digest-drafts', themeDigestRoutes);
+app.use('/api/themes/:themeId/import', themeImportRoutes);
+app.use('/api/themes/:themeId/chat', themeChatRoutes);
 
 // --- Serve static files in production ---
 // This section will be useful when deploying to production

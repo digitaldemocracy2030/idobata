@@ -1,0 +1,43 @@
+# Endpoints to Restructure
+
+## Current Structure to New Structure
+- [x] /api/questions -> /api/themes/:themeId/questions
+- [x] /api/questions/:questionId/details -> /api/themes/:themeId/questions/:questionId/details
+- [x] /api/questions/:questionId/generate-policy -> /api/themes/:themeId/questions/:questionId/generate-policy
+- [x] /api/questions/:questionId/generate-digest -> /api/themes/:themeId/questions/:questionId/generate-digest
+- [x] /api/questions/theme/:themeId -> /api/themes/:themeId/questions
+
+## Other Resources to Check and Update
+- [x] /api/admin/problems -> /api/themes/:themeId/problems
+- [x] /api/admin/solutions -> /api/themes/:themeId/solutions
+- [x] /api/admin/generate-questions -> /api/themes/:themeId/generate-questions
+- [x] /api/policy-drafts -> /api/themes/:themeId/policy-drafts
+- [x] /api/digest-drafts -> /api/themes/:themeId/digest-drafts
+- [x] /api/import -> /api/themes/:themeId/import
+- [x] /api/chat -> /api/themes/:themeId/chat
+
+## Files Updated
+- [x] routes/questionRoutes.js (commented out in server.js)
+- [x] controllers/questionController.js (updated comments)
+- [x] server.js (registered new routes)
+- [x] Created new routes/themeQuestionRoutes.js
+- [x] Created new routes/themeProblemRoutes.js
+- [x] Created new routes/themeSolutionRoutes.js
+- [x] Created new routes/themeGenerateQuestionsRoutes.js
+- [x] Created new routes/themePolicyRoutes.js
+- [x] Created new routes/themeDigestRoutes.js
+- [x] Created new routes/themeImportRoutes.js
+- [x] Created new routes/themeChatRoutes.js
+- [x] Updated controllers/adminController.js
+- [x] Updated controllers/policyController.js
+- [x] Updated controllers/digestController.js
+- [x] Updated controllers/importController.js
+- [x] Updated controllers/chatController.js
+
+## Legacy Routes (Commented Out)
+- [x] /api/chat
+- [x] /api/admin
+- [x] /api/questions
+- [x] /api/policy-drafts
+- [x] /api/digest-drafts
+- [x] /api/import
