@@ -63,7 +63,7 @@ const triggerQuestionGenerationByTheme = async (req, res) => {
 
     console.log(`[AdminController] Received request to generate sharp questions for theme ${themeId}`);
     try {
-        await generateSharpQuestions();
+        await generateSharpQuestions(themeId);
 
         res.status(202).json({ message: 'Sharp question generation process started successfully.' });
     } catch (error) {
