@@ -3,17 +3,17 @@ import SharpQuestion from '../models/SharpQuestion.js';
 import { callLLM } from '../services/llmService.js';
 import { linkQuestionToAllItems } from './linkingWorker.js'; // Import the linking function
 
-async function generateSharpQuestions() {
-    console.log('[QuestionGenerator] Starting sharp question generation...');
+async function generateSharpQuestions(themeId) {
+    console.log(`[QuestionGenerator] Starting sharp question generation for theme ${themeId}...`);
     try {
-        // 1. Fetch all problem statements
-        const problems = await Problem.find({}, 'statement').lean();
+        // 1. Fetch all problem statements for this theme
+        const problems = await Problem.find({ themeId }, 'statement').lean();
         if (!problems || problems.length === 0) {
-            console.log('[QuestionGenerator] No problems found to generate questions from.');
+            console.log(`[QuestionGenerator] No problems found for theme ${themeId} to generate questions from.`);
             return;
         }
         const problemStatements = problems.map(p => p.statement);
-        console.log(`[QuestionGenerator] Found ${problemStatements.length} problem statements.`);
+        console.log(`[QuestionGenerator] Found ${problemStatements.length} problem statements for theme ${themeId}.`);
 
         // 2. Prepare prompt for LLM
         const messages = [
@@ -23,9 +23,9 @@ async function generateSharpQuestions() {
 
 IMPORTANT: When generating questions, focus exclusively on describing both the current state ("現状はこう") and the desired state ("それをこうしたい") with high detail. Do NOT suggest or imply any specific means, methods, or solutions in the questions. The questions should keep the problem space open for creative solutions rather than narrowing the range of possible answers.
 
-Generate all questions in Japanese language, using the format "どのようにできるだろうか？" instead of "How Might We...". Respond ONLY with a JSON object containing a single key "questions" which holds an array of strings, where each string is a generated question in Japanese.
+Generate all questions in Japanese language, using the format "〜にはどうすればいいだろうか？" instead of "How Might We...". Respond ONLY with a JSON object containing a single key "questions" which holds an array of strings, where each string is a generated question in Japanese.
 
-Generate 5-10 questions.
+Generate 5 questions. 50-100字以内程度。
 `
             },
             {
@@ -54,10 +54,10 @@ Generate 5-10 questions.
                 continue;
             }
             try {
-                // Use findOneAndUpdate with upsert to avoid duplicates based on questionText
+                // Use findOneAndUpdate with upsert to avoid duplicates based on questionText and themeId
                 const result = await SharpQuestion.findOneAndUpdate(
-                    { questionText: questionText.trim() },
-                    { $setOnInsert: { questionText: questionText.trim(), createdAt: new Date() } }, // Add createdAt on insert
+                    { questionText: questionText.trim(), themeId }, // Include themeId in query
+                    { $setOnInsert: { questionText: questionText.trim(), themeId, createdAt: new Date() } }, // Add themeId and createdAt on insert
                     { upsert: true, new: true, setDefaultsOnInsert: true, runValidators: true } // Create if not exists, return the new doc
                 );
 

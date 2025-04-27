@@ -16,7 +16,10 @@ function AppLayout() {
   );
   const [showExtractions, setShowExtractions] = useState<boolean>(false);
   const [notification, setNotification] = useState<NotificationType | null>(null);
-  const [previousExtractions, setPreviousExtractions] = useState<PreviousExtractions>({ problems: [], solutions: [] });
+  const [previousExtractions, setPreviousExtractions] = useState<PreviousExtractions>({
+    problems: [],
+    solutions: [],
+  });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSendMessage = async (newMessageContent: string): Promise<void> => {
@@ -31,7 +34,7 @@ function AppLayout() {
     setMessages(prevMessages => [...prevMessages, newUserMessage]);
 
     try {
-      const backendUrl = `${import.meta.env.VITE_API_BASE_URL}/api/chat/messages`;
+      const backendUrl = `${import.meta.env.VITE_API_BASE_URL}/api/themes/${localStorage.getItem('defaultThemeId')}/chat/messages`;
       const response = await fetch(backendUrl, {
         method: 'POST',
         headers: {
@@ -40,7 +43,7 @@ function AppLayout() {
         body: JSON.stringify({
           userId: currentUserId,
           message: newUserMessage.content,
-          threadId: currentThreadId
+          threadId: currentThreadId,
         }),
       });
 
@@ -48,7 +51,9 @@ function AppLayout() {
         let errorBody = 'Unknown error';
         try {
           errorBody = await response.text();
-        } catch (e) { /* ignore */ }
+        } catch (e) {
+          /* ignore */
+        }
         throw new Error(`HTTP error! status: ${response.status}, Body: ${errorBody}`);
       }
 
@@ -70,9 +75,8 @@ function AppLayout() {
       if (responseData.userId && !userId) {
         setUserId(responseData.userId);
       }
-
     } catch (error: any) {
-      console.error("Failed to send message:", error);
+      console.error('Failed to send message:', error);
       const errorMessage = {
         role: 'assistant',
         content: `メッセージ送信エラー: ${error.message}`,
@@ -87,7 +91,9 @@ function AppLayout() {
     if (!currentThreadId) return;
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chat/threads/${currentThreadId}/extractions`);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/themes/${localStorage.getItem('defaultThemeId')}/chat/threads/${currentThreadId}/extractions`
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -105,7 +111,7 @@ function AppLayout() {
           setNotification({
             message: `ありがとうございます！新しい課題「${problem.statement.substring(0, 30)}${problem.statement.length > 30 ? '...' : ''}」についてのあなたの声が追加されました。`,
             type: 'problem',
-            id: problem._id
+            id: problem._id,
           });
           break;
         } else if (existingProblem.version !== problem.version) {
@@ -113,7 +119,7 @@ function AppLayout() {
           setNotification({
             message: `ありがとうございます！課題「${problem.statement.substring(0, 30)}${problem.statement.length > 30 ? '...' : ''}」についてのあなたの声が更新されました。`,
             type: 'problem',
-            id: problem._id
+            id: problem._id,
           });
           break;
         }
@@ -129,7 +135,7 @@ function AppLayout() {
             setNotification({
               message: `ありがとうございます！新しい解決策「${solution.statement.substring(0, 30)}${solution.statement.length > 30 ? '...' : ''}」についてのあなたの声が追加されました。`,
               type: 'solution',
-              id: solution._id
+              id: solution._id,
             });
             break;
           } else if (existingSolution.version !== solution.version) {
@@ -137,7 +143,7 @@ function AppLayout() {
             setNotification({
               message: `ありがとうございます！解決策「${solution.statement.substring(0, 30)}${solution.statement.length > 30 ? '...' : ''}」についてのあなたの声が更新されました。`,
               type: 'solution',
-              id: solution._id
+              id: solution._id,
             });
             break;
           }
@@ -146,9 +152,8 @@ function AppLayout() {
 
       // Update previous extractions for next comparison
       setPreviousExtractions({ problems: currentProblems, solutions: currentSolutions });
-
     } catch (error: any) {
-      console.error("Failed to check for new extractions:", error);
+      console.error('Failed to check for new extractions:', error);
     }
   }, [currentThreadId, previousExtractions, notification]);
 
@@ -183,7 +188,9 @@ function AppLayout() {
 
       setIsLoading(true);
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chat/threads/${currentThreadId}/messages`);
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/themes/${localStorage.getItem('defaultThemeId')}/chat/threads/${currentThreadId}/messages`
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -193,7 +200,7 @@ function AppLayout() {
           setMessages(data.messages);
         }
       } catch (error: any) {
-        console.error("Failed to load thread messages:", error);
+        console.error('Failed to load thread messages:', error);
         // If there's an error loading the thread (e.g., it was deleted), clear the stored threadId
         if (error.message.includes('404')) {
           localStorage.removeItem('currentThreadId');
@@ -221,21 +228,25 @@ function AppLayout() {
       {/* Header */}
       <header className="absolute top-0 left-0 right-0 z-20 border-b border-neutral-200 bg-white py-2 px-4 shadow-sm">
         <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-lg font-semibold text-primary">
-            いどばた新分析システム案
-          </h1>
+          <h1 className="text-lg font-semibold text-primary">いどばた新分析システム案</h1>
           <nav className="flex items-center space-x-4">
             <Link
-              to="/data"
+              to="/legacy/data"
               className="px-3 py-1 rounded-md text-sm transition-colors duration-200 text-neutral-600 hover:text-primary hover:bg-neutral-100"
             >
               データ一覧
             </Link>
             <Link
-              to="/"
+              to="/legacy/"
               className="px-3 py-1 rounded-md text-sm transition-colors duration-200 text-neutral-600 hover:text-primary hover:bg-neutral-100"
             >
               シャープな問いとインサイト
+            </Link>
+            <Link
+              to="/"
+              className="px-3 py-1 rounded-md text-sm transition-colors duration-200 text-neutral-600 hover:text-primary hover:bg-neutral-100"
+            >
+              新UI
             </Link>
           </nav>
         </div>
@@ -267,7 +278,13 @@ function AppLayout() {
                     ? 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300' // Active state
                     : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200' // Default state
               }`}
-              title={!currentThreadId ? "最初にメッセージを送信してください" : (showExtractions ? "抽出結果を非表示" : "抽出結果を表示")}
+              title={
+                !currentThreadId
+                  ? '最初にメッセージを送信してください'
+                  : showExtractions
+                    ? '抽出結果を非表示'
+                    : '抽出結果を表示'
+              }
             >
               抽出された課題/解決策を表示
             </button>

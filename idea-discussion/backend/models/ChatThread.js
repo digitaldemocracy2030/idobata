@@ -31,6 +31,11 @@ const chatThreadSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Solution', // Reference to the Solution model
     }],
+    themeId: {  // 追加：所属するテーマのID
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Theme',
+        required: true,
+    }
 }, { timestamps: true }); // Adds createdAt and updatedAt automatically
 
 const ChatThread = mongoose.model('ChatThread', chatThreadSchema);

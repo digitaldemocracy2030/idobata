@@ -80,3 +80,17 @@ export interface QuestionDetails {
 
 // UI関連の型定義
 export type TabType = 'questions' | 'problems' | 'solutions' | 'policies';
+
+export interface Theme {
+  _id: string;
+  title: string;
+  slug: string;
+}
+
+export type MessageType = 'user' | 'system' | 'system-message';
+
+export interface ExtendedMessage extends Message {
+  type: MessageType;
+  isStreaming?: boolean;
+  id?: string;
+}
