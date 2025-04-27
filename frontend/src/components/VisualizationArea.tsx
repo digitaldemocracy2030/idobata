@@ -25,7 +25,9 @@ function VisualizationArea() {
       setIsLoadingQuestions(true);
       setError(null);
       try {
-        const response = await fetch(`${API_BASE_URL}/questions`);
+        const response = await fetch(
+          `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/questions`
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -56,7 +58,9 @@ function VisualizationArea() {
       setError(null);
       setGenerationStatus('');
       try {
-        const response = await fetch(`${API_BASE_URL}/questions/${selectedQuestionId}/details`);
+        const response = await fetch(
+          `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/questions/${selectedQuestionId}/details`
+        );
         if (!response.ok) {
           if (response.status === 404) {
             throw new Error('問いの詳細が見つかりません。');
@@ -89,7 +93,7 @@ function VisualizationArea() {
       setError(null);
       try {
         const response = await fetch(
-          `${API_BASE_URL}/policy-drafts?questionId=${selectedQuestionId}`
+          `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/policy-drafts?questionId=${selectedQuestionId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -122,7 +126,7 @@ function VisualizationArea() {
       setError(null);
       try {
         const response = await fetch(
-          `${API_BASE_URL}/digest-drafts?questionId=${selectedQuestionId}`
+          `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/digest-drafts?questionId=${selectedQuestionId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -156,7 +160,7 @@ function VisualizationArea() {
     setGenerationStatus('政策ドラフトを生成中...');
     try {
       const response = await fetch(
-        `${API_BASE_URL}/questions/${selectedQuestionId}/generate-policy`,
+        `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/questions/${selectedQuestionId}/generate-policy`,
         {
           method: 'POST',
         }
@@ -176,7 +180,7 @@ function VisualizationArea() {
             setIsLoadingDrafts(true);
             try {
               const response = await fetch(
-                `${API_BASE_URL}/policy-drafts?questionId=${selectedQuestionId}`
+                `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/policy-drafts?questionId=${selectedQuestionId}`
               );
               if (!response.ok) throw new Error('ドラフトの取得に失敗しました');
               const data = await response.json();
@@ -208,7 +212,7 @@ function VisualizationArea() {
     setDigestGenerationStatus('ダイジェストを生成中...');
     try {
       const response = await fetch(
-        `${API_BASE_URL}/questions/${selectedQuestionId}/generate-digest`,
+        `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/questions/${selectedQuestionId}/generate-digest`,
         {
           method: 'POST',
         }
@@ -228,7 +232,7 @@ function VisualizationArea() {
             setIsLoadingDigestDrafts(true);
             try {
               const response = await fetch(
-                `${API_BASE_URL}/digest-drafts?questionId=${selectedQuestionId}`
+                `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/digest-drafts?questionId=${selectedQuestionId}`
               );
               if (!response.ok) throw new Error('ダイジェストの取得に失敗しました');
               const data = await response.json();

@@ -6,10 +6,21 @@ import Problem from '../models/Problem.js'; // Import Problem model
 import Solution from '../models/Solution.js'; // Import Solution model
 import SharpQuestion from '../models/SharpQuestion.js'; // Import SharpQuestion model
 import QuestionLink from '../models/QuestionLink.js'; // Import QuestionLink model
-// Controller function for handling new chat messages
-const handleNewMessage = async (req, res) => {
+import mongoose from 'mongoose'; // Import mongoose for ObjectId validation
+
+
+
+
+// Controller function for handling new chat messages by theme
+const handleNewMessageByTheme = async (req, res) => {
+    const { themeId } = req.params;
+    
+    if (!mongoose.Types.ObjectId.isValid(themeId)) {
+        return res.status(400).json({ error: 'Invalid theme ID format' });
+    }
+
     try {
-        let { userId, message, threadId } = req.body; // Destructure threadId
+        let { userId, message, threadId } = req.body;
 
         // Validate input
         if (!message) {
@@ -20,8 +31,6 @@ const handleNewMessage = async (req, res) => {
         if (!userId) {
             userId = `temp_${uuidv4()}`;
             console.log(`Generated temporary userId: ${userId}`);
-            // Consider how you want to handle temporary users long-term
-            // Maybe return the userId in the response so the frontend can store it?
         }
 
         let chatThread;
@@ -31,27 +40,30 @@ const handleNewMessage = async (req, res) => {
             console.log(`Looking for existing chat thread with ID: ${threadId}`);
             chatThread = await ChatThread.findById(threadId);
             if (!chatThread) {
-                // Handle case where threadId is provided but not found
                 console.error(`Chat thread with ID ${threadId} not found.`);
                 return res.status(404).json({ error: 'Chat thread not found.' });
             }
+            
+            if (!chatThread.themeId || chatThread.themeId.toString() !== themeId) {
+                console.error(`Thread ${threadId} does not belong to theme ${themeId}`);
+                return res.status(403).json({ error: 'Thread does not belong to the specified theme.' });
+            }
+            
             // Optional: Verify if the userId matches the thread's userId if needed for security
             if (chatThread.userId !== userId) {
                 console.warn(`User ID mismatch for thread ${threadId}. Request userId: ${userId}, Thread userId: ${chatThread.userId}`);
-                // Depending on security requirements, you might return an error here
-                // return res.status(403).json({ error: 'User ID does not match thread owner.' });
             }
             console.log(`Found existing chat thread with ID: ${threadId}`);
         } else {
             // If no threadId is provided, create a new thread
-            console.log(`Creating new chat thread for userId: ${userId}`);
+            console.log(`Creating new chat thread for userId: ${userId} in theme: ${themeId}`);
             chatThread = new ChatThread({
                 userId: userId,
                 messages: [],
                 extractedProblemIds: [],
                 extractedSolutionIds: [],
+                themeId: themeId, // Add themeId to the new thread
             });
-            // No need to save here, will be saved after adding messages
         }
 
         // Add user message to the thread
@@ -64,12 +76,12 @@ const handleNewMessage = async (req, res) => {
         // --- Fetch Reference Opinions (Sharp Questions and related Problems/Solutions) ---
         let referenceOpinions = '';
         try {
-            const allQuestions = await SharpQuestion.find({}).lean(); // Use lean for performance if not modifying
+            const themeQuestions = await SharpQuestion.find({ themeId }).lean();
 
-            if (allQuestions.length > 0) {
+            if (themeQuestions.length > 0) {
                 referenceOpinions += "参考情報として、システム内で議論されている主要な「問い」と、それに関連する意見の一部を紹介します:\n\n";
 
-                for (const question of allQuestions) {
+                for (const question of themeQuestions) {
                     referenceOpinions += `問い: ${question.questionText}\n`;
 
                     // Find up to 10 random related problems with relevance > 0.8
@@ -79,31 +91,30 @@ const handleNewMessage = async (req, res) => {
                                 questionId: question._id,
                                 linkedItemType: 'problem',
                                 linkType: 'prompts_question',
-                                relevanceScore: { $gte: 0.8 } // Filter by score >= 0.8
+                                relevanceScore: { $gte: 0.8 }
                             }
                         },
-                        { $sample: { size: 10 } }, // Select up to 10 random documents
-                        // Manually perform population after aggregation
+                        { $sample: { size: 10 } },
                         {
                             $lookup: {
-                                from: 'problems', // The collection name for Problem model
+                                from: 'problems',
                                 localField: 'linkedItemId',
                                 foreignField: '_id',
                                 as: 'linkedProblem'
                             }
                         },
-                        { $unwind: { path: "$linkedProblem", preserveNullAndEmptyArrays: true } } // Deconstruct the array, keep if no match
+                        { $unwind: { path: "$linkedProblem", preserveNullAndEmptyArrays: true } }
                     ]);
 
-                    // Note: Aggregation result structure is different
                     if (problemLinks.length > 0 && problemLinks.some(link => link.linkedProblem)) {
                         referenceOpinions += "  関連性の高い課題:\n";
                         problemLinks.forEach(link => {
-                            if (link.linkedProblem) { // Check if lookup worked
+                            if (link.linkedProblem) {
                                 const problem = link.linkedProblem;
-                                // Use the most appropriate statement field available
-                                const statement = problem.statement || problem.combinedStatement || problem.statementA || problem.statementB || 'N/A';
-                                referenceOpinions += `    - ${statement})\n`;
+                                if (problem.themeId && problem.themeId.toString() === themeId) {
+                                    const statement = problem.statement || problem.combinedStatement || problem.statementA || problem.statementB || 'N/A';
+                                    referenceOpinions += `    - ${statement})\n`;
+                                }
                             }
                         });
                     } else {
@@ -117,30 +128,29 @@ const handleNewMessage = async (req, res) => {
                                 questionId: question._id,
                                 linkedItemType: 'solution',
                                 linkType: 'answers_question',
-                                relevanceScore: { $gte: 0.8 } // Filter by score >= 0.8
+                                relevanceScore: { $gte: 0.8 }
                             }
                         },
-                        { $sample: { size: 10 } }, // Select up to 10 random documents
-                        // Manually perform population after aggregation
+                        { $sample: { size: 10 } },
                         {
                             $lookup: {
-                                from: 'solutions', // The collection name for Solution model
+                                from: 'solutions',
                                 localField: 'linkedItemId',
                                 foreignField: '_id',
                                 as: 'linkedSolution'
                             }
                         },
-                        { $unwind: { path: "$linkedSolution", preserveNullAndEmptyArrays: true } } // Deconstruct the array, keep if no match
+                        { $unwind: { path: "$linkedSolution", preserveNullAndEmptyArrays: true } }
                     ]);
 
-
-                    // Note: Aggregation result structure is different
                     if (solutionLinks.length > 0 && solutionLinks.some(link => link.linkedSolution)) {
                         referenceOpinions += "  関連性の高い解決策 (最大10件, 関連度 >80%):\n";
                         solutionLinks.forEach(link => {
-                            if (link.linkedSolution) { // Check if lookup worked
+                            if (link.linkedSolution) {
                                 const solution = link.linkedSolution;
-                                referenceOpinions += `    - ${solution.statement || 'N/A'})\n`;
+                                if (solution.themeId && solution.themeId.toString() === themeId) {
+                                    referenceOpinions += `    - ${solution.statement || 'N/A'})\n`;
+                                }
                             }
                         });
                     } else {
@@ -151,11 +161,10 @@ const handleNewMessage = async (req, res) => {
                 referenceOpinions += "---\nこれらの「問い」や関連意見も踏まえ、ユーザーとの対話を深めてください。\n";
             }
         } catch (dbError) {
-            console.error("Error fetching reference opinions (questions/links):", dbError);
+            console.error(`Error fetching reference opinions for theme ${themeId}:`, dbError);
             // Continue without reference opinions if DB fetch fails
         }
         // --- End Fetch Reference Opinions ---
-
 
         // --- Call LLM for AI Response ---
         // Prepare messages for the LLM (ensure correct format)
@@ -175,14 +184,9 @@ const handleNewMessage = async (req, res) => {
         llmMessages.push({ role: 'system', content: systemPrompt });
         // --- End core system prompt ---
 
-        // Add the reference opinions as a system message (or prepend to user message if needed)
+        // Add the reference opinions as a system message
         if (referenceOpinions) {
-            // Option 1: Add as a system message if supported
             llmMessages.push({ role: 'system', content: referenceOpinions });
-            // Option 2: Prepend to the first user message (if system role not ideal)
-            // if (chatThread.messages.length > 0) {
-            //     chatThread.messages[0].content = referenceOpinions + chatThread.messages[0].content;
-            // }
         }
 
         // Add actual chat history
@@ -191,14 +195,11 @@ const handleNewMessage = async (req, res) => {
             content: msg.content
         })));
 
-
         // Call the LLM service
         const aiResponseContent = await callLLM(llmMessages);
 
         if (!aiResponseContent) {
-            // Handle cases where LLM fails to respond
             console.error('LLM did not return a response.');
-            // You might want to return a specific error or a fallback message
             return res.status(500).json({ error: 'AI failed to generate a response.' });
         }
 
@@ -212,73 +213,76 @@ const handleNewMessage = async (req, res) => {
 
         // Save the updated thread
         await chatThread.save();
-        console.log(`Saved chat thread for userId: ${userId}`);
+        console.log(`Saved chat thread for userId: ${userId} in theme: ${themeId}`);
 
         // --- Trigger asynchronous extraction ---
-        // Use setTimeout for a simple async call (not production-ready)
         setTimeout(() => {
-            // Create a job object with the expected structure
             const job = {
                 data: {
                     sourceType: 'chat',
                     sourceOriginId: chatThread._id.toString(),
-                    content: null,  // Not needed for chat source type
-                    metadata: {}    // Optional metadata
+                    content: null,
+                    metadata: {},
+                    themeId: themeId // Include themeId in job data
                 }
             };
 
-            // Pass the properly structured job object
             processExtraction(job).catch(err => {
-                console.error(`[Async Extraction Call] Error for thread ${chatThread._id}:`, err);
+                console.error(`[Async Extraction Call] Error for thread ${chatThread._id} in theme ${themeId}:`, err);
             });
         }, 0);
         // --- End Trigger ---
 
-        // Return the actual AI response, the threadId, and potentially the userId if generated
+        // Return the response
         const responsePayload = {
             response: aiResponseContent,
-            threadId: chatThread._id // Always include the threadId
+            threadId: chatThread._id
         };
-        if (req.body.userId !== userId) { // If userId was generated
-            responsePayload.userId = userId; // Include generated userId if applicable
+        if (req.body.userId !== userId) {
+            responsePayload.userId = userId;
         }
 
         res.status(200).json(responsePayload);
     } catch (error) {
-        console.error('Error handling new message:', error);
+        console.error(`Error handling new message for theme ${themeId}:`, error);
         res.status(500).json({ error: 'Internal server error while processing message.' });
     }
 };
 
-// Controller function for getting extractions for a specific thread
-const getThreadExtractions = async (req, res) => {
+// Controller function for getting extractions for a specific thread by theme
+const getThreadExtractionsByTheme = async (req, res) => {
+    const { themeId, threadId } = req.params;
+    
+    if (!mongoose.Types.ObjectId.isValid(themeId)) {
+        return res.status(400).json({ error: 'Invalid theme ID format' });
+    }
+
+    if (!threadId) {
+        return res.status(400).json({ error: 'Thread ID is required.' });
+    }
+
     try {
-        const { threadId } = req.params;
-
-        if (!threadId) {
-            return res.status(400).json({ error: 'Thread ID is required.' });
-        }
-
         // Find the chat thread and populate the extracted problems and solutions
-        // Make sure 'Problem' and 'Solution' models are correctly referenced in ChatThread schema's 'ref'
         const chatThread = await ChatThread.findById(threadId)
-            .populate('extractedProblemIds') // Populates based on the 'ref: Problem' in ChatThread schema
-            .populate('extractedSolutionIds'); // Populates based on the 'ref: Solution' in ChatThread schema
-
+            .populate('extractedProblemIds')
+            .populate('extractedSolutionIds');
 
         if (!chatThread) {
             return res.status(404).json({ error: 'Chat thread not found.' });
         }
 
+        if (!chatThread.themeId || chatThread.themeId.toString() !== themeId) {
+            console.error(`Thread ${threadId} does not belong to theme ${themeId}`);
+            return res.status(403).json({ error: 'Thread does not belong to the specified theme.' });
+        }
+
         // Return the populated problems and solutions
         res.status(200).json({
-            problems: chatThread.extractedProblemIds || [], // Ensure array even if null/undefined
-            solutions: chatThread.extractedSolutionIds || [], // Ensure array even if null/undefined
+            problems: chatThread.extractedProblemIds || [],
+            solutions: chatThread.extractedSolutionIds || [],
         });
-
     } catch (error) {
-        console.error('Error getting thread extractions:', error);
-        // Handle potential CastError if threadId is not a valid ObjectId format
+        console.error(`Error getting thread extractions for theme ${themeId}:`, error);
         if (error.name === 'CastError') {
             return res.status(400).json({ error: 'Invalid Thread ID format.' });
         }
@@ -286,15 +290,19 @@ const getThreadExtractions = async (req, res) => {
     }
 };
 
-// Controller function for getting a thread's messages
-const getThreadMessages = async (req, res) => {
+// Controller function for getting a thread's messages by theme
+const getThreadMessagesByTheme = async (req, res) => {
+    const { themeId, threadId } = req.params;
+    
+    if (!mongoose.Types.ObjectId.isValid(themeId)) {
+        return res.status(400).json({ error: 'Invalid theme ID format' });
+    }
+
+    if (!threadId) {
+        return res.status(400).json({ error: 'Thread ID is required.' });
+    }
+
     try {
-        const { threadId } = req.params;
-
-        if (!threadId) {
-            return res.status(400).json({ error: 'Thread ID is required.' });
-        }
-
         // Find the chat thread
         const chatThread = await ChatThread.findById(threadId);
 
@@ -302,16 +310,20 @@ const getThreadMessages = async (req, res) => {
             return res.status(404).json({ error: 'Chat thread not found.' });
         }
 
+        if (!chatThread.themeId || chatThread.themeId.toString() !== themeId) {
+            console.error(`Thread ${threadId} does not belong to theme ${themeId}`);
+            return res.status(403).json({ error: 'Thread does not belong to the specified theme.' });
+        }
+
         // Return the thread's messages
         res.status(200).json({
             threadId: chatThread._id,
             userId: chatThread.userId,
+            themeId: chatThread.themeId,
             messages: chatThread.messages || [],
         });
-
     } catch (error) {
-        console.error('Error getting thread messages:', error);
-        // Handle potential CastError if threadId is not a valid ObjectId format
+        console.error(`Error getting thread messages for theme ${themeId}:`, error);
         if (error.name === 'CastError') {
             return res.status(400).json({ error: 'Invalid Thread ID format.' });
         }
@@ -319,5 +331,8 @@ const getThreadMessages = async (req, res) => {
     }
 };
 
-
-export { handleNewMessage, getThreadExtractions, getThreadMessages };
+export { 
+    handleNewMessageByTheme,
+    getThreadExtractionsByTheme,
+    getThreadMessagesByTheme
+};

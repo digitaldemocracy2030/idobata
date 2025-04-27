@@ -36,7 +36,7 @@ function DataList() {
     setIsLoadingQuestions(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/questions`);
+      const response = await fetch(`${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/questions`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -54,7 +54,7 @@ function DataList() {
     setIsLoadingProblems(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/problems`);
+      const response = await fetch(`${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/problems`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -72,7 +72,7 @@ function DataList() {
     setIsLoadingSolutions(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/solutions`);
+      const response = await fetch(`${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/solutions`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -90,7 +90,7 @@ function DataList() {
     setIsLoadingPolicyDrafts(true);
     setError(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/policy-drafts`);
+      const response = await fetch(`${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/policy-drafts`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -109,7 +109,7 @@ function DataList() {
     setError(null);
     setSuccessMessage(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/generate-questions`, {
+      const response = await fetch(`${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/generate-questions`, {
         method: 'POST',
       });
       if (!response.ok) {

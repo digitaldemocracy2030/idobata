@@ -5,18 +5,9 @@ import Solution from '../models/Solution.js';
 import mongoose from 'mongoose';
 import { generatePolicyDraft } from '../workers/policyGenerator.js'; // Import the worker function
 import { generateDigestDraft } from '../workers/digestGenerator.js'; // Import the digest worker function
-// GET /api/questions - Fetch all sharp questions
-export const getAllQuestions = async (req, res) => {
-    try {
-        const questions = await SharpQuestion.find().sort({ createdAt: -1 });
-        res.status(200).json(questions);
-    } catch (error) {
-        console.error('Error fetching all questions:', error);
-        res.status(500).json({ message: 'Error fetching questions', error: error.message });
-    }
-};
 
-// GET /api/questions/:questionId/details - Fetch details for a specific question
+
+// GET /api/themes/:themeId/questions/:questionId/details - 特定の質問の詳細を取得
 export const getQuestionDetails = async (req, res) => {
     const { questionId } = req.params;
 
@@ -74,7 +65,7 @@ export const getQuestionDetails = async (req, res) => {
     }
 };
 
-// POST /api/questions/:questionId/generate-policy - Trigger policy draft generation
+// POST /api/themes/:themeId/questions/:questionId/generate-policy - ポリシードラフト生成
 export const triggerPolicyGeneration = async (req, res) => {
     const { questionId } = req.params;
 
@@ -106,7 +97,7 @@ export const triggerPolicyGeneration = async (req, res) => {
     }
 };
 
-// POST /api/questions/:questionId/generate-digest - Trigger digest draft generation
+// POST /api/themes/:themeId/questions/:questionId/generate-digest - ダイジェストドラフト生成
 export const triggerDigestGeneration = async (req, res) => {
     const { questionId } = req.params;
 
@@ -135,5 +126,22 @@ export const triggerDigestGeneration = async (req, res) => {
     } catch (error) {
         console.error(`Error triggering digest generation for question ${questionId}:`, error);
         res.status(500).json({ message: 'Error triggering digest generation', error: error.message });
+    }
+};
+
+// GET /api/themes/:themeId/questions - 特定テーマの質問を取得
+export const getQuestionsByTheme = async (req, res) => {
+    const { themeId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(themeId)) {
+        return res.status(400).json({ message: 'Invalid theme ID format' });
+    }
+
+    try {
+        const questions = await SharpQuestion.find({ themeId }).sort({ createdAt: -1 });
+        res.status(200).json(questions);
+    } catch (error) {
+        console.error(`Error fetching questions for theme ${themeId}:`, error);
+        res.status(500).json({ message: 'Error fetching theme questions', error: error.message });
     }
 };

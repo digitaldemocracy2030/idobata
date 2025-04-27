@@ -185,7 +185,7 @@ Output Format: Respond ONLY in JSON format with the following structure:
 }
 
 // Helper to save a new problem/solution and trigger linking
-async function saveAndLinkItem(itemData, sourceOriginId, sourceType, sourceMetadata) {
+async function saveAndLinkItem(itemData, sourceOriginId, sourceType, sourceMetadata, themeId) {
     let savedItem;
     if (itemData.type === 'problem') {
         const newProblem = new Problem({
@@ -194,9 +194,10 @@ async function saveAndLinkItem(itemData, sourceOriginId, sourceType, sourceMetad
             sourceType: sourceType,
             sourceMetadata: sourceMetadata || {},
             version: 1,
+            themeId: themeId,
         });
         savedItem = await newProblem.save();
-        console.log(`[ExtractionWorker] Added Problem: ${savedItem._id} from ${sourceType} ${sourceOriginId}`);
+        console.log(`[ExtractionWorker] Added Problem: ${savedItem._id} from ${sourceType} ${sourceOriginId} for theme ${themeId}`);
     } else if (itemData.type === 'solution') {
         const newSolution = new Solution({
             statement: itemData.statement,
@@ -204,9 +205,10 @@ async function saveAndLinkItem(itemData, sourceOriginId, sourceType, sourceMetad
             sourceType: sourceType,
             sourceMetadata: sourceMetadata || {},
             version: 1,
+            themeId: themeId,
         });
         savedItem = await newSolution.save();
-        console.log(`[ExtractionWorker] Added Solution: ${savedItem._id} from ${sourceType} ${sourceOriginId}`);
+        console.log(`[ExtractionWorker] Added Solution: ${savedItem._id} from ${sourceType} ${sourceOriginId} for theme ${themeId}`);
     }
 
     if (savedItem) {
@@ -219,7 +221,7 @@ async function saveAndLinkItem(itemData, sourceOriginId, sourceType, sourceMetad
 
 // Main processing function called by the job queue worker
 async function processExtraction(job) {
-    const { sourceType, sourceOriginId, content, metadata } = job.data; // Assuming job data structure
+    const { sourceType, sourceOriginId, content, metadata, themeId } = job.data; // Assuming job data structure
     console.log(`[ExtractionWorker] Starting extraction for ${sourceType}: ${sourceOriginId}`);
     // Transaction removed as it requires a replica set/mongos
 
@@ -263,7 +265,7 @@ async function processExtraction(job) {
             for (let i = 0; i < additions.length; i++) {
                 const item = additions[i];
                 console.log(`[ExtractionWorker] Processing item ${i + 1}/${totalAdditions} (${item.type}) for chat ${sourceOriginId}`);
-                const savedItem = await saveAndLinkItem(item, sourceOriginId, 'chat', {}); // No specific metadata for chat items
+                const savedItem = await saveAndLinkItem(item, sourceOriginId, 'chat', {}, thread.themeId); // Pass themeId from thread
                 if (savedItem) {
                     if (item.type === 'problem') addedProblemIds.push(savedItem._id);
                     if (item.type === 'solution') addedSolutionIds.push(savedItem._id);
@@ -361,8 +363,8 @@ async function processExtraction(job) {
             for (let i = 0; i < additions.length; i++) {
                 const item = additions[i];
                 console.log(`[ExtractionWorker] Processing item ${i + 1}/${totalAdditions} (${item.type}) for ${sourceType} ${sourceOriginId}`);
-                // Use the metadata from the job/importItem
-                const savedItem = await saveAndLinkItem(item, sourceOriginId, sourceType, importItem.metadata);
+                // Use the metadata from the job/importItem and pass themeId
+                const savedItem = await saveAndLinkItem(item, sourceOriginId, sourceType, importItem.metadata, importItem.themeId);
                 if (savedItem) {
                     if (item.type === 'problem') addedProblemIds.push(savedItem._id);
                     if (item.type === 'solution') addedSolutionIds.push(savedItem._id);

@@ -34,7 +34,7 @@ function AppLayout() {
     setMessages(prevMessages => [...prevMessages, newUserMessage]);
 
     try {
-      const backendUrl = `${import.meta.env.VITE_API_BASE_URL}/api/chat/messages`;
+      const backendUrl = `${import.meta.env.VITE_API_BASE_URL}/api/themes/${localStorage.getItem('defaultThemeId')}/chat/messages`;
       const response = await fetch(backendUrl, {
         method: 'POST',
         headers: {
@@ -92,7 +92,7 @@ function AppLayout() {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/chat/threads/${currentThreadId}/extractions`
+        `${import.meta.env.VITE_API_BASE_URL}/api/themes/${localStorage.getItem('defaultThemeId')}/chat/threads/${currentThreadId}/extractions`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -189,7 +189,7 @@ function AppLayout() {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/api/chat/threads/${currentThreadId}/messages`
+          `${import.meta.env.VITE_API_BASE_URL}/api/themes/${localStorage.getItem('defaultThemeId')}/chat/threads/${currentThreadId}/messages`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -231,16 +231,22 @@ function AppLayout() {
           <h1 className="text-lg font-semibold text-primary">いどばた新分析システム案</h1>
           <nav className="flex items-center space-x-4">
             <Link
-              to="/data"
+              to="/legacy/data"
               className="px-3 py-1 rounded-md text-sm transition-colors duration-200 text-neutral-600 hover:text-primary hover:bg-neutral-100"
             >
               データ一覧
             </Link>
             <Link
-              to="/"
+              to="/legacy/"
               className="px-3 py-1 rounded-md text-sm transition-colors duration-200 text-neutral-600 hover:text-primary hover:bg-neutral-100"
             >
               シャープな問いとインサイト
+            </Link>
+            <Link
+              to="/"
+              className="px-3 py-1 rounded-md text-sm transition-colors duration-200 text-neutral-600 hover:text-primary hover:bg-neutral-100"
+            >
+              新UI
             </Link>
           </nav>
         </div>

@@ -102,6 +102,97 @@ Analyze the relationship and provide the JSON output.`
         console.error(`[LinkingWorker] Error processing linking for ${itemType} ID ${itemId}:`, error);
     }
 }
+/**
+ * Links a specific SharpQuestion to a specific Problem or Solution item using LLM.
+ * @param {string} questionId - The ID of the SharpQuestion.
+ * @param {string} itemId - The ID of the Problem or Solution item.
+ * @param {'problem' | 'solution'} itemType - The type of the item ('problem' or 'solution').
+ */
+async function linkSpecificQuestionToItem(questionId, itemId, itemType) {
+    try {
+        const question = await SharpQuestion.findById(questionId);
+        if (!question) {
+            console.error(`[LinkingWorker] SharpQuestion not found with ID: ${questionId}`);
+            return;
+        }
+
+        let item;
+        if (itemType === 'problem') {
+            item = await Problem.findById(itemId);
+        } else if (itemType === 'solution') {
+            item = await Solution.findById(itemId);
+        } else {
+            console.error(`[LinkingWorker] Invalid itemType: ${itemType}`);
+            return;
+        }
+
+        if (!item) {
+            console.error(`[LinkingWorker] ${itemType} not found with ID: ${itemId}`);
+            return;
+        }
+
+        const itemStatement = item.statement;
+        if (!itemStatement) {
+            console.warn(`[LinkingWorker] Statement is empty for ${itemType} ID: ${itemId}. Skipping linking.`);
+            return;
+        }
+
+        const promptMessages = [
+            {
+                role: 'system',
+                content: `You are an AI assistant that determines the relationship between a "Sharp Question" (often in "How might we..." format) and a "Statement" (which can be a Problem or a Solution).
+Your task is to analyze the provided Question and Statement and determine if the Statement either:
+1.  **Prompts the Question (link_type: "prompts_question"):** The Problem statement directly leads to or exemplifies the core issue addressed by the Question.
+2.  **Answers the Question (link_type: "answers_question"):** The Solution statement offers a potential way to address the challenge posed by the Question.
+
+Respond ONLY in JSON format with the following structure:
+{
+  "is_relevant": boolean, // true if the statement prompts or answers the question, false otherwise
+  "link_type": "prompts_question" | "answers_question" | null, // The type of link, or null if not relevant
+  "rationale": string, // A brief explanation for your decision (max 1-2 sentences)
+  "relevanceScore": number // A score between 0.0 and 1.0 indicating relevance. 1 if it has clear, direct and strong relevance. 0.5 if it has some relevance. 0.0 if not relevant.
+}`
+            },
+            {
+                role: 'user',
+                content: `Sharp Question: "${question.questionText}"
+
+Statement (${itemType}): "${itemStatement}"
+
+Analyze the relationship and provide the JSON output.`
+            }
+        ];
+
+        try {
+            const llmResponse = await callLLM(promptMessages, true); // Request JSON output
+
+            if (llmResponse && llmResponse.is_relevant) {
+                console.log(`[LinkingWorker] Found relevant link: Question ${questionId} <-> ${itemType} ${itemId} (Type: ${llmResponse.link_type})`);
+                await QuestionLink.findOneAndUpdate(
+                    { questionId: questionId, linkedItemId: itemId },
+                    {
+                        questionId: questionId,
+                        linkedItemId: itemId,
+                        linkedItemType: itemType,
+                        linkType: llmResponse.link_type,
+                        relevanceScore: llmResponse.relevanceScore || 0.8, // Default score if missing
+                        rationale: llmResponse.rationale || 'N/A',
+                    },
+                    { upsert: true, new: true, setDefaultsOnInsert: true }
+                );
+            } else {
+                // Optional: Log if not relevant or if response format is wrong
+                // console.log(`[LinkingWorker] No relevant link found or invalid response for Question ${questionId} and ${itemType} ${itemId}`);
+            }
+        } catch (llmError) {
+            console.error(`[LinkingWorker] LLM call failed for Question ${questionId} and ${itemType} ${itemId}:`, llmError);
+        }
+    } catch (error) {
+        console.error(`[LinkingWorker] Error processing specific linking for Question ${questionId} and ${itemType} ${itemId}:`, error);
+    }
+}
+
+
 
 /**
  * Links all existing Problems and Solutions to a specific SharpQuestion.
@@ -124,14 +215,12 @@ async function linkQuestionToAllItems(questionId) {
 
         // Link Problems
         for (const problem of problems) {
-            // Avoid redundant calls, call the existing function
-            await linkItemToQuestions(problem._id.toString(), 'problem');
+            await linkSpecificQuestionToItem(questionId, problem._id.toString(), 'problem');
         }
 
         // Link Solutions
         for (const solution of solutions) {
-            // Avoid redundant calls, call the existing function
-            await linkItemToQuestions(solution._id.toString(), 'solution');
+            await linkSpecificQuestionToItem(questionId, solution._id.toString(), 'solution');
         }
 
         console.log(`[LinkingWorker] Finished linking for new Question ID: ${questionId}`);
@@ -142,4 +231,4 @@ async function linkQuestionToAllItems(questionId) {
 }
 
 
-export { linkItemToQuestions, linkQuestionToAllItems };
+export { linkItemToQuestions, linkQuestionToAllItems, linkSpecificQuestionToItem };

@@ -8,6 +8,7 @@ import Themes from './pages/Themes';
 import ThemeDetail from './pages/ThemeDetail';
 import AppLayout from './components/AppLayout';
 import PageLayout from './components/layout/PageLayout';
+import { ThemeProvider } from './ThemeContext';
 
 function App() {
   const [userId, setUserId] = useState<string | null>(
@@ -29,11 +30,15 @@ function App() {
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: (
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
+    ),
     children: [
       { index: true, element: <Navigate to="/top" replace /> },
       {
-        path: 'old',
+        path: 'legacy',
         element: <AppLayout />,
         children: [
           { index: true, element: <MainPage /> },
