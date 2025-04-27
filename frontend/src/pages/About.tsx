@@ -1,4 +1,3 @@
-import React from 'react';
 import BreadcrumbView from '../components/common/BreadcrumbView';
 import AboutSection from '../components/common/AboutSection';
 
