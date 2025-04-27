@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const ImportedItemSchema = new mongoose.Schema({
   sourceType: {
@@ -17,21 +17,26 @@ const ImportedItemSchema = new mongoose.Schema({
   status: {
     type: String,
     required: true,
-    enum: ['pending', 'processing', 'completed', 'failed'],
-    default: 'pending',
+    enum: ["pending", "processing", "completed", "failed"],
+    default: "pending",
     index: true,
   },
-  extractedProblemIds: [{
+  extractedProblemIds: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Problem",
+    },
+  ],
+  extractedSolutionIds: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Solution",
+    },
+  ],
+  themeId: {
+    // 追加：所属するテーマのID
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Problem',
-  }],
-  extractedSolutionIds: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Solution',
-  }],
-  themeId: {  // 追加：所属するテーマのID
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Theme',
+    ref: "Theme",
     required: true,
   },
   createdAt: {
@@ -46,4 +51,4 @@ const ImportedItemSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model('ImportedItem', ImportedItemSchema);
+export default mongoose.model("ImportedItem", ImportedItemSchema);

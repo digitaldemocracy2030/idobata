@@ -1,12 +1,12 @@
-import { Menu, User } from 'lucide-react';
+import { Menu, User } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "../ui/button";
 import {
+  NavigationRouterLink,
   NavigationSheet,
   NavigationSheetContent,
   NavigationSheetTrigger,
-  NavigationRouterLink,
-} from '../ui/navigation/menu-sheet';
-import { Button } from '../ui/button';
-import { Link } from 'react-router-dom';
+} from "../ui/navigation/menu-sheet";
 
 const Header = () => {
   return (
@@ -45,7 +45,9 @@ const Header = () => {
 
         {/* サイトタイトル（中央） */}
         <Link to="/top">
-          <h1 className="text-base font-semibold text-center">XX党 みんなの政策フォーラム</h1>
+          <h1 className="text-base font-semibold text-center">
+            XX党 みんなの政策フォーラム
+          </h1>
         </Link>
 
         {/* マイページアイコン（右） */}

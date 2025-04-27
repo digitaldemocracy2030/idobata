@@ -1,5 +1,11 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Theme } from './types';
+import {
+  type ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import type { Theme } from "./types";
 
 interface ThemeContextType {
   defaultThemeId: string | null;
@@ -28,33 +34,39 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     const fetchDefaultTheme = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/themes`);
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/themes`
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const themes = await response.json();
         if (themes && themes.length > 0) {
-          const defaultTheme = themes.find((theme: Theme) => theme.slug === 'default') || themes[0];
+          const defaultTheme =
+            themes.find((theme: Theme) => theme.slug === "default") ||
+            themes[0];
           setDefaultThemeId(defaultTheme._id);
-          localStorage.setItem('defaultThemeId', defaultTheme._id);
+          localStorage.setItem("defaultThemeId", defaultTheme._id);
         } else {
-          throw new Error('No themes available');
+          throw new Error("No themes available");
         }
-      } catch (error: any) {
-        console.error('Failed to fetch default theme:', error);
-        const cachedThemeId = localStorage.getItem('defaultThemeId');
+      } catch (error) {
+        console.error("Failed to fetch default theme:", error);
+        const cachedThemeId = localStorage.getItem("defaultThemeId");
         if (cachedThemeId) {
           setDefaultThemeId(cachedThemeId);
           setError(null);
         } else {
-          setError('テーマの取得に失敗しました。しばらく経ってからリロードしてください。');
+          setError(
+            "テーマの取得に失敗しました。しばらく経ってからリロードしてください。"
+          );
         }
       } finally {
         setIsLoading(false);
       }
     };
 
-    const cachedThemeId = localStorage.getItem('defaultThemeId');
+    const cachedThemeId = localStorage.getItem("defaultThemeId");
     if (cachedThemeId) {
       setDefaultThemeId(cachedThemeId);
       setIsLoading(false);

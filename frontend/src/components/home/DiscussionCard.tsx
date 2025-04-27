@@ -1,4 +1,4 @@
-import { ArrowRight, ListFilter, CheckCircle } from 'lucide-react';
+import { ArrowRight, CheckCircle, ListFilter } from "lucide-react";
 
 interface DiscussionCardProps {
   title: string;
@@ -6,7 +6,11 @@ interface DiscussionCardProps {
   solutionCount: number;
 }
 
-const DiscussionCard = ({ title, problemCount, solutionCount }: DiscussionCardProps) => {
+const DiscussionCard = ({
+  title,
+  problemCount,
+  solutionCount,
+}: DiscussionCardProps) => {
   return (
     <div className="border border-neutral-200 rounded-lg p-4 bg-white hover:shadow-md transition-all duration-200">
       <div className="mb-2">
@@ -23,7 +27,10 @@ const DiscussionCard = ({ title, problemCount, solutionCount }: DiscussionCardPr
             解決策: {solutionCount}
           </span>
         </div>
-        <button className="bg-purple-500 text-white p-1 rounded-md">
+        <button
+          className="bg-purple-500 text-white p-1 rounded-md"
+          type="button"
+        >
           <ArrowRight className="h-5 w-5" />
         </button>
       </div>

@@ -1,15 +1,15 @@
-import * as React from 'react';
-import { Link, LinkProps } from 'react-router-dom';
+import * as React from "react";
+import { Link, type LinkProps } from "react-router-dom";
 import {
   Sheet,
-  SheetTrigger,
   SheetClose,
   SheetContent,
-  SheetHeader,
-  SheetFooter,
-  SheetTitle,
   SheetDescription,
-} from '../base/sheet';
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../base/sheet";
 
 // Navigation-specific sheet component with legacy UI link
 const NavigationSheetContent = React.forwardRef<
@@ -20,24 +20,34 @@ const NavigationSheetContent = React.forwardRef<
     {/* Add a visible title for the navigation menu */}
     <SheetTitle className="mb-4">メニュー</SheetTitle>
     {/* Add a description for accessibility */}
-    <SheetDescription className="mb-4">サイト内のナビゲーションメニューです</SheetDescription>
+    <SheetDescription className="mb-4">
+      サイト内のナビゲーションメニューです
+    </SheetDescription>
     <div className="mb-4">
-      <NavigationLink href="/legacy" className="text-sm text-blue-600 hover:underline">
+      <NavigationLink
+        href="/legacy"
+        className="text-sm text-blue-600 hover:underline"
+      >
         旧UI
       </NavigationLink>
     </div>
     {children}
   </SheetContent>
 ));
-NavigationSheetContent.displayName = 'NavigationSheetContent';
+NavigationSheetContent.displayName = "NavigationSheetContent";
 
 // Custom NavigationLink component that closes the sheet when clicked
-interface NavigationLinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> {
+interface NavigationLinkProps
+  extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {
   href: string;
   children: React.ReactNode;
 }
 
-const NavigationLink: React.FC<NavigationLinkProps> = ({ href, children, ...props }) => {
+const NavigationLink: React.FC<NavigationLinkProps> = ({
+  href,
+  children,
+  ...props
+}) => {
   return (
     <SheetClose asChild>
       <a href={href} {...props}>
@@ -53,7 +63,10 @@ interface NavigationRouterLinkProps extends LinkProps {
   children: React.ReactNode;
 }
 
-const NavigationRouterLink: React.FC<NavigationRouterLinkProps> = ({ children, ...props }) => {
+const NavigationRouterLink: React.FC<NavigationRouterLinkProps> = ({
+  children,
+  ...props
+}) => {
   return (
     <SheetClose asChild>
       <Link {...props}>{children}</Link>

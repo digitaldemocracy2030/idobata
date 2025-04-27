@@ -1,12 +1,15 @@
-import React from 'react';
-import { ChatSheet as BaseChatSheet, ChatSheetContent } from '../ui/chat/chat-sheet';
-import { ChatHeader } from './ChatHeader';
-import ExtendedChatHistory from './ExtendedChatHistory';
-import { Button } from '../ui/button';
-import { Send, Loader2 } from 'lucide-react';
-import { useDraggable } from '../../hooks/useDraggable';
-import { useChat } from './ChatProvider';
-import { useState } from 'react';
+import { Loader2, Send } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import { useDraggable } from "../../hooks/useDraggable";
+import { Button } from "../ui/button";
+import {
+  ChatSheet as BaseChatSheet,
+  ChatSheetContent,
+} from "../ui/chat/chat-sheet";
+import { ChatHeader } from "./ChatHeader";
+import { useChat } from "./ChatProvider";
+import ExtendedChatHistory from "./ExtendedChatHistory";
 
 interface ChatSheetProps {
   isOpen: boolean;
@@ -14,9 +17,13 @@ interface ChatSheetProps {
   onSendMessage?: (message: string) => void;
 }
 
-export const ChatSheet: React.FC<ChatSheetProps> = ({ isOpen, onClose, onSendMessage }) => {
+export const ChatSheet: React.FC<ChatSheetProps> = ({
+  isOpen,
+  onClose,
+  onSendMessage,
+}) => {
   const { messages, addMessage } = useChat();
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
   const { height, handleDragStart } = useDraggable({
     minHeight: 300,
@@ -27,10 +34,10 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({ isOpen, onClose, onSendMes
   const handleSendMessage = () => {
     if (inputValue.trim() && !isSending) {
       setIsSending(true);
-      addMessage(inputValue, 'user');
+      addMessage(inputValue, "user");
 
       const message = inputValue;
-      setInputValue('');
+      setInputValue("");
 
       if (onSendMessage) {
         try {
@@ -39,7 +46,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({ isOpen, onClose, onSendMes
             setIsSending(false);
           }, 1000);
         } catch (error) {
-          console.error('Error sending message:', error);
+          console.error("Error sending message:", error);
           setIsSending(false);
         }
       } else {
@@ -51,7 +58,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({ isOpen, onClose, onSendMes
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey && !isSending) {
+    if (e.key === "Enter" && !e.shiftKey && !isSending) {
       e.preventDefault();
       handleSendMessage();
     }
@@ -72,7 +79,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({ isOpen, onClose, onSendMes
             <input
               type="text"
               value={inputValue}
-              onChange={e => setInputValue(e.target.value)}
+              onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="気になることをAIに質問"
               className="flex-grow px-4 py-2 bg-transparent border-none focus:outline-none text-sm"
