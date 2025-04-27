@@ -35,7 +35,7 @@ export const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
         >
           <Send className="h-5 w-5" />
           {hasUnread && (
-            <span className="absolute top-0 right-0 h-3 w-3 rounded-full bg-red-500"></span>
+            <span className="absolute top-0 right-0 h-3 w-3 rounded-full bg-red-500" />
           )}
         </Button>
       </div>

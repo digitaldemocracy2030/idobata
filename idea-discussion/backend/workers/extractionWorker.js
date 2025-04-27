@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import ChatThread from "../models/ChatThread.js"; // For chat source
 import ImportedItem from "../models/ImportedItem.js"; // For import source
 import Problem from "../models/Problem.js";
@@ -347,16 +346,16 @@ async function processExtraction(job) {
           continue;
         }
         const updateData = { ...item };
-        delete updateData.id;
-        delete updateData.type;
-        delete updateData.version; // Let $inc handle version
+        updateData.id = undefined;
+        updateData.type = undefined;
+        updateData.version = undefined; // Let $inc handle version
 
-        let Model, existingItem;
+        let Model;
         if (item.type === "problem") Model = Problem;
         else if (item.type === "solution") Model = Solution;
         else continue;
 
-        existingItem = await Model.findById(item.id);
+        const existingItem = await Model.findById(item.id);
         if (!existingItem) {
           console.warn(
             `[ExtractionWorker] ${item.type} ${item.id} not found for update (chat ${sourceOriginId}).`

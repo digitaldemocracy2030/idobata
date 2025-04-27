@@ -1,10 +1,8 @@
 import mongoose from "mongoose"; // Import mongoose for ObjectId validation
 import { v4 as uuidv4 } from "uuid"; // For generating temporary user IDs
 import ChatThread from "../models/ChatThread.js";
-import Problem from "../models/Problem.js"; // Import Problem model
 import QuestionLink from "../models/QuestionLink.js"; // Import QuestionLink model
 import SharpQuestion from "../models/SharpQuestion.js"; // Import SharpQuestion model
-import Solution from "../models/Solution.js"; // Import Solution model
 import { callLLM } from "../services/llmService.js"; // Import the LLM service
 import { processExtraction } from "../workers/extractionWorker.js"; // Import the extraction worker function
 
@@ -120,7 +118,7 @@ const handleNewMessageByTheme = async (req, res) => {
             problemLinks.some((link) => link.linkedProblem)
           ) {
             referenceOpinions += "  関連性の高い課題:\n";
-            problemLinks.forEach((link) => {
+            for (const link of problemLinks) {
               if (link.linkedProblem) {
                 const problem = link.linkedProblem;
                 if (problem.themeId && problem.themeId.toString() === themeId) {
@@ -133,7 +131,7 @@ const handleNewMessageByTheme = async (req, res) => {
                   referenceOpinions += `    - ${statement})\n`;
                 }
               }
-            });
+            }
           } else {
             referenceOpinions += "  関連性の高い課題: (ありません)\n";
           }
@@ -171,7 +169,7 @@ const handleNewMessageByTheme = async (req, res) => {
           ) {
             referenceOpinions +=
               "  関連性の高い解決策 (最大10件, 関連度 >80%):\n";
-            solutionLinks.forEach((link) => {
+            for (const link of solutionLinks) {
               if (link.linkedSolution) {
                 const solution = link.linkedSolution;
                 if (
@@ -181,7 +179,7 @@ const handleNewMessageByTheme = async (req, res) => {
                   referenceOpinions += `    - ${solution.statement || "N/A"})\n`;
                 }
               }
-            });
+            }
           } else {
             referenceOpinions += "  関連性の高い解決策: (ありません)\n";
           }
@@ -385,7 +383,7 @@ const getThreadMessagesByTheme = async (req, res) => {
 };
 
 export {
-  handleNewMessageByTheme,
   getThreadExtractionsByTheme,
   getThreadMessagesByTheme,
+  handleNewMessageByTheme,
 };

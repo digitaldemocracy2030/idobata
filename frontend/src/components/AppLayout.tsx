@@ -87,7 +87,7 @@ function AppLayout() {
       if (responseData.userId && !userId) {
         setUserId(responseData.userId);
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to send message:", error);
       const errorMessage = {
         role: "assistant",
@@ -128,7 +128,8 @@ function AppLayout() {
             id: problem._id,
           });
           break;
-        } else if (existingProblem.version !== problem.version) {
+        }
+        if (existingProblem.version !== problem.version) {
           // Problem updated
           setNotification({
             message: `ありがとうございます！課題「${problem.statement.substring(0, 30)}${problem.statement.length > 30 ? "..." : ""}」についてのあなたの声が更新されました。`,
@@ -154,7 +155,8 @@ function AppLayout() {
               id: solution._id,
             });
             break;
-          } else if (existingSolution.version !== solution.version) {
+          }
+          if (existingSolution.version !== solution.version) {
             // Solution updated
             setNotification({
               message: `ありがとうございます！解決策「${solution.statement.substring(0, 30)}${solution.statement.length > 30 ? "..." : ""}」についてのあなたの声が更新されました。`,
@@ -171,7 +173,7 @@ function AppLayout() {
         problems: currentProblems,
         solutions: currentSolutions,
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to check for new extractions:", error);
     }
   }, [currentThreadId, previousExtractions, notification]);
@@ -218,7 +220,7 @@ function AppLayout() {
         if (data.messages && data.messages.length > 0) {
           setMessages(data.messages);
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error("Failed to load thread messages:", error);
         // If there's an error loading the thread (e.g., it was deleted), clear the stored threadId
         if (error.message.includes("404")) {
@@ -306,6 +308,7 @@ function AppLayout() {
                     ? "抽出結果を非表示"
                     : "抽出結果を表示"
               }
+              type="button"
             >
               抽出された課題/解決策を表示
             </button>
@@ -322,6 +325,7 @@ function AppLayout() {
                 }}
                 className="px-2 py-1 rounded-md text-xs border border-neutral-300 transition-colors duration-200 bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
                 title="新しい会話"
+                type="button"
               >
                 会話をリセット
               </button>

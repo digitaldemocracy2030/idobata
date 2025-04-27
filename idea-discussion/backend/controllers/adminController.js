@@ -13,11 +13,9 @@ const triggerQuestionGeneration = async (req, res) => {
     // In a production scenario, this might add a job to a queue instead of direct execution.
     await generateSharpQuestions();
 
-    res
-      .status(202)
-      .json({
-        message: "Sharp question generation process started successfully.",
-      });
+    res.status(202).json({
+      message: "Sharp question generation process started successfully.",
+    });
   } catch (error) {
     console.error(
       "[AdminController] Error triggering question generation:",
@@ -45,12 +43,10 @@ const getProblemsByTheme = async (req, res) => {
       `[AdminController] Error fetching problems for theme ${themeId}:`,
       error
     );
-    res
-      .status(500)
-      .json({
-        message: "Failed to fetch problems for theme",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Failed to fetch problems for theme",
+      error: error.message,
+    });
   }
 };
 
@@ -70,12 +66,10 @@ const getSolutionsByTheme = async (req, res) => {
       `[AdminController] Error fetching solutions for theme ${themeId}:`,
       error
     );
-    res
-      .status(500)
-      .json({
-        message: "Failed to fetch solutions for theme",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Failed to fetch solutions for theme",
+      error: error.message,
+    });
   }
 };
 
@@ -92,22 +86,18 @@ const triggerQuestionGenerationByTheme = async (req, res) => {
   try {
     await generateSharpQuestions(themeId);
 
-    res
-      .status(202)
-      .json({
-        message: "Sharp question generation process started successfully.",
-      });
+    res.status(202).json({
+      message: "Sharp question generation process started successfully.",
+    });
   } catch (error) {
     console.error(
       `[AdminController] Error triggering question generation for theme ${themeId}:`,
       error
     );
-    res
-      .status(500)
-      .json({
-        message: "Failed to start sharp question generation process for theme",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Failed to start sharp question generation process for theme",
+      error: error.message,
+    });
   }
 };
 

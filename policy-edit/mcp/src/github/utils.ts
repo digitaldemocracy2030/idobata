@@ -1,4 +1,3 @@
-import path from "path"; // pathモジュールをインポート
 import type { Octokit } from "@octokit/rest";
 import config from "../config.js";
 import logger from "../logger.js";
@@ -29,8 +28,8 @@ export async function ensureBranchExists(
     });
     branchExists = true;
     logger.info(`Branch ${branchName} already exists.`);
-  } catch (error: any) {
-    if (error.status === 404) {
+  } catch (error: unknown) {
+    if (error instanceof Error && "status" in error && error.status === 404) {
       logger.info(`Branch ${branchName} does not exist. Creating...`);
       // ブランチが存在しない場合は作成に進む
     } else {
@@ -112,25 +111,24 @@ export async function findOrCreateDraftPr(
         );
       }
       return { number: pr.number, html_url: pr.html_url };
-    } else {
-      logger.info(
-        `No open PR found for branch ${branchName}. Creating draft PR...`
-      );
-      // Draft PRを作成
-      const { data: newPr } = await octokit.rest.pulls.create({
-        owner,
-        repo,
-        title: title, // 引数で受け取ったタイトルを使用
-        head: branchName,
-        base: baseBranch,
-        body: body, // 引数で受け取った本文を使用
-        draft: true,
-      });
-      logger.info(
-        `Created draft PR #${newPr.number} for branch ${branchName}. URL: ${newPr.html_url}`
-      );
-      return { number: newPr.number, html_url: newPr.html_url };
     }
+    logger.info(
+      `No open PR found for branch ${branchName}. Creating draft PR...`
+    );
+    // Draft PRを作成
+    const { data: newPr } = await octokit.rest.pulls.create({
+      owner,
+      repo,
+      title: title, // 引数で受け取ったタイトルを使用
+      head: branchName,
+      base: baseBranch,
+      body: body, // 引数で受け取った本文を使用
+      draft: true,
+    });
+    logger.info(
+      `Created draft PR #${newPr.number} for branch ${branchName}. URL: ${newPr.html_url}`
+    );
+    return { number: newPr.number, html_url: newPr.html_url };
   } catch (error) {
     logger.error(
       { error },

@@ -28,16 +28,16 @@ const FileView: React.FC<FileViewProps> = ({ data }) => {
     // Decode the Base64 content
     const decodedContent = decodeBase64Content(data.content);
     return <MarkdownViewer content={decodedContent} />;
-  } else {
-    // Display message for non-markdown files
-    return (
-      <div className="p-4 border rounded bg-gray-50 text-center">
-        <p className="font-semibold text-gray-700">ファイル：{data.name}</p>
-        <p className="mt-2 text-sm text-gray-500">
-          このファイルタイプのプレビューはサポートされていません。
-        </p>
-        {/* Optionally, add a download link if available */}
-        {/* {data.download_url && (
+  }
+  // Display message for non-markdown files
+  return (
+    <div className="p-4 border rounded bg-gray-50 text-center">
+      <p className="font-semibold text-gray-700">ファイル：{data.name}</p>
+      <p className="mt-2 text-sm text-gray-500">
+        このファイルタイプのプレビューはサポートされていません。
+      </p>
+      {/* Optionally, add a download link if available */}
+      {/* {data.download_url && (
           <a
             href={data.download_url}
             target="_blank"
@@ -47,9 +47,8 @@ const FileView: React.FC<FileViewProps> = ({ data }) => {
             ファイルをダウンロード
           </a>
         )} */}
-      </div>
-    );
-  }
+    </div>
+  );
 };
 
 export default FileView;

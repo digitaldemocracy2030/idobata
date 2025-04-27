@@ -74,9 +74,8 @@ function VisualizationArea() {
         if (!response.ok) {
           if (response.status === 404) {
             throw new Error("問いの詳細が見つかりません。");
-          } else {
-            throw new Error(`HTTP error! status: ${response.status}`);
           }
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
         setQuestionDetails(data);
@@ -289,6 +288,7 @@ function VisualizationArea() {
               viewBox="0 0 20 20"
               fill="currentColor"
             >
+              <title>エラー</title>
               <path
                 fillRule="evenodd"
                 d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -310,9 +310,9 @@ function VisualizationArea() {
             {isLoadingQuestions ? (
               <div className="flex items-center justify-center p-8">
                 <div className="animate-pulse-slow flex space-x-2">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
                 </div>
               </div>
             ) : questions.length > 0 ? (
@@ -326,6 +326,7 @@ function VisualizationArea() {
                           ? "bg-neutral-700 text-white shadow-md"
                           : "bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-200 hover:border-neutral-300"
                       }`}
+                      type="button"
                     >
                       {q.questionText}
                     </button>
@@ -349,9 +350,9 @@ function VisualizationArea() {
             {isLoadingDetails && selectedQuestionId ? (
               <div className="flex items-center justify-center p-12">
                 <div className="animate-pulse-slow flex space-x-2">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
                 </div>
               </div>
             ) : selectedQuestionId && questionDetails ? (
@@ -364,7 +365,7 @@ function VisualizationArea() {
                   {/* Related Problems */}
                   <div className="card p-4 bg-neutral-50 border border-neutral-200">
                     <h4 className="text-md font-semibold mb-3 text-primary-dark flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-primary inline-block"></span>
+                      <span className="w-2 h-2 rounded-full bg-primary inline-block" />
                       関連する課題 ({questionDetails.relatedProblems.length})
                     </h4>
                     <div className="overflow-y-auto max-h-[300px] pr-2">
@@ -395,7 +396,7 @@ function VisualizationArea() {
                   {/* Related Solutions */}
                   <div className="card p-4 bg-neutral-50 border border-neutral-200">
                     <h4 className="text-md font-semibold mb-3 text-success flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-success inline-block"></span>
+                      <span className="w-2 h-2 rounded-full bg-success inline-block" />
                       関連する解決策 ({questionDetails.relatedSolutions.length})
                     </h4>
                     <div className="overflow-y-auto max-h-[300px] pr-2">
@@ -439,6 +440,7 @@ function VisualizationArea() {
                       onClick={handleGeneratePolicy}
                       disabled={isGeneratingPolicy || isLoadingDetails}
                       className="btn bg-primary text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm whitespace-nowrap hover:bg-primary/90"
+                      type="button"
                     >
                       {isGeneratingPolicy ? (
                         <span className="flex items-center">
@@ -448,6 +450,7 @@ function VisualizationArea() {
                             fill="none"
                             viewBox="0 0 24 24"
                           >
+                            <title>生成中</title>
                             <circle
                               className="opacity-25"
                               cx="12"
@@ -455,12 +458,12 @@ function VisualizationArea() {
                               r="10"
                               stroke="currentColor"
                               strokeWidth="4"
-                            ></circle>
+                            />
                             <path
                               className="opacity-75"
                               fill="currentColor"
                               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            ></path>
+                            />
                           </svg>
                           生成中...
                         </span>
@@ -495,6 +498,7 @@ function VisualizationArea() {
                         policyDrafts.length === 0
                       }
                       className="btn bg-success text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm whitespace-nowrap hover:bg-success/90"
+                      type="button"
                     >
                       {isGeneratingDigest ? (
                         <span className="flex items-center">
@@ -504,6 +508,7 @@ function VisualizationArea() {
                             fill="none"
                             viewBox="0 0 24 24"
                           >
+                            <title>生成中</title>
                             <circle
                               className="opacity-25"
                               cx="12"
@@ -511,12 +516,12 @@ function VisualizationArea() {
                               r="10"
                               stroke="currentColor"
                               strokeWidth="4"
-                            ></circle>
+                            />
                             <path
                               className="opacity-75"
                               fill="currentColor"
                               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            ></path>
+                            />
                           </svg>
                           生成中...
                         </span>
@@ -535,15 +540,15 @@ function VisualizationArea() {
                 {/* Policy Drafts Display */}
                 <div className="mb-8">
                   <h4 className="text-lg font-semibold mb-4 text-primary-dark border-b border-neutral-200 pb-2 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-primary-dark inline-block"></span>
+                    <span className="w-2 h-2 rounded-full bg-primary-dark inline-block" />
                     政策ドラフト ({policyDrafts.length})
                   </h4>
                   {isLoadingDrafts ? (
                     <div className="flex items-center justify-center p-8">
                       <div className="animate-pulse-slow flex space-x-2">
-                        <div className="w-2 h-2 bg-primary rounded-full"></div>
-                        <div className="w-2 h-2 bg-primary rounded-full"></div>
-                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <div className="w-2 h-2 bg-primary rounded-full" />
+                        <div className="w-2 h-2 bg-primary rounded-full" />
+                        <div className="w-2 h-2 bg-primary rounded-full" />
                       </div>
                     </div>
                   ) : policyDrafts.length > 0 ? (
@@ -587,15 +592,15 @@ function VisualizationArea() {
                 {/* Digest Drafts Display */}
                 <div>
                   <h4 className="text-lg font-semibold mb-4 text-success border-b border-neutral-200 pb-2 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-success inline-block"></span>
+                    <span className="w-2 h-2 rounded-full bg-success inline-block" />
                     一般向けダイジェスト ({digestDrafts.length})
                   </h4>
                   {isLoadingDigestDrafts ? (
                     <div className="flex items-center justify-center p-8">
                       <div className="animate-pulse-slow flex space-x-2">
-                        <div className="w-2 h-2 bg-success rounded-full"></div>
-                        <div className="w-2 h-2 bg-success rounded-full"></div>
-                        <div className="w-2 h-2 bg-success rounded-full"></div>
+                        <div className="w-2 h-2 bg-success rounded-full" />
+                        <div className="w-2 h-2 bg-success rounded-full" />
+                        <div className="w-2 h-2 bg-success rounded-full" />
                       </div>
                     </div>
                   ) : digestDrafts.length > 0 ? (
@@ -657,6 +662,7 @@ function VisualizationArea() {
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
+                  <title>エラー</title>
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"

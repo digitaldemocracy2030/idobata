@@ -76,12 +76,10 @@ export const getQuestionDetails = async (req, res) => {
     });
   } catch (error) {
     console.error(`Error fetching details for question ${questionId}:`, error);
-    res
-      .status(500)
-      .json({
-        message: "Error fetching question details",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error fetching question details",
+      error: error.message,
+    });
   }
 };
 
@@ -114,22 +112,18 @@ export const triggerPolicyGeneration = async (req, res) => {
     console.log(
       `[API Trigger] Policy generation triggered for questionId: ${questionId}`
     );
-    res
-      .status(202)
-      .json({
-        message: `Policy draft generation started for question ${questionId}`,
-      });
+    res.status(202).json({
+      message: `Policy draft generation started for question ${questionId}`,
+    });
   } catch (error) {
     console.error(
       `Error triggering policy generation for question ${questionId}:`,
       error
     );
-    res
-      .status(500)
-      .json({
-        message: "Error triggering policy generation",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error triggering policy generation",
+      error: error.message,
+    });
   }
 };
 
@@ -162,22 +156,18 @@ export const triggerDigestGeneration = async (req, res) => {
     console.log(
       `[API Trigger] Digest generation triggered for questionId: ${questionId}`
     );
-    res
-      .status(202)
-      .json({
-        message: `Digest draft generation started for question ${questionId}`,
-      });
+    res.status(202).json({
+      message: `Digest draft generation started for question ${questionId}`,
+    });
   } catch (error) {
     console.error(
       `Error triggering digest generation for question ${questionId}:`,
       error
     );
-    res
-      .status(500)
-      .json({
-        message: "Error triggering digest generation",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error triggering digest generation",
+      error: error.message,
+    });
   }
 };
 
@@ -196,11 +186,9 @@ export const getQuestionsByTheme = async (req, res) => {
     res.status(200).json(questions);
   } catch (error) {
     console.error(`Error fetching questions for theme ${themeId}:`, error);
-    res
-      .status(500)
-      .json({
-        message: "Error fetching theme questions",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error fetching theme questions",
+      error: error.message,
+    });
   }
 };

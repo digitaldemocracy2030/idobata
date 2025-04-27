@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import pLimit from "p-limit";
 import Problem from "../models/Problem.js";
 import QuestionLink from "../models/QuestionLink.js";
@@ -80,7 +79,7 @@ Analyze the relationship and provide the JSON output.`,
       try {
         const llmResponse = await callLLM(promptMessages, true); // Request JSON output
 
-        if (llmResponse && llmResponse.is_relevant) {
+        if (llmResponse?.is_relevant) {
           console.log(
             `[LinkingWorker] Found relevant link: Question ${question._id} <-> ${itemType} ${itemId} (Type: ${llmResponse.link_type})`
           );
@@ -187,7 +186,7 @@ Analyze the relationship and provide the JSON output.`,
     try {
       const llmResponse = await callLLM(promptMessages, true); // Request JSON output
 
-      if (llmResponse && llmResponse.is_relevant) {
+      if (llmResponse?.is_relevant) {
         console.log(
           `[LinkingWorker] Found relevant link: Question ${questionId} <-> ${itemType} ${itemId} (Type: ${llmResponse.link_type})`
         );
@@ -255,7 +254,7 @@ async function linkQuestionToAllItems(questionId) {
     const tasks = [];
 
     // Prepare tasks for problems
-    problems.forEach((problem) => {
+    for (const problem of problems) {
       tasks.push(
         limit(async () => {
           try {
@@ -276,10 +275,10 @@ async function linkQuestionToAllItems(questionId) {
           }
         })
       );
-    });
+    }
 
     // Prepare tasks for solutions
-    solutions.forEach((solution) => {
+    for (const solution of solutions) {
       tasks.push(
         limit(async () => {
           try {
@@ -300,7 +299,7 @@ async function linkQuestionToAllItems(questionId) {
           }
         })
       );
-    });
+    }
 
     // Execute all tasks concurrently
     await Promise.all(tasks);

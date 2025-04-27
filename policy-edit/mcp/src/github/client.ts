@@ -60,7 +60,7 @@ export async function getAuthenticatedOctokit(): Promise<InstallationOctokit> {
     try {
       const appInstance = getApp();
       const installationId = Number.parseInt(config.GITHUB_INSTALLATION_ID, 10);
-      if (isNaN(installationId)) {
+      if (Number.isNaN(installationId)) {
         throw new Error("Invalid GITHUB_INSTALLATION_ID. Must be a number.");
       }
 

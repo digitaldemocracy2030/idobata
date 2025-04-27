@@ -1,5 +1,3 @@
-import { Buffer } from "buffer";
-
 // GitHub APIレスポンスの型定義 (必要に応じて詳細化)
 // ディレクトリの場合
 export interface GitHubDirectoryItem {
@@ -107,9 +105,8 @@ export async function fetchGitHubContent(
     // fetch自体が失敗した場合 (ネットワークエラーなど)
     if (error instanceof Error) {
       throw error; // 元のエラーを再スロー
-    } else {
-      throw new Error("An unknown error occurred during fetch.");
     }
+    throw new Error("An unknown error occurred during fetch.");
   }
 }
 
@@ -120,9 +117,21 @@ export async function fetchGitHubContent(
  */
 export function decodeBase64Content(base64String: string): string {
   try {
-    return Buffer.from(base64String, "base64").toString("utf-8");
+    const binaryString = atob(base64String);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return new TextDecoder().decode(bytes);
   } catch (error) {
     console.error("Error decoding Base64 content:", error);
-    return "Error decoding content"; // エラー発生時は代替文字列を返す
+    if (
+      error instanceof DOMException &&
+      error.name === "InvalidCharacterError"
+    ) {
+      return "Error: Invalid Base64 string";
+    }
+    return "Error decoding content"; // General error message
   }
 }

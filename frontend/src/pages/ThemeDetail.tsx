@@ -117,6 +117,7 @@ const ThemeDetail = () => {
                 : "text-neutral-500"
             }`}
             onClick={() => setActiveTab("issues")}
+            type="button"
           >
             課題点 ({issues.length})
           </button>
@@ -127,6 +128,7 @@ const ThemeDetail = () => {
                 : "text-neutral-500"
             }`}
             onClick={() => setActiveTab("solutions")}
+            type="button"
           >
             解決策 ({solutions.length})
           </button>

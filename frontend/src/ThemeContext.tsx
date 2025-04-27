@@ -50,7 +50,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
         } else {
           throw new Error("No themes available");
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error("Failed to fetch default theme:", error);
         const cachedThemeId = localStorage.getItem("defaultThemeId");
         if (cachedThemeId) {

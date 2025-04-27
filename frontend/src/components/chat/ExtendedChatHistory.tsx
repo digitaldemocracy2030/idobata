@@ -35,7 +35,7 @@ function ExtendedChatHistory({ messages }: ExtendedChatHistoryProps) {
     <div className="flex-grow p-3 overflow-y-auto space-y-4 custom-scrollbar">
       {initialMessages.map((msg, index) => (
         <div
-          key={index}
+          key={`${msg.timestamp}-${index}`}
           className={cn("animate-fade-in mb-3", {
             "flex justify-end": msg.type === "user",
             "flex justify-start": msg.type === "system",

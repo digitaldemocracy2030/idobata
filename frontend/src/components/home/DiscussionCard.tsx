@@ -27,7 +27,10 @@ const DiscussionCard = ({
             解決策: {solutionCount}
           </span>
         </div>
-        <button className="bg-purple-500 text-white p-1 rounded-md">
+        <button
+          className="bg-purple-500 text-white p-1 rounded-md"
+          type="button"
+        >
           <ArrowRight className="h-5 w-5" />
         </button>
       </div>

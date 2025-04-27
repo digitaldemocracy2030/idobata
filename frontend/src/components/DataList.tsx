@@ -134,7 +134,6 @@ function DataList() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json();
       setSuccessMessage(
         "シャープな問いの生成を開始しました。しばらくすると問いリストに表示されます。"
       );
@@ -166,7 +165,7 @@ function DataList() {
   const truncateText = (text: string, maxLength = 100): string => {
     if (!text) return "";
     return text.length > maxLength
-      ? text.substring(0, maxLength) + "..."
+      ? `${text.substring(0, maxLength)}...`
       : text;
   };
 
@@ -185,6 +184,7 @@ function DataList() {
               viewBox="0 0 20 20"
               fill="currentColor"
             >
+              <title>エラー</title>
               <path
                 fillRule="evenodd"
                 d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -205,6 +205,7 @@ function DataList() {
               viewBox="0 0 20 20"
               fill="currentColor"
             >
+              <title>成功</title>
               <path
                 fillRule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -228,6 +229,7 @@ function DataList() {
             </p>
           </div>
           <button
+            type="button"
             onClick={handleGenerateQuestions}
             disabled={isGeneratingQuestions}
             className="btn bg-primary text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm whitespace-nowrap hover:bg-primary-dark"
@@ -240,6 +242,7 @@ function DataList() {
                   fill="none"
                   viewBox="0 0 24 24"
                 >
+                  <title>生成中</title>
                   <circle
                     className="opacity-25"
                     cx="12"
@@ -247,12 +250,12 @@ function DataList() {
                     r="10"
                     stroke="currentColor"
                     strokeWidth="4"
-                  ></circle>
+                  />
                   <path
                     className="opacity-75"
                     fill="currentColor"
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
+                  />
                 </svg>
                 生成中...
               </span>
@@ -274,6 +277,7 @@ function DataList() {
                   ? "text-primary border-b-2 border-primary"
                   : "text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
               }`}
+              type="button"
             >
               シャープな問い
             </button>
@@ -286,6 +290,7 @@ function DataList() {
                   ? "text-primary border-b-2 border-primary"
                   : "text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
               }`}
+              type="button"
             >
               課題
             </button>
@@ -298,6 +303,7 @@ function DataList() {
                   ? "text-primary border-b-2 border-primary"
                   : "text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
               }`}
+              type="button"
             >
               解決策
             </button>
@@ -310,6 +316,7 @@ function DataList() {
                   ? "text-primary border-b-2 border-primary"
                   : "text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
               }`}
+              type="button"
             >
               政策ドラフト
             </button>
@@ -328,9 +335,9 @@ function DataList() {
             {isLoadingQuestions ? (
               <div className="flex items-center justify-center p-8">
                 <div className="animate-pulse-slow flex space-x-2">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
                 </div>
               </div>
             ) : questions.length > 0 ? (
@@ -386,9 +393,9 @@ function DataList() {
             {isLoadingProblems ? (
               <div className="flex items-center justify-center p-8">
                 <div className="animate-pulse-slow flex space-x-2">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
                 </div>
               </div>
             ) : problems.length > 0 ? (
@@ -453,9 +460,9 @@ function DataList() {
             {isLoadingSolutions ? (
               <div className="flex items-center justify-center p-8">
                 <div className="animate-pulse-slow flex space-x-2">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
                 </div>
               </div>
             ) : solutions.length > 0 ? (
@@ -520,9 +527,9 @@ function DataList() {
             {isLoadingPolicyDrafts ? (
               <div className="flex items-center justify-center p-8">
                 <div className="animate-pulse-slow flex space-x-2">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
                 </div>
               </div>
             ) : policyDrafts.length > 0 ? (

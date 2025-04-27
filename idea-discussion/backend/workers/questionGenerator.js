@@ -100,7 +100,7 @@ Generate 5 questions. 50-100字以内程度。
         // but checking the result object structure or comparing timestamps is more robust.
         // For simplicity, let's assume if we get a result, we trigger linking.
         // A more precise check would involve comparing timestamps or checking the upserted flag if available in the result.
-        if (result && result._id) {
+        if (result?._id) {
           // Trigger linking asynchronously for the new or existing question
           // Linking all items to this question might be resource-intensive.
           // Consider triggering only if it's a truly *new* question.

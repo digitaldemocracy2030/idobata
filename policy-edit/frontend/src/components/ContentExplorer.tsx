@@ -32,7 +32,7 @@ const ContentExplorer: React.FC<ContentExplorerProps> = ({ initialPath }) => {
     // Check if it's a markdown file
     if (initialPath.endsWith(".md")) {
       const thread = chatThreads[initialPath];
-      if (thread && thread.branchId) {
+      if (thread?.branchId) {
         refToFetch = thread.branchId;
         console.log(
           `Fetching MD file ${initialPath} using branchId: ${refToFetch}`
@@ -97,7 +97,7 @@ const ContentExplorer: React.FC<ContentExplorerProps> = ({ initialPath }) => {
         if (contentType === "file" && currentPath.endsWith(".md")) {
           const thread = chatThreads[currentPath];
           // Check if there's a specific branchId associated with this file's thread
-          if (thread && thread.branchId) {
+          if (thread?.branchId) {
             viewingBranchId = thread.branchId;
           }
         }

@@ -1,4 +1,3 @@
-import path from "path"; // pathモジュールをインポート
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import config from "../config.js";
@@ -43,7 +42,7 @@ export async function handleUpsertFile(
 
   logger.info(
     { owner, repo, branchName, fullPath },
-    `Handling upsert_file_and_commit request`
+    "Handling upsert_file_and_commit request"
   );
 
   try {
@@ -88,8 +87,8 @@ export async function handleUpsertFile(
           `Could not retrieve content data for ${fullPath}. Assuming file does not exist.`
         );
       }
-    } catch (error: any) {
-      if (error.status === 404) {
+    } catch (error: unknown) {
+      if (error instanceof Error && "status" in error && error.status === 404) {
         logger.info(
           `File ${fullPath} does not exist in branch ${branchName}. Will create it.`
         );
@@ -128,14 +127,24 @@ export async function handleUpsertFile(
         },
       ],
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error(
       { error, params },
       `Error processing upsert_file_and_commit for ${filePath}`
     );
-    // Octokitのエラーオブジェクトから詳細を取得試行
-    const errorMessage = error.message || "Unknown error";
-    const status = error.status ? ` (Status: ${error.status})` : "";
+    // Type check before accessing properties
+    let errorMessage = "Unknown error";
+    let status = "";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      // Check if 'status' property exists (common in HTTP errors like from Octokit)
+      if ("status" in error && typeof error.status === "number") {
+        status = ` (Status: ${error.status})`;
+      }
+    } else if (typeof error === "string") {
+      errorMessage = error;
+    }
+
     return {
       isError: true,
       content: [

@@ -88,12 +88,10 @@ router.post("/connect", async (req, res) => {
       logger.error(
         "MCP_SERVER_PATH environment variable is not set or is invalid."
       );
-      return res
-        .status(400)
-        .json({
-          error:
-            "MCP_SERVER_PATH environment variable is not configured correctly on the server.",
-        });
+      return res.status(400).json({
+        error:
+          "MCP_SERVER_PATH environment variable is not configured correctly on the server.",
+      });
     }
 
     await initializeMcpClient(serverPath);

@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import DigestDraft from "../models/DigestDraft.js";
 import PolicyDraft from "../models/PolicyDraft.js";
 import Problem from "../models/Problem.js";
@@ -41,12 +40,12 @@ async function generateDigestDraft(questionId) {
     const solutionIds = solutionLinks.map((link) => link.linkedItemId);
 
     const relevanceScoreMap = new Map();
-    links.forEach((link) => {
+    for (const link of links) {
       relevanceScoreMap.set(
         link.linkedItemId.toString(),
         link.relevanceScore || 0
       );
-    });
+    }
 
     const problems = await Problem.find({ _id: { $in: problemIds } });
     const solutions = await Solution.find({ _id: { $in: solutionIds } });

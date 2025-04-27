@@ -236,22 +236,21 @@ const useContentStore = create<ContentState>()(
 
         if (thread.branchId) {
           return thread.branchId; // Return existing ID
-        } else {
-          // Generate new branch ID: idobata- + 6 random alphanumeric chars
-          const randomPart = Math.random().toString(36).substring(2, 8);
-          const newBranchId = `idobata-${randomPart}`;
-
-          set((prevState) => ({
-            chatThreads: {
-              ...prevState.chatThreads,
-              [path]: {
-                ...prevState.chatThreads[path], // Get the latest state of the thread
-                branchId: newBranchId,
-              },
-            },
-          }));
-          return newBranchId;
         }
+        // Generate new branch ID: idobata- + 6 random alphanumeric chars
+        const randomPart = Math.random().toString(36).substring(2, 8);
+        const newBranchId = `idobata-${randomPart}`;
+
+        set((prevState) => ({
+          chatThreads: {
+            ...prevState.chatThreads,
+            [path]: {
+              ...prevState.chatThreads[path], // Get the latest state of the thread
+              branchId: newBranchId,
+            },
+          },
+        }));
+        return newBranchId;
       },
       reloadCurrentContent: async () => {
         const { currentPath, fetchContent, chatThreads } = get();

@@ -8,7 +8,14 @@ import { logger } from "../utils/logger.js";
 interface McpTool {
   name: string;
   description?: string;
-  input_schema: Record<string, any>;
+  input_schema: Record<string, unknown>;
+}
+
+// Add an interface for the raw tool definition from listTools
+interface McpToolDefinition {
+  name: string;
+  description?: string;
+  inputSchema: Record<string, unknown>; // Assuming this structure based on usage
 }
 
 // Convert MCP tools to OpenAI tools format
@@ -123,12 +130,16 @@ export class McpClient {
       await this.mcp.connect(this.transport); // Connect might be async
 
       const toolsResult = await this.mcp.listTools();
-      this._tools = toolsResult.tools.map((tool: any) => ({
-        // Simplified map return
-        name: tool.name,
-        description: tool.description,
-        input_schema: tool.inputSchema,
-      }));
+      // Cast 'tool' to the defined interface
+      this._tools = toolsResult.tools.map((tool: unknown) => {
+        // Cast the unknown tool to our defined interface
+        const definedTool = tool as McpToolDefinition;
+        return {
+          name: definedTool.name,
+          description: definedTool.description,
+          input_schema: definedTool.inputSchema,
+        };
+      });
 
       this._initialized = true; // Mark as initialized
 
@@ -195,8 +206,7 @@ export class McpClient {
       const maxContentLength = 50000; // Adjust as needed
       const truncatedContent =
         fileContent.length > maxContentLength
-          ? fileContent.substring(0, maxContentLength) +
-            "\n... (content truncated)"
+          ? `${fileContent.substring(0, maxContentLength)}\n... (content truncated)`
           : fileContent;
       contextContent += `\nCurrent File Content:\n---\n${truncatedContent}\n---`;
     }
@@ -227,7 +237,7 @@ export class McpClient {
       });
 
       const finalText: string[] = [];
-      const toolResults: any[] = [];
+      const toolResults: unknown[] = [];
 
       // Process the response content
       if (response.choices && response.choices.length > 0) {

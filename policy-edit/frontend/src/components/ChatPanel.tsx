@@ -1,7 +1,7 @@
 import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { decodeBase64Content } from "../lib/github"; // Import the decoder
 import type { GitHubFile } from "../lib/github"; // Import the type
+import { decodeBase64Content } from "../lib/github"; // Import the decoder
 import useContentStore from "../store/contentStore"; // Import the Zustand store
 import MarkdownViewer from "./MarkdownViewer"; // Import the MarkdownViewer component
 
@@ -407,6 +407,7 @@ const ChatPanel: React.FC = () => {
             }}
             disabled={isLoading}
             className="bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
+            type="button"
           >
             {isLoading ? "接続中..." : "サーバーに接続"}
           </button>
@@ -484,6 +485,7 @@ const ChatPanel: React.FC = () => {
             inputValue.trim() === ""
           } // Also disable if no MD file active or input is empty
           className="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-300"
+          type="button"
         >
           {isLoading ? "..." : "送信"}
         </button>
