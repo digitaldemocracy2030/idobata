@@ -8,7 +8,7 @@
     "build": "tsc",
     "build:mcp": "cd ../mcp && npm run build",
     "start": "node build/index.js",
-    "dev": "nodemon",
+    "dev": "nodemon --watch src --ext ts,json --exec \"npm run build && node build/index.js\"",
     "lint": "biome check .",
     "format": "biome check --write .",
     "test": "echo 'not implemented yet'"

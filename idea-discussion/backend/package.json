@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "idobata-idea-discussion-backend",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
