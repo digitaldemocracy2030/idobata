@@ -5,6 +5,7 @@ import DataPage from './pages/DataPage';
 import Top from './pages/Top';
 import About from './pages/About';
 import Themes from './pages/Themes';
+import ThemeDetail from './pages/ThemeDetail';
 import AppLayout from './components/AppLayout';
 
 function App() {
@@ -48,6 +49,10 @@ export const router = createBrowserRouter([
       {
         path: 'themes',
         element: <Themes />,
+      },
+      {
+        path: 'themes/:themeId',
+        element: <ThemeDetail />,
       },
     ],
   },
