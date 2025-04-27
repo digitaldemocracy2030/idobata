@@ -15,7 +15,6 @@
   animation: float 6s ease-in-out infinite;
 }
 
-
 /* Custom scrollbar styles */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
@@ -63,14 +62,17 @@
 /* Minimal pattern background */
 .minimal-pattern {
   background-color: rgb(var(--color-neutral-50));
-  background-image: linear-gradient(rgba(var(--color-neutral-200), 0.3) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(var(--color-neutral-200), 0.3) 1px, transparent 1px);
+  background-image:
+    linear-gradient(rgba(var(--color-neutral-200), 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--color-neutral-200), 0.3) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
 /* Subtle shadow for cards */
 .subtle-shadow {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 /* Minimal border */
@@ -116,7 +118,10 @@
   font-weight: 500;
 }
 
-.prose h1, .prose h2, .prose h3, .prose h4 {
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
   color: rgb(var(--color-neutral-900));
   font-weight: 600;
   margin-top: 2em;
@@ -143,7 +148,8 @@
   line-height: 1.5;
 }
 
-.prose ul, .prose ol {
+.prose ul,
+.prose ol {
   margin-top: 1.25em;
   margin-bottom: 1.25em;
   padding-left: 1.625em;
@@ -168,7 +174,7 @@
   color: rgb(var(--color-neutral-900));
   border-left-width: 0.25rem;
   border-left-color: rgb(var(--color-neutral-200));
-  quotes: "\201C""\201D""\2018""\2019";
+  quotes: '\201C' '\201D' '\2018' '\2019';
   margin-top: 1.6em;
   margin-bottom: 1.6em;
   padding-left: 1em;
@@ -190,7 +196,7 @@
 
 .prose code::before,
 .prose code::after {
-  content: "`";
+  content: '`';
 }
 
 .prose pre {
@@ -220,7 +226,7 @@
 
 .prose pre code::before,
 .prose pre code::after {
-  content: "";
+  content: '';
 }
 
 .prose-sm {

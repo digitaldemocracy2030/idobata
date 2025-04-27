@@ -1,4 +1,4 @@
-import { ArrowRight, MessageSquare, HelpCircle } from "lucide-react";
+import { ArrowRight, MessageSquare, HelpCircle } from 'lucide-react';
 
 interface ThemeCardProps {
   title: string;
@@ -9,13 +9,13 @@ interface ThemeCardProps {
   solutionCount?: number;
 }
 
-const ThemeCard = ({ 
-  title, 
-  description, 
-  keyQuestionCount, 
+const ThemeCard = ({
+  title,
+  description,
+  keyQuestionCount,
   commentCount,
   problemCount,
-  solutionCount 
+  solutionCount,
 }: ThemeCardProps) => {
   if (description !== undefined && keyQuestionCount !== undefined && commentCount !== undefined) {
     return (
@@ -40,7 +40,7 @@ const ThemeCard = ({
       </div>
     );
   }
-  
+
   return (
     <div className="border border-neutral-200 rounded-lg p-4 bg-white hover:shadow-md transition-all duration-200">
       <div className="mb-2">

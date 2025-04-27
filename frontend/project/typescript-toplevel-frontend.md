@@ -5,6 +5,7 @@
 このドキュメントでは、現在JavaScriptで書かれているフロントエンドコードをTypeScriptに移行するための手順を説明します。この移行計画では、まずはファイル拡張子を`.jsx`から`.tsx`に変更し、最小限の型定義を追加することに焦点を当てます。厳密な型安全性は後のフェーズで対応するため、必要に応じて`any`型を使用します。
 
 ## 作業時の注意
+
 - ユーザーからの指示への返答はかならず日本語で行ってください。
 - 基本的にコマンドの標準出力は取得できないので、commandResult.txt ファイルにパイプで出力してその結果をファイルから読み取ってください。
 - コマンドの結果が不明です、という状態で次の作業に進まないでください。
@@ -94,7 +95,6 @@ function Component(props: ComponentProps) {
 
 #### useState/useEffectの型定義
 
-
 ```typescript
 // 変換前
 const [state, setState] = useState(initialValue);
@@ -107,7 +107,7 @@ const [state, setState] = useState<any>(initialValue);
 
 ```typescript
 // 変換前
-const handleClick = (e) => {
+const handleClick = e => {
   // ...
 };
 
@@ -131,7 +131,7 @@ const handleChange = (e: any) => {
 import Component from './Component.jsx';
 
 // 変換後
-import Component from './Component';  // 拡張子を省略
+import Component from './Component'; // 拡張子を省略
 ```
 
 ### 6. main.jsxの更新
@@ -140,10 +140,10 @@ import Component from './Component';  // 拡張子を省略
 
 ```typescript
 // 変換前
-import { router } from './App.jsx'
+import { router } from './App.jsx';
 
 // 変換後
-import { router } from './App'
+import { router } from './App';
 ```
 
 ### 7. テストとデバッグ
@@ -179,41 +179,41 @@ export default [
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.node
+        ...globals.node,
       },
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
         ecmaFeatures: {
-          jsx: true
-        }
-      }
+          jsx: true,
+        },
+      },
     },
     rules: {
       'no-unused-vars': 'warn',
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true }
-      ],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       // TypeScript関連のルールを一時的に緩和
       '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/explicit-module-boundary-types': 'off'
-    }
-  }
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+    },
+  },
 ];
 ```
 
 ## 移行の実行手順
 
 1. 開発ブランチを作成する
+
    ```bash
    git checkout -b typescript-migration
    ```
 
 2. TypeScript設定を調整する
+
    - `tsconfig.json`を更新
 
 3. 各ファイルを順番に変換する
+
    - ファイル拡張子を`.jsx`から`.tsx`に変更
    - 最小限の型定義を追加
    - インポート参照を更新
@@ -221,6 +221,7 @@ export default [
 4. ESLint設定を更新する
 
 5. アプリケーションをビルドしてテストする
+
    ```bash
    npm run build
    npm run dev
@@ -257,6 +258,7 @@ export default [
 #### 現在のTypeScript設定
 
 **tsconfig.json**
+
 ```json
 {
   "compilerOptions": {
@@ -290,6 +292,7 @@ export default [
 ```
 
 **tsconfig.node.json**
+
 ```json
 {
   "compilerOptions": {
@@ -398,10 +401,10 @@ export default [
 
 ```typescript
 // 変更前
-import { router } from './App.jsx'
+import { router } from './App.jsx';
 
 // 変更後
-import { router } from './App'
+import { router } from './App';
 ```
 
 他のファイルのインポート文は拡張子が含まれていなかったため、更新は不要でした。
@@ -424,7 +427,7 @@ import { router } from './App'
     /* Linting */
     "strict": false,
     "noImplicitAny": false,
-    "strictNullChecks": false,
+    "strictNullChecks": false
     // その他の設定...
   }
 }
@@ -433,36 +436,44 @@ import { router } from './App'
 次に、以下のファイルに最小限の型定義を追加しました：
 
 1. `src/App.tsx`
+
    - `useState<string | null>`の型パラメータを追加
 
 2. `src/main.tsx`
+
    - `document.getElementById('root')`の戻り値に対するnullチェックを追加
 
 3. `src/components/AppLayout.tsx`
+
    - `OutletContext`インターフェースを定義
    - 状態変数に型パラメータを追加（`useState<Message[]>`, `useState<string | null>`など）
    - 関数に戻り値の型を追加（`async (): Promise<void>`）
    - エラー処理に`any`型を使用
 
 4. `src/components/ChatInput.tsx`
+
    - `ChatInputProps`インターフェースを定義
    - イベントハンドラに型を追加（`React.FormEvent`, `React.ChangeEvent<HTMLTextAreaElement>`など）
 
 5. `src/components/ChatHistory.tsx`
+
    - `Message`インターフェースを定義
    - `ChatHistoryProps`インターフェースを定義
    - `useRef<HTMLDivElement>(null)`の型パラメータを追加
 
 6. `src/components/ThreadExtractions.tsx`
+
    - `Problem`と`Solution`インターフェースを定義
    - `ThreadExtractionsProps`インターフェースを定義
    - 状態変数に型パラメータを追加
 
 7. `src/components/Notification.tsx`
+
    - `NotificationProps`インターフェースを定義
    - 状態変数に型パラメータを追加
 
 8. `src/components/DataList.tsx`
+
    - データ型のインターフェースを定義（`Problem`, `Solution`, `Question`, `PolicyDraft`）
    - 状態変数に型パラメータを追加
    - 関数に戻り値の型を追加
@@ -486,6 +497,7 @@ import { router } from './App'
 #### 変更内容
 
 1. `types.ts`に以下のドメインオブジェクトのインターフェースを集約
+
    - `Problem`
    - `Solution`
    - `Question`
@@ -512,9 +524,11 @@ import { router } from './App'
 さらに、以下のファイルも修正して、共通ドメインオブジェクトのインターフェースを`types.ts`からインポートするようにしました：
 
 1. `frontend/src/components/ThreadExtractions.tsx`
+
    - `Problem`と`Solution`のインターフェースを`types.ts`からインポート
 
 2. `frontend/src/components/AppLayout.tsx`
+
    - `OutletContext`, `Message`, `Problem`, `Solution`, `NotificationType`, `PreviousExtractions`のインターフェースを`types.ts`からインポート
 
 3. `frontend/src/components/ChatHistory.tsx`
@@ -529,11 +543,13 @@ import { router } from './App'
 #### 実施内容
 
 1. 必要なパッケージのインストール
+
    ```bash
    npm install --save-dev prettier eslint-config-prettier
    ```
 
 2. Prettier の設定ファイル (.prettierrc) の作成
+
    ```json
    {
      "semi": true,
@@ -547,11 +563,13 @@ import { router } from './App'
    ```
 
 3. ESLint の設定ファイル (eslint.config.js) の更新
+
    - TypeScript ESLint の設定を追加
    - Prettier との競合を避けるための設定を追加
    - TypeScript 関連のルールを一時的に緩和
 
 4. VSCode の設定ファイル (.vscode/settings.json) の作成
+
    - 保存時に自動フォーマットするように設定
    - ESLint の自動修正を有効化
 
@@ -577,11 +595,13 @@ import { router } from './App'
 フォーマット時に未使用のインポートを自動的に削除するために、以下の設定を追加しました：
 
 1. eslint-plugin-unused-imports のインストール
+
    ```bash
    npm install --save-dev eslint-plugin-unused-imports
    ```
 
 2. ESLint の設定ファイルに未使用インポート削除のルールを追加
+
    ```javascript
    // eslint.config.js
    import unusedImports from 'eslint-plugin-unused-imports';
@@ -595,11 +615,11 @@ import { router } from './App'
          'unused-imports/no-unused-imports': 'error',
          'unused-imports/no-unused-vars': [
            'warn',
-           { 'vars': 'all', 'varsIgnorePattern': '^_', 'args': 'after-used', 'argsIgnorePattern': '^_' }
+           { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
          ],
          // その他のルール...
-       }
-     }
+       },
+     },
    ];
    ```
 
@@ -612,6 +632,7 @@ TypeScript専用のプロジェクトにするため、JavaScriptと併存させ
 #### 実施内容
 
 1. `vite.config.js`の削除
+
    - `vite.config.ts`が既に存在しており、内容もほぼ同じだったため、JavaScriptバージョンを削除しました。
 
 2. 設定ファイルの確認

@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle, ThumbsUp } from "lucide-react";
+import { AlertTriangle, CheckCircle, ThumbsUp } from 'lucide-react';
 
 interface KeyQuestionCardProps {
   question: string;
@@ -7,7 +7,12 @@ interface KeyQuestionCardProps {
   solutionCount: number;
 }
 
-const KeyQuestionCard = ({ question, voteCount, issueCount, solutionCount }: KeyQuestionCardProps) => {
+const KeyQuestionCard = ({
+  question,
+  voteCount,
+  issueCount,
+  solutionCount,
+}: KeyQuestionCardProps) => {
   return (
     <div className="border border-neutral-200 rounded-lg p-4 bg-white hover:shadow-md transition-all duration-200">
       <h3 className="font-semibold text-lg mb-3">{question}</h3>

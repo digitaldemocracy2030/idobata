@@ -1,7 +1,7 @@
-import { Menu, User } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
-import { Button } from "../ui/button";
-import { Link } from "react-router-dom";
+import { Menu, User } from 'lucide-react';
+import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
+import { Button } from '../ui/button';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
@@ -16,9 +16,18 @@ const Header = () => {
           </SheetTrigger>
           <SheetContent side="left" className="w-72">
             <nav className="flex flex-col gap-4 mt-8">
-              <Link to="/top" className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md border-l-4 border-purple-500">ホーム</Link>
-              <Link to="/about" className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md">このサイトについて</Link>
-              <Link to="/mypage" className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md">マイページ</Link>
+              <Link
+                to="/top"
+                className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md border-l-4 border-purple-500"
+              >
+                ホーム
+              </Link>
+              <Link to="/about" className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md">
+                このサイトについて
+              </Link>
+              <Link to="/mypage" className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md">
+                マイページ
+              </Link>
             </nav>
           </SheetContent>
         </Sheet>

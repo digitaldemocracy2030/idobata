@@ -1,18 +1,18 @@
 import React from 'react';
-import BreadcrumbView from "../components/common/BreadcrumbView";
-import AboutSection from "../components/common/AboutSection";
+import BreadcrumbView from '../components/common/BreadcrumbView';
+import AboutSection from '../components/common/AboutSection';
 
 const About = () => {
   const breadcrumbItems = [
-    { label: "TOP", href: "/" },
-    { label: "このサイトについて", href: "/about" },
+    { label: 'TOP', href: '/' },
+    { label: 'このサイトについて', href: '/about' },
   ];
 
   return (
     <div className="min-h-screen flex flex-col">
       <div className="container mx-auto px-4 py-8">
         <BreadcrumbView items={breadcrumbItems} />
-        
+
         <AboutSection
           title="XX党みんなの政策フォーラムとは"
           body={
@@ -75,7 +75,10 @@ const About = () => {
         />
 
         <div className="text-center mt-12">
-          <a href="https://xxparty-policy.com" className="text-sm text-neutral-500 hover:text-neutral-700">
+          <a
+            href="https://xxparty-policy.com"
+            className="text-sm text-neutral-500 hover:text-neutral-700"
+          >
             © xxparty-policy.com
           </a>
         </div>
