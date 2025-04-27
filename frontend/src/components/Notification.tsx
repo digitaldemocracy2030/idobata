@@ -1,26 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-function Notification({ message, onClose, duration = 5000 }) {
-  const [isVisible, setIsVisible] = useState(true);
-  
+interface NotificationProps {
+  message: string;
+  onClose: () => void;
+  duration?: number;
+}
+
+function Notification({ message, onClose, duration = 5000 }: NotificationProps) {
+  const [isVisible, setIsVisible] = useState<boolean>(true);
+
   useEffect(() => {
     // Set timer to start fade out
     const timer = setTimeout(() => {
       // Start fade out
       setIsVisible(false);
-      
+
       // Remove notification after animation completes
       const fadeTimer = setTimeout(() => {
         onClose();
       }, 500); // Match this with the CSS transition duration
-      
+
       return () => clearTimeout(fadeTimer);
     }, duration);
-    
+
     // Cleanup timer on unmount
     return () => clearTimeout(timer);
   }, [duration, onClose]);
-  
+
   return (
     <div
       className={`absolute top-0 left-0 right-0 z-30 transition-all duration-500 ease-in-out ${

@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { Problem, Solution } from '../types';
 
-const ThreadExtractions = ({ threadId }) => {
-    const [problems, setProblems] = useState([]);
-    const [solutions, setSolutions] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+interface ThreadExtractionsProps {
+    threadId: string | null;
+}
+
+const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
+    const [problems, setProblems] = useState<Problem[]>([]);
+    const [solutions, setSolutions] = useState<Solution[]>([]);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         // Don't fetch if threadId is not available (e.g., before first message)
@@ -14,7 +18,7 @@ const ThreadExtractions = ({ threadId }) => {
             return;
         }
 
-        const fetchExtractions = async () => {
+        const fetchExtractions = async (): Promise<void> => {
             // Don't set loading if it's just a background refresh
             // setIsLoading(true); // Maybe only set loading on initial load?
             setError(null);
@@ -37,7 +41,7 @@ const ThreadExtractions = ({ threadId }) => {
                     setProblems(data.problems || []);
                     setSolutions(data.solutions || []);
                 }
-            } catch (err) {
+            } catch (err: any) {
                 console.error("Failed to fetch extractions:", err);
                 setError('抽出結果の読み込みに失敗しました。'); // Translated error
                 // Keep stale data? Or clear? Clearing might be less confusing.
@@ -83,13 +87,13 @@ const ThreadExtractions = ({ threadId }) => {
                 <h3 className="font-semibold text-primary text-sm md:text-base">抽出されたインサイト</h3>
                 <span className="badge badge-secondary text-xs">自動抽出</span>
             </div>
-            
+
             {!hasExtractions && (
                 <div className="p-4 bg-white rounded-lg border border-neutral-200 text-neutral-500 italic text-center">
                     このスレッドからはまだインサイトが抽出されていません
                 </div>
             )}
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {problems.length > 0 && (
                     <div className="bg-white p-2 md:p-3 border border-neutral-200 rounded-lg shadow-sm">
@@ -106,7 +110,7 @@ const ThreadExtractions = ({ threadId }) => {
                         </ul>
                     </div>
                 )}
-                
+
                 {solutions.length > 0 && (
                     <div className="bg-white p-2 md:p-3 border border-neutral-200 rounded-lg shadow-sm">
                         <h4 className="font-medium text-success flex items-center gap-1 md:gap-2 mb-1 md:mb-2 text-xs md:text-sm">

@@ -1,26 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import {
+  Question,
+  QuestionDetails,
+  PolicyDraft,
+  DigestDraft
+} from '../types';
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`; // Adjust if your backend runs elsewhere
 
 function VisualizationArea() {
-  const [questions, setQuestions] = useState([]);
-  const [selectedQuestionId, setSelectedQuestionId] = useState(null);
-  const [questionDetails, setQuestionDetails] = useState(null);
-  const [policyDrafts, setPolicyDrafts] = useState([]);
-  const [digestDrafts, setDigestDrafts] = useState([]);
-  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
-  const [isLoadingDrafts, setIsLoadingDrafts] = useState(false);
-  const [isLoadingDigestDrafts, setIsLoadingDigestDrafts] = useState(false);
-  const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
-  const [isGeneratingPolicy, setIsGeneratingPolicy] = useState(false);
-  const [isGeneratingDigest, setIsGeneratingDigest] = useState(false);
-  const [error, setError] = useState(null);
-  const [generationStatus, setGenerationStatus] = useState('');
-  const [digestGenerationStatus, setDigestGenerationStatus] = useState('');
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null);
+  const [questionDetails, setQuestionDetails] = useState<QuestionDetails | null>(null);
+  const [policyDrafts, setPolicyDrafts] = useState<PolicyDraft[]>([]);
+  const [digestDrafts, setDigestDrafts] = useState<DigestDraft[]>([]);
+  const [isLoadingDetails, setIsLoadingDetails] = useState<boolean>(false);
+  const [isLoadingDrafts, setIsLoadingDrafts] = useState<boolean>(false);
+  const [isLoadingDigestDrafts, setIsLoadingDigestDrafts] = useState<boolean>(false);
+  const [isLoadingQuestions, setIsLoadingQuestions] = useState<boolean>(false);
+  const [isGeneratingPolicy, setIsGeneratingPolicy] = useState<boolean>(false);
+  const [isGeneratingDigest, setIsGeneratingDigest] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [generationStatus, setGenerationStatus] = useState<string>('');
+  const [digestGenerationStatus, setDigestGenerationStatus] = useState<string>('');
 
   // Fetch all questions on component mount
   useEffect(() => {
-    const fetchQuestions = async () => {
+    const fetchQuestions = async (): Promise<void> => {
       setIsLoadingQuestions(true);
       setError(null);
       try {
@@ -50,7 +56,7 @@ function VisualizationArea() {
       return;
     }
 
-    const fetchDetails = async () => {
+    const fetchDetails = async (): Promise<void> => {
       setIsLoadingDetails(true);
       setError(null);
       setGenerationStatus('');
@@ -83,7 +89,7 @@ function VisualizationArea() {
       return;
     }
 
-    const fetchDrafts = async () => {
+    const fetchDrafts = async (): Promise<void> => {
       setIsLoadingDrafts(true);
       setError(null);
       try {
@@ -104,7 +110,7 @@ function VisualizationArea() {
 
     fetchDrafts();
   }, [selectedQuestionId]);
-  
+
   // Fetch digest drafts when a question is selected
   useEffect(() => {
     if (!selectedQuestionId) {
@@ -112,7 +118,7 @@ function VisualizationArea() {
       return;
     }
 
-    const fetchDigestDrafts = async () => {
+    const fetchDigestDrafts = async (): Promise<void> => {
       setIsLoadingDigestDrafts(true);
       setError(null);
       try {
@@ -134,12 +140,12 @@ function VisualizationArea() {
     fetchDigestDrafts();
   }, [selectedQuestionId]);
 
-  const handleQuestionSelect = (questionId) => {
+  const handleQuestionSelect = (questionId: string): void => {
     setSelectedQuestionId(prevId => (prevId === questionId ? null : questionId));
   };
 
   // Handle policy generation request
-  const handleGeneratePolicy = async () => {
+  const handleGeneratePolicy = async (): Promise<void> => {
     if (!selectedQuestionId) return;
 
     setIsGeneratingPolicy(true);
@@ -156,7 +162,7 @@ function VisualizationArea() {
       setGenerationStatus('政策生成を開始しました。準備ができ次第、ドラフトが以下に表示されます（更新が必要な場合や、しばらくお待ちいただく場合があります）。');
       setTimeout(() => {
            if (selectedQuestionId) {
-                const fetchDrafts = async () => {
+                const fetchDrafts = async (): Promise<void> => {
                   setIsLoadingDrafts(true);
                   try {
                     const response = await fetch(`${API_BASE_URL}/policy-drafts?questionId=${selectedQuestionId}`);
@@ -180,9 +186,9 @@ function VisualizationArea() {
       setIsGeneratingPolicy(false);
     }
   };
-  
+
   // Handle digest generation request
-  const handleGenerateDigest = async () => {
+  const handleGenerateDigest = async (): Promise<void> => {
     if (!selectedQuestionId) return;
 
     setIsGeneratingDigest(true);
@@ -199,7 +205,7 @@ function VisualizationArea() {
       setDigestGenerationStatus('ダイジェスト生成を開始しました。準備ができ次第、ダイジェストが以下に表示されます（更新が必要な場合や、しばらくお待ちいただく場合があります）。');
       setTimeout(() => {
            if (selectedQuestionId) {
-                const fetchDigestDrafts = async () => {
+                const fetchDigestDrafts = async (): Promise<void> => {
                   setIsLoadingDigestDrafts(true);
                   try {
                     const response = await fetch(`${API_BASE_URL}/digest-drafts?questionId=${selectedQuestionId}`);
@@ -382,7 +388,7 @@ function VisualizationArea() {
                     </div>
                   )}
                 </div>
-                
+
                 {/* Digest Generation Button & Status */}
                 <div className="mb-6 p-4 bg-neutral-50 rounded-lg border border-neutral-200">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -451,7 +457,7 @@ function VisualizationArea() {
                     </div>
                   )}
                 </div>
-                
+
                 {/* Digest Drafts Display */}
                 <div>
                   <h4 className="text-lg font-semibold mb-4 text-success border-b border-neutral-200 pb-2 flex items-center gap-2">

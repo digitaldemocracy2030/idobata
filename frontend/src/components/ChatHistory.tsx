@@ -1,12 +1,17 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
+import { Message } from '../types';
 
-function ChatHistory({ messages }) {
-  const messagesEndRef = useRef(null);
-  
+interface ChatHistoryProps {
+  messages: Message[];
+}
+
+function ChatHistory({ messages }: ChatHistoryProps) {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-  
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -17,7 +22,7 @@ function ChatHistory({ messages }) {
           <p className="text-neutral-400 text-sm">会話を始めましょう</p>
         </div>
       )}
-      
+
       {messages.map((msg, index) => (
         <div key={index} className={`${msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'} animate-fade-in`}>
           <div className="flex flex-col max-w-[85%] sm:max-w-[75%] md:max-w-[65%]">

@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-function ChatInput({ onSendMessage }) {
-  const [message, setMessage] = useState('');
+interface ChatInputProps {
+  onSendMessage: (message: string) => void;
+}
 
-  const handleSubmit = (e) => {
+function ChatInput({ onSendMessage }: ChatInputProps) {
+  const [message, setMessage] = useState<string>('');
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
       onSendMessage(message);
@@ -15,10 +19,10 @@ function ChatInput({ onSendMessage }) {
     <form onSubmit={handleSubmit} className="flex w-full relative">
       <textarea
         value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value)}
         placeholder="メッセージを入力..."
         className="w-full bg-white border border-neutral-300 focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 rounded-xl text-neutral-800 placeholder:text-neutral-400 py-2 md:py-3 px-3 md:px-4 pr-12 md:pr-16 min-h-[50px] md:min-h-[60px] text-sm md:text-base resize-none"
-        onKeyDown={(e) => {
+        onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement> & { isComposing?: boolean, nativeEvent: { isComposing?: boolean } }) => {
           // Only handle Enter key press when not in IME composition
           if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && !e.nativeEvent.isComposing && message.trim()) {
             e.preventDefault();

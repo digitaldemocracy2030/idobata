@@ -1,24 +1,6 @@
 version: '3.8'
 
 services:
-  # --- idea-discussion ---
-  idea-frontend:
-    container_name: idea-frontend-dev
-    image: node:20-alpine # Use a base image, Vite runs on host via volume mount
-    working_dir: /app
-    volumes:
-      - ./idea-discussion/frontend:/app
-      # Add node_modules volume to prevent host node_modules from overwriting container's
-      - /app/node_modules
-    ports:
-      - "5173:5173" # Expose Vite dev server port
-    command: sh -c "npm install && npm run dev -- --host 0.0.0.0" # Install deps if needed and run dev server
-    env_file:
-      - .env # Load environment variables from .env file
-    environment:
-      - NODE_ENV=development
-      - VITE_API_BASE_URL=${IDEA_FRONTEND_API_BASE_URL} # Use variable from .env
-
   idea-backend:
     container_name: idea-backend-dev
     build:
@@ -84,6 +66,24 @@ services:
       - CORS_ORIGIN=http://localhost:5174
     # Run the production start command
     command: npm start
+
+  # --- Unified Frontend ---
+  frontend:
+    container_name: frontend-dev
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      # Add node_modules volume
+      - /app/node_modules
+    ports:
+      - "5173:5173" # idea-discussion/backendのCORS設定に合わせたポート
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - VITE_API_BASE_URL=${IDEA_FRONTEND_API_BASE_URL} # 初期段階ではidea-discussionのAPIを使用
 
   # --- Database ---
   mongo:
