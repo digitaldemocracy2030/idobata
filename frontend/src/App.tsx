@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import DataPage from './pages/DataPage';
 import Top from './pages/Top';
+import About from './pages/About';
 import AppLayout from './components/AppLayout';
 
 function App() {
@@ -38,6 +39,10 @@ export const router = createBrowserRouter([
       {
         path: 'top',
         element: <Top />,
+      },
+      {
+        path: 'about',
+        element: <About />,
       },
     ],
   },
