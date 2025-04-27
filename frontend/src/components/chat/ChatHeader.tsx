@@ -27,11 +27,13 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ onDragStart }) => {
       <div className="w-full flex flex-col items-center py-3">
         <div className="w-10 h-1 bg-neutral-300 rounded-full mb-1" />
       </div>
-      <SheetClose asChild>
-        <Button variant="ghost" size="icon" className="absolute right-2 top-2">
-          <X className="h-5 w-5" />
-        </Button>
-      </SheetClose>
+      <div className="absolute right-2 top-2">
+        <SheetClose asChild>
+          <Button variant="ghost" size="icon" className="h-8 w-8 flex items-center justify-center">
+            <X className="h-5 w-5" />
+          </Button>
+        </SheetClose>
+      </div>
     </div>
   );
 };

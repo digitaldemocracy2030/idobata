@@ -3,7 +3,7 @@ import { Sheet, SheetContent } from '../ui/sheet';
 import { ChatHeader } from './ChatHeader';
 import ExtendedChatHistory from './ExtendedChatHistory';
 import { Button } from '../ui/button';
-import { Send } from 'lucide-react';
+import { Send, Loader2 } from 'lucide-react';
 import { useDraggable } from '../../hooks/useDraggable';
 import { useChat } from './ChatProvider';
 import { useState } from 'react';
@@ -21,6 +21,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
 }) => {
   const { messages, addMessage } = useChat();
   const [inputValue, setInputValue] = useState('');
+  const [isSending, setIsSending] = useState(false);
   const { height, handleDragStart, isDragging } = useDraggable({
     minHeight: 300,
     maxHeight: window.innerHeight * 0.8,
@@ -28,15 +29,33 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
   });
 
   const handleSendMessage = () => {
-    if (inputValue.trim()) {
+    if (inputValue.trim() && !isSending) {
+      setIsSending(true);
       addMessage(inputValue, 'user');
-      onSendMessage?.(inputValue);
+      
+      const message = inputValue;
       setInputValue('');
+      
+      if (onSendMessage) {
+        try {
+          onSendMessage(message);
+          setTimeout(() => {
+            setIsSending(false);
+          }, 1000);
+        } catch (error) {
+          console.error('Error sending message:', error);
+          setIsSending(false);
+        }
+      } else {
+        setTimeout(() => {
+          setIsSending(false);
+        }, 1000);
+      }
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey && !isSending) {
       e.preventDefault();
       handleSendMessage();
     }
@@ -62,15 +81,20 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
               onKeyDown={handleKeyDown}
               placeholder="気になることをAIに質問"
               className="flex-grow px-4 py-2 bg-transparent border-none focus:outline-none text-sm"
+              disabled={isSending}
             />
             <Button
               onClick={handleSendMessage}
               variant="ghost"
               size="icon"
               className="rounded-full h-10 w-10 flex items-center justify-center"
-              disabled={!inputValue.trim()}
+              disabled={!inputValue.trim() || isSending}
             >
-              <Send className="h-5 w-5" />
+              {isSending ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <Send className="h-5 w-5" />
+              )}
             </Button>
           </div>
         </div>
