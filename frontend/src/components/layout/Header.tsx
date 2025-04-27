@@ -17,7 +17,7 @@ const Header = () => {
           <SheetContent side="left" className="w-72">
             <nav className="flex flex-col gap-4 mt-8">
               <Link
-                to="/top"
+                to="/"
                 className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md border-l-4 border-purple-500"
               >
                 ホーム
@@ -33,7 +33,9 @@ const Header = () => {
         </Sheet>
 
         {/* サイトタイトル（中央） */}
-        <h1 className="text-base font-semibold text-center">XX党 みんなの政策フォーラム</h1>
+        <Link to="/top">
+          <h1 className="text-base font-semibold text-center">XX党 みんなの政策フォーラム</h1>
+        </Link>
 
         {/* マイページアイコン（右） */}
         <Button variant="ghost" size="icon" asChild>
