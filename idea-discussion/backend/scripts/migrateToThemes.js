@@ -1,4 +1,3 @@
-import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";
@@ -12,7 +11,9 @@ dotenv.config({ path: path.join(__dirname, "../../..", ".env") });
 const mongoUri = process.env.MONGODB_URI;
 
 if (!mongoUri) {
-  console.error("Error: MONGODB_URI is not defined in the .env file.");
+  console.error(
+    "Error: MONGODB_URI is not defined. Please check .env file or docker-compose.yml file."
+  );
   process.exit(1);
 }
 
