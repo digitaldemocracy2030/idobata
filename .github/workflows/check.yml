@@ -11,6 +11,6 @@ jobs:
       - run: npm install
       # TODO: tsc
       - name: lint
-        run: npm run lint:all
+        run: npm run lint
       - name: test
-        run: npm run test:all
+        run: npm run test

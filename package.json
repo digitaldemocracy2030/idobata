@@ -14,11 +14,8 @@
     "frontend"
   ],
   "scripts": {
-    "lint:all": "npm run lint -ws --include-workspace-root",
-    "format:all": "npm run format -ws --include-workspace-root",
-    "test:all": "npm run test -ws --include-workspace-root",
+    "test": "npm run test -ws",
     "lint": "biome check .",
-    "format": "biome check --write .",
-    "test": "echo 'not implemented yet'"
+    "format": "biome check --write ."
   }
 }
