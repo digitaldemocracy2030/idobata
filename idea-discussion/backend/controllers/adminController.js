@@ -18,29 +18,7 @@ const triggerQuestionGeneration = async (req, res) => {
     }
 };
 
-// Controller to get all problems (非推奨 - 削除予定)
-const getAllProblems = async (req, res) => {
-    console.log('[AdminController] Fetching all problems');
-    try {
-        const problems = await Problem.find().sort({ createdAt: -1 });
-        res.status(200).json(problems);
-    } catch (error) {
-        console.error('[AdminController] Error fetching problems:', error);
-        res.status(500).json({ message: 'Failed to fetch problems' });
-    }
-};
 
-// Controller to get all solutions (非推奨 - 削除予定)
-const getAllSolutions = async (req, res) => {
-    console.log('[AdminController] Fetching all solutions');
-    try {
-        const solutions = await Solution.find().sort({ createdAt: -1 });
-        res.status(200).json(solutions);
-    } catch (error) {
-        console.error('[AdminController] Error fetching solutions:', error);
-        res.status(500).json({ message: 'Failed to fetch solutions' });
-    }
-};
 
 const getProblemsByTheme = async (req, res) => {
     const { themeId } = req.params;
@@ -96,8 +74,6 @@ const triggerQuestionGenerationByTheme = async (req, res) => {
 
 export { 
     triggerQuestionGeneration, 
-    getAllProblems, 
-    getAllSolutions, 
     getProblemsByTheme, 
     getSolutionsByTheme, 
     triggerQuestionGenerationByTheme 

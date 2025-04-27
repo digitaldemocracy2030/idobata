@@ -6,16 +6,6 @@ import mongoose from 'mongoose';
 import { generatePolicyDraft } from '../workers/policyGenerator.js'; // Import the worker function
 import { generateDigestDraft } from '../workers/digestGenerator.js'; // Import the digest worker function
 
-// GET /api/questions - Fetch all sharp questions (非推奨 - 削除予定)
-export const getAllQuestions = async (req, res) => {
-    try {
-        const questions = await SharpQuestion.find().sort({ createdAt: -1 });
-        res.status(200).json(questions);
-    } catch (error) {
-        console.error('Error fetching all questions:', error);
-        res.status(500).json({ message: 'Error fetching questions', error: error.message });
-    }
-};
 
 // GET /api/themes/:themeId/questions/:questionId/details - 特定の質問の詳細を取得
 export const getQuestionDetails = async (req, res) => {
