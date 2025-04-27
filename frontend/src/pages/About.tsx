@@ -1,11 +1,23 @@
+import { useRef } from 'react';
 import BreadcrumbView from '../components/common/BreadcrumbView';
 import AboutSection from '../components/common/AboutSection';
+import { FloatingChat, FloatingChatRef } from '../components/chat/FloatingChat';
 
 const About = () => {
   const breadcrumbItems = [
     { label: 'TOP', href: '/' },
     { label: 'このサイトについて', href: '/about' },
   ];
+  
+  const chatRef = useRef<FloatingChatRef>(null);
+
+  const handleSendMessage = (message: string) => {
+    console.log('Message sent:', message);
+    
+    setTimeout(() => {
+      chatRef.current?.addMessage('メッセージを受け取りました。', 'system');
+    }, 500);
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -80,6 +92,8 @@ const About = () => {
           © xxparty-policy.com
         </a>
       </div>
+      
+      <FloatingChat ref={chatRef} onSendMessage={handleSendMessage} />
     </div>
   );
 };

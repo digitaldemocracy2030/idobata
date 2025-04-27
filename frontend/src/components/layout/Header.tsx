@@ -1,5 +1,10 @@
 import { Menu, User } from 'lucide-react';
-import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
+import {
+  NavigationSheet,
+  NavigationSheetContent,
+  NavigationSheetTrigger,
+  NavigationRouterLink,
+} from '../ui/navigation/menu-sheet';
 import { Button } from '../ui/button';
 import { Link } from 'react-router-dom';
 
@@ -8,29 +13,35 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b border-purple-200 py-3 px-4">
       <div className="flex justify-between items-center">
         {/* ハンバーガーメニュー（左） */}
-        <Sheet>
-          <SheetTrigger asChild>
+        <NavigationSheet>
+          <NavigationSheetTrigger asChild>
             <Button variant="ghost" size="icon">
               <Menu className="h-6 w-6" />
             </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-72">
+          </NavigationSheetTrigger>
+          <NavigationSheetContent className="w-72">
             <nav className="flex flex-col gap-4 mt-8">
-              <Link
+              <NavigationRouterLink
                 to="/"
                 className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md border-l-4 border-purple-500"
               >
                 ホーム
-              </Link>
-              <Link to="/about" className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md">
+              </NavigationRouterLink>
+              <NavigationRouterLink
+                to="/about"
+                className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md"
+              >
                 このサイトについて
-              </Link>
-              <Link to="/mypage" className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md">
+              </NavigationRouterLink>
+              <NavigationRouterLink
+                to="/mypage"
+                className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md"
+              >
                 マイページ
-              </Link>
+              </NavigationRouterLink>
             </nav>
-          </SheetContent>
-        </Sheet>
+          </NavigationSheetContent>
+        </NavigationSheet>
 
         {/* サイトタイトル（中央） */}
         <Link to="/top">
@@ -38,11 +49,11 @@ const Header = () => {
         </Link>
 
         {/* マイページアイコン（右） */}
-        <Button variant="ghost" size="icon" asChild>
-          <Link to="/mypage">
+        <Link to="/mypage">
+          <Button variant="ghost" size="icon">
             <User className="h-6 w-6" />
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </div>
     </header>
   );
