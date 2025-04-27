@@ -1,5 +1,5 @@
 // src/components/LoadingIndicator.tsx
-import React from 'react';
+import type React from "react";
 
 const LoadingIndicator: React.FC = () => {
   return (

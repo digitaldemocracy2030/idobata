@@ -1,8 +1,14 @@
-import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
-import { FloatingChatButton } from './FloatingChatButton';
-import { ChatSheet } from './ChatSheet';
-import { ChatProvider, useChat } from './ChatProvider';
-import { MessageType, ExtendedMessage } from '../../types';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
+import { ExtendedMessage, type MessageType } from "../../types";
+import { ChatProvider, useChat } from "./ChatProvider";
+import { ChatSheet } from "./ChatSheet";
+import { FloatingChatButton } from "./FloatingChatButton";
 
 interface FloatingChatProps {
   onSendMessage?: (message: string) => void;
@@ -22,12 +28,12 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
   ({ onSendMessage, onClose, onOpen }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
     const [hasUnread, setHasUnread] = useState(false);
-    const { 
-      addMessage, 
-      startStreamingMessage, 
-      updateStreamingMessage, 
-      endStreamingMessage, 
-      clearMessages 
+    const {
+      addMessage,
+      startStreamingMessage,
+      updateStreamingMessage,
+      endStreamingMessage,
+      clearMessages,
     } = useChat();
 
     const handleOpen = () => {
@@ -85,4 +91,4 @@ export const FloatingChat = forwardRef<FloatingChatRef, FloatingChatProps>(
   }
 );
 
-FloatingChat.displayName = 'FloatingChat';
+FloatingChat.displayName = "FloatingChat";

@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom';
-import { Button } from '../ui/button';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "../ui/button";
 
 const HeroSection = () => {
   return (

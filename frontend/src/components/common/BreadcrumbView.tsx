@@ -15,7 +15,7 @@ export function BreadcrumbView({ items }: BreadcrumbViewProps) {
           <a href={item.href} className="underline">
             {item.label}
           </a>
-          {index < items.length - 1 && ' ＞ '}
+          {index < items.length - 1 && " ＞ "}
         </span>
       ))}
     </nav>

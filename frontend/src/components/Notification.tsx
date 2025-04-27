@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 interface NotificationProps {
   message: string;
@@ -6,7 +6,11 @@ interface NotificationProps {
   duration?: number;
 }
 
-function Notification({ message, onClose, duration = 5000 }: NotificationProps) {
+function Notification({
+  message,
+  onClose,
+  duration = 5000,
+}: NotificationProps) {
   const [isVisible, setIsVisible] = useState<boolean>(true);
 
   useEffect(() => {
@@ -30,7 +34,7 @@ function Notification({ message, onClose, duration = 5000 }: NotificationProps) 
   return (
     <div
       className={`absolute top-0 left-0 right-0 z-30 transition-all duration-500 ease-in-out ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full"
       }`}
     >
       <div className="bg-white text-primary-dark py-2 px-3 shadow-md rounded-lg border border-primary-light/30 mt-2 mb-2 mx-2">

@@ -1,5 +1,5 @@
-import { ArrowRight, MessageSquare, HelpCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ArrowRight, HelpCircle, MessageSquare } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface ThemeCardProps {
   id?: number;
@@ -20,7 +20,11 @@ const ThemeCard = ({
   problemCount,
   solutionCount,
 }: ThemeCardProps) => {
-  if (description !== undefined && keyQuestionCount !== undefined && commentCount !== undefined) {
+  if (
+    description !== undefined &&
+    keyQuestionCount !== undefined &&
+    commentCount !== undefined
+  ) {
     return (
       <div className="border border-neutral-200 rounded-lg p-4 bg-white hover:shadow-md transition-all duration-200">
         <h3 className="font-semibold text-lg mb-2">{title}</h3>
@@ -63,7 +67,10 @@ const ThemeCard = ({
             解決策: {solutionCount}
           </span>
         </div>
-        <Link to={`/themes/${id}`} className="bg-purple-500 text-white p-1 rounded-md inline-block">
+        <Link
+          to={`/themes/${id}`}
+          className="bg-purple-500 text-white p-1 rounded-md inline-block"
+        >
           <ArrowRight className="h-5 w-5" />
         </Link>
       </div>

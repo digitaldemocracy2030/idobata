@@ -6,7 +6,13 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4"
   },
-  "workspaces": ["policy-edit/backend", "policy-edit/frontend", "policy-edit/mcp", "idea-discussion/backend", "frontend"],
+  "workspaces": [
+    "policy-edit/backend",
+    "policy-edit/frontend",
+    "policy-edit/mcp",
+    "idea-discussion/backend",
+    "frontend"
+  ],
   "scripts": {
     "lint:all": "npm run lint -ws --include-workspace-root",
     "format:all": "npm run format -ws --include-workspace-root",

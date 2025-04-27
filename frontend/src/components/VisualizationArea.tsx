@@ -1,23 +1,33 @@
-import { useState, useEffect } from 'react';
-import { Question, QuestionDetails, PolicyDraft, DigestDraft } from '../types';
+import { useEffect, useState } from "react";
+import type {
+  DigestDraft,
+  PolicyDraft,
+  Question,
+  QuestionDetails,
+} from "../types";
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`; // Adjust if your backend runs elsewhere
 
 function VisualizationArea() {
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null);
-  const [questionDetails, setQuestionDetails] = useState<QuestionDetails | null>(null);
+  const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(
+    null
+  );
+  const [questionDetails, setQuestionDetails] =
+    useState<QuestionDetails | null>(null);
   const [policyDrafts, setPolicyDrafts] = useState<PolicyDraft[]>([]);
   const [digestDrafts, setDigestDrafts] = useState<DigestDraft[]>([]);
   const [isLoadingDetails, setIsLoadingDetails] = useState<boolean>(false);
   const [isLoadingDrafts, setIsLoadingDrafts] = useState<boolean>(false);
-  const [isLoadingDigestDrafts, setIsLoadingDigestDrafts] = useState<boolean>(false);
+  const [isLoadingDigestDrafts, setIsLoadingDigestDrafts] =
+    useState<boolean>(false);
   const [isLoadingQuestions, setIsLoadingQuestions] = useState<boolean>(false);
   const [isGeneratingPolicy, setIsGeneratingPolicy] = useState<boolean>(false);
   const [isGeneratingDigest, setIsGeneratingDigest] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [generationStatus, setGenerationStatus] = useState<string>('');
-  const [digestGenerationStatus, setDigestGenerationStatus] = useState<string>('');
+  const [generationStatus, setGenerationStatus] = useState<string>("");
+  const [digestGenerationStatus, setDigestGenerationStatus] =
+    useState<string>("");
 
   // Fetch all questions on component mount
   useEffect(() => {
@@ -26,7 +36,7 @@ function VisualizationArea() {
       setError(null);
       try {
         const response = await fetch(
-          `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/questions`
+          `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/questions`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -34,8 +44,8 @@ function VisualizationArea() {
         const data = await response.json();
         setQuestions(data);
       } catch (e) {
-        console.error('Failed to fetch questions:', e);
-        setError('問いの読み込みに失敗しました。');
+        console.error("Failed to fetch questions:", e);
+        setError("問いの読み込みに失敗しました。");
       } finally {
         setIsLoadingQuestions(false);
       }
@@ -49,21 +59,21 @@ function VisualizationArea() {
       setQuestionDetails(null);
       setPolicyDrafts([]);
       setError(null);
-      setGenerationStatus('');
+      setGenerationStatus("");
       return;
     }
 
     const fetchDetails = async (): Promise<void> => {
       setIsLoadingDetails(true);
       setError(null);
-      setGenerationStatus('');
+      setGenerationStatus("");
       try {
         const response = await fetch(
-          `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/questions/${selectedQuestionId}/details`
+          `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/questions/${selectedQuestionId}/details`
         );
         if (!response.ok) {
           if (response.status === 404) {
-            throw new Error('問いの詳細が見つかりません。');
+            throw new Error("問いの詳細が見つかりません。");
           } else {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
@@ -71,8 +81,10 @@ function VisualizationArea() {
         const data = await response.json();
         setQuestionDetails(data);
       } catch (e) {
-        console.error('Failed to fetch question details:', e);
-        setError(`問い (${selectedQuestionId}) の詳細読み込みに失敗しました。 ${e.message}`);
+        console.error("Failed to fetch question details:", e);
+        setError(
+          `問い (${selectedQuestionId}) の詳細読み込みに失敗しました。 ${e.message}`
+        );
         setQuestionDetails(null);
       } finally {
         setIsLoadingDetails(false);
@@ -93,7 +105,7 @@ function VisualizationArea() {
       setError(null);
       try {
         const response = await fetch(
-          `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/policy-drafts?questionId=${selectedQuestionId}`
+          `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/policy-drafts?questionId=${selectedQuestionId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -101,7 +113,7 @@ function VisualizationArea() {
         const data = await response.json();
         setPolicyDrafts(data);
       } catch (e) {
-        console.error('Failed to fetch policy drafts:', e);
+        console.error("Failed to fetch policy drafts:", e);
         setError(
           `問い (${selectedQuestionId}) の政策ドラフト読み込みに失敗しました。 ${e.message}`
         );
@@ -126,7 +138,7 @@ function VisualizationArea() {
       setError(null);
       try {
         const response = await fetch(
-          `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/digest-drafts?questionId=${selectedQuestionId}`
+          `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/digest-drafts?questionId=${selectedQuestionId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -134,7 +146,7 @@ function VisualizationArea() {
         const data = await response.json();
         setDigestDrafts(data);
       } catch (e) {
-        console.error('Failed to fetch digest drafts:', e);
+        console.error("Failed to fetch digest drafts:", e);
         setError(
           `問い (${selectedQuestionId}) のダイジェスト読み込みに失敗しました。 ${e.message}`
         );
@@ -148,7 +160,9 @@ function VisualizationArea() {
   }, [selectedQuestionId]);
 
   const handleQuestionSelect = (questionId: string): void => {
-    setSelectedQuestionId(prevId => (prevId === questionId ? null : questionId));
+    setSelectedQuestionId((prevId) =>
+      prevId === questionId ? null : questionId
+    );
   };
 
   // Handle policy generation request
@@ -157,22 +171,24 @@ function VisualizationArea() {
 
     setIsGeneratingPolicy(true);
     setError(null);
-    setGenerationStatus('政策ドラフトを生成中...');
+    setGenerationStatus("政策ドラフトを生成中...");
     try {
       const response = await fetch(
-        `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/questions/${selectedQuestionId}/generate-policy`,
+        `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/questions/${selectedQuestionId}/generate-policy`,
         {
-          method: 'POST',
+          method: "POST",
         }
       );
       if (!response.ok) {
         const errorData = await response
           .json()
-          .catch(() => ({ message: '政策生成の開始に失敗しました。' }));
-        throw new Error(`HTTP error! status: ${response.status}. ${errorData.message}`);
+          .catch(() => ({ message: "政策生成の開始に失敗しました。" }));
+        throw new Error(
+          `HTTP error! status: ${response.status}. ${errorData.message}`
+        );
       }
       setGenerationStatus(
-        '政策生成を開始しました。準備ができ次第、ドラフトが以下に表示されます（更新が必要な場合や、しばらくお待ちいただく場合があります）。'
+        "政策生成を開始しました。準備ができ次第、ドラフトが以下に表示されます（更新が必要な場合や、しばらくお待ちいただく場合があります）。"
       );
       setTimeout(() => {
         if (selectedQuestionId) {
@@ -180,13 +196,13 @@ function VisualizationArea() {
             setIsLoadingDrafts(true);
             try {
               const response = await fetch(
-                `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/policy-drafts?questionId=${selectedQuestionId}`
+                `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/policy-drafts?questionId=${selectedQuestionId}`
               );
-              if (!response.ok) throw new Error('ドラフトの取得に失敗しました');
+              if (!response.ok) throw new Error("ドラフトの取得に失敗しました");
               const data = await response.json();
               setPolicyDrafts(data);
             } catch (e) {
-              console.error('Delayed draft fetch failed:', e);
+              console.error("Delayed draft fetch failed:", e);
             } finally {
               setIsLoadingDrafts(false);
             }
@@ -195,9 +211,9 @@ function VisualizationArea() {
         }
       }, 10000);
     } catch (e) {
-      console.error('Failed to trigger policy generation:', e);
+      console.error("Failed to trigger policy generation:", e);
       setError(`政策生成の開始に失敗しました: ${e.message}`);
-      setGenerationStatus('');
+      setGenerationStatus("");
     } finally {
       setIsGeneratingPolicy(false);
     }
@@ -209,22 +225,24 @@ function VisualizationArea() {
 
     setIsGeneratingDigest(true);
     setError(null);
-    setDigestGenerationStatus('ダイジェストを生成中...');
+    setDigestGenerationStatus("ダイジェストを生成中...");
     try {
       const response = await fetch(
-        `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/questions/${selectedQuestionId}/generate-digest`,
+        `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/questions/${selectedQuestionId}/generate-digest`,
         {
-          method: 'POST',
+          method: "POST",
         }
       );
       if (!response.ok) {
         const errorData = await response
           .json()
-          .catch(() => ({ message: 'ダイジェスト生成の開始に失敗しました。' }));
-        throw new Error(`HTTP error! status: ${response.status}. ${errorData.message}`);
+          .catch(() => ({ message: "ダイジェスト生成の開始に失敗しました。" }));
+        throw new Error(
+          `HTTP error! status: ${response.status}. ${errorData.message}`
+        );
       }
       setDigestGenerationStatus(
-        'ダイジェスト生成を開始しました。準備ができ次第、ダイジェストが以下に表示されます（更新が必要な場合や、しばらくお待ちいただく場合があります）。'
+        "ダイジェスト生成を開始しました。準備ができ次第、ダイジェストが以下に表示されます（更新が必要な場合や、しばらくお待ちいただく場合があります）。"
       );
       setTimeout(() => {
         if (selectedQuestionId) {
@@ -232,13 +250,14 @@ function VisualizationArea() {
             setIsLoadingDigestDrafts(true);
             try {
               const response = await fetch(
-                `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/digest-drafts?questionId=${selectedQuestionId}`
+                `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/digest-drafts?questionId=${selectedQuestionId}`
               );
-              if (!response.ok) throw new Error('ダイジェストの取得に失敗しました');
+              if (!response.ok)
+                throw new Error("ダイジェストの取得に失敗しました");
               const data = await response.json();
               setDigestDrafts(data);
             } catch (e) {
-              console.error('Delayed digest fetch failed:', e);
+              console.error("Delayed digest fetch failed:", e);
             } finally {
               setIsLoadingDigestDrafts(false);
             }
@@ -247,9 +266,9 @@ function VisualizationArea() {
         }
       }, 10000);
     } catch (e) {
-      console.error('Failed to trigger digest generation:', e);
+      console.error("Failed to trigger digest generation:", e);
       setError(`ダイジェスト生成の開始に失敗しました: ${e.message}`);
-      setDigestGenerationStatus('');
+      setDigestGenerationStatus("");
     } finally {
       setIsGeneratingDigest(false);
     }
@@ -298,14 +317,14 @@ function VisualizationArea() {
               </div>
             ) : questions.length > 0 ? (
               <ul className="space-y-2 overflow-y-auto max-h-[calc(100vh-300px)]">
-                {questions.map(q => (
+                {questions.map((q) => (
                   <li key={q._id}>
                     <button
                       onClick={() => handleQuestionSelect(q._id)}
                       className={`w-full text-left p-3 rounded-lg transition-all duration-200 text-sm ${
                         selectedQuestionId === q._id
-                          ? 'bg-neutral-700 text-white shadow-md'
-                          : 'bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-200 hover:border-neutral-300'
+                          ? "bg-neutral-700 text-white shadow-md"
+                          : "bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-200 hover:border-neutral-300"
                       }`}
                     >
                       {q.questionText}
@@ -316,7 +335,9 @@ function VisualizationArea() {
             ) : (
               <div className="p-6 text-center text-neutral-500 text-sm border border-dashed border-neutral-300 rounded-lg">
                 <p>まだ問いが生成されていません</p>
-                <p className="mt-2 text-xs">管理パネルから生成してみてください</p>
+                <p className="mt-2 text-xs">
+                  管理パネルから生成してみてください
+                </p>
               </div>
             )}
           </div>
@@ -349,7 +370,7 @@ function VisualizationArea() {
                     <div className="overflow-y-auto max-h-[300px] pr-2">
                       {questionDetails.relatedProblems.length > 0 ? (
                         <ul className="space-y-3">
-                          {questionDetails.relatedProblems.map(p => (
+                          {questionDetails.relatedProblems.map((p) => (
                             <li
                               key={p._id}
                               className="p-3 bg-white rounded-lg border border-neutral-200 text-sm text-neutral-700 shadow-sm"
@@ -380,7 +401,7 @@ function VisualizationArea() {
                     <div className="overflow-y-auto max-h-[300px] pr-2">
                       {questionDetails.relatedSolutions.length > 0 ? (
                         <ul className="space-y-3">
-                          {questionDetails.relatedSolutions.map(s => (
+                          {questionDetails.relatedSolutions.map((s) => (
                             <li
                               key={s._id}
                               className="p-3 bg-white rounded-lg border border-neutral-200 text-sm text-neutral-700 shadow-sm"
@@ -444,7 +465,7 @@ function VisualizationArea() {
                           生成中...
                         </span>
                       ) : (
-                        '政策ドラフト生成'
+                        "政策ドラフト生成"
                       )}
                     </button>
                   </div>
@@ -468,7 +489,11 @@ function VisualizationArea() {
                     </div>
                     <button
                       onClick={handleGenerateDigest}
-                      disabled={isGeneratingDigest || isLoadingDetails || policyDrafts.length === 0}
+                      disabled={
+                        isGeneratingDigest ||
+                        isLoadingDetails ||
+                        policyDrafts.length === 0
+                      }
                       className="btn bg-success text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm whitespace-nowrap hover:bg-success/90"
                     >
                       {isGeneratingDigest ? (
@@ -496,7 +521,7 @@ function VisualizationArea() {
                           生成中...
                         </span>
                       ) : (
-                        'ダイジェスト生成'
+                        "ダイジェスト生成"
                       )}
                     </button>
                   </div>
@@ -523,7 +548,7 @@ function VisualizationArea() {
                     </div>
                   ) : policyDrafts.length > 0 ? (
                     <div className="space-y-4 overflow-y-auto max-h-[400px] pr-2">
-                      {policyDrafts.map(draft => (
+                      {policyDrafts.map((draft) => (
                         <div
                           key={draft._id}
                           className="card p-4 border border-neutral-200 bg-white shadow-sm hover:shadow-md transition-all duration-200"
@@ -533,22 +558,28 @@ function VisualizationArea() {
                           </h5>
                           <div className="flex items-center gap-2 mb-3">
                             <span className="badge badge-primary text-xs">
-                              v{draft.version || '1'}
+                              v{draft.version || "1"}
                             </span>
                             <span className="text-xs text-neutral-500">
                               {new Date(draft.createdAt).toLocaleString()}
                             </span>
                           </div>
                           <div className="prose prose-sm max-w-none text-neutral-700 bg-neutral-50 p-4 rounded-lg border border-neutral-200">
-                            <p className="whitespace-pre-wrap">{draft.content}</p>
+                            <p className="whitespace-pre-wrap">
+                              {draft.content}
+                            </p>
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
                     <div className="p-6 text-center text-neutral-500 text-sm border border-dashed border-neutral-300 rounded-lg">
-                      <p>この問いに対する政策ドラフトはまだ生成されていません</p>
-                      <p className="mt-2 text-xs">上のボタンから生成を開始できます</p>
+                      <p>
+                        この問いに対する政策ドラフトはまだ生成されていません
+                      </p>
+                      <p className="mt-2 text-xs">
+                        上のボタンから生成を開始できます
+                      </p>
                     </div>
                   )}
                 </div>
@@ -569,30 +600,38 @@ function VisualizationArea() {
                     </div>
                   ) : digestDrafts.length > 0 ? (
                     <div className="space-y-4 overflow-y-auto max-h-[400px] pr-2">
-                      {digestDrafts.map(draft => (
+                      {digestDrafts.map((draft) => (
                         <div
                           key={draft._id}
                           className="card p-4 border border-success/30 bg-success/5 shadow-sm hover:shadow-md transition-all duration-200"
                         >
-                          <h5 className="font-semibold text-success text-lg mb-2">{draft.title}</h5>
+                          <h5 className="font-semibold text-success text-lg mb-2">
+                            {draft.title}
+                          </h5>
                           <div className="flex items-center gap-2 mb-3">
                             <span className="bg-success text-white text-xs px-2 py-1 rounded-full">
-                              v{draft.version || '1'}
+                              v{draft.version || "1"}
                             </span>
                             <span className="text-xs text-neutral-500">
                               {new Date(draft.createdAt).toLocaleString()}
                             </span>
                           </div>
                           <div className="prose prose-sm max-w-none text-neutral-700 bg-white p-4 rounded-lg border border-success/20">
-                            <p className="whitespace-pre-wrap">{draft.content}</p>
+                            <p className="whitespace-pre-wrap">
+                              {draft.content}
+                            </p>
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
                     <div className="p-6 text-center text-neutral-500 text-sm border border-dashed border-success/30 rounded-lg">
-                      <p>この問いに対するダイジェストはまだ生成されていません</p>
-                      <p className="mt-2 text-xs">上のボタンから生成を開始できます</p>
+                      <p>
+                        この問いに対するダイジェストはまだ生成されていません
+                      </p>
+                      <p className="mt-2 text-xs">
+                        上のボタンから生成を開始できます
+                      </p>
                       {policyDrafts.length === 0 && (
                         <p className="mt-2 text-xs text-amber-600">
                           ※ダイジェスト生成には政策ドラフトが必要です
@@ -605,7 +644,9 @@ function VisualizationArea() {
             ) : selectedQuestionId && !isLoadingDetails ? (
               <div className="p-6 text-center text-red-600 text-sm border border-dashed border-red-300 rounded-lg">
                 <p>選択された問いの詳細を読み込めませんでした</p>
-                <p className="mt-2 text-xs">別の問いを選択するか、ページを更新してみてください</p>
+                <p className="mt-2 text-xs">
+                  別の問いを選択するか、ページを更新してみてください
+                </p>
               </div>
             ) : (
               <div className="p-12 text-center text-neutral-500 flex flex-col items-center justify-center h-full">
@@ -623,7 +664,9 @@ function VisualizationArea() {
                     d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <p className="text-lg font-medium mb-2">問いを選択してください</p>
+                <p className="text-lg font-medium mb-2">
+                  問いを選択してください
+                </p>
                 <p className="text-sm">
                   リストから問いを選択すると、詳細と政策オプションが表示されます
                 </p>
