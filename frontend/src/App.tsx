@@ -4,6 +4,7 @@ import MainPage from './pages/MainPage';
 import DataPage from './pages/DataPage';
 import Top from './pages/Top';
 import About from './pages/About';
+import Themes from './pages/Themes';
 import AppLayout from './components/AppLayout';
 
 function App() {
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
       {
         path: 'about',
         element: <About />,
+      },
+      {
+        path: 'themes',
+        element: <Themes />,
       },
     ],
   },
