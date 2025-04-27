@@ -1,11 +1,11 @@
 # Use a recent Node LTS version
 FROM node:20-alpine
 
-# Set the working directory inside the container (project root context)
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy root package files first to leverage Docker cache
-# Assumes the build context is the project root directory
+# Copy package files and install dependencies
+# Copy only package files first to leverage Docker cache
 COPY package.json package-lock.json ./
 
 # Copy the specific workspace's package.json
@@ -13,12 +13,8 @@ COPY package.json package-lock.json ./
 COPY idea-discussion/backend/package.json ./idea-discussion/backend/
 
 # Install dependencies ONLY for the backend workspace, including devDependencies
-# IMPORTANT: Replace 'your-backend-package-name' with the actual package name
-#            defined in idea-discussion/backend/package.json
 # This command runs from the project root (/app)
 RUN npm install --workspace=idobata-idea-discussion-backend
-# Alternative for npm v7+ if the above doesn't work as expected:
-# RUN npm install --workspaces --include=your-backend-package-name --include-workspace-root
 
 # Set the working directory to the specific backend workspace
 WORKDIR /app/idea-discussion/backend
