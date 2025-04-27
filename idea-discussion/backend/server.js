@@ -4,12 +4,7 @@ import mongoose from 'mongoose';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { callLLM } from './services/llmService.js'; // Import LLM service
-import chatRoutes from './routes/chatRoutes.js'; // Import chat routes
-import adminRoutes from './routes/adminRoutes.js'; // Import admin routes
-import questionRoutes from './routes/questionRoutes.js'; // Import question routes
-import policyRoutes from './routes/policyRoutes.js'; // Import policy routes
-import digestRoutes from './routes/digestRoutes.js'; // Import digest routes
-import importRoutes from './routes/importRoutes.js'; // Import import routes
+import themeRoutes from './routes/themeRoutes.js'; // Import theme routes
 
 // Get __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -51,13 +46,27 @@ app.get('/api/health', (req, res) => {
     res.json({ status: "ok", timestamp: new Date() });
 });
 
-// Placeholder for future routes
-app.use('/api/chat', chatRoutes);
-app.use('/api/admin', adminRoutes); // Use admin routes
-app.use('/api/questions', questionRoutes); // Use question routes
-app.use('/api/policy-drafts', policyRoutes); // Use policy routes
-app.use('/api/digest-drafts', digestRoutes); // Use digest routes
-app.use('/api/import', importRoutes); // Use import routes
+// Import theme-based routes
+import themeQuestionRoutes from './routes/themeQuestionRoutes.js';
+import themeProblemRoutes from './routes/themeProblemRoutes.js';
+import themeSolutionRoutes from './routes/themeSolutionRoutes.js';
+import themeGenerateQuestionsRoutes from './routes/themeGenerateQuestionsRoutes.js';
+import themePolicyRoutes from './routes/themePolicyRoutes.js';
+import themeDigestRoutes from './routes/themeDigestRoutes.js';
+import themeImportRoutes from './routes/themeImportRoutes.js';
+import themeChatRoutes from './routes/themeChatRoutes.js';
+
+// Theme management routes
+app.use('/api/themes', themeRoutes);
+
+app.use('/api/themes/:themeId/questions', themeQuestionRoutes);
+app.use('/api/themes/:themeId/problems', themeProblemRoutes);
+app.use('/api/themes/:themeId/solutions', themeSolutionRoutes);
+app.use('/api/themes/:themeId/generate-questions', themeGenerateQuestionsRoutes);
+app.use('/api/themes/:themeId/policy-drafts', themePolicyRoutes);
+app.use('/api/themes/:themeId/digest-drafts', themeDigestRoutes);
+app.use('/api/themes/:themeId/import', themeImportRoutes);
+app.use('/api/themes/:themeId/chat', themeChatRoutes);
 
 // --- Serve static files in production ---
 // This section will be useful when deploying to production

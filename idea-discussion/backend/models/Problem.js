@@ -30,6 +30,11 @@ const problemSchema = new mongoose.Schema({
         required: true,
         default: 1,
     },
+    themeId: {  // 追加：所属するテーマのID
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Theme',
+        required: true,
+    }
 }, { timestamps: true }); // createdAt, updatedAt を自動追加
 
 const Problem = mongoose.model('Problem', problemSchema);

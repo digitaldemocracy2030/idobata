@@ -9,6 +9,11 @@ const sharpQuestionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Problem',
     }],
+    themeId: {  // 追加：所属するテーマのID
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Theme',
+        required: true,
+    }
 }, { timestamps: true }); // createdAt, updatedAt を自動追加 (todo.md指示)
 
 const SharpQuestion = mongoose.model('SharpQuestion', sharpQuestionSchema);
