@@ -23,7 +23,7 @@ COPY --from=mcp-builder /app/node_modules ./node_modules
 
 WORKDIR /app/policy-edit/backend
 # Copy the backend source code
-COPY ./policy-edit/backend ./policy-edit/backend/
+COPY ./policy-edit/backend ./
 # Build backend
 RUN npm run build
 
