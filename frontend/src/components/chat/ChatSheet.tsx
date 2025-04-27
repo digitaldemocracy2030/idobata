@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sheet, SheetContent } from '../ui/sheet';
+import { ChatSheet as BaseChatSheet, ChatSheetContent } from '../ui/chat/chat-sheet';
 import { ChatHeader } from './ChatHeader';
 import ExtendedChatHistory from './ExtendedChatHistory';
 import { Button } from '../ui/button';
@@ -14,15 +14,11 @@ interface ChatSheetProps {
   onSendMessage?: (message: string) => void;
 }
 
-export const ChatSheet: React.FC<ChatSheetProps> = ({
-  isOpen,
-  onClose,
-  onSendMessage,
-}) => {
+export const ChatSheet: React.FC<ChatSheetProps> = ({ isOpen, onClose, onSendMessage }) => {
   const { messages, addMessage } = useChat();
   const [inputValue, setInputValue] = useState('');
   const [isSending, setIsSending] = useState(false);
-  const { height, handleDragStart, isDragging } = useDraggable({
+  const { height, handleDragStart } = useDraggable({
     minHeight: 300,
     maxHeight: window.innerHeight * 0.8,
     initialHeight: 500,
@@ -32,10 +28,10 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
     if (inputValue.trim() && !isSending) {
       setIsSending(true);
       addMessage(inputValue, 'user');
-      
+
       const message = inputValue;
       setInputValue('');
-      
+
       if (onSendMessage) {
         try {
           onSendMessage(message);
@@ -62,9 +58,8 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent
-        side="bottom"
+    <BaseChatSheet open={isOpen} onOpenChange={onClose}>
+      <ChatSheetContent
         className="p-0 h-auto rounded-t-xl overflow-hidden"
         style={{ height: `${height}px` }}
       >
@@ -77,7 +72,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
             <input
               type="text"
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={e => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="気になることをAIに質問"
               className="flex-grow px-4 py-2 bg-transparent border-none focus:outline-none text-sm"
@@ -98,7 +93,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
             </Button>
           </div>
         </div>
-      </SheetContent>
-    </Sheet>
+      </ChatSheetContent>
+    </BaseChatSheet>
   );
 };

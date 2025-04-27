@@ -3,6 +3,7 @@ import {
   NavigationSheet,
   NavigationSheetContent,
   NavigationSheetTrigger,
+  NavigationRouterLink,
 } from '../ui/navigation/menu-sheet';
 import { Button } from '../ui/button';
 import { Link } from 'react-router-dom';
@@ -20,18 +21,24 @@ const Header = () => {
           </NavigationSheetTrigger>
           <NavigationSheetContent className="w-72">
             <nav className="flex flex-col gap-4 mt-8">
-              <Link
+              <NavigationRouterLink
                 to="/"
                 className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md border-l-4 border-purple-500"
               >
                 ホーム
-              </Link>
-              <Link to="/about" className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md">
+              </NavigationRouterLink>
+              <NavigationRouterLink
+                to="/about"
+                className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md"
+              >
                 このサイトについて
-              </Link>
-              <Link to="/mypage" className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md">
+              </NavigationRouterLink>
+              <NavigationRouterLink
+                to="/mypage"
+                className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md"
+              >
                 マイページ
-              </Link>
+              </NavigationRouterLink>
             </nav>
           </NavigationSheetContent>
         </NavigationSheet>
