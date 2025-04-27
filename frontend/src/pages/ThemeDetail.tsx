@@ -1,12 +1,22 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import BreadcrumbView from '../components/common/BreadcrumbView';
 import KeyQuestionCard from '../components/theme/KeyQuestionCard';
 import CommentCard from '../components/theme/CommentCard';
+import { FloatingChat, FloatingChatRef } from '../components/chat/FloatingChat';
 
 const ThemeDetail = () => {
   const { themeId } = useParams<{ themeId: string }>();
   const [activeTab, setActiveTab] = useState<'issues' | 'solutions'>('issues');
+  const chatRef = useRef<FloatingChatRef>(null);
+
+  const handleSendMessage = (message: string) => {
+    console.log('Message sent:', message);
+    
+    setTimeout(() => {
+      chatRef.current?.addMessage('メッセージを受け取りました。', 'system');
+    }, 500);
+  };
 
   const themeData = {
     id: themeId,
@@ -119,19 +129,7 @@ const ThemeDetail = () => {
         </div>
       </div>
 
-      <div className="bg-purple-50 p-4 rounded-lg">
-        <h2 className="text-lg font-semibold mb-2">気になること・思ったことをAIに質問</h2>
-        <div className="flex flex-col sm:flex-row gap-2">
-          <input
-            type="text"
-            placeholder="質問を入力してください"
-            className="flex-grow p-2 border border-purple-200 rounded-md"
-          />
-          <button className="bg-purple-500 text-white px-4 py-2 rounded-md hover:bg-purple-600">
-            送信
-          </button>
-        </div>
-      </div>
+      <FloatingChat ref={chatRef} onSendMessage={handleSendMessage} />
     </div>
   );
 };

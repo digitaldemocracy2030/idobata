@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import DataPage from './pages/DataPage';
@@ -9,13 +9,11 @@ import ThemeDetail from './pages/ThemeDetail';
 import AppLayout from './components/AppLayout';
 import PageLayout from './components/layout/PageLayout';
 import { ThemeProvider } from './ThemeContext';
-import { FloatingChat, FloatingChatRef } from './components/chat/FloatingChat';
 
 function App() {
   const [userId, setUserId] = useState<string | null>(
     localStorage.getItem('policyChatUserId') || null
   );
-  const chatRef = useRef<FloatingChatRef>(null);
 
   useEffect(() => {
     if (userId) {
@@ -26,20 +24,7 @@ function App() {
     }
   }, [userId]);
 
-  const handleSendMessage = (message: string) => {
-    console.log('Message sent:', message);
-    
-    setTimeout(() => {
-      chatRef.current?.addMessage('メッセージを受け取りました。', 'system');
-    }, 500);
-  };
-
-  return (
-    <>
-      <Outlet context={{ userId, setUserId }} />
-      <FloatingChat ref={chatRef} onSendMessage={handleSendMessage} />
-    </>
-  );
+  return <Outlet context={{ userId, setUserId }} />;
 }
 
 export const router = createBrowserRouter([
