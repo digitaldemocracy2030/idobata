@@ -48,41 +48,39 @@ const Themes = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="container mx-auto px-4 py-8">
-        <BreadcrumbView items={breadcrumbItems} />
+    <div className="container mx-auto px-4 py-8">
+      <BreadcrumbView items={breadcrumbItems} />
 
-        <h1 className="text-2xl md:text-3xl font-bold mb-4">議論テーマ一覧</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-4">議論テーマ一覧</h1>
 
-        <p className="text-sm text-neutral-600 mb-8">
-          全国から寄せられた多様な意見をもとに、重要な社会課題について議論するテーマを設定しています。
-          関心のあるテーマに参加して、あなたの声を政策づくりに活かしましょう。
-        </p>
+      <p className="text-sm text-neutral-600 mb-8">
+        全国から寄せられた多様な意見をもとに、重要な社会課題について議論するテーマを設定しています。
+        関心のあるテーマに参加して、あなたの声を政策づくりに活かしましょう。
+      </p>
 
-        <div className="grid grid-cols-1 gap-4 mb-12">
-          {themesData.map(theme => (
-            <ThemeCard
-              key={theme.id}
-              title={theme.title}
-              description={theme.description}
-              keyQuestionCount={theme.keyQuestionCount}
-              commentCount={theme.commentCount}
-            />
-          ))}
-        </div>
+      <div className="grid grid-cols-1 gap-4 mb-12">
+        {themesData.map(theme => (
+          <ThemeCard
+            key={theme.id}
+            title={theme.title}
+            description={theme.description}
+            keyQuestionCount={theme.keyQuestionCount}
+            commentCount={theme.commentCount}
+          />
+        ))}
+      </div>
 
-        <div className="bg-purple-50 p-4 rounded-lg">
-          <h2 className="text-lg font-semibold mb-2">気になること・思ったことをAIに質問</h2>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <input
-              type="text"
-              placeholder="質問を入力してください"
-              className="flex-grow p-2 border border-purple-200 rounded-md"
-            />
-            <button className="bg-purple-500 text-white px-4 py-2 rounded-md hover:bg-purple-600">
-              送信
-            </button>
-          </div>
+      <div className="bg-purple-50 p-4 rounded-lg">
+        <h2 className="text-lg font-semibold mb-2">気になること・思ったことをAIに質問</h2>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input
+            type="text"
+            placeholder="質問を入力してください"
+            className="flex-grow p-2 border border-purple-200 rounded-md"
+          />
+          <button className="bg-purple-500 text-white px-4 py-2 rounded-md hover:bg-purple-600">
+            送信
+          </button>
         </div>
       </div>
     </div>

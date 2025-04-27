@@ -17,11 +17,11 @@
    - `Top`、`About`、`Themes`、`ThemeDetail`ページに`PageLayout`を適用する
    - 各ページを`PageLayout`でラップする
 
-3. `Top.tsx`を更新する
+3. ✅ 完了: `Top.tsx`を更新する
    - 直接インポートしている Header と Footer を削除する（レイアウトから提供されるため）
    - ページの構造を調整して、レイアウトコンポーネントと連携するようにする
 
-4. 他のページ（`About.tsx`、`ThemeDetail.tsx`、`Themes.tsx`）を更新する
+4. ✅ 完了: 他のページ（`About.tsx`、`ThemeDetail.tsx`、`Themes.tsx`）を更新する
    - 外側のコンテナ div を削除または調整する（レイアウトから提供されるため）
    - 必要に応じてスタイルを調整する
 

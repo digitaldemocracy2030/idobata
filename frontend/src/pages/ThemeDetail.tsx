@@ -62,76 +62,74 @@ const ThemeDetail = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="container mx-auto px-4 py-8">
-        <BreadcrumbView items={breadcrumbItems} />
+    <div className="container mx-auto px-4 py-8">
+      <BreadcrumbView items={breadcrumbItems} />
 
-        <h1 className="text-2xl md:text-3xl font-bold mb-4">{themeData.title}</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-4">{themeData.title}</h1>
 
-        <p className="text-sm text-neutral-600 mb-8">{themeData.description}</p>
+      <p className="text-sm text-neutral-600 mb-8">{themeData.description}</p>
 
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">キークエスチョン ({keyQuestions.length})</h2>
-          <div className="space-y-4">
-            {keyQuestions.map(question => (
-              <KeyQuestionCard
-                key={question.id}
-                question={question.question}
-                voteCount={question.voteCount}
-                issueCount={question.issueCount}
-                solutionCount={question.solutionCount}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="mb-12">
-          <h2 className="text-xl font-semibold mb-4">寄せられた意見</h2>
-
-          <div className="flex border-b border-neutral-200 mb-4">
-            <button
-              className={`py-2 px-4 text-sm font-medium ${
-                activeTab === 'issues'
-                  ? 'border-b-2 border-purple-500 text-purple-700'
-                  : 'text-neutral-500'
-              }`}
-              onClick={() => setActiveTab('issues')}
-            >
-              課題点 ({issues.length})
-            </button>
-            <button
-              className={`py-2 px-4 text-sm font-medium ${
-                activeTab === 'solutions'
-                  ? 'border-b-2 border-purple-500 text-purple-700'
-                  : 'text-neutral-500'
-              }`}
-              onClick={() => setActiveTab('solutions')}
-            >
-              解決策 ({solutions.length})
-            </button>
-          </div>
-
-          <div className="space-y-3">
-            {activeTab === 'issues'
-              ? issues.map(issue => <CommentCard key={issue.id} text={issue.text} type="issue" />)
-              : solutions.map(solution => (
-                  <CommentCard key={solution.id} text={solution.text} type="solution" />
-                ))}
-          </div>
-        </div>
-
-        <div className="bg-purple-50 p-4 rounded-lg">
-          <h2 className="text-lg font-semibold mb-2">気になること・思ったことをAIに質問</h2>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <input
-              type="text"
-              placeholder="質問を入力してください"
-              className="flex-grow p-2 border border-purple-200 rounded-md"
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold mb-4">キークエスチョン ({keyQuestions.length})</h2>
+        <div className="space-y-4">
+          {keyQuestions.map(question => (
+            <KeyQuestionCard
+              key={question.id}
+              question={question.question}
+              voteCount={question.voteCount}
+              issueCount={question.issueCount}
+              solutionCount={question.solutionCount}
             />
-            <button className="bg-purple-500 text-white px-4 py-2 rounded-md hover:bg-purple-600">
-              送信
-            </button>
-          </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mb-12">
+        <h2 className="text-xl font-semibold mb-4">寄せられた意見</h2>
+
+        <div className="flex border-b border-neutral-200 mb-4">
+          <button
+            className={`py-2 px-4 text-sm font-medium ${
+              activeTab === 'issues'
+                ? 'border-b-2 border-purple-500 text-purple-700'
+                : 'text-neutral-500'
+            }`}
+            onClick={() => setActiveTab('issues')}
+          >
+            課題点 ({issues.length})
+          </button>
+          <button
+            className={`py-2 px-4 text-sm font-medium ${
+              activeTab === 'solutions'
+                ? 'border-b-2 border-purple-500 text-purple-700'
+                : 'text-neutral-500'
+            }`}
+            onClick={() => setActiveTab('solutions')}
+          >
+            解決策 ({solutions.length})
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {activeTab === 'issues'
+            ? issues.map(issue => <CommentCard key={issue.id} text={issue.text} type="issue" />)
+            : solutions.map(solution => (
+                <CommentCard key={solution.id} text={solution.text} type="solution" />
+              ))}
+        </div>
+      </div>
+
+      <div className="bg-purple-50 p-4 rounded-lg">
+        <h2 className="text-lg font-semibold mb-2">気になること・思ったことをAIに質問</h2>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input
+            type="text"
+            placeholder="質問を入力してください"
+            className="flex-grow p-2 border border-purple-200 rounded-md"
+          />
+          <button className="bg-purple-500 text-white px-4 py-2 rounded-md hover:bg-purple-600">
+            送信
+          </button>
         </div>
       </div>
     </div>
