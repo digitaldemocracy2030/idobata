@@ -8,7 +8,7 @@
 
 ## タスクリスト
 
-1. `src/components/layout/PageLayout.tsx`コンポーネントを作成する
+1. ✅ 完了: `src/components/layout/PageLayout.tsx`コンポーネントを作成する
    - Header と Footer コンポーネントをインポートする
    - children を props として受け取り、ページコンテンツをレンダリングする
    - `Top.tsx`と同じ構造（min-h-screen, flex-col, pt-14 など）でコンテンツをラップする
