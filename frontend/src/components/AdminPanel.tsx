@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`; // Adjust if your backend runs elsewhere
+import { apiClient } from '../services/api/apiClient';
+import { ApiErrorType } from '../services/api/apiError';
 
 function AdminPanel() {
   const [problems, setProblems] = useState([]);
@@ -37,119 +37,118 @@ function AdminPanel() {
   const fetchQuestions = async () => {
     setIsLoadingQuestions(true);
     setError(null);
-    try {
-      const response = await fetch(`${API_BASE_URL}/questions`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setQuestions(data);
-    } catch (e) {
-      console.error('Failed to fetch questions:', e);
+    
+    const result = await apiClient.getAllQuestions();
+    
+    if (result.isErr()) {
+      const apiError = result.error;
+      console.error('Failed to fetch questions:', apiError);
       setError('問いの読み込みに失敗しました。');
-    } finally {
       setIsLoadingQuestions(false);
+      return;
     }
+    
+    setQuestions(result.value);
+    setIsLoadingQuestions(false);
   };
 
   const fetchProblems = async () => {
     setIsLoadingProblems(true);
     setError(null);
-    try {
-      const response = await fetch(`${API_BASE_URL}/admin/problems`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setProblems(data);
-    } catch (e) {
-      console.error('Failed to fetch problems:', e);
+    
+    const result = await apiClient.getAllProblems();
+    
+    if (result.isErr()) {
+      const apiError = result.error;
+      console.error('Failed to fetch problems:', apiError);
       setError('課題の読み込みに失敗しました。');
-    } finally {
       setIsLoadingProblems(false);
+      return;
     }
+    
+    setProblems(result.value);
+    setIsLoadingProblems(false);
   };
 
   const fetchSolutions = async () => {
     setIsLoadingSolutions(true);
     setError(null);
-    try {
-      const response = await fetch(`${API_BASE_URL}/admin/solutions`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setSolutions(data);
-    } catch (e) {
-      console.error('Failed to fetch solutions:', e);
+    
+    const result = await apiClient.getAllSolutions();
+    
+    if (result.isErr()) {
+      const apiError = result.error;
+      console.error('Failed to fetch solutions:', apiError);
       setError('解決策の読み込みに失敗しました。');
-    } finally {
       setIsLoadingSolutions(false);
+      return;
     }
+    
+    setSolutions(result.value);
+    setIsLoadingSolutions(false);
   };
 
   const fetchPolicyDrafts = async () => {
     setIsLoadingPolicyDrafts(true);
     setError(null);
-    try {
-      const response = await fetch(`${API_BASE_URL}/policy-drafts`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setPolicyDrafts(data);
-    } catch (e) {
-      console.error('Failed to fetch policy drafts:', e);
+    
+    const result = await apiClient.getAllPolicyDrafts();
+    
+    if (result.isErr()) {
+      const apiError = result.error;
+      console.error('Failed to fetch policy drafts:', apiError);
       setError('政策ドラフトの読み込みに失敗しました。');
-    } finally {
       setIsLoadingPolicyDrafts(false);
+      return;
     }
+    
+    setPolicyDrafts(result.value);
+    setIsLoadingPolicyDrafts(false);
   };
 
   const fetchDigestDrafts = async () => {
     setIsLoadingDigestDrafts(true);
     setError(null);
-    try {
-      const response = await fetch(`${API_BASE_URL}/digest-drafts`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setDigestDrafts(data);
-    } catch (e) {
-      console.error('Failed to fetch digest drafts:', e);
+    
+    const result = await apiClient.getAllDigestDrafts();
+    
+    if (result.isErr()) {
+      const apiError = result.error;
+      console.error('Failed to fetch digest drafts:', apiError);
       setError('ダイジェストの読み込みに失敗しました。');
-    } finally {
       setIsLoadingDigestDrafts(false);
+      return;
     }
+    
+    setDigestDrafts(result.value);
+    setIsLoadingDigestDrafts(false);
   };
 
   const handleGenerateQuestions = async () => {
     setIsGeneratingQuestions(true);
     setError(null);
     setSuccessMessage(null);
-    try {
-      const response = await fetch(`${API_BASE_URL}/admin/generate-questions`, {
-        method: 'POST',
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const _data = await response.json();
-      setSuccessMessage(
-        'シャープな問いの生成を開始しました。しばらくすると問いリストに表示されます。'
-      );
-
-      // Fetch questions after a delay to allow time for generation
-      setTimeout(() => {
-        fetchQuestions();
-      }, 5000);
-    } catch (e) {
-      console.error('Failed to generate questions:', e);
+    
+    const result = await apiClient.generateQuestions();
+    
+    if (result.isErr()) {
+      const apiError = result.error;
+      console.error('Failed to generate questions:', apiError);
       setError('問いの生成に失敗しました。');
-    } finally {
       setIsGeneratingQuestions(false);
+      return;
     }
+    
+    setSuccessMessage(
+      'シャープな問いの生成を開始しました。しばらくすると問いリストに表示されます。'
+    );
+    
+    // Fetch questions after a delay to allow time for generation
+    setTimeout(() => {
+      fetchQuestions();
+    }, 5000);
+    
+    setIsGeneratingQuestions(false);
   };
 
   // Helper function to format dates

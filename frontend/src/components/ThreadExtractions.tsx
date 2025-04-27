@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Problem, Solution } from '../types';
+import { apiClient } from '../services/api/apiClient';
+import { ApiErrorType } from '../services/api/apiError';
 
 interface ThreadExtractionsProps {
   threadId: string | null;
@@ -19,37 +21,28 @@ const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
     }
 
     const fetchExtractions = async (): Promise<void> => {
-      // Don't set loading if it's just a background refresh
-      // setIsLoading(true); // Maybe only set loading on initial load?
       setError(null);
-      try {
-        // Construct the correct API URL using the backend port (default 3000)
-        const apiUrl = import.meta.env.VITE_API_BASE_URL;
-        const response = await fetch(`${apiUrl}/api/chat/threads/${threadId}/extractions`);
-
-        if (!response.ok) {
-          // Handle specific errors like 404 Not Found
-          if (response.status === 404) {
-            console.warn(`No extractions found for thread ${threadId} or thread does not exist.`);
-            setProblems([]);
-            setSolutions([]);
-          } else {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-        } else {
-          const data = await response.json();
-          setProblems(data.problems || []);
-          setSolutions(data.solutions || []);
+      
+      const result = await apiClient.getThreadExtractions(threadId);
+      
+      if (result.isErr()) {
+        const apiError = result.error;
+        console.error('Failed to fetch extractions:', apiError);
+        
+        if (apiError.statusCode === 404) {
+          console.warn(`No extractions found for thread ${threadId} or thread does not exist.`);
+          setProblems([]);
+          setSolutions([]);
+          return;
         }
-      } catch (err: any) {
-        console.error('Failed to fetch extractions:', err);
-        setError('抽出結果の読み込みに失敗しました。'); // Translated error
-        // Keep stale data? Or clear? Clearing might be less confusing.
-        // setProblems([]);
-        // setSolutions([]);
-      } finally {
-        // setIsLoading(false);
+        
+        setError('抽出結果の読み込みに失敗しました。');
+        return;
       }
+      
+      const data = result.value;
+      setProblems(data.problems || []);
+      setSolutions(data.solutions || []);
     };
 
     // Fetch immediately on threadId change

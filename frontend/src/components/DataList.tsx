@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Problem, Solution, Question, PolicyDraft, TabType } from '../types';
-
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`; // Adjust if your backend runs elsewhere
+import { apiClient } from '../services/api/apiClient';
+import { ApiErrorType } from '../services/api/apiError';
 
 function DataList() {
   const [problems, setProblems] = useState<Problem[]>([]);
@@ -35,101 +35,136 @@ function DataList() {
   const fetchQuestions = async (): Promise<void> => {
     setIsLoadingQuestions(true);
     setError(null);
-    try {
-      const response = await fetch(`${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/questions`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setQuestions(data);
-    } catch (e) {
-      console.error('Failed to fetch questions:', e);
-      setError('問いの読み込みに失敗しました。');
-    } finally {
+    
+    const themeId = localStorage.getItem('defaultThemeId');
+    if (!themeId) {
+      setError('デフォルトテーマが見つかりません。');
       setIsLoadingQuestions(false);
+      return;
     }
+    
+    
+    const result = await apiClient.getQuestionsByTheme(themeId);
+    
+    if (result.isErr()) {
+      const apiError = result.error;
+      console.error('Failed to fetch questions:', apiError);
+      setError('問いの読み込みに失敗しました。');
+      setIsLoadingQuestions(false);
+      return;
+    }
+    
+    setQuestions(result.value);
+    setIsLoadingQuestions(false);
   };
 
   const fetchProblems = async (): Promise<void> => {
     setIsLoadingProblems(true);
     setError(null);
-    try {
-      const response = await fetch(`${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/problems`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setProblems(data);
-    } catch (e) {
-      console.error('Failed to fetch problems:', e);
-      setError('課題の読み込みに失敗しました。');
-    } finally {
+    
+    const themeId = localStorage.getItem('defaultThemeId');
+    if (!themeId) {
+      setError('デフォルトテーマが見つかりません。');
       setIsLoadingProblems(false);
+      return;
     }
+    
+    const result = await apiClient.getProblemsByTheme(themeId);
+    
+    if (result.isErr()) {
+      const apiError = result.error;
+      console.error('Failed to fetch problems:', apiError);
+      setError('課題の読み込みに失敗しました。');
+      setIsLoadingProblems(false);
+      return;
+    }
+    
+    setProblems(result.value);
+    setIsLoadingProblems(false);
   };
 
   const fetchSolutions = async (): Promise<void> => {
     setIsLoadingSolutions(true);
     setError(null);
-    try {
-      const response = await fetch(`${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/solutions`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setSolutions(data);
-    } catch (e) {
-      console.error('Failed to fetch solutions:', e);
-      setError('解決策の読み込みに失敗しました。');
-    } finally {
+    
+    const themeId = localStorage.getItem('defaultThemeId');
+    if (!themeId) {
+      setError('デフォルトテーマが見つかりません。');
       setIsLoadingSolutions(false);
+      return;
     }
+    
+    const result = await apiClient.getSolutionsByTheme(themeId);
+    
+    if (result.isErr()) {
+      const apiError = result.error;
+      console.error('Failed to fetch solutions:', apiError);
+      setError('解決策の読み込みに失敗しました。');
+      setIsLoadingSolutions(false);
+      return;
+    }
+    
+    setSolutions(result.value);
+    setIsLoadingSolutions(false);
   };
 
   const fetchPolicyDrafts = async (): Promise<void> => {
     setIsLoadingPolicyDrafts(true);
     setError(null);
-    try {
-      const response = await fetch(`${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/policy-drafts`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setPolicyDrafts(data);
-    } catch (e) {
-      console.error('Failed to fetch policy drafts:', e);
-      setError('政策ドラフトの読み込みに失敗しました。');
-    } finally {
+    
+    const themeId = localStorage.getItem('defaultThemeId');
+    if (!themeId) {
+      setError('デフォルトテーマが見つかりません。');
       setIsLoadingPolicyDrafts(false);
+      return;
     }
+    
+    const result = await apiClient.getPolicyDraftsByTheme(themeId);
+    
+    if (result.isErr()) {
+      const apiError = result.error;
+      console.error('Failed to fetch policy drafts:', apiError);
+      setError('政策ドラフトの読み込みに失敗しました。');
+      setIsLoadingPolicyDrafts(false);
+      return;
+    }
+    
+    setPolicyDrafts(result.value);
+    setIsLoadingPolicyDrafts(false);
   };
 
   const handleGenerateQuestions = async (): Promise<void> => {
     setIsGeneratingQuestions(true);
     setError(null);
     setSuccessMessage(null);
-    try {
-      const response = await fetch(`${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/generate-questions`, {
-        method: 'POST',
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setSuccessMessage(
-        'シャープな問いの生成を開始しました。しばらくすると問いリストに表示されます。'
-      );
-
-      // Fetch questions after a delay to allow time for generation
-      setTimeout(() => {
-        fetchQuestions();
-      }, 5000);
-    } catch (e) {
-      console.error('Failed to generate questions:', e);
-      setError('問いの生成に失敗しました。');
-    } finally {
+    
+    const themeId = localStorage.getItem('defaultThemeId');
+    if (!themeId) {
+      setError('デフォルトテーマが見つかりません。');
       setIsGeneratingQuestions(false);
+      return;
     }
+    
+    const result = await apiClient.generateQuestions(themeId);
+    
+    if (result.isErr()) {
+      const apiError = result.error;
+      console.error('Failed to generate questions:', apiError);
+      setError('問いの生成に失敗しました。');
+      setIsGeneratingQuestions(false);
+      return;
+    }
+    
+    setSuccessMessage(
+      'シャープな問いの生成を開始しました。しばらくすると問いリストに表示されます。'
+    );
+    
+    // Fetch questions after a delay to allow time for generation
+    setTimeout(() => {
+      fetchQuestions();
+    }, 5000);
+    
+    setIsGeneratingQuestions(false);
   };
 
   // Helper function to format dates

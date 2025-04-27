@@ -5,6 +5,8 @@ import ChatInput from './ChatInput';
 import ChatHistory from './ChatHistory';
 import ThreadExtractions from './ThreadExtractions';
 import Notification from './Notification';
+import { apiClient } from '../services/api/apiClient';
+import { ApiErrorType } from '../services/api/apiError';
 
 function AppLayout() {
   const { userId, setUserId } = useOutletContext<OutletContext>();
@@ -34,30 +36,18 @@ function AppLayout() {
     setMessages(prevMessages => [...prevMessages, newUserMessage]);
 
     try {
-      const backendUrl = `${import.meta.env.VITE_API_BASE_URL}/api/themes/${localStorage.getItem('defaultThemeId')}/chat/messages`;
-      const response = await fetch(backendUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: currentUserId,
-          message: newUserMessage.content,
-          threadId: currentThreadId,
-        }),
-      });
+      const result = await apiClient.sendMessage(
+        currentUserId,
+        newUserMessage.content,
+        currentThreadId || undefined
+      );
 
-      if (!response.ok) {
-        let errorBody = 'Unknown error';
-        try {
-          errorBody = await response.text();
-        } catch (e) {
-          /* ignore */
-        }
-        throw new Error(`HTTP error! status: ${response.status}, Body: ${errorBody}`);
+      if (result.isErr()) {
+        const apiError = result.error;
+        throw new Error(`API error: ${apiError.message}`);
       }
 
-      const responseData = await response.json();
+      const responseData = result.value;
 
       const assistantMessage = {
         role: 'assistant',
@@ -91,14 +81,14 @@ function AppLayout() {
     if (!currentThreadId) return;
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/themes/${localStorage.getItem('defaultThemeId')}/chat/threads/${currentThreadId}/extractions`
-      );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const result = await apiClient.getThreadExtractions(currentThreadId);
+      
+      if (result.isErr()) {
+        const apiError = result.error;
+        throw new Error(`API error: ${apiError.message}`);
       }
 
-      const data = await response.json();
+      const data = result.value;
       const currentProblems = data.problems || [];
       const currentSolutions = data.solutions || [];
 
@@ -188,24 +178,26 @@ function AppLayout() {
 
       setIsLoading(true);
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/api/themes/${localStorage.getItem('defaultThemeId')}/chat/threads/${currentThreadId}/messages`
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        const result = await apiClient.getThreadMessages(currentThreadId);
+        
+        if (result.isErr()) {
+          const apiError = result.error;
+          
+          // If thread not found, clear the stored threadId
+          if (apiError.statusCode === 404) {
+            localStorage.removeItem('currentThreadId');
+            setCurrentThreadId(null);
+          }
+          
+          throw new Error(`API error: ${apiError.message}`);
         }
 
-        const data = await response.json();
+        const data = result.value;
         if (data.messages && data.messages.length > 0) {
           setMessages(data.messages);
         }
       } catch (error: any) {
         console.error('Failed to load thread messages:', error);
-        // If there's an error loading the thread (e.g., it was deleted), clear the stored threadId
-        if (error.message.includes('404')) {
-          localStorage.removeItem('currentThreadId');
-          setCurrentThreadId(null);
-        }
       } finally {
         setIsLoading(false);
       }
