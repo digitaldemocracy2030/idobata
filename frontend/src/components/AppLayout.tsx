@@ -31,7 +31,7 @@ function AppLayout() {
     setMessages(prevMessages => [...prevMessages, newUserMessage]);
 
     try {
-      const backendUrl = `${import.meta.env.VITE_API_BASE_URL}/api/chat/messages`;
+      const backendUrl = `${import.meta.env.VITE_API_BASE_URL}/api/themes/${localStorage.getItem('defaultThemeId')}/chat/messages`;
       const response = await fetch(backendUrl, {
         method: 'POST',
         headers: {
@@ -87,7 +87,7 @@ function AppLayout() {
     if (!currentThreadId) return;
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chat/threads/${currentThreadId}/extractions`);
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/themes/${localStorage.getItem('defaultThemeId')}/chat/threads/${currentThreadId}/extractions`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -183,7 +183,7 @@ function AppLayout() {
 
       setIsLoading(true);
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chat/threads/${currentThreadId}/messages`);
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/themes/${localStorage.getItem('defaultThemeId')}/chat/threads/${currentThreadId}/messages`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

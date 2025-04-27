@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import DataPage from './pages/DataPage';
 import AppLayout from './components/AppLayout';
+import { ThemeProvider } from './ThemeContext';
 
 function App() {
   const [userId, setUserId] = useState<string | null>(
@@ -24,7 +25,11 @@ function App() {
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: (
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
+    ),
     children: [
       {
         element: <AppLayout />,

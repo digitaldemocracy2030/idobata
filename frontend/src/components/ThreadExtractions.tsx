@@ -25,7 +25,7 @@ const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
             try {
                 // Construct the correct API URL using the backend port (default 3000)
                 const apiUrl = import.meta.env.VITE_API_BASE_URL;
-                const response = await fetch(`${apiUrl}/api/chat/threads/${threadId}/extractions`);
+                const response = await fetch(`${apiUrl}/api/themes/${localStorage.getItem('defaultThemeId')}/chat/threads/${threadId}/extractions`);
 
                 if (!response.ok) {
                     // Handle specific errors like 404 Not Found
