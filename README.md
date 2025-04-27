@@ -2,6 +2,15 @@
 
 このドキュメントでは、`idea-discussion` および `policy-edit` アプリケーションの開発環境をDocker Composeを使用してセットアップし、実行する方法について説明します。これらは独立してセットアップ・実行可能です。
 
+## プロジェクト構成
+
+このプロジェクトは以下のコンポーネントで構成されています：
+
+* **ルートレベルのfrontend**: idea-discussion用のフロントエンドとして機能しています。将来的にpolicy-editのフロントエンドと統合することを見据えて、トップレベルに配置されています。TypeScriptをサポートし、JSXとTSXの両方のファイル形式を扱えます。（かつて idea-discussion/frontend だったものです）
+* **idea-discussion/backend**: アイデア議論のためのバックエンド（Node.js）
+* **policy-edit**: ポリシー編集のためのフロントエンド（React + TypeScript）とバックエンド（Node.js）
+* **MongoDB**: データベース
+
 ## 前提条件
 
 *   **Docker:** お使いのオペレーティングシステム用のDocker Desktop（またはDocker Engine + Docker Compose）をインストールしてください。[https://www.docker.com/get-started](https://www.docker.com/get-started)
@@ -58,17 +67,17 @@
 
 ### 全サービスの起動
 
-両方のアプリケーションを同時に起動する場合：
+すべてのサービスを同時に起動する場合：
 ```bash
 docker-compose up --build -d
 ```
 
-### Idea Discussionのみ起動
+### Idea Discussionの起動
 
-`idea-discussion` のフロントエンド、バックエンド、およびMongoDBのみを起動する場合：
+ルートレベルのフロントエンドとidea-discussionのバックエンド、およびMongoDBを起動する場合：
 ```bash
 # 必要なセットアップ: Idea Discussion セットアップ
-docker-compose up --build -d idea-frontend idea-backend mongo
+docker-compose up --build -d frontend idea-backend mongo
 ```
 
 ### Policy Editのみ起動

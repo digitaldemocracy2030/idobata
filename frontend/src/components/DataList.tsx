@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { Problem, Solution, Question, PolicyDraft, TabType } from '../types';
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`; // Adjust if your backend runs elsewhere
 
 function DataList() {
-  const [problems, setProblems] = useState([]);
-  const [solutions, setSolutions] = useState([]);
-  const [questions, setQuestions] = useState([]);
-  const [policyDrafts, setPolicyDrafts] = useState([]);
-  const [isLoadingProblems, setIsLoadingProblems] = useState(false);
-  const [isLoadingSolutions, setIsLoadingSolutions] = useState(false);
-  const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
-  const [isLoadingPolicyDrafts, setIsLoadingPolicyDrafts] = useState(false);
-  const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false);
-  const [activeTab, setActiveTab] = useState('questions');
-  const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [problems, setProblems] = useState<Problem[]>([]);
+  const [solutions, setSolutions] = useState<Solution[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [policyDrafts, setPolicyDrafts] = useState<PolicyDraft[]>([]);
+  const [isLoadingProblems, setIsLoadingProblems] = useState<boolean>(false);
+  const [isLoadingSolutions, setIsLoadingSolutions] = useState<boolean>(false);
+  const [isLoadingQuestions, setIsLoadingQuestions] = useState<boolean>(false);
+  const [isLoadingPolicyDrafts, setIsLoadingPolicyDrafts] = useState<boolean>(false);
+  const [isGeneratingQuestions, setIsGeneratingQuestions] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<TabType>('questions');
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Fetch questions on component mount and when questions are generated
   useEffect(() => {
@@ -31,7 +32,7 @@ function DataList() {
     }
   }, [activeTab]);
 
-  const fetchQuestions = async () => {
+  const fetchQuestions = async (): Promise<void> => {
     setIsLoadingQuestions(true);
     setError(null);
     try {
@@ -49,7 +50,7 @@ function DataList() {
     }
   };
 
-  const fetchProblems = async () => {
+  const fetchProblems = async (): Promise<void> => {
     setIsLoadingProblems(true);
     setError(null);
     try {
@@ -67,7 +68,7 @@ function DataList() {
     }
   };
 
-  const fetchSolutions = async () => {
+  const fetchSolutions = async (): Promise<void> => {
     setIsLoadingSolutions(true);
     setError(null);
     try {
@@ -85,7 +86,7 @@ function DataList() {
     }
   };
 
-  const fetchPolicyDrafts = async () => {
+  const fetchPolicyDrafts = async (): Promise<void> => {
     setIsLoadingPolicyDrafts(true);
     setError(null);
     try {
@@ -103,7 +104,7 @@ function DataList() {
     }
   };
 
-  const handleGenerateQuestions = async () => {
+  const handleGenerateQuestions = async (): Promise<void> => {
     setIsGeneratingQuestions(true);
     setError(null);
     setSuccessMessage(null);
@@ -116,7 +117,7 @@ function DataList() {
       }
       const data = await response.json();
       setSuccessMessage('シャープな問いの生成を開始しました。しばらくすると問いリストに表示されます。');
-      
+
       // Fetch questions after a delay to allow time for generation
       setTimeout(() => {
         fetchQuestions();
@@ -130,7 +131,7 @@ function DataList() {
   };
 
   // Helper function to format dates
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleString('ja-JP', {
       year: 'numeric',
       month: '2-digit',
@@ -141,7 +142,7 @@ function DataList() {
   };
 
   // Helper function to truncate text
-  const truncateText = (text, maxLength = 100) => {
+  const truncateText = (text: string, maxLength = 100): string => {
     if (!text) return '';
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
   };
@@ -202,7 +203,7 @@ function DataList() {
         <ul className="flex flex-wrap -mb-px text-sm font-medium text-center">
           <li className="mr-2">
             <button
-              onClick={() => setActiveTab('questions')}
+              onClick={() => setActiveTab('questions' as TabType)}
               className={`inline-block p-4 rounded-t-lg ${
                 activeTab === 'questions'
                   ? 'text-primary border-b-2 border-primary'
@@ -214,7 +215,7 @@ function DataList() {
           </li>
           <li className="mr-2">
             <button
-              onClick={() => setActiveTab('problems')}
+              onClick={() => setActiveTab('problems' as TabType)}
               className={`inline-block p-4 rounded-t-lg ${
                 activeTab === 'problems'
                   ? 'text-primary border-b-2 border-primary'
@@ -226,7 +227,7 @@ function DataList() {
           </li>
           <li className="mr-2">
             <button
-              onClick={() => setActiveTab('solutions')}
+              onClick={() => setActiveTab('solutions' as TabType)}
               className={`inline-block p-4 rounded-t-lg ${
                 activeTab === 'solutions'
                   ? 'text-primary border-b-2 border-primary'
@@ -238,7 +239,7 @@ function DataList() {
           </li>
           <li>
             <button
-              onClick={() => setActiveTab('policies')}
+              onClick={() => setActiveTab('policies' as TabType)}
               className={`inline-block p-4 rounded-t-lg ${
                 activeTab === 'policies'
                   ? 'text-primary border-b-2 border-primary'

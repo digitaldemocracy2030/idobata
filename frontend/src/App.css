@@ -15,6 +15,7 @@
   animation: float 6s ease-in-out infinite;
 }
 
+
 /* Custom scrollbar styles */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
