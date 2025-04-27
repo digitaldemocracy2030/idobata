@@ -5,6 +5,7 @@
 現在のプロジェクト構造では、2つの独立したフロントエンドアプリケーションがあります：
 
 1. **idea-discussion/frontend (①)**
+
    - React + Vite (JavaScript/JSX)
    - React Router DOM
    - Tailwind CSS
@@ -58,6 +59,7 @@ mkdir -p frontend/src frontend/public
 TypeScriptとJavaScriptの両方をサポートする設定ファイルを作成します。
 
 **frontend/tsconfig.json**:
+
 ```json
 {
   "compilerOptions": {
@@ -91,6 +93,7 @@ TypeScriptとJavaScriptの両方をサポートする設定ファイルを作成
 ```
 
 **frontend/tsconfig.node.json**:
+
 ```json
 {
   "compilerOptions": {
@@ -105,21 +108,23 @@ TypeScriptとJavaScriptの両方をサポートする設定ファイルを作成
 ```
 
 **frontend/vite.config.ts**:
+
 ```typescript
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
     port: 5175, // 既存のサービスと競合しないポート
-    host: '0.0.0.0'
-  }
-})
+    host: '0.0.0.0',
+  },
+});
 ```
 
 **frontend/src/vite-env.d.ts**:
+
 ```typescript
 /// <reference types="vite/client" />
 ```
@@ -143,6 +148,7 @@ cp idea-discussion/frontend/.gitignore frontend/
 ### 工程4: package.jsonの更新
 
 **frontend/package.json**:
+
 ```json
 {
   "name": "idobata-frontend",
@@ -183,6 +189,7 @@ cp idea-discussion/frontend/.gitignore frontend/
 ### 工程5: ESLint設定の更新
 
 **frontend/eslint.config.js**:
+
 ```javascript
 import js from '@eslint/js';
 import { FlatCompat } from '@eslint/eslintrc';
@@ -198,24 +205,21 @@ export default [
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.node
+        ...globals.node,
       },
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
         ecmaFeatures: {
-          jsx: true
-        }
-      }
+          jsx: true,
+        },
+      },
     },
     rules: {
       'no-unused-vars': 'warn',
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true }
-      ]
-    }
-  }
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    },
+  },
 ];
 ```
 
@@ -234,7 +238,7 @@ frontend:
     # Add node_modules volume
     - /app/node_modules
   ports:
-    - "5175:5175" # 新しいポート
+    - '5175:5175' # 新しいポート
   command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
   env_file:
     - .env
@@ -301,6 +305,7 @@ flowchart LR
 ## 作業ログ
 
 ### 2025/4/26
+
 - 作業1完了: frontendディレクトリを作成し、その下にsrcとpublicディレクトリを作成しました。
 - 作業2完了: TypeScript設定ファイルを追加しました。以下のファイルを作成:
   - frontend/tsconfig.json
@@ -335,6 +340,7 @@ flowchart LR
   - http://localhost:5175 でアクセス可能
 
 ## 作業時の注意
+
 - ユーザーからの指示への返答はかならず日本語で行ってください。
 - 基本的にコマンドの標準出力は取得できないので、commandResult.txt ファイルにパイプで出力してその結果をファイルから読み取ってください。
 - コマンドの結果が不明です、という状態で次の作業に進まないでください。
