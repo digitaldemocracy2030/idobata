@@ -1,11 +1,23 @@
+import { useRef } from 'react';
 import BreadcrumbView from '../components/common/BreadcrumbView';
 import ThemeCard from '../components/home/ThemeCard';
+import { FloatingChat, FloatingChatRef } from '../components/chat/FloatingChat';
 
 const Themes = () => {
   const breadcrumbItems = [
     { label: 'TOP', href: '/' },
     { label: 'テーマ一覧', href: '/themes' },
   ];
+
+  const chatRef = useRef<FloatingChatRef>(null);
+
+  const handleSendMessage = (message: string) => {
+    console.log('Message sent:', message);
+    
+    setTimeout(() => {
+      chatRef.current?.addMessage('メッセージを受け取りました。', 'system');
+    }, 500);
+  };
 
   const themesData = [
     {
@@ -70,19 +82,7 @@ const Themes = () => {
         ))}
       </div>
 
-      <div className="bg-purple-50 p-4 rounded-lg">
-        <h2 className="text-lg font-semibold mb-2">気になること・思ったことをAIに質問</h2>
-        <div className="flex flex-col sm:flex-row gap-2">
-          <input
-            type="text"
-            placeholder="質問を入力してください"
-            className="flex-grow p-2 border border-purple-200 rounded-md"
-          />
-          <button className="bg-purple-500 text-white px-4 py-2 rounded-md hover:bg-purple-600">
-            送信
-          </button>
-        </div>
-      </div>
+      <FloatingChat ref={chatRef} onSendMessage={handleSendMessage} />
     </div>
   );
 };

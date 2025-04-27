@@ -86,3 +86,11 @@ export interface Theme {
   title: string;
   slug: string;
 }
+
+export type MessageType = 'user' | 'system' | 'system-message';
+
+export interface ExtendedMessage extends Message {
+  type: MessageType;
+  isStreaming?: boolean;
+  id?: string;
+}
