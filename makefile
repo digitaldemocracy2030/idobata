@@ -1,8 +1,8 @@
 ## ショートカット（自分のよく使うものを登録すると便利）
 default: containers-start
-lint: policy-edit-frontend-lint policy-edit-backend-lint policy-edit-mcp-lint idea-discussion-frontend-lint idea-discussion-backend-lint
-format: policy-edit-frontend-format policy-edit-backend-format policy-edit-mcp-format idea-discussion-frontend-format idea-discussion-backend-format
-test: policy-edit-frontend-test policy-edit-backend-test policy-edit-mcp-test idea-discussion-frontend-test idea-discussion-backend-test
+lint: policy-edit-frontend-lint policy-edit-backend-lint policy-edit-mcp-lint frontend-lint idea-discussion-backend-lint
+format: policy-edit-frontend-format policy-edit-backend-format policy-edit-mcp-format frontend-format idea-discussion-backend-format
+test: policy-edit-frontend-test policy-edit-backend-test policy-edit-mcp-test frontend-test idea-discussion-backend-test
 
 # ターゲット定義（makefile は薄いラッパーとして使う。複雑な処理を書かずシンプルに保つこと）
 containers-start:
