@@ -1,0 +1,13 @@
+# Old API Files to Delete
+
+## Route Files
+- [x] routes/questionRoutes.js
+- [x] routes/adminRoutes.js
+- [x] routes/policyRoutes.js
+- [x] routes/digestRoutes.js
+- [x] routes/importRoutes.js
+- [x] routes/chatRoutes.js
+
+## Server.js Updates
+- [x] Remove imports of old route files
+- [x] Remove commented-out route registrations

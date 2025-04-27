@@ -1,33 +1,13 @@
-version: '3.8'
-
 services:
-  # --- idea-discussion ---
-  idea-frontend:
-    container_name: idea-frontend-dev
-    image: node:20-alpine # Use a base image, Vite runs on host via volume mount
-    working_dir: /app
-    volumes:
-      - ./idea-discussion/frontend:/app
-      # Add node_modules volume to prevent host node_modules from overwriting container's
-      - /app/node_modules
-    ports:
-      - "5173:5173" # Expose Vite dev server port
-    command: sh -c "npm install && npm run dev -- --host 0.0.0.0" # Install deps if needed and run dev server
-    env_file:
-      - .env # Load environment variables from .env file
-    environment:
-      - NODE_ENV=development
-      - VITE_API_BASE_URL=${IDEA_FRONTEND_API_BASE_URL} # Use variable from .env
-
   idea-backend:
     container_name: idea-backend-dev
     build:
-      context: ./idea-discussion/backend
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: idea-discussion/backend/Dockerfile.dev
     volumes:
-      - ./idea-discussion/backend:/app
-      # Prevent host node_modules from overwriting container's
-      - /app/node_modules
+      - ./idea-discussion/backend:/app/idea-discussion/backend
+      # Prevent node_modules from being overwritten by host mount
+      - /app/idea-discussion/backend/node_modules
     ports:
       - "3000:3000" # Expose backend API port
     depends_on:
@@ -40,7 +20,6 @@ services:
       - MONGODB_URI=mongodb://mongo:27017/idea_discussion_db # Use service name 'mongo'
       # Explicitly pass GitHub and OpenRouter variables from .env
       - GITHUB_APP_ID=${GITHUB_APP_ID}
-      - GITHUB_APP_PRIVATE_KEY=${GITHUB_APP_PRIVATE_KEY}
       - GITHUB_INSTALLATION_ID=${GITHUB_INSTALLATION_ID}
       - GITHUB_TARGET_OWNER=${GITHUB_TARGET_OWNER}
       - GITHUB_TARGET_REPO=${GITHUB_TARGET_REPO}
@@ -74,7 +53,7 @@ services:
     build:
       context: . # Change context to the root directory
       dockerfile: ./policy-edit/backend/Dockerfile # Specify Dockerfile path relative to new context
-      target: production             # Build the production stage
+      target: production # Build the production stage
     ports:
       - "3001:3001" # Expose backend API port
     env_file:
@@ -86,6 +65,24 @@ services:
     # Run the production start command
     command: npm start
 
+  # --- Unified Frontend ---
+  frontend:
+    container_name: frontend-dev
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      # Add node_modules volume
+      - /app/node_modules
+    ports:
+      - "5173:5173" # idea-discussion/backendのCORS設定に合わせたポート
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - VITE_API_BASE_URL=${IDEA_FRONTEND_API_BASE_URL} # 初期段階ではidea-discussionのAPIを使用
+
   # --- Database ---
   mongo:
     container_name: mongo-dev
@@ -96,5 +93,5 @@ services:
       - mongo_data:/data/db # Persist data using a named volume
 
 volumes:
-  mongo_data:                  # Define the named volume for MongoDB
+  mongo_data: # Define the named volume for MongoDB
   # Removed node_modules volumes as they are part of the production image
