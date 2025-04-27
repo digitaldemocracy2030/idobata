@@ -18,19 +18,22 @@ function ExtendedChatHistory({ messages }: ExtendedChatHistoryProps) {
     scrollToBottom();
   }, [messages]);
 
-  return (
-    <div className="flex-grow p-3 md:p-4 overflow-y-auto space-y-4 md:space-y-6 custom-scrollbar">
-      {messages.length === 0 && (
-        <div className="flex items-center justify-center h-full">
-          <p className="text-neutral-400 text-sm">会話を始めましょう</p>
-        </div>
-      )}
+  const initialMessages = messages.length > 0 ? messages : [
+    {
+      role: 'assistant',
+      content: '「どうすれば若者が安心してキャリアを築ける社会を実現できるか？」がチャット対象になったよ。',
+      type: 'system-message',
+      timestamp: new Date(),
+    }
+  ];
 
-      {messages.map((msg, index) => (
+  return (
+    <div className="flex-grow p-3 overflow-y-auto space-y-4 custom-scrollbar">
+      {initialMessages.map((msg, index) => (
         <div
           key={index}
           className={cn(
-            'animate-fade-in',
+            'animate-fade-in mb-3',
             {
               'flex justify-end': msg.type === 'user',
               'flex justify-start': msg.type === 'system',
@@ -39,7 +42,7 @@ function ExtendedChatHistory({ messages }: ExtendedChatHistoryProps) {
           )}
         >
           <div className={cn(
-            'flex flex-col max-w-[85%] sm:max-w-[75%] md:max-w-[65%]',
+            'flex flex-col max-w-[90%]',
             {
               'items-end': msg.type === 'user',
               'items-start': msg.type === 'system',
@@ -48,15 +51,15 @@ function ExtendedChatHistory({ messages }: ExtendedChatHistoryProps) {
           )}>
             <div
               className={cn(
-                'inline-block py-2 md:py-3 px-3 md:px-4 break-words',
+                'inline-block py-2 px-3 break-words',
                 {
-                  'bg-neutral-700 text-white shadow-sm rounded-2xl rounded-tr-sm': msg.type === 'user',
-                  'bg-white border border-neutral-200 text-neutral-800 shadow-sm rounded-2xl rounded-tl-sm': msg.type === 'system',
-                  'bg-neutral-100 border border-neutral-200 text-neutral-800 shadow-sm rounded-2xl': msg.type === 'system-message',
+                  'bg-neutral-700 text-white rounded-2xl rounded-tr-sm': msg.type === 'user',
+                  'bg-white border border-neutral-200 text-neutral-800 rounded-2xl rounded-tl-sm': msg.type === 'system',
+                  'bg-neutral-100 border border-neutral-200 text-neutral-800 rounded-2xl': msg.type === 'system-message',
                 }
               )}
             >
-              <div className="text-xs md:text-sm whitespace-pre-wrap">
+              <div className="text-sm whitespace-pre-wrap">
                 {msg.isStreaming ? (
                   <StreamingText content={msg.content} />
                 ) : (
@@ -64,21 +67,7 @@ function ExtendedChatHistory({ messages }: ExtendedChatHistoryProps) {
                 )}
               </div>
             </div>
-            <div
-              className={cn(
-                'text-xs text-neutral-500 mt-1',
-                {
-                  'text-right mr-1': msg.type === 'user',
-                  'ml-1': msg.type === 'system',
-                  'text-center': msg.type === 'system-message',
-                }
-              )}
-            >
-              {new Date(msg.timestamp).toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-            </div>
+            {/* タイムスタンプは表示しない */}
           </div>
         </div>
       ))}

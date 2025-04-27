@@ -1,5 +1,5 @@
 import React from 'react';
-import { SheetTitle, SheetClose } from '../ui/sheet';
+import { SheetClose } from '../ui/sheet';
 import { Button } from '../ui/button';
 import { X } from 'lucide-react';
 
@@ -20,16 +20,15 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ onDragStart }) => {
 
   return (
     <div
-      className="p-4 border-b flex items-center justify-between cursor-grab active:cursor-grabbing"
+      className="border-b flex items-center justify-center cursor-grab active:cursor-grabbing relative"
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
     >
-      <div className="w-full flex flex-col items-center">
-        <div className="w-10 h-1 bg-neutral-300 rounded-full mb-2" />
-        <SheetTitle>チャット</SheetTitle>
+      <div className="w-full flex flex-col items-center py-3">
+        <div className="w-10 h-1 bg-neutral-300 rounded-full mb-1" />
       </div>
       <SheetClose asChild>
-        <Button variant="ghost" size="icon" className="absolute right-4 top-4">
+        <Button variant="ghost" size="icon" className="absolute right-2 top-2">
           <X className="h-5 w-5" />
         </Button>
       </SheetClose>

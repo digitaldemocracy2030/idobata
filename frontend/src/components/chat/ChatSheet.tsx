@@ -2,9 +2,11 @@ import React from 'react';
 import { Sheet, SheetContent } from '../ui/sheet';
 import { ChatHeader } from './ChatHeader';
 import ExtendedChatHistory from './ExtendedChatHistory';
-import ChatInput from '../ChatInput';
+import { Button } from '../ui/button';
+import { Send } from 'lucide-react';
 import { useDraggable } from '../../hooks/useDraggable';
 import { useChat } from './ChatProvider';
+import { useState } from 'react';
 
 interface ChatSheetProps {
   isOpen: boolean;
@@ -18,30 +20,59 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
   onSendMessage,
 }) => {
   const { messages, addMessage } = useChat();
+  const [inputValue, setInputValue] = useState('');
   const { height, handleDragStart, isDragging } = useDraggable({
     minHeight: 300,
     maxHeight: window.innerHeight * 0.8,
-    initialHeight: 400,
+    initialHeight: 500,
   });
 
-  const handleSendMessage = (message: string) => {
-    addMessage(message, 'user');
-    onSendMessage?.(message);
+  const handleSendMessage = () => {
+    if (inputValue.trim()) {
+      addMessage(inputValue, 'user');
+      onSendMessage?.(inputValue);
+      setInputValue('');
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent
         side="bottom"
-        className="p-0 h-auto"
+        className="p-0 h-auto rounded-t-xl overflow-hidden"
         style={{ height: `${height}px` }}
       >
         <ChatHeader onDragStart={handleDragStart} />
-        <div className="flex-grow overflow-hidden h-[calc(100%-120px)]">
+        <div className="flex-grow overflow-hidden h-[calc(100%-110px)]">
           <ExtendedChatHistory messages={messages} />
         </div>
-        <div className="p-4 border-t">
-          <ChatInput onSendMessage={handleSendMessage} />
+        <div className="p-3 border-t">
+          <div className="flex items-center bg-white border border-neutral-200 rounded-full p-1">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="気になることをAIに質問"
+              className="flex-grow px-4 py-2 bg-transparent border-none focus:outline-none text-sm"
+            />
+            <Button
+              onClick={handleSendMessage}
+              variant="ghost"
+              size="icon"
+              className="rounded-full h-10 w-10 flex items-center justify-center"
+              disabled={!inputValue.trim()}
+            >
+              <Send className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </SheetContent>
     </Sheet>
