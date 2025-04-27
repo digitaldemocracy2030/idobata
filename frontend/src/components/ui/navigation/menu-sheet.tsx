@@ -2,8 +2,6 @@ import * as React from 'react';
 import { Link, LinkProps } from 'react-router-dom';
 import {
   Sheet,
-  SheetPortal,
-  SheetOverlay,
   SheetTrigger,
   SheetClose,
   SheetContent,
