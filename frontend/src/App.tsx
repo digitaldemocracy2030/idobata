@@ -7,6 +7,7 @@ import About from './pages/About';
 import Themes from './pages/Themes';
 import ThemeDetail from './pages/ThemeDetail';
 import AppLayout from './components/AppLayout';
+import PageLayout from './components/layout/PageLayout';
 
 function App() {
   const [userId, setUserId] = useState<string | null>(
@@ -40,19 +41,35 @@ export const router = createBrowserRouter([
       },
       {
         path: 'top',
-        element: <Top />,
+        element: (
+          <PageLayout>
+            <Top />
+          </PageLayout>
+        ),
       },
       {
         path: 'about',
-        element: <About />,
+        element: (
+          <PageLayout>
+            <About />
+          </PageLayout>
+        ),
       },
       {
         path: 'themes',
-        element: <Themes />,
+        element: (
+          <PageLayout>
+            <Themes />
+          </PageLayout>
+        ),
       },
       {
         path: 'themes/:themeId',
-        element: <ThemeDetail />,
+        element: (
+          <PageLayout>
+            <ThemeDetail />
+          </PageLayout>
+        ),
       },
     ],
   },

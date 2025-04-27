@@ -13,7 +13,7 @@
    - children を props として受け取り、ページコンテンツをレンダリングする
    - `Top.tsx`と同じ構造（min-h-screen, flex-col, pt-14 など）でコンテンツをラップする
 
-2. `App.tsx`のルーター設定を更新する
+2. ✅ 完了: `App.tsx`のルーター設定を更新する
    - `Top`、`About`、`Themes`、`ThemeDetail`ページに`PageLayout`を適用する
    - 各ページを`PageLayout`でラップする
 
