@@ -23,9 +23,9 @@ async function generateSharpQuestions(themeId) {
 
 IMPORTANT: When generating questions, focus exclusively on describing both the current state ("現状はこう") and the desired state ("それをこうしたい") with high detail. Do NOT suggest or imply any specific means, methods, or solutions in the questions. The questions should keep the problem space open for creative solutions rather than narrowing the range of possible answers.
 
-Generate all questions in Japanese language, using the format "どのようにできるだろうか？" instead of "How Might We...". Respond ONLY with a JSON object containing a single key "questions" which holds an array of strings, where each string is a generated question in Japanese.
+Generate all questions in Japanese language, using the format "〜にはどうすればいいだろうか？" instead of "How Might We...". Respond ONLY with a JSON object containing a single key "questions" which holds an array of strings, where each string is a generated question in Japanese.
 
-Generate 5-10 questions.
+Generate 5 questions. 50-100字以内程度。
 `
             },
             {
