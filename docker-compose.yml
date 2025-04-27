@@ -52,7 +52,7 @@ services:
     container_name: policy-backend-dev
     build:
       context: . # Change context to the root directory
-      dockerfile: ./policy-edit/backend/Dockerfile.dev # Specify Dockerfile path relative to new context
+      dockerfile: ./policy-edit/backend/Dockerfile # Specify Dockerfile path relative to new context
       target: production # Build the production stage
     ports:
       - "3001:3001" # Expose backend API port
@@ -93,5 +93,5 @@ services:
       - mongo_data:/data/db # Persist data using a named volume
 
 volumes:
-  mongo_data:                  # Define the named volume for MongoDB
+  mongo_data: # Define the named volume for MongoDB
   # Removed node_modules volumes as they are part of the production image

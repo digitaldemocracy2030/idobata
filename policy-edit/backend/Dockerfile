@@ -9,23 +9,22 @@ COPY ./policy-edit/backend/package.json ./policy-edit/backend/
 RUN npm install --workspace=github-contribution-mcp
 RUN npm install --workspace=idobata-policy-editor-backend
 
-# Copy the mcp source code
-COPY ./policy-edit/mcp ./policy-edit/mcp/
-# Build mcp
 WORKDIR /app/policy-edit/mcp
+# Copy the mcp source code
+COPY ./policy-edit/mcp ./
+# Build mcp
 RUN npm run build
-# Reset WORKDIR for potential use in subsequent COPY --from commands if needed
-WORKDIR /app
 
 # Stage 2: Build Backend Server
 FROM node:20-alpine AS backend-builder
 WORKDIR /app
 # Copy installed node_modules from the first stage
 COPY --from=mcp-builder /app/node_modules ./node_modules
+
+WORKDIR /app/policy-edit/backend
 # Copy the backend source code
 COPY ./policy-edit/backend ./policy-edit/backend/
 # Build backend
-WORKDIR /app/policy-edit/backend
 RUN npm run build
 
 # Stage 3: Final Production Image
@@ -47,6 +46,7 @@ ENV NODE_ENV=production
 # Copy the private key into the final image
 # IMPORTANT: Ensure the key exists at ./policy-edit/backend/secrets/github-key.pem during build
 COPY ./policy-edit/backend/secrets/github-key.pem /app/secrets/github-key.pem
+
 # Copy backend package.json (optional, if needed by CMD or runtime)
 COPY ./policy-edit/backend/package.json ./policy-edit/backend/package.json
 
