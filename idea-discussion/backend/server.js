@@ -10,6 +10,7 @@ import questionRoutes from './routes/questionRoutes.js'; // Import question rout
 import policyRoutes from './routes/policyRoutes.js'; // Import policy routes
 import digestRoutes from './routes/digestRoutes.js'; // Import digest routes
 import importRoutes from './routes/importRoutes.js'; // Import import routes
+import themeRoutes from './routes/themeRoutes.js'; // Import theme routes
 
 // Get __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -58,6 +59,7 @@ app.use('/api/questions', questionRoutes); // Use question routes
 app.use('/api/policy-drafts', policyRoutes); // Use policy routes
 app.use('/api/digest-drafts', digestRoutes); // Use digest routes
 app.use('/api/import', importRoutes); // Use import routes
+app.use('/api/themes', themeRoutes); // Use theme routes
 
 // --- Serve static files in production ---
 // This section will be useful when deploying to production

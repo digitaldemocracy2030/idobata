@@ -29,6 +29,11 @@ const ImportedItemSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Solution',
   }],
+  themeId: {  // 追加：所属するテーマのID
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Theme',
+    required: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

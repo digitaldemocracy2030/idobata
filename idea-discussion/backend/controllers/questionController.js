@@ -5,7 +5,8 @@ import Solution from '../models/Solution.js';
 import mongoose from 'mongoose';
 import { generatePolicyDraft } from '../workers/policyGenerator.js'; // Import the worker function
 import { generateDigestDraft } from '../workers/digestGenerator.js'; // Import the digest worker function
-// GET /api/questions - Fetch all sharp questions
+
+// GET /api/questions - Fetch all sharp questions (非推奨)
 export const getAllQuestions = async (req, res) => {
     try {
         const questions = await SharpQuestion.find().sort({ createdAt: -1 });
@@ -135,5 +136,22 @@ export const triggerDigestGeneration = async (req, res) => {
     } catch (error) {
         console.error(`Error triggering digest generation for question ${questionId}:`, error);
         res.status(500).json({ message: 'Error triggering digest generation', error: error.message });
+    }
+};
+
+// GET /api/questions/theme/:themeId - 特定テーマの質問のみ取得
+export const getQuestionsByTheme = async (req, res) => {
+    const { themeId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(themeId)) {
+        return res.status(400).json({ message: 'Invalid theme ID format' });
+    }
+
+    try {
+        const questions = await SharpQuestion.find({ themeId }).sort({ createdAt: -1 });
+        res.status(200).json(questions);
+    } catch (error) {
+        console.error(`Error fetching questions for theme ${themeId}:`, error);
+        res.status(500).json({ message: 'Error fetching theme questions', error: error.message });
     }
 };
