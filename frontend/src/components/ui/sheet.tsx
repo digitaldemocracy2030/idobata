@@ -51,6 +51,11 @@ const SheetContent = React.forwardRef<
       )}
       {...props}
     >
+      <div className="mb-4">
+        <a href="/legacy" className="text-sm text-blue-600 hover:underline">
+          旧UI
+        </a>
+      </div>
       {children}
     </SheetPrimitive.Content>
   </SheetPortal>
