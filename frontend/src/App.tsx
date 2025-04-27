@@ -3,8 +3,6 @@ import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import DataPage from './pages/DataPage';
 import AppLayout from './components/AppLayout';
-import './App.css';
-import './index.css';
 
 function App() {
   const [userId, setUserId] = useState<string | null>(
