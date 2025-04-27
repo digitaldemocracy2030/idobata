@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import { generatePolicyDraft } from '../workers/policyGenerator.js'; // Import the worker function
 import { generateDigestDraft } from '../workers/digestGenerator.js'; // Import the digest worker function
 
-// GET /api/questions - Fetch all sharp questions (非推奨)
+// GET /api/questions - Fetch all sharp questions (非推奨 - 削除予定)
 export const getAllQuestions = async (req, res) => {
     try {
         const questions = await SharpQuestion.find().sort({ createdAt: -1 });
@@ -17,7 +17,7 @@ export const getAllQuestions = async (req, res) => {
     }
 };
 
-// GET /api/questions/:questionId/details - Fetch details for a specific question
+// GET /api/themes/:themeId/questions/:questionId/details - 特定の質問の詳細を取得
 export const getQuestionDetails = async (req, res) => {
     const { questionId } = req.params;
 
@@ -75,7 +75,7 @@ export const getQuestionDetails = async (req, res) => {
     }
 };
 
-// POST /api/questions/:questionId/generate-policy - Trigger policy draft generation
+// POST /api/themes/:themeId/questions/:questionId/generate-policy - ポリシードラフト生成
 export const triggerPolicyGeneration = async (req, res) => {
     const { questionId } = req.params;
 
@@ -107,7 +107,7 @@ export const triggerPolicyGeneration = async (req, res) => {
     }
 };
 
-// POST /api/questions/:questionId/generate-digest - Trigger digest draft generation
+// POST /api/themes/:themeId/questions/:questionId/generate-digest - ダイジェストドラフト生成
 export const triggerDigestGeneration = async (req, res) => {
     const { questionId } = req.params;
 
@@ -139,7 +139,7 @@ export const triggerDigestGeneration = async (req, res) => {
     }
 };
 
-// GET /api/questions/theme/:themeId - 特定テーマの質問のみ取得
+// GET /api/themes/:themeId/questions - 特定テーマの質問を取得
 export const getQuestionsByTheme = async (req, res) => {
     const { themeId } = req.params;
 

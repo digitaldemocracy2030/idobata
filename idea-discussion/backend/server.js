@@ -52,14 +52,18 @@ app.get('/api/health', (req, res) => {
     res.json({ status: "ok", timestamp: new Date() });
 });
 
+// Import theme question routes
+import themeQuestionRoutes from './routes/themeQuestionRoutes.js';
+
 // Placeholder for future routes
 app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes); // Use admin routes
-app.use('/api/questions', questionRoutes); // Use question routes
+// app.use('/api/questions', questionRoutes); // Old route - removed as per user request
 app.use('/api/policy-drafts', policyRoutes); // Use policy routes
 app.use('/api/digest-drafts', digestRoutes); // Use digest routes
 app.use('/api/import', importRoutes); // Use import routes
 app.use('/api/themes', themeRoutes); // Use theme routes
+app.use('/api/themes/:themeId/questions', themeQuestionRoutes); // New theme-based question routes
 
 // --- Serve static files in production ---
 // This section will be useful when deploying to production
