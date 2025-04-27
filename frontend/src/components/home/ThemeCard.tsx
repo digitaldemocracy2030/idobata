@@ -1,6 +1,8 @@
 import { ArrowRight, MessageSquare, HelpCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface ThemeCardProps {
+  id?: number;
   title: string;
   description?: string;
   keyQuestionCount?: number;
@@ -10,6 +12,7 @@ interface ThemeCardProps {
 }
 
 const ThemeCard = ({
+  id,
   title,
   description,
   keyQuestionCount,
@@ -33,9 +36,12 @@ const ThemeCard = ({
               関連意見: {commentCount}件
             </span>
           </div>
-          <button className="bg-purple-500 text-white p-1 rounded-md">
+          <Link
+            to={`/themes/${id}`}
+            className="bg-purple-500 text-white p-1 rounded-md inline-block"
+          >
             <ArrowRight className="h-5 w-5" />
-          </button>
+          </Link>
         </div>
       </div>
     );
@@ -57,9 +63,9 @@ const ThemeCard = ({
             解決策: {solutionCount}
           </span>
         </div>
-        <button className="bg-purple-500 text-white p-1 rounded-md">
+        <Link to={`/themes/${id}`} className="bg-purple-500 text-white p-1 rounded-md inline-block">
           <ArrowRight className="h-5 w-5" />
-        </button>
+        </Link>
       </div>
     </div>
   );

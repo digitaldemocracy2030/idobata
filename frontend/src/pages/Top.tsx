@@ -67,7 +67,7 @@ const Top = () => {
               />
             ))}
           </div>
-          <SeeMoreButton />
+          <SeeMoreButton to="/" />
         </section>
 
         <section className="mb-6 bg-purple-50 rounded-xl p-4">
@@ -79,13 +79,14 @@ const Top = () => {
             {themeData.map(item => (
               <ThemeCard
                 key={item.id}
+                id={item.id}
                 title={item.title}
                 problemCount={item.problemCount}
                 solutionCount={item.solutionCount}
               />
             ))}
           </div>
-          <SeeMoreButton />
+          <SeeMoreButton to="/themes" />
         </section>
       </div>
     </>
