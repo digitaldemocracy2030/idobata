@@ -255,7 +255,7 @@ function AppLayout() {
           )}
 
           {/* Control Buttons */}
-          <div className="absolute top-2 left-2 z-10 flex space-x-2">
+          <div className="absolute top-2 left-2 z-10 flex space-x-2 bg-red-500">
             {/* Extraction Toggle Button */}
             <button
               onClick={() => setShowExtractions(!showExtractions)}

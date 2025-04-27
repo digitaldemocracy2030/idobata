@@ -177,7 +177,7 @@ const ChatPanel: React.FC = () => {
   const connectToGithubContributionServer = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}/chat/connect`, {
         method: 'POST',
@@ -186,9 +186,9 @@ const ChatPanel: React.FC = () => {
         },
         // No body needed, server path is now read from backend .env
       });
-      
+
       const data = await response.json();
-      
+
       // Don't add messages here directly, let the check after connection handle it
       if (response.ok) {
         setIsConnected(true);
@@ -360,7 +360,7 @@ const ChatPanel: React.FC = () => {
           </span>
         )}
       </div>
-      
+
       {/* Chat messages area */}
       <div ref={chatContainerRef} className="flex-grow overflow-y-auto mb-4 pr-2 space-y-2">
         {!isMdFileActive ? (
@@ -402,7 +402,7 @@ const ChatPanel: React.FC = () => {
       </div>
 
       {/* Input area - only enabled when an MD file is active */}
-      
+
       <div className={`flex-shrink-0 flex ${!isMdFileActive ? 'opacity-50 cursor-not-allowed' : ''}`}>
         <textarea
           value={inputValue}
