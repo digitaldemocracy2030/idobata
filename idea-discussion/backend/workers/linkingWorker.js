@@ -3,7 +3,10 @@ import Problem from '../models/Problem.js';
 import Solution from '../models/Solution.js';
 import SharpQuestion from '../models/SharpQuestion.js';
 import QuestionLink from '../models/QuestionLink.js';
+import pLimit from 'p-limit';
 import { callLLM } from '../services/llmService.js';
+
+const DEFAULT_CONCURRENCY_LIMIT = 10; // Set the concurrency limit here
 
 /**
  * Links a specific Problem or Solution item to relevant SharpQuestions using LLM.
@@ -200,7 +203,12 @@ Analyze the relationship and provide the JSON output.`
  * @param {string} questionId - The ID of the newly generated SharpQuestion.
  */
 async function linkQuestionToAllItems(questionId) {
-    console.log(`[LinkingWorker] Starting linking for new Question ID: ${questionId}`);
+    const concurrencyLimit = DEFAULT_CONCURRENCY_LIMIT;
+    console.log(`[LinkingWorker] Starting linking for new Question ID: ${questionId} with concurrency ${concurrencyLimit}`);
+    const limit = pLimit(concurrencyLimit);
+    let completedTasks = 0;
+    let totalTasks = 0;
+
     try {
         const question = await SharpQuestion.findById(questionId);
         if (!question) {
@@ -211,17 +219,39 @@ async function linkQuestionToAllItems(questionId) {
         const problems = await Problem.find({});
         const solutions = await Solution.find({});
 
-        console.log(`[LinkingWorker] Linking Question ${questionId} to ${problems.length} problems and ${solutions.length} solutions.`);
+        totalTasks = problems.length + solutions.length;
+        console.log(`[LinkingWorker] Linking Question ${questionId} to ${problems.length} problems and ${solutions.length} solutions. Total tasks: ${totalTasks}`);
 
-        // Link Problems
-        for (const problem of problems) {
-            await linkSpecificQuestionToItem(questionId, problem._id.toString(), 'problem');
-        }
+        const tasks = [];
 
-        // Link Solutions
-        for (const solution of solutions) {
-            await linkSpecificQuestionToItem(questionId, solution._id.toString(), 'solution');
-        }
+        // Prepare tasks for problems
+        problems.forEach(problem => {
+            tasks.push(limit(async () => {
+                try {
+                    await linkSpecificQuestionToItem(questionId, problem._id.toString(), 'problem');
+                } finally {
+                    completedTasks++;
+                    const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 100;
+                    console.log(`[LinkingWorker] Progress for Q ${questionId}: ${completedTasks}/${totalTasks} (${progress}%)`);
+                }
+            }));
+        });
+
+        // Prepare tasks for solutions
+        solutions.forEach(solution => {
+            tasks.push(limit(async () => {
+                try {
+                    await linkSpecificQuestionToItem(questionId, solution._id.toString(), 'solution');
+                } finally {
+                    completedTasks++;
+                    const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 100;
+                    console.log(`[LinkingWorker] Progress for Q ${questionId}: ${completedTasks}/${totalTasks} (${progress}%)`);
+                }
+            }));
+        });
+
+        // Execute all tasks concurrently
+        await Promise.all(tasks);
 
         console.log(`[LinkingWorker] Finished linking for new Question ID: ${questionId}`);
 
