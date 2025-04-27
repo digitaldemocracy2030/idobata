@@ -23,10 +23,18 @@
   - package.jsonから不要なパッケージを削除: `@tailwindcss/vite` と `@tailwindcss/postcss`
   - npmコマンドを実行: `npm uninstall @tailwindcss/vite @tailwindcss/postcss && npm install`
 
+### 2025/4/27 午前9:46
+- 作業3「変更の適用と確認」を実行中に問題を発見
+  - エラー: Tailwind CSS v4では、PostCSSプラグインが別パッケージに移動しており、`'tailwindcss'`ではなく`'@tailwindcss/postcss'`を使用する必要がある
+  - 修正対応:
+    - PostCSS設定を元に戻し、`'@tailwindcss/postcss'`を使用するように変更
+    - `@tailwindcss/postcss`パッケージを再インストール
+
 ## 1. 設定ファイルの修正
 
-- [x] **PostCSS の設定を修正**
-  - [x] `frontend/postcss.config.js` の `'@tailwindcss/postcss'` を `'tailwindcss'` に変更
+- [x] **PostCSS の設定を確認**
+  - [x] ~~`frontend/postcss.config.js` の `'@tailwindcss/postcss'` を `'tailwindcss'` に変更~~ (※この変更は誤りでした)
+  - [x] Tailwind CSS v4では、`'@tailwindcss/postcss'`が正しい設定であることを確認
 
 - [x] **CSS インポートの確認**
   - [x] `frontend/src/index.css` の先頭部分を確認
@@ -41,10 +49,11 @@
 
 - [x] **不要なパッケージを削除**
   - [x] `@tailwindcss/vite` パッケージを削除
-  - [x] `@tailwindcss/postcss` パッケージを削除
+  - [x] ~~`@tailwindcss/postcss` パッケージを削除~~ (※この変更は誤りでした)
 
 - [x] **パッケージの再インストール**
   - [x] `npm install` を実行して依存関係を更新
+  - [x] `@tailwindcss/postcss` パッケージを再インストール
 
 ## 3. 変更の適用と確認
 
@@ -57,13 +66,13 @@
 
 ## 修正内容の詳細
 
-### 1. PostCSS 設定の修正
+### 1. PostCSS 設定の確認
 
-**現在の問題点**: 非標準のプラグイン名 `'@tailwindcss/postcss'` を使用している
+**現在の状況**: Tailwind CSS v4では、`'@tailwindcss/postcss'`が正しいプラグイン名である
 
 **ファイル**: `frontend/postcss.config.js`
 
-**変更前**:
+**正しい設定**:
 ```javascript
 // postcss.config.js
 export default {
@@ -74,16 +83,7 @@ export default {
   }
 ```
 
-**変更後**:
-```javascript
-// postcss.config.js
-export default {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {},
-    },
-  }
-```
+**注意**: 当初は`'tailwindcss'`に変更する予定でしたが、Tailwind CSS v4では、PostCSSプラグインが別パッケージに移動しており、`'@tailwindcss/postcss'`を使用する必要があります。
 
 ### 2. CSS インポートの確認
 
@@ -143,16 +143,18 @@ export default defineConfig({
 
 ### 4. パッケージ依存関係の更新
 
-**現在の問題点**: 非標準の Tailwind パッケージを使用している
+**現在の状況**: Tailwind CSS v4では、`@tailwindcss/postcss`パッケージが必要である
 
 **ファイル**: `frontend/package.json`
 
 **削除するべき依存関係**:
 - `"@tailwindcss/vite": "^4.1.3"` (dependencies から)
-- `"@tailwindcss/postcss": "^4.1.4"` (devDependencies から)
+
+**保持するべき依存関係**:
+- `"@tailwindcss/postcss": "^4.1.4"` (devDependencies に必要)
 
 **ファイル変更後に実行するコマンド**:
 ```bash
 cd frontend
-npm uninstall @tailwindcss/vite @tailwindcss/postcss
+npm uninstall @tailwindcss/vite
 npm install
