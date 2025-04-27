@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo 'not implemented yet'",
+    "test": "vitest run --passWithNoTests",
     "start": "node server.js",
     "dev": "nodemon server.js",
     "lint": "biome check .",
@@ -21,10 +21,11 @@
     "express": "^5.1.0",
     "mongoose": "^8.13.2",
     "openai": "^4.93.0",
-    "uuid": "^11.1.0",
-    "p-limit": "^6.2.0"
+    "p-limit": "^6.2.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "vitest": "^3.1.2"
   }
 }

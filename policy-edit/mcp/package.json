@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/main.js",
-    "test": "echo 'not implemented yet'",
+    "test": "vitest run --passWithNoTests",
     "dev": "nodemon --watch src --exec \"node --loader ts-node/esm src/main.ts\" | pino-pretty",
     "lint": "biome check .",
     "format": "biome check --write ."
@@ -20,7 +20,8 @@
     "nodemon": "^3.1.9",
     "pino-pretty": "^13.0.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.2"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.9.0",
