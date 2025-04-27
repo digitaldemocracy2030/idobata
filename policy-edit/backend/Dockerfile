@@ -1,42 +1,45 @@
 # Stage 1: Build MCP Server
 FROM node:20-alpine AS mcp-builder
-WORKDIR /app/mcp
-# Copy only package files first for better layer caching
-COPY ./policy-edit/mcp/package*.json ./
-# Install dependencies (consider --only=production for smaller final image if applicable)
-RUN npm install
-# Copy the rest of the mcp source code
+WORKDIR /app
+# Copy root package files and relevant workspace package.json files
+COPY package.json package-lock.json ./
+COPY ./policy-edit/mcp/package.json ./policy-edit/mcp/
+COPY ./policy-edit/backend/package.json ./policy-edit/backend/
+# Install ALL dependencies (including dev) needed for build, based on root lock file
+RUN npm install --workspace=github-contribution-mcp
+RUN npm install --workspace=idobata-policy-editor-backend
+
+WORKDIR /app/policy-edit/mcp
+# Copy the mcp source code
 COPY ./policy-edit/mcp ./
 # Build mcp
 RUN npm run build
 
 # Stage 2: Build Backend Server
 FROM node:20-alpine AS backend-builder
-WORKDIR /app/backend
-# Copy only package files first
-COPY ./policy-edit/backend/package*.json ./
-# Install dependencies (consider --only=production)
-RUN npm install
-# Copy the rest of the backend source code
+WORKDIR /app
+# Copy installed node_modules from the first stage
+COPY --from=mcp-builder /app/node_modules ./node_modules
+
+WORKDIR /app/policy-edit/backend
+# Copy the backend source code
 COPY ./policy-edit/backend ./
 # Build backend
 RUN npm run build
 
-# Stage 3: Final Production Image (if needed, otherwise skip to development)
+# Stage 3: Final Production Image
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Copy built artifacts and necessary node_modules from builders
-COPY --from=mcp-builder /app/mcp/dist ./mcp/dist/
-COPY --from=mcp-builder /app/mcp/node_modules ./mcp/node_modules/
-COPY --from=mcp-builder /app/mcp/package.json ./mcp/
+# Copy installed node_modules from the first stage
+COPY --from=mcp-builder /app/node_modules ./node_modules
 
-COPY --from=backend-builder /app/backend/build ./backend/build/
-COPY --from=backend-builder /app/backend/node_modules ./backend/node_modules/
-COPY --from=backend-builder /app/backend/package.json ./backend/package.json
+# Copy built artifacts from builders
+COPY --from=mcp-builder /app/policy-edit/mcp/dist ./policy-edit/mcp/dist/
+COPY --from=backend-builder /app/policy-edit/backend/build ./policy-edit/backend/build/
 
 # Set environment variable for MCP server path within the container
-ENV MCP_SERVER_PATH=/app/mcp/dist/main.js
+ENV MCP_SERVER_PATH=/app/policy-edit/mcp/dist/main.js
 # Set NODE_ENV to production
 ENV NODE_ENV=production
 
@@ -44,7 +47,10 @@ ENV NODE_ENV=production
 # IMPORTANT: Ensure the key exists at ./policy-edit/backend/secrets/github-key.pem during build
 COPY ./policy-edit/backend/secrets/github-key.pem /app/secrets/github-key.pem
 
-WORKDIR /app/backend
+# Copy backend package.json (optional, if needed by CMD or runtime)
+COPY ./policy-edit/backend/package.json ./policy-edit/backend/package.json
+
+WORKDIR /app/policy-edit/backend
 EXPOSE 3001
 CMD ["node", "build/index.js"]
 

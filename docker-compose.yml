@@ -1,15 +1,13 @@
-version: '3.8'
-
 services:
   idea-backend:
     container_name: idea-backend-dev
     build:
-      context: ./idea-discussion/backend
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: idea-discussion/backend/Dockerfile.dev
     volumes:
-      - ./idea-discussion/backend:/app
-      # Prevent host node_modules from overwriting container's
-      - /app/node_modules
+      - ./idea-discussion/backend:/app/idea-discussion/backend
+      # Prevent node_modules from being overwritten by host mount
+      - /app/idea-discussion/backend/node_modules
     ports:
       - "3000:3000" # Expose backend API port
     depends_on:
@@ -55,7 +53,7 @@ services:
     build:
       context: . # Change context to the root directory
       dockerfile: ./policy-edit/backend/Dockerfile # Specify Dockerfile path relative to new context
-      target: production             # Build the production stage
+      target: production # Build the production stage
     ports:
       - "3001:3001" # Expose backend API port
     env_file:
@@ -95,5 +93,5 @@ services:
       - mongo_data:/data/db # Persist data using a named volume
 
 volumes:
-  mongo_data:                  # Define the named volume for MongoDB
+  mongo_data: # Define the named volume for MongoDB
   # Removed node_modules volumes as they are part of the production image
