@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React from "react";
+import { useState, useEffect } from "react";
+import type { FC } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import ThemeForm from "../components/theme/ThemeForm";
 import { apiClient } from "../services/api/apiClient";
 import type { Theme } from "../services/api/types";
 
-const ThemeEdit: React.FC = () => {
+const ThemeEdit: FC = () => {
   const { themeId } = useParams<{ themeId: string }>();
   const navigate = useNavigate();
   const [theme, setTheme] = useState<Theme | null>(null);

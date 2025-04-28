@@ -1,4 +1,4 @@
-import { err, ok, Result } from "neverthrow";
+import { err, ok, type Result } from "neverthrow";
 import { ApiError, ApiErrorType } from "./apiError";
 import type { Theme, CreateThemePayload, UpdateThemePayload } from "./types";
 

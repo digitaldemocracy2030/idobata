@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import { useState, useEffect } from "react";
 import type { FC } from "react";
-import Button from "../components/ui/Button";
+import { Link } from "react-router-dom";
 import ThemeTable from "../components/theme/ThemeTable";
+import Button from "../components/ui/Button";
 import { apiClient } from "../services/api/apiClient";
 import type { Theme } from "../services/api/types";
 
