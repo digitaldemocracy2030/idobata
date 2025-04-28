@@ -54,12 +54,12 @@ const DebateSummary = ({
       ) : (
         <div>
           <h3 className="text-md font-medium mb-3">主要な論点と対立軸</h3>
-          {axes.map((axis, axisIndex) => (
-            <div key={axisIndex} className="mb-4">
+          {axes.map((axis) => (
+            <div key={`axis-${axis.title}`} className="mb-4">
               <h4 className="text-sm font-medium mb-2">{axis.title}</h4>
               <div className="pl-4 space-y-2">
-                {axis.options.map((option, optionIndex) => (
-                  <div key={optionIndex}>
+                {axis.options.map((option) => (
+                  <div key={`option-${axis.title}-${option.label}`}>
                     <p className="text-sm font-medium">{option.label}</p>
                     <p className="text-xs text-neutral-600">
                       {option.description}
@@ -81,7 +81,7 @@ const DebateSummary = ({
               ))}
             </ul>
           </div>
-          
+
           <div>
             <h4 className="text-sm font-medium mb-2">対立点</h4>
             <ul className="pl-5 list-disc text-sm">

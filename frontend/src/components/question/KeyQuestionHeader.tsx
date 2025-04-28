@@ -8,7 +8,9 @@ export interface KeyQuestionHeaderProps {
 const KeyQuestionHeader = ({ question, voteCount }: KeyQuestionHeaderProps) => {
   return (
     <div className="mb-6">
-      <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4">{question}</h1>
+      <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4">
+        {question}
+      </h1>
       <div className="flex items-center">
         <button
           className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md flex items-center transition-colors duration-200"
