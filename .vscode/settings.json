@@ -3,11 +3,28 @@
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.biome": "explicit",
-    "source.organizeImports": "explicit",
-    "source.addMissingImports": "always"
+    "source.organizeImports.biome": "explicit",
+    "source.addMissingImports": "always",
+    "source.fixAll.eslint": "never"
   },
   "[javascript][typescript][javascriptreact][typescriptreact][json][jsonc]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
-  "biome.lspBin": "./node_modules/.bin/biome"
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "biome.lspBin": "./node_modules/.bin/biome",
+  "biome.enabled": true
 }
