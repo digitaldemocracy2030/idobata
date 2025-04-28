@@ -14,7 +14,9 @@ const DebateSummary = ({
   agreementPoints,
   disagreementPoints,
 }: DebateSummaryProps) => {
-  const [activeTab, setActiveTab] = useState<"illustration" | "analysis">("illustration");
+  const [activeTab, setActiveTab] = useState<"illustration" | "analysis">(
+    "illustration"
+  );
 
   return (
     <div className="mb-8 border border-neutral-200 rounded-lg p-4 bg-white">
@@ -59,7 +61,9 @@ const DebateSummary = ({
                 {axis.options.map((option, optionIndex) => (
                   <div key={optionIndex}>
                     <p className="text-sm font-medium">{option.label}</p>
-                    <p className="text-xs text-neutral-600">{option.description}</p>
+                    <p className="text-xs text-neutral-600">
+                      {option.description}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -70,8 +74,10 @@ const DebateSummary = ({
           <div className="mb-4">
             <h4 className="text-sm font-medium mb-2">合意点</h4>
             <ul className="pl-5 list-disc text-sm">
-              {agreementPoints.map((point, index) => (
-                <li key={index} className="mb-1">{point}</li>
+              {agreementPoints.map((point) => (
+                <li key={`point-${point}`} className="mb-1">
+                  {point}
+                </li>
               ))}
             </ul>
           </div>
@@ -79,8 +85,10 @@ const DebateSummary = ({
           <div>
             <h4 className="text-sm font-medium mb-2">対立点</h4>
             <ul className="pl-5 list-disc text-sm">
-              {disagreementPoints.map((point, index) => (
-                <li key={index} className="mb-1">{point}</li>
+              {disagreementPoints.map((point) => (
+                <li key={`point-${point}`} className="mb-1">
+                  {point}
+                </li>
               ))}
             </ul>
           </div>
