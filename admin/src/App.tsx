@@ -1,12 +1,12 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Header from "./components/layout/Header";
-import Sidebar from "./components/layout/Sidebar";
 import MainContent from "./components/layout/MainContent";
+import Sidebar from "./components/layout/Sidebar";
 import Dashboard from "./pages/Dashboard";
-import ThemeList from "./pages/ThemeList";
 import ThemeCreate from "./pages/ThemeCreate";
 import ThemeEdit from "./pages/ThemeEdit";
+import ThemeList from "./pages/ThemeList";
 
 const App: React.FC = () => {
   return (

@@ -141,8 +141,9 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
       />
 
       <div className="mb-4">
-        <label className="block text-gray-700 font-medium mb-2">説明</label>
+        <label htmlFor="description" className="block text-gray-700 font-medium mb-2">説明</label>
         <textarea
+          id="description"
           name="description"
           value={formData.description}
           onChange={handleChange}
