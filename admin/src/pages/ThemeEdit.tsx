@@ -45,7 +45,9 @@ const ThemeEdit: FC = () => {
   }
 
   if (error) {
-    return <div className="bg-red-100 text-red-700 p-4 rounded mb-4">{error}</div>;
+    return (
+      <div className="bg-red-100 text-red-700 p-4 rounded mb-4">{error}</div>
+    );
   }
 
   if (!theme) {
