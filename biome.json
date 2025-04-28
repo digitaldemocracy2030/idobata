@@ -2,8 +2,8 @@
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": true },
   "files": {
-    "ignoreUnknown": false,
-    "ignore": ["node_modules", "dist", "*.d.ts"]
+    "ignoreUnknown": true,
+    "ignore": ["node_modules", "dist", "*.d.ts", "**/*.md", "**/*.svg", "**/*.png", "**/*.tsbuildinfo"]
   },
 
   "formatter": { "enabled": true, "indentStyle": "space", "indentWidth": 2 },
@@ -14,12 +14,15 @@
       "recommended": true,
       "correctness": {
         "useExhaustiveDependencies": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
       }
     }
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "double",
+      "quoteStyle": "single",
       "trailingCommas": "es5",
       "semicolons": "always"
     }
