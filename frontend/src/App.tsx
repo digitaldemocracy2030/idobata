@@ -6,6 +6,7 @@ import PageLayout from "./components/layout/PageLayout";
 import About from "./pages/About";
 import DataPage from "./pages/DataPage";
 import MainPage from "./pages/MainPage";
+import QuestionDetail from "./pages/QuestionDetail";
 import ThemeDetail from "./pages/ThemeDetail";
 import Themes from "./pages/Themes";
 import Top from "./pages/Top";
@@ -75,6 +76,14 @@ export const router = createBrowserRouter([
         element: (
           <PageLayout>
             <ThemeDetail />
+          </PageLayout>
+        ),
+      },
+      {
+        path: "themes/:themeId/questions/:qId",
+        element: (
+          <PageLayout>
+            <QuestionDetail />
           </PageLayout>
         ),
       },
