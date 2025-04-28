@@ -107,7 +107,7 @@ services:
       - .env
     environment:
       - NODE_ENV=development
-      - VITE_API_BASE_URL=http://idea-backend:3000 # idea-discussionバックエンドを指す
+      - VITE_API_BASE_URL=http://localhost:3000 # idea-discussionバックエンドを指す
 
 volumes:
   mongo_data: # Define the named volume for MongoDB
