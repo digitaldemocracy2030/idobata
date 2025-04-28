@@ -1,11 +1,12 @@
 import React from "react";
+import type { FC, ReactNode } from "react";
 
 interface AlertProps {
-  children: React.ReactNode;
+  children: ReactNode;
   type?: "success" | "error" | "warning" | "info";
 }
 
-const Alert: React.FC<AlertProps> = ({ children, type = "info" }) => {
+const Alert: FC<AlertProps> = ({ children, type = "info" }) => {
   const typeStyles = {
     success: "bg-green-100 text-green-700",
     error: "bg-red-100 text-red-700",
