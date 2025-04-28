@@ -1,6 +1,6 @@
-import { Result, ok, err, ResultAsync } from 'neverthrow';
-import { HttpClient, HttpResult } from './httpClient';
-import { ApiError, ApiErrorType } from './apiError';
+import { ok, err } from "neverthrow";
+import { HttpClient, HttpResult } from "./httpClient";
+import { ApiError, ApiErrorType } from "./apiError";
 import {
   Theme,
   Question,
@@ -9,7 +9,7 @@ import {
   Solution,
   PolicyDraft,
   DigestDraft
-} from '../../types';
+} from "../../types";
 
 interface RetryOptions {
   maxRetries: number;
@@ -36,7 +36,7 @@ export class ApiClient {
     const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/api`;
     this.httpClient = new HttpClient({
       baseUrl,
-      timeout: 30000
+      timeout: 30000,
     });
     this.retryOptions = defaultRetryOptions;
   }
@@ -61,14 +61,14 @@ export class ApiClient {
         return err(lastError);
       }
 
-      await new Promise(resolve => setTimeout(resolve, retryOpts.delayMs));
+      await new Promise((resolve) => setTimeout(resolve, retryOpts.delayMs));
     }
 
-    return err(lastError || new ApiError(ApiErrorType.UNKNOWN_ERROR, 'Unknown error occurred'));
+    return err(lastError || new ApiError(ApiErrorType.UNKNOWN_ERROR, "Unknown error occurred"));
   }
 
   async getAllThemes(): Promise<HttpResult<Theme[]>> {
-    return this.withRetry(() => this.httpClient.get<Theme[]>('/themes'));
+    return this.withRetry(() => this.httpClient.get<Theme[]>("/themes"));
   }
 
   async getThemeById(id: string): Promise<HttpResult<Theme>> {
@@ -78,17 +78,17 @@ export class ApiClient {
   async getDefaultTheme(): Promise<HttpResult<Theme>> {
     const themesResult = await this.getAllThemes();
 
-    return themesResult.andThen(themes => {
-      const defaultTheme = themes.find(theme => theme.slug === 'default') || themes[0];
+    return themesResult.andThen((themes) => {
+      const defaultTheme = themes.find((theme) => theme.slug === "default") || themes[0];
       if (!defaultTheme) {
-        return err(new ApiError(ApiErrorType.NOT_FOUND, 'Default theme not found'));
+        return err(new ApiError(ApiErrorType.NOT_FOUND, "Default theme not found"));
       }
       return ok(defaultTheme);
     });
   }
 
   async getAllQuestions(): Promise<HttpResult<Question[]>> {
-    return this.withRetry(() => this.httpClient.get<Question[]>('/questions'));
+    return this.withRetry(() => this.httpClient.get<Question[]>("/questions"));
   }
 
   async getQuestionsByTheme(themeId: string): Promise<HttpResult<Question[]>> {
@@ -108,13 +108,13 @@ export class ApiClient {
   async generateQuestions(themeId?: string): Promise<HttpResult<void>> {
     const endpoint = themeId
       ? `/themes/${themeId}/generate-questions`
-      : `/admin/generate-questions`;
+      : "/admin/generate-questions";
 
     return this.withRetry(() => this.httpClient.post<void>(endpoint));
   }
 
   async getAllProblems(): Promise<HttpResult<Problem[]>> {
-    return this.withRetry(() => this.httpClient.get<Problem[]>('/admin/problems'));
+    return this.withRetry(() => this.httpClient.get<Problem[]>("/admin/problems"));
   }
 
   async getProblemsByTheme(themeId: string): Promise<HttpResult<Problem[]>> {
@@ -124,7 +124,7 @@ export class ApiClient {
   }
 
   async getAllSolutions(): Promise<HttpResult<Solution[]>> {
-    return this.withRetry(() => this.httpClient.get<Solution[]>('/admin/solutions'));
+    return this.withRetry(() => this.httpClient.get<Solution[]>("/admin/solutions"));
   }
 
   async getSolutionsByTheme(themeId: string): Promise<HttpResult<Solution[]>> {
@@ -134,7 +134,7 @@ export class ApiClient {
   }
 
   async getAllPolicyDrafts(): Promise<HttpResult<PolicyDraft[]>> {
-    return this.withRetry(() => this.httpClient.get<PolicyDraft[]>('/policy-drafts'));
+    return this.withRetry(() => this.httpClient.get<PolicyDraft[]>("/policy-drafts"));
   }
 
   async getPolicyDraftsByTheme(themeId: string): Promise<HttpResult<PolicyDraft[]>> {
@@ -144,7 +144,7 @@ export class ApiClient {
   }
 
   async getAllDigestDrafts(): Promise<HttpResult<DigestDraft[]>> {
-    return this.withRetry(() => this.httpClient.get<DigestDraft[]>('/digest-drafts'));
+    return this.withRetry(() => this.httpClient.get<DigestDraft[]>("/digest-drafts"));
   }
 
   async getDigestDraftsByTheme(themeId: string): Promise<HttpResult<DigestDraft[]>> {
@@ -168,11 +168,11 @@ export class ApiClient {
   async sendMessage(userId: string, message: string, threadId?: string): Promise<HttpResult<{ response: string; threadId: string; userId: string }>> {
     return this.withRetry(() =>
       this.httpClient.post<{ response: string; threadId: string; userId: string }>(
-        `/chat/messages`,
+        "/chat/messages",
         {
           userId,
           message,
-          threadId
+          threadId,
         }
       )
     );

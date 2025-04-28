@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { apiClient } from '../services/api/apiClient';
+import { apiClient } from "../services/api/apiClient";
 
 function AdminPanel() {
   const [problems, setProblems] = useState([]);

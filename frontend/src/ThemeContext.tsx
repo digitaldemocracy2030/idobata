@@ -5,9 +5,9 @@ import {
   useEffect,
   useState,
 } from "react";
+import { apiClient } from "./services/api/apiClient";
+import { ApiErrorType } from "./services/api/apiError";
 import type { Theme } from "./types";
-import { apiClient } from './services/api/apiClient';
-import { ApiErrorType } from './services/api/apiError';
 
 interface ThemeContextType {
   defaultThemeId: string | null;

@@ -1,5 +1,5 @@
-import { Result, ok, err } from 'neverthrow';
-import { ApiError, ApiErrorType } from './apiError';
+import { Result, ok, err } from "neverthrow";
+import { ApiError } from "./apiError";
 
 export type HttpResult<T> = Result<T, ApiError>;
 
@@ -18,25 +18,39 @@ export class HttpClient {
     this.baseUrl = options.baseUrl;
     this.timeout = options.timeout || 30000; // デフォルトタイムアウト: 30秒
     this.defaultHeaders = {
-      'Content-Type': 'application/json',
-      ...options.headers
+      "Content-Type": "application/json",
+      ...options.headers,
     };
   }
 
-  async get<T>(endpoint: string, headers?: Record<string, string>): Promise<HttpResult<T>> {
-    return this.request<T>(endpoint, 'GET', undefined, headers);
+  async get<T>(
+    endpoint: string,
+    headers?: Record<string, string>
+  ): Promise<HttpResult<T>> {
+    return this.request<T>(endpoint, "GET", undefined, headers);
   }
 
-  async post<T>(endpoint: string, data?: any, headers?: Record<string, string>): Promise<HttpResult<T>> {
-    return this.request<T>(endpoint, 'POST', data, headers);
+  async post<T>(
+    endpoint: string,
+    data?: any,
+    headers?: Record<string, string>
+  ): Promise<HttpResult<T>> {
+    return this.request<T>(endpoint, "POST", data, headers);
   }
 
-  async put<T>(endpoint: string, data?: any, headers?: Record<string, string>): Promise<HttpResult<T>> {
-    return this.request<T>(endpoint, 'PUT', data, headers);
+  async put<T>(
+    endpoint: string,
+    data?: any,
+    headers?: Record<string, string>
+  ): Promise<HttpResult<T>> {
+    return this.request<T>(endpoint, "PUT", data, headers);
   }
 
-  async delete<T>(endpoint: string, headers?: Record<string, string>): Promise<HttpResult<T>> {
-    return this.request<T>(endpoint, 'DELETE', undefined, headers);
+  async delete<T>(
+    endpoint: string,
+    headers?: Record<string, string>
+  ): Promise<HttpResult<T>> {
+    return this.request<T>(endpoint, "DELETE", undefined, headers);
   }
 
   private async request<T>(
@@ -50,7 +64,7 @@ export class HttpClient {
       method,
       headers: {
         ...this.defaultHeaders,
-        ...headers
+        ...headers,
       },
     };
 
@@ -70,13 +84,15 @@ export class HttpClient {
         let responseData;
         try {
           responseData = await response.json();
-        } catch (e) {
-        }
+        } catch (e) {}
 
         return err(ApiError.fromHttpError(response, responseData));
       }
 
-      if (response.status === 204 || response.headers.get('content-length') === '0') {
+      if (
+        response.status === 204 ||
+        response.headers.get("content-length") === "0"
+      ) {
         return ok({} as T);
       }
 
@@ -84,11 +100,11 @@ export class HttpClient {
       return ok(responseData as T);
     } catch (error) {
       if (error instanceof Error) {
-        if (error.name === 'AbortError') {
+        if (error.name === "AbortError") {
           return err(ApiError.fromTimeoutError());
         }
 
-        if (error instanceof TypeError && error.message.includes('fetch')) {
+        if (error instanceof TypeError && error.message.includes("fetch")) {
           return err(ApiError.fromNetworkError(error));
         }
       }
