@@ -18,7 +18,7 @@ const ThemeTable: React.FC<ThemeTableProps> = ({ themes, onDelete }) => {
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border border-gray-200">
         <thead>
-          <tr className="bg-gray-50">
+          <tr className="bg-gray-100">
             <th className="py-2 px-4 border-b text-left">タイトル</th>
             <th className="py-2 px-4 border-b text-left">スラッグ</th>
             <th className="py-2 px-4 border-b text-left">ステータス</th>
@@ -35,7 +35,7 @@ const ThemeTable: React.FC<ThemeTableProps> = ({ themes, onDelete }) => {
             </tr>
           ) : (
             themes.map((theme) => (
-              <tr key={theme._id} className="hover:bg-gray-50">
+              <tr key={theme._id} className="hover:bg-gray-100">
                 <td className="py-2 px-4 border-b">{theme.title}</td>
                 <td className="py-2 px-4 border-b">{theme.slug}</td>
                 <td className="py-2 px-4 border-b">

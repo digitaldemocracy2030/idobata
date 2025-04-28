@@ -13,19 +13,19 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "autoprefixer": "^10.4.21",
     "neverthrow": "^8.2.0",
-    "postcss": "^8.5.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^7.5.2",
-    "tailwindcss": "^4.1.4"
+    "react-router-dom": "^7.5.2"
   },
   "devDependencies": {
     "@types/node": "^22.15.3",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.24",
+    "tailwindcss": "^3.3.2",
     "typescript": "^5.8.3",
     "vite": "^6.3.3"
   }
