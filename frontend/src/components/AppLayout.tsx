@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, Outlet, useOutletContext } from "react-router-dom";
+import { apiClient } from "../services/api/apiClient";
 import type {
   Message,
   NotificationType,
@@ -18,6 +19,9 @@ function AppLayout() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentThreadId, setCurrentThreadId] = useState<string | null>(
     localStorage.getItem("currentThreadId") || null
+  );
+  const [currentThemeId, setCurrentThemeId] = useState<string | null>(
+    localStorage.getItem("currentThemeId") || null
   );
   const [showExtractions, setShowExtractions] = useState<boolean>(false);
   const [notification, setNotification] = useState<NotificationType | null>(
@@ -44,32 +48,33 @@ function AppLayout() {
     setMessages((prevMessages) => [...prevMessages, newUserMessage]);
 
     try {
-      const backendUrl = `${import.meta.env.VITE_API_BASE_URL}/api/themes/${localStorage.getItem("defaultThemeId")}/chat/messages`;
-      const response = await fetch(backendUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: currentUserId,
-          message: newUserMessage.content,
-          threadId: currentThreadId,
-        }),
-      });
-
-      if (!response.ok) {
-        let errorBody = "Unknown error";
-        try {
-          errorBody = await response.text();
-        } catch (e) {
-          /* ignore */
+      // テーマIDがない場合はデフォルトのテーマを取得
+      if (!currentThemeId) {
+        const themeResult = await apiClient.getDefaultTheme();
+        if (themeResult.isOk()) {
+          const defaultTheme = themeResult.value;
+          setCurrentThemeId(defaultTheme._id);
+          localStorage.setItem("currentThemeId", defaultTheme._id);
+        } else {
+          throw new Error(
+            `テーマの取得に失敗しました: ${themeResult.error.message}`
+          );
         }
-        throw new Error(
-          `HTTP error! status: ${response.status}, Body: ${errorBody}`
-        );
       }
 
-      const responseData = await response.json();
+      const result = await apiClient.sendMessage(
+        currentUserId,
+        newUserMessage.content,
+        currentThemeId || "",
+        currentThreadId || undefined
+      );
+
+      if (result.isErr()) {
+        const apiError = result.error;
+        throw new Error(`API error: ${apiError.message}`);
+      }
+
+      const responseData = result.value;
 
       const assistantMessage = {
         role: "assistant",
@@ -100,17 +105,20 @@ function AppLayout() {
 
   // Function to check for new extractions and show notifications
   const checkForNewExtractions = useCallback(async (): Promise<void> => {
-    if (!currentThreadId) return;
+    if (!currentThreadId || !currentThemeId) return;
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/themes/${localStorage.getItem("defaultThemeId")}/chat/threads/${currentThreadId}/extractions`
+      const result = await apiClient.getThreadExtractions(
+        currentThreadId,
+        currentThemeId
       );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+
+      if (result.isErr()) {
+        const apiError = result.error;
+        throw new Error(`API error: ${apiError.message}`);
       }
 
-      const data = await response.json();
+      const data = result.value;
       const currentProblems = data.problems || [];
       const currentSolutions = data.solutions || [];
 
@@ -123,7 +131,12 @@ function AppLayout() {
         if (!existingProblem) {
           // New problem added
           setNotification({
-            message: `ありがとうございます！新しい課題「${problem.statement.substring(0, 30)}${problem.statement.length > 30 ? "..." : ""}」についてのあなたの声が追加されました。`,
+            message: `ありがとうございます！新しい課題「${problem.statement.substring(
+              0,
+              30
+            )}${
+              problem.statement.length > 30 ? "..." : ""
+            }」についてのあなたの声が追加されました。`,
             type: "problem",
             id: problem._id,
           });
@@ -132,7 +145,12 @@ function AppLayout() {
         if (existingProblem.version !== problem.version) {
           // Problem updated
           setNotification({
-            message: `ありがとうございます！課題「${problem.statement.substring(0, 30)}${problem.statement.length > 30 ? "..." : ""}」についてのあなたの声が更新されました。`,
+            message: `ありがとうございます！課題「${problem.statement.substring(
+              0,
+              30
+            )}${
+              problem.statement.length > 30 ? "..." : ""
+            }」についてのあなたの声が更新されました。`,
             type: "problem",
             id: problem._id,
           });
@@ -150,7 +168,12 @@ function AppLayout() {
           if (!existingSolution) {
             // New solution added
             setNotification({
-              message: `ありがとうございます！新しい解決策「${solution.statement.substring(0, 30)}${solution.statement.length > 30 ? "..." : ""}」についてのあなたの声が追加されました。`,
+              message: `ありがとうございます！新しい解決策「${solution.statement.substring(
+                0,
+                30
+              )}${
+                solution.statement.length > 30 ? "..." : ""
+              }」についてのあなたの声が追加されました。`,
               type: "solution",
               id: solution._id,
             });
@@ -159,7 +182,12 @@ function AppLayout() {
           if (existingSolution.version !== solution.version) {
             // Solution updated
             setNotification({
-              message: `ありがとうございます！解決策「${solution.statement.substring(0, 30)}${solution.statement.length > 30 ? "..." : ""}」についてのあなたの声が更新されました。`,
+              message: `ありがとうございます！解決策「${solution.statement.substring(
+                0,
+                30
+              )}${
+                solution.statement.length > 30 ? "..." : ""
+              }」についてのあなたの声が更新されました。`,
               type: "solution",
               id: solution._id,
             });
@@ -205,28 +233,34 @@ function AppLayout() {
   // Load thread messages when component mounts or currentThreadId changes
   useEffect(() => {
     const loadThreadMessages = async (): Promise<void> => {
-      if (!currentThreadId) return;
+      if (!currentThreadId || !currentThemeId) return;
 
       setIsLoading(true);
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/api/themes/${localStorage.getItem("defaultThemeId")}/chat/threads/${currentThreadId}/messages`
+        const result = await apiClient.getThreadMessages(
+          currentThreadId,
+          currentThemeId
         );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+
+        if (result.isErr()) {
+          const apiError = result.error;
+
+          // If thread not found, clear the stored threadId
+          if (apiError.statusCode === 404) {
+            localStorage.removeItem("currentThreadId");
+            setCurrentThreadId(null);
+          }
+
+          throw new Error(`API error: ${apiError.message}`);
         }
 
-        const data = await response.json();
+        const data = result.value;
         if (data.messages && data.messages.length > 0) {
-          setMessages(data.messages);
+          // unknown[]型からMessage[]型にキャスト
+          setMessages(data.messages as Message[]);
         }
       } catch (error) {
         console.error("Failed to load thread messages:", error);
-        // If there's an error loading the thread (e.g., it was deleted), clear the stored threadId
-        if (error.message.includes("404")) {
-          localStorage.removeItem("currentThreadId");
-          setCurrentThreadId(null);
-        }
       } finally {
         setIsLoading(false);
       }
@@ -234,6 +268,26 @@ function AppLayout() {
 
     loadThreadMessages();
   }, [currentThreadId]);
+
+  // Load default theme when component mounts if no theme is set
+  useEffect(() => {
+    const loadDefaultTheme = async () => {
+      if (!currentThemeId) {
+        try {
+          const themeResult = await apiClient.getDefaultTheme();
+          if (themeResult.isOk()) {
+            const defaultTheme = themeResult.value;
+            setCurrentThemeId(defaultTheme._id);
+            localStorage.setItem("currentThemeId", defaultTheme._id);
+          }
+        } catch (error) {
+          console.error("Failed to load default theme:", error);
+        }
+      }
+    };
+
+    loadDefaultTheme();
+  }, [currentThemeId]);
 
   return (
     <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-neutral-50 text-neutral-800">
@@ -322,6 +376,7 @@ function AppLayout() {
                   setCurrentThreadId(null);
                   setMessages([]);
                   setPreviousExtractions({ problems: [], solutions: [] });
+                  // テーマIDはリセットしない
                 }}
                 className="px-2 py-1 rounded-md text-xs border border-neutral-300 transition-colors duration-200 bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
                 title="新しい会話"
@@ -341,7 +396,10 @@ function AppLayout() {
         {showExtractions && (
           <div className="bg-neutral-100 shadow-inner border-t border-neutral-200">
             <div className="p-2 md:p-4 max-h-32 md:max-h-48 overflow-y-auto custom-scrollbar">
-              <ThreadExtractions threadId={currentThreadId} />
+              <ThreadExtractions
+                threadId={currentThreadId}
+                themeId={currentThemeId}
+              />
             </div>
           </div>
         )}

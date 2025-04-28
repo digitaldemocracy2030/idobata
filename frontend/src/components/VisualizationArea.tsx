@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
+import { apiClient } from "../services/api/apiClient";
 import type {
   DigestDraft,
   PolicyDraft,
   Question,
   QuestionDetails,
 } from "../types";
-
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`; // Adjust if your backend runs elsewhere
 
 function VisualizationArea() {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -34,21 +33,26 @@ function VisualizationArea() {
     const fetchQuestions = async (): Promise<void> => {
       setIsLoadingQuestions(true);
       setError(null);
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/questions`
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setQuestions(data);
-      } catch (e) {
-        console.error("Failed to fetch questions:", e);
-        setError("問いの読み込みに失敗しました。");
-      } finally {
+
+      const themeId = localStorage.getItem("defaultThemeId");
+      if (!themeId) {
+        setError("デフォルトテーマが見つかりません。");
         setIsLoadingQuestions(false);
+        return;
       }
+
+      const result = await apiClient.getQuestionsByTheme(themeId);
+
+      if (result.isErr()) {
+        const apiError = result.error;
+        console.error("Failed to fetch questions:", apiError);
+        setError("問いの読み込みに失敗しました。");
+        setIsLoadingQuestions(false);
+        return;
+      }
+
+      setQuestions(result.value);
+      setIsLoadingQuestions(false);
     };
     fetchQuestions();
   }, []);
@@ -67,27 +71,38 @@ function VisualizationArea() {
       setIsLoadingDetails(true);
       setError(null);
       setGenerationStatus("");
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/questions/${selectedQuestionId}/details`
-        );
-        if (!response.ok) {
-          if (response.status === 404) {
-            throw new Error("問いの詳細が見つかりません。");
-          }
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setQuestionDetails(data);
-      } catch (e) {
-        console.error("Failed to fetch question details:", e);
-        setError(
-          `問い (${selectedQuestionId}) の詳細読み込みに失敗しました。 ${e.message}`
-        );
-        setQuestionDetails(null);
-      } finally {
+
+      const themeId = localStorage.getItem("defaultThemeId");
+      if (!themeId) {
+        setError("デフォルトテーマが見つかりません。");
         setIsLoadingDetails(false);
+        return;
       }
+
+      const result = await apiClient.getQuestionDetails(
+        selectedQuestionId,
+        themeId
+      );
+
+      if (result.isErr()) {
+        const apiError = result.error;
+        console.error("Failed to fetch question details:", apiError);
+
+        if (apiError.statusCode === 404) {
+          setError("問いの詳細が見つかりません。");
+        } else {
+          setError(
+            `問い (${selectedQuestionId}) の詳細読み込みに失敗しました。`
+          );
+        }
+
+        setQuestionDetails(null);
+        setIsLoadingDetails(false);
+        return;
+      }
+
+      setQuestionDetails(result.value);
+      setIsLoadingDetails(false);
     };
     fetchDetails();
   }, [selectedQuestionId]);
@@ -102,24 +117,32 @@ function VisualizationArea() {
     const fetchDrafts = async (): Promise<void> => {
       setIsLoadingDrafts(true);
       setError(null);
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/policy-drafts?questionId=${selectedQuestionId}`
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setPolicyDrafts(data);
-      } catch (e) {
-        console.error("Failed to fetch policy drafts:", e);
+
+      const themeId = localStorage.getItem("defaultThemeId");
+      if (!themeId) {
+        setError("デフォルトテーマが見つかりません。");
+        setIsLoadingDrafts(false);
+        return;
+      }
+
+      const result = await apiClient.getPolicyDraftsByQuestion(
+        themeId,
+        selectedQuestionId
+      );
+
+      if (result.isErr()) {
+        const apiError = result.error;
+        console.error("Failed to fetch policy drafts:", apiError);
         setError(
-          `問い (${selectedQuestionId}) の政策ドラフト読み込みに失敗しました。 ${e.message}`
+          `問い (${selectedQuestionId}) の政策ドラフト読み込みに失敗しました。`
         );
         setPolicyDrafts([]);
-      } finally {
         setIsLoadingDrafts(false);
+        return;
       }
+
+      setPolicyDrafts(result.value);
+      setIsLoadingDrafts(false);
     };
 
     fetchDrafts();
@@ -135,24 +158,32 @@ function VisualizationArea() {
     const fetchDigestDrafts = async (): Promise<void> => {
       setIsLoadingDigestDrafts(true);
       setError(null);
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/digest-drafts?questionId=${selectedQuestionId}`
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setDigestDrafts(data);
-      } catch (e) {
-        console.error("Failed to fetch digest drafts:", e);
+
+      const themeId = localStorage.getItem("defaultThemeId");
+      if (!themeId) {
+        setError("デフォルトテーマが見つかりません。");
+        setIsLoadingDigestDrafts(false);
+        return;
+      }
+
+      const result = await apiClient.getDigestDraftsByQuestion(
+        themeId,
+        selectedQuestionId
+      );
+
+      if (result.isErr()) {
+        const apiError = result.error;
+        console.error("Failed to fetch digest drafts:", apiError);
         setError(
-          `問い (${selectedQuestionId}) のダイジェスト読み込みに失敗しました。 ${e.message}`
+          `問い (${selectedQuestionId}) のダイジェスト読み込みに失敗しました。`
         );
         setDigestDrafts([]);
-      } finally {
         setIsLoadingDigestDrafts(false);
+        return;
       }
+
+      setDigestDrafts(result.value);
+      setIsLoadingDigestDrafts(false);
     };
 
     fetchDigestDrafts();
@@ -171,51 +202,54 @@ function VisualizationArea() {
     setIsGeneratingPolicy(true);
     setError(null);
     setGenerationStatus("政策ドラフトを生成中...");
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/questions/${selectedQuestionId}/generate-policy`,
-        {
-          method: "POST",
-        }
-      );
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({ message: "政策生成の開始に失敗しました。" }));
-        throw new Error(
-          `HTTP error! status: ${response.status}. ${errorData.message}`
-        );
-      }
-      setGenerationStatus(
-        "政策生成を開始しました。準備ができ次第、ドラフトが以下に表示されます（更新が必要な場合や、しばらくお待ちいただく場合があります）。"
-      );
-      setTimeout(() => {
-        if (selectedQuestionId) {
-          const fetchDrafts = async (): Promise<void> => {
-            setIsLoadingDrafts(true);
-            try {
-              const response = await fetch(
-                `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/policy-drafts?questionId=${selectedQuestionId}`
-              );
-              if (!response.ok) throw new Error("ドラフトの取得に失敗しました");
-              const data = await response.json();
-              setPolicyDrafts(data);
-            } catch (e) {
-              console.error("Delayed draft fetch failed:", e);
-            } finally {
-              setIsLoadingDrafts(false);
-            }
-          };
-          fetchDrafts();
-        }
-      }, 10000);
-    } catch (e) {
-      console.error("Failed to trigger policy generation:", e);
-      setError(`政策生成の開始に失敗しました: ${e.message}`);
-      setGenerationStatus("");
-    } finally {
+
+    const themeId = localStorage.getItem("defaultThemeId");
+    if (!themeId) {
+      setError("デフォルトテーマが見つかりません。");
       setIsGeneratingPolicy(false);
+      setGenerationStatus("");
+      return;
     }
+
+    const result = await apiClient.generatePolicy(themeId, selectedQuestionId);
+
+    if (result.isErr()) {
+      const apiError = result.error;
+      console.error("Failed to trigger policy generation:", apiError);
+      setError(`政策生成の開始に失敗しました: ${apiError.message}`);
+      setGenerationStatus("");
+      setIsGeneratingPolicy(false);
+      return;
+    }
+
+    setGenerationStatus(
+      "政策生成を開始しました。準備ができ次第、ドラフトが以下に表示されます（更新が必要な場合や、しばらくお待ちいただく場合があります）。"
+    );
+
+    setTimeout(() => {
+      if (selectedQuestionId) {
+        const fetchDrafts = async (): Promise<void> => {
+          setIsLoadingDrafts(true);
+
+          const result = await apiClient.getPolicyDraftsByQuestion(
+            themeId,
+            selectedQuestionId
+          );
+
+          if (result.isErr()) {
+            console.error("Delayed draft fetch failed:", result.error);
+            setIsLoadingDrafts(false);
+            return;
+          }
+
+          setPolicyDrafts(result.value);
+          setIsLoadingDrafts(false);
+        };
+        fetchDrafts();
+      }
+    }, 10000);
+
+    setIsGeneratingPolicy(false);
   };
 
   // Handle digest generation request
@@ -225,52 +259,54 @@ function VisualizationArea() {
     setIsGeneratingDigest(true);
     setError(null);
     setDigestGenerationStatus("ダイジェストを生成中...");
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/questions/${selectedQuestionId}/generate-digest`,
-        {
-          method: "POST",
-        }
-      );
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({ message: "ダイジェスト生成の開始に失敗しました。" }));
-        throw new Error(
-          `HTTP error! status: ${response.status}. ${errorData.message}`
-        );
-      }
-      setDigestGenerationStatus(
-        "ダイジェスト生成を開始しました。準備ができ次第、ダイジェストが以下に表示されます（更新が必要な場合や、しばらくお待ちいただく場合があります）。"
-      );
-      setTimeout(() => {
-        if (selectedQuestionId) {
-          const fetchDigestDrafts = async (): Promise<void> => {
-            setIsLoadingDigestDrafts(true);
-            try {
-              const response = await fetch(
-                `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/digest-drafts?questionId=${selectedQuestionId}`
-              );
-              if (!response.ok)
-                throw new Error("ダイジェストの取得に失敗しました");
-              const data = await response.json();
-              setDigestDrafts(data);
-            } catch (e) {
-              console.error("Delayed digest fetch failed:", e);
-            } finally {
-              setIsLoadingDigestDrafts(false);
-            }
-          };
-          fetchDigestDrafts();
-        }
-      }, 10000);
-    } catch (e) {
-      console.error("Failed to trigger digest generation:", e);
-      setError(`ダイジェスト生成の開始に失敗しました: ${e.message}`);
-      setDigestGenerationStatus("");
-    } finally {
+
+    const themeId = localStorage.getItem("defaultThemeId");
+    if (!themeId) {
+      setError("デフォルトテーマが見つかりません。");
       setIsGeneratingDigest(false);
+      setDigestGenerationStatus("");
+      return;
     }
+
+    const result = await apiClient.generateDigest(themeId, selectedQuestionId);
+
+    if (result.isErr()) {
+      const apiError = result.error;
+      console.error("Failed to trigger digest generation:", apiError);
+      setError(`ダイジェスト生成の開始に失敗しました: ${apiError.message}`);
+      setDigestGenerationStatus("");
+      setIsGeneratingDigest(false);
+      return;
+    }
+
+    setDigestGenerationStatus(
+      "ダイジェスト生成を開始しました。準備ができ次第、ダイジェストが以下に表示されます（更新が必要な場合や、しばらくお待ちいただく場合があります）。"
+    );
+
+    setTimeout(() => {
+      if (selectedQuestionId) {
+        const fetchDigestDrafts = async (): Promise<void> => {
+          setIsLoadingDigestDrafts(true);
+
+          const result = await apiClient.getDigestDraftsByQuestion(
+            themeId,
+            selectedQuestionId
+          );
+
+          if (result.isErr()) {
+            console.error("Delayed digest fetch failed:", result.error);
+            setIsLoadingDigestDrafts(false);
+            return;
+          }
+
+          setDigestDrafts(result.value);
+          setIsLoadingDigestDrafts(false);
+        };
+        fetchDigestDrafts();
+      }
+    }, 10000);
+
+    setIsGeneratingDigest(false);
   };
 
   return (
