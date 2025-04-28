@@ -92,6 +92,23 @@ services:
     volumes:
       - mongo_data:/data/db # Persist data using a named volume
 
+  # --- Admin Panel ---
+  admin:
+    container_name: admin-dev
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./admin:/app
+      - /app/node_modules
+    ports:
+      - "5175:5173" # 他のサービスとポートが重複しないようにする
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - VITE_API_BASE_URL=http://localhost:3000 # idea-discussionバックエンドを指す
+
 volumes:
   mongo_data: # Define the named volume for MongoDB
   # Removed node_modules volumes as they are part of the production image
