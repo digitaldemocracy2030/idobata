@@ -1,23 +1,23 @@
-import mongoose from "mongoose";
-import Problem from "../models/Problem.js";
-import QuestionLink from "../models/QuestionLink.js";
-import SharpQuestion from "../models/SharpQuestion.js";
-import Solution from "../models/Solution.js";
-import { generateDigestDraft } from "../workers/digestGenerator.js"; // Import the digest worker function
-import { generatePolicyDraft } from "../workers/policyGenerator.js"; // Import the worker function
+import mongoose from 'mongoose';
+import Problem from '../models/Problem.js';
+import QuestionLink from '../models/QuestionLink.js';
+import SharpQuestion from '../models/SharpQuestion.js';
+import Solution from '../models/Solution.js';
+import { generateDigestDraft } from '../workers/digestGenerator.js'; // Import the digest worker function
+import { generatePolicyDraft } from '../workers/policyGenerator.js'; // Import the worker function
 
 // GET /api/themes/:themeId/questions/:questionId/details - 特定の質問の詳細を取得
 export const getQuestionDetails = async (req, res) => {
   const { questionId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(questionId)) {
-    return res.status(400).json({ message: "Invalid question ID format" });
+    return res.status(400).json({ message: 'Invalid question ID format' });
   }
 
   try {
     const question = await SharpQuestion.findById(questionId);
     if (!question) {
-      return res.status(404).json({ message: "Question not found" });
+      return res.status(404).json({ message: 'Question not found' });
     }
 
     // Find links related to this question
@@ -25,10 +25,10 @@ export const getQuestionDetails = async (req, res) => {
 
     // Separate problem and solution links
     const problemLinks = links.filter(
-      (link) => link.linkedItemType === "problem"
+      (link) => link.linkedItemType === 'problem'
     );
     const solutionLinks = links.filter(
-      (link) => link.linkedItemType === "solution"
+      (link) => link.linkedItemType === 'solution'
     );
 
     // Extract IDs
@@ -77,7 +77,7 @@ export const getQuestionDetails = async (req, res) => {
   } catch (error) {
     console.error(`Error fetching details for question ${questionId}:`, error);
     res.status(500).json({
-      message: "Error fetching question details",
+      message: 'Error fetching question details',
       error: error.message,
     });
   }
@@ -88,14 +88,14 @@ export const triggerPolicyGeneration = async (req, res) => {
   const { questionId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(questionId)) {
-    return res.status(400).json({ message: "Invalid question ID format" });
+    return res.status(400).json({ message: 'Invalid question ID format' });
   }
 
   try {
     // Check if the question exists (optional but good practice)
     const question = await SharpQuestion.findById(questionId);
     if (!question) {
-      return res.status(404).json({ message: "Question not found" });
+      return res.status(404).json({ message: 'Question not found' });
     }
 
     // Trigger the generation asynchronously (using setTimeout for simplicity)
@@ -121,7 +121,7 @@ export const triggerPolicyGeneration = async (req, res) => {
       error
     );
     res.status(500).json({
-      message: "Error triggering policy generation",
+      message: 'Error triggering policy generation',
       error: error.message,
     });
   }
@@ -132,14 +132,14 @@ export const triggerDigestGeneration = async (req, res) => {
   const { questionId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(questionId)) {
-    return res.status(400).json({ message: "Invalid question ID format" });
+    return res.status(400).json({ message: 'Invalid question ID format' });
   }
 
   try {
     // Check if the question exists (optional but good practice)
     const question = await SharpQuestion.findById(questionId);
     if (!question) {
-      return res.status(404).json({ message: "Question not found" });
+      return res.status(404).json({ message: 'Question not found' });
     }
 
     // Trigger the generation asynchronously (using setTimeout for simplicity)
@@ -165,7 +165,7 @@ export const triggerDigestGeneration = async (req, res) => {
       error
     );
     res.status(500).json({
-      message: "Error triggering digest generation",
+      message: 'Error triggering digest generation',
       error: error.message,
     });
   }
@@ -176,7 +176,7 @@ export const getQuestionsByTheme = async (req, res) => {
   const { themeId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(themeId)) {
-    return res.status(400).json({ message: "Invalid theme ID format" });
+    return res.status(400).json({ message: 'Invalid theme ID format' });
   }
 
   try {
@@ -187,7 +187,7 @@ export const getQuestionsByTheme = async (req, res) => {
   } catch (error) {
     console.error(`Error fetching questions for theme ${themeId}:`, error);
     res.status(500).json({
-      message: "Error fetching theme questions",
+      message: 'Error fetching theme questions',
       error: error.message,
     });
   }

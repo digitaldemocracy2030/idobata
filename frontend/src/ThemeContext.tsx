@@ -4,8 +4,8 @@ import {
   useContext,
   useEffect,
   useState,
-} from "react";
-import type { Theme } from "./types";
+} from 'react';
+import type { Theme } from './types';
 
 interface ThemeContextType {
   defaultThemeId: string | null;
@@ -43,22 +43,22 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
         const themes = await response.json();
         if (themes && themes.length > 0) {
           const defaultTheme =
-            themes.find((theme: Theme) => theme.slug === "default") ||
+            themes.find((theme: Theme) => theme.slug === 'default') ||
             themes[0];
           setDefaultThemeId(defaultTheme._id);
-          localStorage.setItem("defaultThemeId", defaultTheme._id);
+          localStorage.setItem('defaultThemeId', defaultTheme._id);
         } else {
-          throw new Error("No themes available");
+          throw new Error('No themes available');
         }
       } catch (error) {
-        console.error("Failed to fetch default theme:", error);
-        const cachedThemeId = localStorage.getItem("defaultThemeId");
+        console.error('Failed to fetch default theme:', error);
+        const cachedThemeId = localStorage.getItem('defaultThemeId');
         if (cachedThemeId) {
           setDefaultThemeId(cachedThemeId);
           setError(null);
         } else {
           setError(
-            "テーマの取得に失敗しました。しばらく経ってからリロードしてください。"
+            'テーマの取得に失敗しました。しばらく経ってからリロードしてください。'
           );
         }
       } finally {
@@ -66,7 +66,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
       }
     };
 
-    const cachedThemeId = localStorage.getItem("defaultThemeId");
+    const cachedThemeId = localStorage.getItem('defaultThemeId');
     if (cachedThemeId) {
       setDefaultThemeId(cachedThemeId);
       setIsLoading(false);

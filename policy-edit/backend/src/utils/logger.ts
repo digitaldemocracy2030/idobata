@@ -15,7 +15,7 @@ export const logger = {
   },
 
   debug: (message: string, ...args: unknown[]) => {
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === 'development') {
       console.debug(`[DEBUG] ${message}`, ...args);
     }
   },

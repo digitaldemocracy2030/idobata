@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const questionLinkSchema = new mongoose.Schema(
   {
     questionId: {
       // 関連する `sharp_questions` のID
       type: mongoose.Schema.Types.ObjectId,
-      ref: "SharpQuestion",
+      ref: 'SharpQuestion',
       required: true,
     },
     linkedItemId: {
@@ -13,25 +13,25 @@ const questionLinkSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       // refPath を使って動的に参照先を決定
-      refPath: "linkedItemTypeModel",
+      refPath: 'linkedItemTypeModel',
     },
     linkedItemType: {
       // 関連アイテムの種類
       type: String,
       required: true,
-      enum: ["problem", "solution"],
+      enum: ['problem', 'solution'],
     },
     // linkedItemTypeに基づいて参照するモデル名を動的に設定するための仮想フィールド
     linkedItemTypeModel: {
       type: String,
       required: true,
-      enum: ["Problem", "Solution"], // 実際のモデル名
+      enum: ['Problem', 'Solution'], // 実際のモデル名
     },
     linkType: {
       // 関連の種類 (課題が問いを提起 / 解決策が問いに回答)
       type: String,
       required: true,
-      enum: ["prompts_question", "answers_question"],
+      enum: ['prompts_question', 'answers_question'],
     },
     relevanceScore: {
       // (任意) LLMによる関連度スコア
@@ -48,19 +48,19 @@ const questionLinkSchema = new mongoose.Schema(
 ); // createdAt, updatedAt を自動追加 (todo.md指示)
 
 // linkedItemId の参照先を動的に設定するための pre-save フック
-questionLinkSchema.pre("save", function (next) {
-  if (this.linkedItemType === "problem") {
-    this.linkedItemTypeModel = "Problem";
-  } else if (this.linkedItemType === "solution") {
-    this.linkedItemTypeModel = "Solution";
+questionLinkSchema.pre('save', function (next) {
+  if (this.linkedItemType === 'problem') {
+    this.linkedItemTypeModel = 'Problem';
+  } else if (this.linkedItemType === 'solution') {
+    this.linkedItemTypeModel = 'Solution';
   } else {
     // エラーハンドリング: 予期しない linkedItemType
-    next(new Error("Invalid linkedItemType specified"));
+    next(new Error('Invalid linkedItemType specified'));
     return;
   }
   next();
 });
 
-const QuestionLink = mongoose.model("QuestionLink", questionLinkSchema);
+const QuestionLink = mongoose.model('QuestionLink', questionLinkSchema);
 
 export default QuestionLink;

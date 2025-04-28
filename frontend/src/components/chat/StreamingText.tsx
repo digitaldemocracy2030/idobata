@@ -1,5 +1,5 @@
-import type React from "react";
-import { useEffect, useState } from "react";
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 interface StreamingTextProps {
   content: string;
@@ -10,7 +10,7 @@ export const StreamingText: React.FC<StreamingTextProps> = ({
   content,
   speed = 30,
 }) => {
-  const [displayedText, setDisplayedText] = useState("");
+  const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {

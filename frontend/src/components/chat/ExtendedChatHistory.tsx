@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
-import { cn } from "../../lib/utils";
-import type { ExtendedMessage } from "../../types";
-import { StreamingText } from "./StreamingText";
+import { useEffect, useRef } from 'react';
+import { cn } from '../../lib/utils';
+import type { ExtendedMessage } from '../../types';
+import { StreamingText } from './StreamingText';
 
 interface ExtendedChatHistoryProps {
   messages: ExtendedMessage[];
@@ -11,7 +11,7 @@ function ExtendedChatHistory({ messages }: ExtendedChatHistoryProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -23,10 +23,10 @@ function ExtendedChatHistory({ messages }: ExtendedChatHistoryProps) {
       ? messages
       : [
           {
-            role: "assistant",
+            role: 'assistant',
             content:
-              "「どうすれば若者が安心してキャリアを築ける社会を実現できるか？」がチャット対象になったよ。",
-            type: "system-message",
+              '「どうすれば若者が安心してキャリアを築ける社会を実現できるか？」がチャット対象になったよ。',
+            type: 'system-message',
             timestamp: new Date(),
           },
         ];
@@ -36,27 +36,27 @@ function ExtendedChatHistory({ messages }: ExtendedChatHistoryProps) {
       {initialMessages.map((msg, index) => (
         <div
           key={`${msg.timestamp}-${index}`}
-          className={cn("animate-fade-in mb-3", {
-            "flex justify-end": msg.type === "user",
-            "flex justify-start": msg.type === "system",
-            "flex justify-center": msg.type === "system-message",
+          className={cn('animate-fade-in mb-3', {
+            'flex justify-end': msg.type === 'user',
+            'flex justify-start': msg.type === 'system',
+            'flex justify-center': msg.type === 'system-message',
           })}
         >
           <div
-            className={cn("flex flex-col max-w-[90%]", {
-              "items-end": msg.type === "user",
-              "items-start": msg.type === "system",
-              "items-center": msg.type === "system-message",
+            className={cn('flex flex-col max-w-[90%]', {
+              'items-end': msg.type === 'user',
+              'items-start': msg.type === 'system',
+              'items-center': msg.type === 'system-message',
             })}
           >
             <div
-              className={cn("inline-block py-2 px-3 break-words", {
-                "bg-neutral-700 text-white rounded-2xl rounded-tr-sm":
-                  msg.type === "user",
-                "bg-white border border-neutral-200 text-neutral-800 rounded-2xl rounded-tl-sm":
-                  msg.type === "system",
-                "bg-neutral-100 border border-neutral-200 text-neutral-800 rounded-2xl":
-                  msg.type === "system-message",
+              className={cn('inline-block py-2 px-3 break-words', {
+                'bg-neutral-700 text-white rounded-2xl rounded-tr-sm':
+                  msg.type === 'user',
+                'bg-white border border-neutral-200 text-neutral-800 rounded-2xl rounded-tl-sm':
+                  msg.type === 'system',
+                'bg-neutral-100 border border-neutral-200 text-neutral-800 rounded-2xl':
+                  msg.type === 'system-message',
               })}
             >
               <div className="text-sm whitespace-pre-wrap">

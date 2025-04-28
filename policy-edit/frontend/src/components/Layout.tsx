@@ -1,6 +1,6 @@
-import type React from "react";
-import { Outlet } from "react-router-dom";
-import ChatPanel from "./ChatPanel"; // Assuming ChatPanel is in the same directory
+import type React from 'react';
+import { Outlet } from 'react-router-dom';
+import ChatPanel from './ChatPanel'; // Assuming ChatPanel is in the same directory
 
 const Layout: React.FC = () => {
   return (

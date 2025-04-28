@@ -1,4 +1,4 @@
-import { ThumbsUp } from "lucide-react";
+import { ThumbsUp } from 'lucide-react';
 
 export interface KeyQuestionHeaderProps {
   question: string;

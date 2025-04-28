@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const problemSchema = new mongoose.Schema(
   {
@@ -40,13 +40,13 @@ const problemSchema = new mongoose.Schema(
     themeId: {
       // 追加：所属するテーマのID
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Theme",
+      ref: 'Theme',
       required: true,
     },
   },
   { timestamps: true }
 ); // createdAt, updatedAt を自動追加
 
-const Problem = mongoose.model("Problem", problemSchema);
+const Problem = mongoose.model('Problem', problemSchema);
 
 export default Problem;

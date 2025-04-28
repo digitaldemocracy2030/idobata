@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const themeSchema = new mongoose.Schema(
   {
@@ -25,6 +25,6 @@ const themeSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Theme = mongoose.model("Theme", themeSchema);
+const Theme = mongoose.model('Theme', themeSchema);
 
 export default Theme;

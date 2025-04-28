@@ -1,9 +1,9 @@
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { z } from "zod";
-import config from "../config.js";
-import { getAuthenticatedOctokit } from "../github/client.js";
-import { ensureBranchExists } from "../github/utils.js";
-import logger from "../logger.js";
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import { z } from 'zod';
+import config from '../config.js';
+import { getAuthenticatedOctokit } from '../github/client.js';
+import { ensureBranchExists } from '../github/utils.js';
+import logger from '../logger.js';
 
 export const upsertFileSchema = z.object({
   // Temporarily remove refine to check type error
@@ -22,12 +22,12 @@ export async function handleUpsertFile(
   params: UpsertFileInput
 ): Promise<CallToolResult> {
   // Restore refine validation manually inside the handler for now
-  if (!params.filePath.endsWith(".md") || params.filePath.includes("..")) {
+  if (!params.filePath.endsWith('.md') || params.filePath.includes('..')) {
     return {
       isError: true,
       content: [
         {
-          type: "text",
+          type: 'text',
           text: "Invalid filePath: must end with .md and not contain '..'",
         },
       ],
@@ -38,11 +38,11 @@ export async function handleUpsertFile(
   const owner = config.GITHUB_TARGET_OWNER;
   const repo = config.GITHUB_TARGET_REPO;
   // Ensure filePath doesn't start with '/' as path.posix.join might behave unexpectedly.
-  const fullPath = filePath.startsWith("/") ? filePath.substring(1) : filePath;
+  const fullPath = filePath.startsWith('/') ? filePath.substring(1) : filePath;
 
   logger.info(
     { owner, repo, branchName, fullPath },
-    "Handling upsert_file_and_commit request"
+    'Handling upsert_file_and_commit request'
   );
 
   try {
@@ -65,9 +65,9 @@ export async function handleUpsertFile(
         throw new Error(`Path ${fullPath} refers to a directory, not a file.`);
       }
       // contentData が null や undefined でないこと、および type プロパティが存在することを確認
-      if (contentData && contentData.type === "file") {
+      if (contentData && contentData.type === 'file') {
         // contentData が file の場合、sha プロパティが存在することを確認
-        if ("sha" in contentData) {
+        if ('sha' in contentData) {
           currentSha = contentData.sha;
           logger.debug(
             `Found existing file ${fullPath} with SHA: ${currentSha}`
@@ -88,7 +88,7 @@ export async function handleUpsertFile(
         );
       }
     } catch (error: unknown) {
-      if (error instanceof Error && "status" in error && error.status === 404) {
+      if (error instanceof Error && 'status' in error && error.status === 404) {
         logger.info(
           `File ${fullPath} does not exist in branch ${branchName}. Will create it.`
         );
@@ -101,7 +101,7 @@ export async function handleUpsertFile(
 
     // 3. ファイル作成/更新
     logger.info(
-      `${currentSha ? "Updating" : "Creating"} file ${fullPath} in branch ${branchName}`
+      `${currentSha ? 'Updating' : 'Creating'} file ${fullPath} in branch ${branchName}`
     );
     const { data: updateResult } =
       await octokit.rest.repos.createOrUpdateFileContents({
@@ -109,20 +109,20 @@ export async function handleUpsertFile(
         repo,
         path: fullPath,
         message: commitMessage,
-        content: Buffer.from(content, "utf8").toString("base64"),
+        content: Buffer.from(content, 'utf8').toString('base64'),
         branch: branchName,
         sha: currentSha, // 存在する場合のみSHAを指定 (更新)
       });
 
     const commitSha = updateResult.commit.sha;
     // updateResult.content が null でないことを確認してから html_url にアクセス
-    const htmlUrl = updateResult.content?.html_url || "#"; // URLが取得できない場合も考慮
+    const htmlUrl = updateResult.content?.html_url || '#'; // URLが取得できない場合も考慮
     logger.info(`Successfully committed to ${fullPath} (SHA: ${commitSha})`);
 
     return {
       content: [
         {
-          type: "text",
+          type: 'text',
           text: `Successfully committed changes to ${filePath} (SHA: ${commitSha}). View file: ${htmlUrl}`,
         },
       ],
@@ -133,15 +133,15 @@ export async function handleUpsertFile(
       `Error processing upsert_file_and_commit for ${filePath}`
     );
     // Type check before accessing properties
-    let errorMessage = "Unknown error";
-    let status = "";
+    let errorMessage = 'Unknown error';
+    let status = '';
     if (error instanceof Error) {
       errorMessage = error.message;
       // Check if 'status' property exists (common in HTTP errors like from Octokit)
-      if ("status" in error && typeof error.status === "number") {
+      if ('status' in error && typeof error.status === 'number') {
         status = ` (Status: ${error.status})`;
       }
-    } else if (typeof error === "string") {
+    } else if (typeof error === 'string') {
       errorMessage = error;
     }
 
@@ -149,7 +149,7 @@ export async function handleUpsertFile(
       isError: true,
       content: [
         {
-          type: "text",
+          type: 'text',
           text: `Error processing file ${filePath}: ${errorMessage}${status}`,
         },
       ],

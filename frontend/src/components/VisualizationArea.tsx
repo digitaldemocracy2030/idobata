@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import type {
   DigestDraft,
   PolicyDraft,
   Question,
   QuestionDetails,
-} from "../types";
+} from '../types';
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`; // Adjust if your backend runs elsewhere
 
@@ -25,9 +25,9 @@ function VisualizationArea() {
   const [isGeneratingPolicy, setIsGeneratingPolicy] = useState<boolean>(false);
   const [isGeneratingDigest, setIsGeneratingDigest] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [generationStatus, setGenerationStatus] = useState<string>("");
+  const [generationStatus, setGenerationStatus] = useState<string>('');
   const [digestGenerationStatus, setDigestGenerationStatus] =
-    useState<string>("");
+    useState<string>('');
 
   // Fetch all questions on component mount
   useEffect(() => {
@@ -36,7 +36,7 @@ function VisualizationArea() {
       setError(null);
       try {
         const response = await fetch(
-          `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/questions`
+          `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/questions`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -44,8 +44,8 @@ function VisualizationArea() {
         const data = await response.json();
         setQuestions(data);
       } catch (e) {
-        console.error("Failed to fetch questions:", e);
-        setError("問いの読み込みに失敗しました。");
+        console.error('Failed to fetch questions:', e);
+        setError('問いの読み込みに失敗しました。');
       } finally {
         setIsLoadingQuestions(false);
       }
@@ -59,28 +59,28 @@ function VisualizationArea() {
       setQuestionDetails(null);
       setPolicyDrafts([]);
       setError(null);
-      setGenerationStatus("");
+      setGenerationStatus('');
       return;
     }
 
     const fetchDetails = async (): Promise<void> => {
       setIsLoadingDetails(true);
       setError(null);
-      setGenerationStatus("");
+      setGenerationStatus('');
       try {
         const response = await fetch(
-          `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/questions/${selectedQuestionId}/details`
+          `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/questions/${selectedQuestionId}/details`
         );
         if (!response.ok) {
           if (response.status === 404) {
-            throw new Error("問いの詳細が見つかりません。");
+            throw new Error('問いの詳細が見つかりません。');
           }
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
         setQuestionDetails(data);
       } catch (e) {
-        console.error("Failed to fetch question details:", e);
+        console.error('Failed to fetch question details:', e);
         setError(
           `問い (${selectedQuestionId}) の詳細読み込みに失敗しました。 ${e.message}`
         );
@@ -104,7 +104,7 @@ function VisualizationArea() {
       setError(null);
       try {
         const response = await fetch(
-          `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/policy-drafts?questionId=${selectedQuestionId}`
+          `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/policy-drafts?questionId=${selectedQuestionId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -112,7 +112,7 @@ function VisualizationArea() {
         const data = await response.json();
         setPolicyDrafts(data);
       } catch (e) {
-        console.error("Failed to fetch policy drafts:", e);
+        console.error('Failed to fetch policy drafts:', e);
         setError(
           `問い (${selectedQuestionId}) の政策ドラフト読み込みに失敗しました。 ${e.message}`
         );
@@ -137,7 +137,7 @@ function VisualizationArea() {
       setError(null);
       try {
         const response = await fetch(
-          `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/digest-drafts?questionId=${selectedQuestionId}`
+          `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/digest-drafts?questionId=${selectedQuestionId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -145,7 +145,7 @@ function VisualizationArea() {
         const data = await response.json();
         setDigestDrafts(data);
       } catch (e) {
-        console.error("Failed to fetch digest drafts:", e);
+        console.error('Failed to fetch digest drafts:', e);
         setError(
           `問い (${selectedQuestionId}) のダイジェスト読み込みに失敗しました。 ${e.message}`
         );
@@ -170,24 +170,24 @@ function VisualizationArea() {
 
     setIsGeneratingPolicy(true);
     setError(null);
-    setGenerationStatus("政策ドラフトを生成中...");
+    setGenerationStatus('政策ドラフトを生成中...');
     try {
       const response = await fetch(
-        `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/questions/${selectedQuestionId}/generate-policy`,
+        `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/questions/${selectedQuestionId}/generate-policy`,
         {
-          method: "POST",
+          method: 'POST',
         }
       );
       if (!response.ok) {
         const errorData = await response
           .json()
-          .catch(() => ({ message: "政策生成の開始に失敗しました。" }));
+          .catch(() => ({ message: '政策生成の開始に失敗しました。' }));
         throw new Error(
           `HTTP error! status: ${response.status}. ${errorData.message}`
         );
       }
       setGenerationStatus(
-        "政策生成を開始しました。準備ができ次第、ドラフトが以下に表示されます（更新が必要な場合や、しばらくお待ちいただく場合があります）。"
+        '政策生成を開始しました。準備ができ次第、ドラフトが以下に表示されます（更新が必要な場合や、しばらくお待ちいただく場合があります）。'
       );
       setTimeout(() => {
         if (selectedQuestionId) {
@@ -195,13 +195,13 @@ function VisualizationArea() {
             setIsLoadingDrafts(true);
             try {
               const response = await fetch(
-                `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/policy-drafts?questionId=${selectedQuestionId}`
+                `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/policy-drafts?questionId=${selectedQuestionId}`
               );
-              if (!response.ok) throw new Error("ドラフトの取得に失敗しました");
+              if (!response.ok) throw new Error('ドラフトの取得に失敗しました');
               const data = await response.json();
               setPolicyDrafts(data);
             } catch (e) {
-              console.error("Delayed draft fetch failed:", e);
+              console.error('Delayed draft fetch failed:', e);
             } finally {
               setIsLoadingDrafts(false);
             }
@@ -210,9 +210,9 @@ function VisualizationArea() {
         }
       }, 10000);
     } catch (e) {
-      console.error("Failed to trigger policy generation:", e);
+      console.error('Failed to trigger policy generation:', e);
       setError(`政策生成の開始に失敗しました: ${e.message}`);
-      setGenerationStatus("");
+      setGenerationStatus('');
     } finally {
       setIsGeneratingPolicy(false);
     }
@@ -224,24 +224,24 @@ function VisualizationArea() {
 
     setIsGeneratingDigest(true);
     setError(null);
-    setDigestGenerationStatus("ダイジェストを生成中...");
+    setDigestGenerationStatus('ダイジェストを生成中...');
     try {
       const response = await fetch(
-        `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/questions/${selectedQuestionId}/generate-digest`,
+        `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/questions/${selectedQuestionId}/generate-digest`,
         {
-          method: "POST",
+          method: 'POST',
         }
       );
       if (!response.ok) {
         const errorData = await response
           .json()
-          .catch(() => ({ message: "ダイジェスト生成の開始に失敗しました。" }));
+          .catch(() => ({ message: 'ダイジェスト生成の開始に失敗しました。' }));
         throw new Error(
           `HTTP error! status: ${response.status}. ${errorData.message}`
         );
       }
       setDigestGenerationStatus(
-        "ダイジェスト生成を開始しました。準備ができ次第、ダイジェストが以下に表示されます（更新が必要な場合や、しばらくお待ちいただく場合があります）。"
+        'ダイジェスト生成を開始しました。準備ができ次第、ダイジェストが以下に表示されます（更新が必要な場合や、しばらくお待ちいただく場合があります）。'
       );
       setTimeout(() => {
         if (selectedQuestionId) {
@@ -249,14 +249,14 @@ function VisualizationArea() {
             setIsLoadingDigestDrafts(true);
             try {
               const response = await fetch(
-                `${API_BASE_URL}/themes/${localStorage.getItem("defaultThemeId")}/digest-drafts?questionId=${selectedQuestionId}`
+                `${API_BASE_URL}/themes/${localStorage.getItem('defaultThemeId')}/digest-drafts?questionId=${selectedQuestionId}`
               );
               if (!response.ok)
-                throw new Error("ダイジェストの取得に失敗しました");
+                throw new Error('ダイジェストの取得に失敗しました');
               const data = await response.json();
               setDigestDrafts(data);
             } catch (e) {
-              console.error("Delayed digest fetch failed:", e);
+              console.error('Delayed digest fetch failed:', e);
             } finally {
               setIsLoadingDigestDrafts(false);
             }
@@ -265,9 +265,9 @@ function VisualizationArea() {
         }
       }, 10000);
     } catch (e) {
-      console.error("Failed to trigger digest generation:", e);
+      console.error('Failed to trigger digest generation:', e);
       setError(`ダイジェスト生成の開始に失敗しました: ${e.message}`);
-      setDigestGenerationStatus("");
+      setDigestGenerationStatus('');
     } finally {
       setIsGeneratingDigest(false);
     }
@@ -323,8 +323,8 @@ function VisualizationArea() {
                       onClick={() => handleQuestionSelect(q._id)}
                       className={`w-full text-left p-3 rounded-lg transition-all duration-200 text-sm ${
                         selectedQuestionId === q._id
-                          ? "bg-neutral-700 text-white shadow-md"
-                          : "bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-200 hover:border-neutral-300"
+                          ? 'bg-neutral-700 text-white shadow-md'
+                          : 'bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-200 hover:border-neutral-300'
                       }`}
                       type="button"
                     >
@@ -468,7 +468,7 @@ function VisualizationArea() {
                           生成中...
                         </span>
                       ) : (
-                        "政策ドラフト生成"
+                        '政策ドラフト生成'
                       )}
                     </button>
                   </div>
@@ -526,7 +526,7 @@ function VisualizationArea() {
                           生成中...
                         </span>
                       ) : (
-                        "ダイジェスト生成"
+                        'ダイジェスト生成'
                       )}
                     </button>
                   </div>
@@ -563,7 +563,7 @@ function VisualizationArea() {
                           </h5>
                           <div className="flex items-center gap-2 mb-3">
                             <span className="badge badge-primary text-xs">
-                              v{draft.version || "1"}
+                              v{draft.version || '1'}
                             </span>
                             <span className="text-xs text-neutral-500">
                               {new Date(draft.createdAt).toLocaleString()}
@@ -615,7 +615,7 @@ function VisualizationArea() {
                           </h5>
                           <div className="flex items-center gap-2 mb-3">
                             <span className="bg-success text-white text-xs px-2 py-1 rounded-full">
-                              v{draft.version || "1"}
+                              v{draft.version || '1'}
                             </span>
                             <span className="text-xs text-neutral-500">
                               {new Date(draft.createdAt).toLocaleString()}

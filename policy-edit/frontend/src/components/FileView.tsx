@@ -1,15 +1,15 @@
 // src/components/FileView.tsx
-import type React from "react";
-import { decodeBase64Content } from "../lib/github"; // Base64デコード関数をインポート
-import MarkdownViewer from "./MarkdownViewer"; // Import the actual component
+import type React from 'react';
+import { decodeBase64Content } from '../lib/github'; // Base64デコード関数をインポート
+import MarkdownViewer from './MarkdownViewer'; // Import the actual component
 
 // Define the expected structure for the file data prop
 // Should align with the GitHubFile interface from lib/github.ts
 // Use the exported type from lib/github.ts for consistency
-import type { GitHubFile } from "../lib/github";
+import type { GitHubFile } from '../lib/github';
 
 interface FileData
-  extends Pick<GitHubFile, "name" | "path" | "content" | "encoding" | "size"> {
+  extends Pick<GitHubFile, 'name' | 'path' | 'content' | 'encoding' | 'size'> {
   // Add other specific properties needed by FileView if any,
   // or just use GitHubFile directly if all properties might be needed.
   // Using Pick here to only include necessary fields for this component.

@@ -1,6 +1,6 @@
 // src/components/ContentExplorerWrapper.tsx
-import { useParams } from "react-router-dom";
-import ContentExplorer from "./ContentExplorer";
+import { useParams } from 'react-router-dom';
+import ContentExplorer from './ContentExplorer';
 
 /**
  * URLのパスパラメータ (*) を抽出し、ContentExplorerに渡すラッパーコンポーネント。
@@ -8,9 +8,9 @@ import ContentExplorer from "./ContentExplorer";
  */
 function ContentExplorerWrapper() {
   const params = useParams();
-  const path = params["*"] || ""; // /view/ 以降のパスを取得、なければ空文字 (ルート)
+  const path = params['*'] || ''; // /view/ 以降のパスを取得、なければ空文字 (ルート)
 
-  console.log("ContentExplorerWrapper rendering with path:", path); // デバッグ用
+  console.log('ContentExplorerWrapper rendering with path:', path); // デバッグ用
 
   // path を key に設定することで、URLが変わるたびに ContentExplorer が再マウントされ、
   // useEffect 内のデータ取得処理が再度実行されるようになります。

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const sharpQuestionSchema = new mongoose.Schema(
   {
@@ -11,19 +11,19 @@ const sharpQuestionSchema = new mongoose.Schema(
       {
         // (任意) この問いの生成に使用された `problems` のIDリスト
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Problem",
+        ref: 'Problem',
       },
     ],
     themeId: {
       // 追加：所属するテーマのID
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Theme",
+      ref: 'Theme',
       required: true,
     },
   },
   { timestamps: true }
 ); // createdAt, updatedAt を自動追加 (todo.md指示)
 
-const SharpQuestion = mongoose.model("SharpQuestion", sharpQuestionSchema);
+const SharpQuestion = mongoose.model('SharpQuestion', sharpQuestionSchema);
 
 export default SharpQuestion;

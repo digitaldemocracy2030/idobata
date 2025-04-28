@@ -1,9 +1,9 @@
-import pLimit from "p-limit";
-import Problem from "../models/Problem.js";
-import QuestionLink from "../models/QuestionLink.js";
-import SharpQuestion from "../models/SharpQuestion.js";
-import Solution from "../models/Solution.js";
-import { callLLM } from "../services/llmService.js";
+import pLimit from 'p-limit';
+import Problem from '../models/Problem.js';
+import QuestionLink from '../models/QuestionLink.js';
+import SharpQuestion from '../models/SharpQuestion.js';
+import Solution from '../models/Solution.js';
+import { callLLM } from '../services/llmService.js';
 
 const DEFAULT_CONCURRENCY_LIMIT = 10; // Set the concurrency limit here
 
@@ -16,9 +16,9 @@ async function linkItemToQuestions(itemId, itemType) {
   console.log(`[LinkingWorker] Starting linking for ${itemType} ID: ${itemId}`);
   try {
     let item;
-    if (itemType === "problem") {
+    if (itemType === 'problem') {
       item = await Problem.findById(itemId);
-    } else if (itemType === "solution") {
+    } else if (itemType === 'solution') {
       item = await Solution.findById(itemId);
     } else {
       console.error(`[LinkingWorker] Invalid itemType: ${itemType}`);
@@ -31,7 +31,7 @@ async function linkItemToQuestions(itemId, itemType) {
     }
 
     const itemStatement =
-      itemType === "problem" ? item.statement : item.statement;
+      itemType === 'problem' ? item.statement : item.statement;
     if (!itemStatement) {
       console.warn(
         `[LinkingWorker] Statement is empty for ${itemType} ID: ${itemId}. Skipping linking.`
@@ -41,7 +41,7 @@ async function linkItemToQuestions(itemId, itemType) {
 
     const questions = await SharpQuestion.find({});
     if (questions.length === 0) {
-      console.log("[LinkingWorker] No sharp questions found to link against.");
+      console.log('[LinkingWorker] No sharp questions found to link against.');
       return;
     }
 
@@ -52,7 +52,7 @@ async function linkItemToQuestions(itemId, itemType) {
     for (const question of questions) {
       const promptMessages = [
         {
-          role: "system",
+          role: 'system',
           content: `You are an AI assistant that determines the relationship between a "Sharp Question" (often in "How might we..." format) and a "Statement" (which can be a Problem or a Solution).
 Your task is to analyze the provided Question and Statement and determine if the Statement either:
 1.  **Prompts the Question (link_type: "prompts_question"):** The Problem statement directly leads to or exemplifies the core issue addressed by the Question.
@@ -67,7 +67,7 @@ Respond ONLY in JSON format with the following structure:
 }`,
         },
         {
-          role: "user",
+          role: 'user',
           content: `Sharp Question: "${question.questionText}"
 
 Statement (${itemType}): "${itemStatement}"
@@ -91,7 +91,7 @@ Analyze the relationship and provide the JSON output.`,
               linkedItemType: itemType,
               linkType: llmResponse.link_type,
               relevanceScore: llmResponse.relevanceScore || 0.8, // Default score if missing
-              rationale: llmResponse.rationale || "N/A",
+              rationale: llmResponse.rationale || 'N/A',
             },
             { upsert: true, new: true, setDefaultsOnInsert: true }
           );
@@ -135,9 +135,9 @@ async function linkSpecificQuestionToItem(questionId, itemId, itemType) {
     }
 
     let item;
-    if (itemType === "problem") {
+    if (itemType === 'problem') {
       item = await Problem.findById(itemId);
-    } else if (itemType === "solution") {
+    } else if (itemType === 'solution') {
       item = await Solution.findById(itemId);
     } else {
       console.error(`[LinkingWorker] Invalid itemType: ${itemType}`);
@@ -159,7 +159,7 @@ async function linkSpecificQuestionToItem(questionId, itemId, itemType) {
 
     const promptMessages = [
       {
-        role: "system",
+        role: 'system',
         content: `You are an AI assistant that determines the relationship between a "Sharp Question" (often in "How might we..." format) and a "Statement" (which can be a Problem or a Solution).
 Your task is to analyze the provided Question and Statement and determine if the Statement either:
 1.  **Prompts the Question (link_type: "prompts_question"):** The Problem statement directly leads to or exemplifies the core issue addressed by the Question.
@@ -174,7 +174,7 @@ Respond ONLY in JSON format with the following structure:
 }`,
       },
       {
-        role: "user",
+        role: 'user',
         content: `Sharp Question: "${question.questionText}"
 
 Statement (${itemType}): "${itemStatement}"
@@ -198,7 +198,7 @@ Analyze the relationship and provide the JSON output.`,
             linkedItemType: itemType,
             linkType: llmResponse.link_type,
             relevanceScore: llmResponse.relevanceScore || 0.8, // Default score if missing
-            rationale: llmResponse.rationale || "N/A",
+            rationale: llmResponse.rationale || 'N/A',
           },
           { upsert: true, new: true, setDefaultsOnInsert: true }
         );
@@ -261,7 +261,7 @@ async function linkQuestionToAllItems(questionId) {
             await linkSpecificQuestionToItem(
               questionId,
               problem._id.toString(),
-              "problem"
+              'problem'
             );
           } finally {
             completedTasks++;
@@ -285,7 +285,7 @@ async function linkQuestionToAllItems(questionId) {
             await linkSpecificQuestionToItem(
               questionId,
               solution._id.toString(),
-              "solution"
+              'solution'
             );
           } finally {
             completedTasks++;

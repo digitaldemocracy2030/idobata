@@ -1,21 +1,21 @@
-import ChatThread from "../models/ChatThread.js"; // For chat source
-import ImportedItem from "../models/ImportedItem.js"; // For import source
-import Problem from "../models/Problem.js";
-import Solution from "../models/Solution.js";
-import { callLLM } from "../services/llmService.js";
-import { linkItemToQuestions } from "./linkingWorker.js"; // Assume this function exists and works
+import ChatThread from '../models/ChatThread.js'; // For chat source
+import ImportedItem from '../models/ImportedItem.js'; // For import source
+import Problem from '../models/Problem.js';
+import Solution from '../models/Solution.js';
+import { callLLM } from '../services/llmService.js';
+import { linkItemToQuestions } from './linkingWorker.js'; // Assume this function exists and works
 
 // Helper function to build the prompt based on source type
 function buildExtractionPrompt(sourceType, data) {
-  let prompt = "";
+  let prompt = '';
 
-  if (sourceType === "chat") {
+  if (sourceType === 'chat') {
     const { messages, existingProblems, existingSolutions } = data;
     // Prepare conversation history string
     // Find the latest user message index
     const latestUserIndex = [...messages]
       .reverse()
-      .findIndex((msg) => msg.role === "user");
+      .findIndex((msg) => msg.role === 'user');
     const latestUserPosition =
       latestUserIndex >= 0 ? messages.length - 1 - latestUserIndex : -1;
 
@@ -23,29 +23,29 @@ function buildExtractionPrompt(sourceType, data) {
     const latestUserMessage =
       latestUserPosition >= 0
         ? messages[latestUserPosition].content
-        : "No user message found";
+        : 'No user message found';
 
     // Format messages with special marking for the latest user message
     const history = messages
       .map((msg, index) => {
         const isLatestUser = index === latestUserPosition;
-        return `${msg.role}${isLatestUser ? " [LATEST USER MESSAGE]" : ""}: ${msg.content}`;
+        return `${msg.role}${isLatestUser ? ' [LATEST USER MESSAGE]' : ''}: ${msg.content}`;
       })
-      .join("\n");
+      .join('\n');
 
     // Prepare existing data summaries
     const existingProblemSummary =
       existingProblems.length > 0
         ? existingProblems
             .map((p) => `- ID: ${p._id}, Statement: ${p.statement}`)
-            .join("\n")
-        : "None";
+            .join('\n')
+        : 'None';
     const existingSolutionSummary =
       existingSolutions.length > 0
         ? existingSolutions
             .map((s) => `- ID: ${s._id}, Statement: ${s.statement}`)
-            .join("\n")
-        : "None";
+            .join('\n')
+        : 'None';
 
     // Construct the prompt for chat
     prompt = `
@@ -130,9 +130,9 @@ Output Format: Respond ONLY in JSON format with the following structure:
 }
 `;
   } else if (
-    sourceType === "tweet" ||
-    sourceType === "other_import" ||
-    sourceType !== "chat"
+    sourceType === 'tweet' ||
+    sourceType === 'other_import' ||
+    sourceType !== 'chat'
   ) {
     const { content } = data;
     // Construct the prompt for single text import
@@ -198,7 +198,7 @@ Output Format: Respond ONLY in JSON format with the following structure:
   }
 
   // Return messages array for LLM
-  return [{ role: "user", content: prompt }];
+  return [{ role: 'user', content: prompt }];
 }
 
 // Helper to save a new problem/solution and trigger linking
@@ -210,7 +210,7 @@ async function saveAndLinkItem(
   themeId
 ) {
   let savedItem;
-  if (itemData.type === "problem") {
+  if (itemData.type === 'problem') {
     const newProblem = new Problem({
       statement: itemData.statement,
       sourceOriginId: sourceOriginId,
@@ -223,7 +223,7 @@ async function saveAndLinkItem(
     console.log(
       `[ExtractionWorker] Added Problem: ${savedItem._id} from ${sourceType} ${sourceOriginId} for theme ${themeId}`
     );
-  } else if (itemData.type === "solution") {
+  } else if (itemData.type === 'solution') {
     const newSolution = new Solution({
       statement: itemData.statement,
       sourceOriginId: sourceOriginId,
@@ -262,7 +262,7 @@ async function processExtraction(job) {
     const addedProblemIds = [];
     const addedSolutionIds = [];
 
-    if (sourceType === "chat") {
+    if (sourceType === 'chat') {
       // --- Chat Processing Logic ---
       const thread = await ChatThread.findById(sourceOriginId);
       if (!thread) {
@@ -281,7 +281,7 @@ async function processExtraction(job) {
       ]);
 
       // 2. Build prompt and call LLM for chat
-      const extractionPromptMessages = buildExtractionPrompt("chat", {
+      const extractionPromptMessages = buildExtractionPrompt('chat', {
         messages: thread.messages,
         existingProblems,
         existingSolutions,
@@ -290,7 +290,7 @@ async function processExtraction(job) {
 
       if (
         !llmResponse ||
-        typeof llmResponse !== "object" ||
+        typeof llmResponse !== 'object' ||
         (!llmResponse.additions && !llmResponse.updates)
       ) {
         console.warn(
@@ -317,13 +317,13 @@ async function processExtraction(job) {
         const savedItem = await saveAndLinkItem(
           item,
           sourceOriginId,
-          "chat",
+          'chat',
           {},
           thread.themeId
         ); // Pass themeId from thread
         if (savedItem) {
-          if (item.type === "problem") addedProblemIds.push(savedItem._id);
-          if (item.type === "solution") addedSolutionIds.push(savedItem._id);
+          if (item.type === 'problem') addedProblemIds.push(savedItem._id);
+          if (item.type === 'solution') addedSolutionIds.push(savedItem._id);
         }
       }
 
@@ -351,8 +351,8 @@ async function processExtraction(job) {
         updateData.version = undefined; // Let $inc handle version
 
         let Model;
-        if (item.type === "problem") Model = Problem;
-        else if (item.type === "solution") Model = Solution;
+        if (item.type === 'problem') Model = Problem;
+        else if (item.type === 'solution') Model = Solution;
         else continue;
 
         const existingItem = await Model.findById(item.id);
@@ -399,9 +399,9 @@ async function processExtraction(job) {
         );
       }
     } else if (
-      sourceType === "tweet" ||
-      sourceType === "other_import" ||
-      sourceType !== "chat"
+      sourceType === 'tweet' ||
+      sourceType === 'other_import' ||
+      sourceType !== 'chat'
     ) {
       // --- Import Processing Logic ---
       const importItem = await ImportedItem.findById(sourceOriginId);
@@ -411,7 +411,7 @@ async function processExtraction(job) {
         );
         return; // Or throw error
       }
-      if (importItem.status !== "pending") {
+      if (importItem.status !== 'pending') {
         console.warn(
           `[ExtractionWorker] ImportedItem ${sourceOriginId} is not pending, skipping. Status: ${importItem.status}`
         );
@@ -419,7 +419,7 @@ async function processExtraction(job) {
       }
 
       // Mark as processing
-      importItem.status = "processing";
+      importItem.status = 'processing';
       await importItem.save();
 
       // 2. Build prompt and call LLM for import
@@ -430,15 +430,15 @@ async function processExtraction(job) {
 
       if (
         !llmResponse ||
-        typeof llmResponse !== "object" ||
+        typeof llmResponse !== 'object' ||
         !llmResponse.additions
       ) {
         console.warn(
           `[ExtractionWorker] LLM did not return valid JSON or expected structure for import ${sourceOriginId}. Response:`,
           llmResponse
         );
-        importItem.status = "failed";
-        importItem.errorMessage = "LLM response invalid";
+        importItem.status = 'failed';
+        importItem.errorMessage = 'LLM response invalid';
         await importItem.save();
         return; // Or throw error
       }
@@ -465,13 +465,13 @@ async function processExtraction(job) {
           importItem.themeId
         );
         if (savedItem) {
-          if (item.type === "problem") addedProblemIds.push(savedItem._id);
-          if (item.type === "solution") addedSolutionIds.push(savedItem._id);
+          if (item.type === 'problem') addedProblemIds.push(savedItem._id);
+          if (item.type === 'solution') addedSolutionIds.push(savedItem._id);
         }
       }
 
       // 4. Update ImportedItem status and IDs
-      importItem.status = "completed";
+      importItem.status = 'completed';
       importItem.extractedProblemIds = addedProblemIds;
       importItem.extractedSolutionIds = addedSolutionIds;
       importItem.processedAt = new Date();
@@ -494,17 +494,17 @@ async function processExtraction(job) {
 
     // Attempt to mark ImportedItem as failed if applicable
     if (
-      sourceType === "tweet" ||
-      sourceType === "other_import" ||
-      sourceType !== "chat"
+      sourceType === 'tweet' ||
+      sourceType === 'other_import' ||
+      sourceType !== 'chat'
     ) {
       try {
         await ImportedItem.updateOne(
-          { _id: sourceOriginId, status: "processing" }, // Only update if still processing
+          { _id: sourceOriginId, status: 'processing' }, // Only update if still processing
           {
             $set: {
-              status: "failed",
-              errorMessage: error.message || "Unknown error",
+              status: 'failed',
+              errorMessage: error.message || 'Unknown error',
             },
           }
         );

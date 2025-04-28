@@ -1,10 +1,10 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const messageSchema = new mongoose.Schema(
   {
     role: {
       type: String,
-      enum: ["user", "assistant"],
+      enum: ['user', 'assistant'],
       required: true,
     },
     content: {
@@ -30,25 +30,25 @@ const chatThreadSchema = new mongoose.Schema(
     extractedProblemIds: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Problem", // Reference to the Problem model
+        ref: 'Problem', // Reference to the Problem model
       },
     ],
     extractedSolutionIds: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Solution", // Reference to the Solution model
+        ref: 'Solution', // Reference to the Solution model
       },
     ],
     themeId: {
       // 追加：所属するテーマのID
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Theme",
+      ref: 'Theme',
       required: true,
     },
   },
   { timestamps: true }
 ); // Adds createdAt and updatedAt automatically
 
-const ChatThread = mongoose.model("ChatThread", chatThreadSchema);
+const ChatThread = mongoose.model('ChatThread', chatThreadSchema);
 
 export default ChatThread;

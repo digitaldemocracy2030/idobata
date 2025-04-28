@@ -1,5 +1,5 @@
-import * as React from "react";
-import { Link, type LinkProps } from "react-router-dom";
+import * as React from 'react';
+import { Link, type LinkProps } from 'react-router-dom';
 import {
   Sheet,
   SheetClose,
@@ -9,7 +9,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "../base/sheet";
+} from '../base/sheet';
 
 // Navigation-specific sheet component with legacy UI link
 const NavigationSheetContent = React.forwardRef<
@@ -34,11 +34,11 @@ const NavigationSheetContent = React.forwardRef<
     {children}
   </SheetContent>
 ));
-NavigationSheetContent.displayName = "NavigationSheetContent";
+NavigationSheetContent.displayName = 'NavigationSheetContent';
 
 // Custom NavigationLink component that closes the sheet when clicked
 interface NavigationLinkProps
-  extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {
+  extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> {
   href: string;
   children: React.ReactNode;
 }

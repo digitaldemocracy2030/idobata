@@ -1,4 +1,4 @@
-import VisualizationArea from "../components/VisualizationArea";
+import VisualizationArea from '../components/VisualizationArea';
 
 function MainPage() {
   return <VisualizationArea />;

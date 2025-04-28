@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 export interface DebateSummaryProps {
   axes: {
@@ -14,8 +14,8 @@ const DebateSummary = ({
   agreementPoints,
   disagreementPoints,
 }: DebateSummaryProps) => {
-  const [activeTab, setActiveTab] = useState<"illustration" | "analysis">(
-    "illustration"
+  const [activeTab, setActiveTab] = useState<'illustration' | 'analysis'>(
+    'illustration'
   );
 
   return (
@@ -25,29 +25,29 @@ const DebateSummary = ({
       <div className="flex border-b border-neutral-200 mb-4">
         <button
           className={`py-2 px-4 text-sm font-medium ${
-            activeTab === "illustration"
-              ? "border-b-2 border-purple-500 text-purple-700"
-              : "text-neutral-500"
+            activeTab === 'illustration'
+              ? 'border-b-2 border-purple-500 text-purple-700'
+              : 'text-neutral-500'
           }`}
-          onClick={() => setActiveTab("illustration")}
+          onClick={() => setActiveTab('illustration')}
           type="button"
         >
           イラストまとめ
         </button>
         <button
           className={`py-2 px-4 text-sm font-medium ${
-            activeTab === "analysis"
-              ? "border-b-2 border-purple-500 text-purple-700"
-              : "text-neutral-500"
+            activeTab === 'analysis'
+              ? 'border-b-2 border-purple-500 text-purple-700'
+              : 'text-neutral-500'
           }`}
-          onClick={() => setActiveTab("analysis")}
+          onClick={() => setActiveTab('analysis')}
           type="button"
         >
           論点分析
         </button>
       </div>
 
-      {activeTab === "illustration" ? (
+      {activeTab === 'illustration' ? (
         <div className="text-center py-8 text-neutral-400">
           イラストはまだ作成されていません
         </div>

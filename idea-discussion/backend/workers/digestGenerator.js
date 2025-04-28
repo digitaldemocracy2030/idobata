@@ -1,10 +1,10 @@
-import DigestDraft from "../models/DigestDraft.js";
-import PolicyDraft from "../models/PolicyDraft.js";
-import Problem from "../models/Problem.js";
-import QuestionLink from "../models/QuestionLink.js";
-import SharpQuestion from "../models/SharpQuestion.js";
-import Solution from "../models/Solution.js";
-import { callLLM } from "../services/llmService.js";
+import DigestDraft from '../models/DigestDraft.js';
+import PolicyDraft from '../models/PolicyDraft.js';
+import Problem from '../models/Problem.js';
+import QuestionLink from '../models/QuestionLink.js';
+import SharpQuestion from '../models/SharpQuestion.js';
+import Solution from '../models/Solution.js';
+import { callLLM } from '../services/llmService.js';
 
 async function generateDigestDraft(questionId) {
   console.log(
@@ -23,10 +23,10 @@ async function generateDigestDraft(questionId) {
     const links = await QuestionLink.find({ questionId: questionId });
 
     const problemLinks = links.filter(
-      (link) => link.linkedItemType === "problem"
+      (link) => link.linkedItemType === 'problem'
     );
     const solutionLinks = links.filter(
-      (link) => link.linkedItemType === "solution"
+      (link) => link.linkedItemType === 'solution'
     );
 
     problemLinks.sort(
@@ -83,7 +83,7 @@ async function generateDigestDraft(questionId) {
 
     const messages = [
       {
-        role: "system",
+        role: 'system',
         content: `あなたはAIアシスタントです。あなたの任務は、中心的な問い（「私たちはどのようにして...できるか？」）、その問いに関連する問題点と解決策、そして政策ドラフトを分析し、一般市民向けに読みやすく噛み砕いたダイジェストを作成することです。
 
 あなたの出力は、'title'（文字列）と'content'（文字列）のキーを含むJSONオブジェクトにする必要があります。
@@ -113,16 +113,16 @@ async function generateDigestDraft(questionId) {
 応答は、"title"（文字列、ダイジェスト全体に適したタイトル）と "content"（文字列、Markdownで適切にフォーマットされた内容）のキーを含むJSONオブジェクトのみで行ってください。JSON構造外に他のテキストや説明を含めないでください。`,
       },
       {
-        role: "user",
+        role: 'user',
         content: `Generate a digest for the following:
 
 Question: ${question.questionText}
 
 Related Problems (sorted by relevance - higher items are more relevant to the question):
-${problemStatements.length > 0 ? problemStatements.map((p) => `- ${p}`).join("\n") : "- None provided"}
+${problemStatements.length > 0 ? problemStatements.map((p) => `- ${p}`).join('\n') : '- None provided'}
 
 Related Solutions (sorted by relevance - higher items are more relevant to the question):
-${solutionStatements.length > 0 ? solutionStatements.map((s) => `- ${s}`).join("\n") : "- None provided"}
+${solutionStatements.length > 0 ? solutionStatements.map((s) => `- ${s}`).join('\n') : '- None provided'}
 
 Policy Report:
 Title: ${latestPolicyDraft.title}
@@ -132,25 +132,25 @@ Please provide the output as a JSON object with "title" and "content" keys. The 
       },
     ];
 
-    console.log("[DigestGenerator] Calling LLM to generate digest draft...");
+    console.log('[DigestGenerator] Calling LLM to generate digest draft...');
     const llmResponse = await callLLM(
       messages,
       true,
-      "google/gemini-2.5-pro-preview-03-25"
+      'google/gemini-2.5-pro-preview-03-25'
     ); // Request JSON output with specific model
 
     if (
       !llmResponse ||
-      typeof llmResponse !== "object" ||
+      typeof llmResponse !== 'object' ||
       !llmResponse.title ||
       !llmResponse.content
     ) {
       console.error(
-        "[DigestGenerator] Failed to get valid JSON response from LLM:",
+        '[DigestGenerator] Failed to get valid JSON response from LLM:',
         llmResponse
       );
       throw new Error(
-        "Invalid response format from LLM for digest draft generation."
+        'Invalid response format from LLM for digest draft generation.'
       );
     }
 

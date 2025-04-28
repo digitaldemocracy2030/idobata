@@ -1,8 +1,8 @@
-import express from "express";
-import { getSolutionsByTheme } from "../controllers/adminController.js";
+import express from 'express';
+import { getSolutionsByTheme } from '../controllers/adminController.js';
 
 const router = express.Router({ mergeParams: true });
 
-router.get("/", getSolutionsByTheme);
+router.get('/', getSolutionsByTheme);
 
 export default router;

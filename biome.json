@@ -3,7 +3,15 @@
   "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": true },
   "files": {
     "ignoreUnknown": true,
-    "ignore": ["node_modules", "dist", "*.d.ts", "**/*.md", "**/*.svg", "**/*.png", "**/*.tsbuildinfo"]
+    "ignore": [
+      "node_modules",
+      "dist",
+      "*.d.ts",
+      "**/*.md",
+      "**/*.svg",
+      "**/*.png",
+      "**/*.tsbuildinfo"
+    ]
   },
 
   "formatter": { "enabled": true, "indentStyle": "space", "indentWidth": 2 },

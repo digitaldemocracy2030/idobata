@@ -1,5 +1,5 @@
-import type React from "react";
-import { Link } from "react-router-dom";
+import type React from 'react';
+import { Link } from 'react-router-dom';
 
 // Placeholder for 404 page
 const NotFound: React.FC = () => {

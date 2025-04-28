@@ -1,7 +1,7 @@
-import Problem from "../models/Problem.js";
-import SharpQuestion from "../models/SharpQuestion.js";
-import { callLLM } from "../services/llmService.js";
-import { linkQuestionToAllItems } from "./linkingWorker.js"; // Import the linking function
+import Problem from '../models/Problem.js';
+import SharpQuestion from '../models/SharpQuestion.js';
+import { callLLM } from '../services/llmService.js';
+import { linkQuestionToAllItems } from './linkingWorker.js'; // Import the linking function
 
 async function generateSharpQuestions(themeId) {
   console.log(
@@ -9,7 +9,7 @@ async function generateSharpQuestions(themeId) {
   );
   try {
     // 1. Fetch all problem statements for this theme
-    const problems = await Problem.find({ themeId }, "statement").lean();
+    const problems = await Problem.find({ themeId }, 'statement').lean();
     if (!problems || problems.length === 0) {
       console.log(
         `[QuestionGenerator] No problems found for theme ${themeId} to generate questions from.`
@@ -24,7 +24,7 @@ async function generateSharpQuestions(themeId) {
     // 2. Prepare prompt for LLM
     const messages = [
       {
-        role: "system",
+        role: 'system',
         content: `You are an AI assistant specialized in synthesizing problem statements into insightful "How Might We..." (HMW) questions based on Design Thinking principles. Your goal is to generate concise, actionable, and thought-provoking questions that capture the essence of the underlying challenges presented in the input problem statements. Consolidate similar problems into broader HMW questions where appropriate.
 
 IMPORTANT: When generating questions, focus exclusively on describing both the current state ("現状はこう") and the desired state ("それをこうしたい") with high detail. Do NOT suggest or imply any specific means, methods, or solutions in the questions. The questions should keep the problem space open for creative solutions rather than narrowing the range of possible answers.
@@ -35,17 +35,17 @@ Generate 5 questions. 50-100字以内程度。
 `,
       },
       {
-        role: "user",
-        content: `Based on the following problem statements, please generate relevant questions in Japanese using the format "How Might We...":\n\n${problemStatements.join("\n- ")}\n\nFor each question, clearly describe both the current state ("現状はこう") and the desired state ("それをこうしたい") with high detail. Focus exclusively on describing these states without suggesting any specific means, methods, or solutions that could narrow the range of possible answers.\n\nPlease provide the output as a JSON object with a "questions" array containing Japanese questions only.`,
+        role: 'user',
+        content: `Based on the following problem statements, please generate relevant questions in Japanese using the format "How Might We...":\n\n${problemStatements.join('\n- ')}\n\nFor each question, clearly describe both the current state ("現状はこう") and the desired state ("それをこうしたい") with high detail. Focus exclusively on describing these states without suggesting any specific means, methods, or solutions that could narrow the range of possible answers.\n\nPlease provide the output as a JSON object with a "questions" array containing Japanese questions only.`,
       },
     ];
 
     // 3. Call LLM
-    console.log("[QuestionGenerator] Calling LLM to generate questions...");
+    console.log('[QuestionGenerator] Calling LLM to generate questions...');
     const llmResponse = await callLLM(
       messages,
       true,
-      "google/gemini-2.5-pro-preview-03-25"
+      'google/gemini-2.5-pro-preview-03-25'
     ); // Request JSON output with specific model
 
     if (
@@ -54,7 +54,7 @@ Generate 5 questions. 50-100字以内程度。
       llmResponse.questions.length === 0
     ) {
       console.error(
-        "[QuestionGenerator] Failed to get valid questions from LLM response:",
+        '[QuestionGenerator] Failed to get valid questions from LLM response:',
         llmResponse
       );
       return;
@@ -68,9 +68,9 @@ Generate 5 questions. 50-100字以内程度。
     // 4. Save questions to DB (avoid duplicates)
     let savedCount = 0;
     for (const questionText of generatedQuestions) {
-      if (!questionText || typeof questionText !== "string") {
+      if (!questionText || typeof questionText !== 'string') {
         console.warn(
-          "[QuestionGenerator] Skipping invalid question text:",
+          '[QuestionGenerator] Skipping invalid question text:',
           questionText
         );
         continue;
@@ -129,7 +129,7 @@ Generate 5 questions. 50-100字以内程度。
     // Linking is now triggered after each question is saved/upserted above.
   } catch (error) {
     console.error(
-      "[QuestionGenerator] Error during sharp question generation:",
+      '[QuestionGenerator] Error during sharp question generation:',
       error
     );
   }

@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const policyDraftSchema = new mongoose.Schema(
   {
     questionId: {
       // 対象とする `sharp_questions` のID
       type: mongoose.Schema.Types.ObjectId,
-      ref: "SharpQuestion",
+      ref: 'SharpQuestion',
       required: true,
     },
     title: {
@@ -22,14 +22,14 @@ const policyDraftSchema = new mongoose.Schema(
       {
         // 参考にした `problems` のIDリスト
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Problem",
+        ref: 'Problem',
       },
     ],
     sourceSolutionIds: [
       {
         // 参考にした `solutions` のIDリスト
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Solution",
+        ref: 'Solution',
       },
     ],
     version: {
@@ -42,6 +42,6 @@ const policyDraftSchema = new mongoose.Schema(
   { timestamps: true }
 ); // createdAt, updatedAt を自動追加 (todo.md指示)
 
-const PolicyDraft = mongoose.model("PolicyDraft", policyDraftSchema);
+const PolicyDraft = mongoose.model('PolicyDraft', policyDraftSchema);
 
 export default PolicyDraft;

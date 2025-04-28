@@ -1,9 +1,9 @@
 // src/components/MarkdownViewer.tsx
-import type React from "react";
-import ReactMarkdown from "react-markdown";
-import rehypeHighlight from "rehype-highlight"; // Syntax highlighting
-import rehypeRaw from "rehype-raw"; // To handle raw HTML, like embedded images
-import remarkGfm from "remark-gfm"; // GFM (Tables, strikethrough, task lists, etc.)
+import type React from 'react';
+import ReactMarkdown from 'react-markdown';
+import rehypeHighlight from 'rehype-highlight'; // Syntax highlighting
+import rehypeRaw from 'rehype-raw'; // To handle raw HTML, like embedded images
+import remarkGfm from 'remark-gfm'; // GFM (Tables, strikethrough, task lists, etc.)
 // Import highlight.js styles (choose a theme)
 // You might need to install highlight.js: npm install highlight.js
 // Then import the CSS in a global CSS file (e.g., index.css) or here.
@@ -17,7 +17,7 @@ interface MarkdownViewerProps {
 const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ content }) => {
   return (
     <div className="markdown-body">
-      {" "}
+      {' '}
       {/* Use github-markdown-css class, remove others */}
       {/* Apply Tailwind Typography plugin class */}
       {/* Adjust prose classes as needed (e.g., prose-sm, prose-lg) */}
