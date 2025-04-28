@@ -178,21 +178,23 @@ export class ApiClient {
   }
 
   async getThreadExtractions(
-    threadId: string
+    threadId: string,
+    themeId: string
   ): Promise<HttpResult<{ problems: Problem[]; solutions: Solution[] }>> {
     return this.withRetry(() =>
       this.httpClient.get<{ problems: Problem[]; solutions: Solution[] }>(
-        `/chat/threads/${threadId}/extractions`
+        `/themes/${themeId}/chat/threads/${threadId}/extractions`
       )
     );
   }
 
   async getThreadMessages(
-    threadId: string
+    threadId: string,
+    themeId: string
   ): Promise<HttpResult<{ messages: unknown[] }>> {
     return this.withRetry(() =>
       this.httpClient.get<{ messages: unknown[] }>(
-        `/chat/threads/${threadId}/messages`
+        `/themes/${themeId}/chat/threads/${threadId}/messages`
       )
     );
   }
@@ -200,6 +202,7 @@ export class ApiClient {
   async sendMessage(
     userId: string,
     message: string,
+    themeId: string,
     threadId?: string
   ): Promise<
     HttpResult<{ response: string; threadId: string; userId: string }>
@@ -209,7 +212,7 @@ export class ApiClient {
         response: string;
         threadId: string;
         userId: string;
-      }>("/chat/messages", {
+      }>(`/themes/${themeId}/chat/messages`, {
         userId,
         message,
         threadId,

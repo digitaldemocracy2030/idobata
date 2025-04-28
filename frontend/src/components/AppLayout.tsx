@@ -20,6 +20,9 @@ function AppLayout() {
   const [currentThreadId, setCurrentThreadId] = useState<string | null>(
     localStorage.getItem("currentThreadId") || null
   );
+  const [currentThemeId, setCurrentThemeId] = useState<string | null>(
+    localStorage.getItem("currentThemeId") || null
+  );
   const [showExtractions, setShowExtractions] = useState<boolean>(false);
   const [notification, setNotification] = useState<NotificationType | null>(
     null
@@ -45,9 +48,24 @@ function AppLayout() {
     setMessages((prevMessages) => [...prevMessages, newUserMessage]);
 
     try {
+      // テーマIDがない場合はデフォルトのテーマを取得
+      if (!currentThemeId) {
+        const themeResult = await apiClient.getDefaultTheme();
+        if (themeResult.isOk()) {
+          const defaultTheme = themeResult.value;
+          setCurrentThemeId(defaultTheme._id);
+          localStorage.setItem("currentThemeId", defaultTheme._id);
+        } else {
+          throw new Error(
+            `テーマの取得に失敗しました: ${themeResult.error.message}`
+          );
+        }
+      }
+
       const result = await apiClient.sendMessage(
         currentUserId,
         newUserMessage.content,
+        currentThemeId || "",
         currentThreadId || undefined
       );
 
@@ -87,10 +105,13 @@ function AppLayout() {
 
   // Function to check for new extractions and show notifications
   const checkForNewExtractions = useCallback(async (): Promise<void> => {
-    if (!currentThreadId) return;
+    if (!currentThreadId || !currentThemeId) return;
 
     try {
-      const result = await apiClient.getThreadExtractions(currentThreadId);
+      const result = await apiClient.getThreadExtractions(
+        currentThreadId,
+        currentThemeId
+      );
 
       if (result.isErr()) {
         const apiError = result.error;
@@ -110,7 +131,12 @@ function AppLayout() {
         if (!existingProblem) {
           // New problem added
           setNotification({
-            message: `ありがとうございます！新しい課題「${problem.statement.substring(0, 30)}${problem.statement.length > 30 ? "..." : ""}」についてのあなたの声が追加されました。`,
+            message: `ありがとうございます！新しい課題「${problem.statement.substring(
+              0,
+              30
+            )}${
+              problem.statement.length > 30 ? "..." : ""
+            }」についてのあなたの声が追加されました。`,
             type: "problem",
             id: problem._id,
           });
@@ -119,7 +145,12 @@ function AppLayout() {
         if (existingProblem.version !== problem.version) {
           // Problem updated
           setNotification({
-            message: `ありがとうございます！課題「${problem.statement.substring(0, 30)}${problem.statement.length > 30 ? "..." : ""}」についてのあなたの声が更新されました。`,
+            message: `ありがとうございます！課題「${problem.statement.substring(
+              0,
+              30
+            )}${
+              problem.statement.length > 30 ? "..." : ""
+            }」についてのあなたの声が更新されました。`,
             type: "problem",
             id: problem._id,
           });
@@ -137,7 +168,12 @@ function AppLayout() {
           if (!existingSolution) {
             // New solution added
             setNotification({
-              message: `ありがとうございます！新しい解決策「${solution.statement.substring(0, 30)}${solution.statement.length > 30 ? "..." : ""}」についてのあなたの声が追加されました。`,
+              message: `ありがとうございます！新しい解決策「${solution.statement.substring(
+                0,
+                30
+              )}${
+                solution.statement.length > 30 ? "..." : ""
+              }」についてのあなたの声が追加されました。`,
               type: "solution",
               id: solution._id,
             });
@@ -146,7 +182,12 @@ function AppLayout() {
           if (existingSolution.version !== solution.version) {
             // Solution updated
             setNotification({
-              message: `ありがとうございます！解決策「${solution.statement.substring(0, 30)}${solution.statement.length > 30 ? "..." : ""}」についてのあなたの声が更新されました。`,
+              message: `ありがとうございます！解決策「${solution.statement.substring(
+                0,
+                30
+              )}${
+                solution.statement.length > 30 ? "..." : ""
+              }」についてのあなたの声が更新されました。`,
               type: "solution",
               id: solution._id,
             });
@@ -192,11 +233,14 @@ function AppLayout() {
   // Load thread messages when component mounts or currentThreadId changes
   useEffect(() => {
     const loadThreadMessages = async (): Promise<void> => {
-      if (!currentThreadId) return;
+      if (!currentThreadId || !currentThemeId) return;
 
       setIsLoading(true);
       try {
-        const result = await apiClient.getThreadMessages(currentThreadId);
+        const result = await apiClient.getThreadMessages(
+          currentThreadId,
+          currentThemeId
+        );
 
         if (result.isErr()) {
           const apiError = result.error;
@@ -212,7 +256,8 @@ function AppLayout() {
 
         const data = result.value;
         if (data.messages && data.messages.length > 0) {
-          setMessages(data.messages);
+          // unknown[]型からMessage[]型にキャスト
+          setMessages(data.messages as Message[]);
         }
       } catch (error) {
         console.error("Failed to load thread messages:", error);
@@ -223,6 +268,26 @@ function AppLayout() {
 
     loadThreadMessages();
   }, [currentThreadId]);
+
+  // Load default theme when component mounts if no theme is set
+  useEffect(() => {
+    const loadDefaultTheme = async () => {
+      if (!currentThemeId) {
+        try {
+          const themeResult = await apiClient.getDefaultTheme();
+          if (themeResult.isOk()) {
+            const defaultTheme = themeResult.value;
+            setCurrentThemeId(defaultTheme._id);
+            localStorage.setItem("currentThemeId", defaultTheme._id);
+          }
+        } catch (error) {
+          console.error("Failed to load default theme:", error);
+        }
+      }
+    };
+
+    loadDefaultTheme();
+  }, [currentThemeId]);
 
   return (
     <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-neutral-50 text-neutral-800">
@@ -287,15 +352,15 @@ function AppLayout() {
                 !currentThreadId
                   ? "bg-neutral-100 text-neutral-300 cursor-not-allowed"
                   : showExtractions
-                    ? "bg-neutral-200 text-neutral-700 hover:bg-neutral-300" // Active state
-                    : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200" // Default state
+                  ? "bg-neutral-200 text-neutral-700 hover:bg-neutral-300" // Active state
+                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200" // Default state
               }`}
               title={
                 !currentThreadId
                   ? "最初にメッセージを送信してください"
                   : showExtractions
-                    ? "抽出結果を非表示"
-                    : "抽出結果を表示"
+                  ? "抽出結果を非表示"
+                  : "抽出結果を表示"
               }
               type="button"
             >
@@ -311,6 +376,7 @@ function AppLayout() {
                   setCurrentThreadId(null);
                   setMessages([]);
                   setPreviousExtractions({ problems: [], solutions: [] });
+                  // テーマIDはリセットしない
                 }}
                 className="px-2 py-1 rounded-md text-xs border border-neutral-300 transition-colors duration-200 bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
                 title="新しい会話"
@@ -330,7 +396,10 @@ function AppLayout() {
         {showExtractions && (
           <div className="bg-neutral-100 shadow-inner border-t border-neutral-200">
             <div className="p-2 md:p-4 max-h-32 md:max-h-48 overflow-y-auto custom-scrollbar">
-              <ThreadExtractions threadId={currentThreadId} />
+              <ThreadExtractions
+                threadId={currentThreadId}
+                themeId={currentThemeId}
+              />
             </div>
           </div>
         )}

@@ -4,16 +4,17 @@ import type { Problem, Solution } from "../types";
 
 interface ThreadExtractionsProps {
   threadId: string | null;
+  themeId?: string | null;
 }
 
-const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
+const ThreadExtractions = ({ threadId, themeId }: ThreadExtractionsProps) => {
   const [problems, setProblems] = useState<Problem[]>([]);
   const [solutions, setSolutions] = useState<Solution[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Don't fetch if threadId is not available (e.g., before first message)
-    if (!threadId) {
+    // Don't fetch if threadId or themeId is not available
+    if (!threadId || !themeId) {
       setProblems([]);
       setSolutions([]);
       return;
@@ -22,7 +23,7 @@ const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
     const fetchExtractions = async (): Promise<void> => {
       setError(null);
 
-      const result = await apiClient.getThreadExtractions(threadId);
+      const result = await apiClient.getThreadExtractions(threadId, themeId);
 
       if (result.isErr()) {
         const apiError = result.error;
@@ -54,10 +55,10 @@ const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
 
     // Cleanup function to clear the interval when the component unmounts or threadId changes
     return () => clearInterval(intervalId);
-  }, [threadId]); // Re-run effect when threadId changes
+  }, [threadId, themeId]); // Re-run effect when threadId or themeId changes
 
-  // Do not render anything if there's no threadId
-  if (!threadId) {
+  // Do not render anything if there's no threadId or themeId
+  if (!threadId || !themeId) {
     return null;
   }
 
