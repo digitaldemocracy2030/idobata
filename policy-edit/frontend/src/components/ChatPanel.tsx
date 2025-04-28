@@ -146,7 +146,6 @@ const ChatPanel: React.FC = () => {
     };
 
     initializeConnection();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run only once on mount
 
   // Get user name on mount
