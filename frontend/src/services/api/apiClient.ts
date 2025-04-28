@@ -153,28 +153,43 @@ export class ApiClient {
     );
   }
 
-  async getThreadExtractions(threadId: string): Promise<HttpResult<{ problems: Problem[], solutions: Solution[] }>> {
+  async getThreadExtractions(
+    threadId: string
+  ): Promise<HttpResult<{ problems: Problem[]; solutions: Solution[] }>> {
     return this.withRetry(() =>
-      this.httpClient.get<{ problems: Problem[], solutions: Solution[] }>(`/chat/threads/${threadId}/extractions`)
-    );
-  }
-
-  async getThreadMessages(threadId: string): Promise<HttpResult<{ messages: any[] }>> {
-    return this.withRetry(() =>
-      this.httpClient.get<{ messages: any[] }>(`/chat/threads/${threadId}/messages`)
-    );
-  }
-
-  async sendMessage(userId: string, message: string, threadId?: string): Promise<HttpResult<{ response: string; threadId: string; userId: string }>> {
-    return this.withRetry(() =>
-      this.httpClient.post<{ response: string; threadId: string; userId: string }>(
-        "/chat/messages",
-        {
-          userId,
-          message,
-          threadId,
-        }
+      this.httpClient.get<{ problems: Problem[]; solutions: Solution[] }>(
+        `/chat/threads/${threadId}/extractions`
       )
+    );
+  }
+
+  async getThreadMessages(
+    threadId: string
+  ): Promise<HttpResult<{ messages: unknown[] }>> {
+    return this.withRetry(() =>
+      this.httpClient.get<{ messages: unknown[] }>(
+        `/chat/threads/${threadId}/messages`
+      )
+    );
+  }
+
+  async sendMessage(
+    userId: string,
+    message: string,
+    threadId?: string
+  ): Promise<
+    HttpResult<{ response: string; threadId: string; userId: string }>
+  > {
+    return this.withRetry(() =>
+      this.httpClient.post<{
+        response: string;
+        threadId: string;
+        userId: string;
+      }>("/chat/messages", {
+        userId,
+        message,
+        threadId,
+      })
     );
   }
 
