@@ -352,15 +352,15 @@ function AppLayout() {
                 !currentThreadId
                   ? "bg-neutral-100 text-neutral-300 cursor-not-allowed"
                   : showExtractions
-                  ? "bg-neutral-200 text-neutral-700 hover:bg-neutral-300" // Active state
-                  : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200" // Default state
+                    ? "bg-neutral-200 text-neutral-700 hover:bg-neutral-300" // Active state
+                    : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200" // Default state
               }`}
               title={
                 !currentThreadId
                   ? "最初にメッセージを送信してください"
                   : showExtractions
-                  ? "抽出結果を非表示"
-                  : "抽出結果を表示"
+                    ? "抽出結果を非表示"
+                    : "抽出結果を表示"
               }
               type="button"
             >
