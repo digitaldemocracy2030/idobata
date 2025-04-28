@@ -5,9 +5,9 @@ services:
       context: .
       dockerfile: idea-discussion/backend/Dockerfile.dev
     volumes:
-      - ./idea-discussion/backend:/app/idea-discussion/backend
+      - ./idea-discussion/backend:/app
       # Prevent node_modules from being overwritten by host mount
-      - /app/idea-discussion/backend/node_modules
+      - /app/node_modules
     ports:
       - "3000:3000" # Expose backend API port
     depends_on:
