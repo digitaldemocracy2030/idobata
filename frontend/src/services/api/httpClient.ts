@@ -32,7 +32,7 @@ export class HttpClient {
 
   async post<T>(
     endpoint: string,
-    data?: any,
+    data?: unknown,
     headers?: Record<string, string>
   ): Promise<HttpResult<T>> {
     return this.request<T>(endpoint, "POST", data, headers);
@@ -40,7 +40,7 @@ export class HttpClient {
 
   async put<T>(
     endpoint: string,
-    data?: any,
+    data?: unknown,
     headers?: Record<string, string>
   ): Promise<HttpResult<T>> {
     return this.request<T>(endpoint, "PUT", data, headers);
@@ -56,7 +56,7 @@ export class HttpClient {
   private async request<T>(
     endpoint: string,
     method: string,
-    data?: any,
+    data?: unknown,
     headers?: Record<string, string>
   ): Promise<HttpResult<T>> {
     const url = `${this.baseUrl}${endpoint}`;

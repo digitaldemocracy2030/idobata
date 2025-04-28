@@ -1,12 +1,12 @@
 export enum ApiErrorType {
-  NETWORK_ERROR = 'NETWORK_ERROR',
-  TIMEOUT_ERROR = 'TIMEOUT_ERROR',
-  SERVER_ERROR = 'SERVER_ERROR',
-  NOT_FOUND = 'NOT_FOUND',
-  VALIDATION_ERROR = 'VALIDATION_ERROR',
-  UNAUTHORIZED = 'UNAUTHORIZED',
-  FORBIDDEN = 'FORBIDDEN',
-  UNKNOWN_ERROR = 'UNKNOWN_ERROR'
+  NETWORK_ERROR = "NETWORK_ERROR",
+  TIMEOUT_ERROR = "TIMEOUT_ERROR",
+  SERVER_ERROR = "SERVER_ERROR",
+  NOT_FOUND = "NOT_FOUND",
+  VALIDATION_ERROR = "VALIDATION_ERROR",
+  UNAUTHORIZED = "UNAUTHORIZED",
+  FORBIDDEN = "FORBIDDEN",
+  UNKNOWN_ERROR = "UNKNOWN_ERROR"
 }
 
 export class ApiError extends Error {
@@ -25,7 +25,7 @@ export class ApiError extends Error {
     }
   ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
     this.type = type;
     this.statusCode = options?.statusCode;
     this.originalError = options?.originalError;
@@ -42,26 +42,26 @@ export class ApiError extends Error {
     switch (statusCode) {
       case 400:
         type = ApiErrorType.VALIDATION_ERROR;
-        message = 'Invalid request data';
+        message = "Invalid request data";
         break;
       case 401:
         type = ApiErrorType.UNAUTHORIZED;
-        message = 'Authentication required';
+        message = "Authentication required";
         break;
       case 403:
         type = ApiErrorType.FORBIDDEN;
-        message = 'Access forbidden';
+        message = "Access forbidden";
         break;
       case 404:
         type = ApiErrorType.NOT_FOUND;
-        message = 'Resource not found';
+        message = "Resource not found";
         break;
       case 500:
       case 502:
       case 503:
       case 504:
         type = ApiErrorType.SERVER_ERROR;
-        message = 'Server error occurred';
+        message = "Server error occurred";
         break;
       default:
         type = ApiErrorType.UNKNOWN_ERROR;
@@ -72,26 +72,19 @@ export class ApiError extends Error {
   }
 
   static fromNetworkError(error: Error): ApiError {
-    return new ApiError(
-      ApiErrorType.NETWORK_ERROR,
-      'Network error occurred',
-      { originalError: error }
-    );
+    return new ApiError(ApiErrorType.NETWORK_ERROR, "Network error occurred", {
+      originalError: error,
+    });
   }
 
   static fromTimeoutError(): ApiError {
-    return new ApiError(
-      ApiErrorType.TIMEOUT_ERROR,
-      'Request timed out'
-    );
+    return new ApiError(ApiErrorType.TIMEOUT_ERROR, "Request timed out");
   }
 
   static fromUnknownError(error: unknown): ApiError {
-    const message = error instanceof Error ? error.message : 'Unknown error occurred';
-    return new ApiError(
-      ApiErrorType.UNKNOWN_ERROR,
-      message,
-      { originalError: error }
-    );
+    const message = error instanceof Error ? error.message : "Unknown error occurred";
+    return new ApiError(ApiErrorType.UNKNOWN_ERROR, message, {
+      originalError: error,
+    });
   }
 }
