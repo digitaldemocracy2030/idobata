@@ -96,8 +96,10 @@ export class ApiClient {
     });
   }
 
-  async getAllQuestions(): Promise<HttpResult<Question[]>> {
-    return this.withRetry(() => this.httpClient.get<Question[]>("/questions"));
+  async getAllQuestions(themeId: string): Promise<HttpResult<Question[]>> {
+    return this.withRetry(() =>
+      this.httpClient.get<Question[]>(`/themes/${themeId}/questions`)
+    );
   }
 
   async getQuestionsByTheme(themeId: string): Promise<HttpResult<Question[]>> {
@@ -108,26 +110,24 @@ export class ApiClient {
 
   async getQuestionDetails(
     questionId: string,
-    themeId?: string
+    themeId: string
   ): Promise<HttpResult<QuestionDetails>> {
-    const endpoint = themeId
-      ? `/themes/${themeId}/questions/${questionId}/details`
-      : `/questions/${questionId}/details`;
-
-    return this.withRetry(() => this.httpClient.get<QuestionDetails>(endpoint));
-  }
-
-  async generateQuestions(themeId?: string): Promise<HttpResult<void>> {
-    const endpoint = themeId
-      ? `/themes/${themeId}/generate-questions`
-      : "/admin/generate-questions";
-
-    return this.withRetry(() => this.httpClient.post<void>(endpoint));
-  }
-
-  async getAllProblems(): Promise<HttpResult<Problem[]>> {
     return this.withRetry(() =>
-      this.httpClient.get<Problem[]>("/admin/problems")
+      this.httpClient.get<QuestionDetails>(
+        `/themes/${themeId}/questions/${questionId}/details`
+      )
+    );
+  }
+
+  async generateQuestions(themeId: string): Promise<HttpResult<void>> {
+    return this.withRetry(() =>
+      this.httpClient.post<void>(`/themes/${themeId}/generate-questions`)
+    );
+  }
+
+  async getAllProblems(themeId: string): Promise<HttpResult<Problem[]>> {
+    return this.withRetry(() =>
+      this.httpClient.get<Problem[]>(`/themes/${themeId}/problems`)
     );
   }
 
@@ -137,9 +137,9 @@ export class ApiClient {
     );
   }
 
-  async getAllSolutions(): Promise<HttpResult<Solution[]>> {
+  async getAllSolutions(themeId: string): Promise<HttpResult<Solution[]>> {
     return this.withRetry(() =>
-      this.httpClient.get<Solution[]>("/admin/solutions")
+      this.httpClient.get<Solution[]>(`/themes/${themeId}/solutions`)
     );
   }
 
@@ -149,9 +149,11 @@ export class ApiClient {
     );
   }
 
-  async getAllPolicyDrafts(): Promise<HttpResult<PolicyDraft[]>> {
+  async getAllPolicyDrafts(
+    themeId: string
+  ): Promise<HttpResult<PolicyDraft[]>> {
     return this.withRetry(() =>
-      this.httpClient.get<PolicyDraft[]>("/policy-drafts")
+      this.httpClient.get<PolicyDraft[]>(`/themes/${themeId}/policy-drafts`)
     );
   }
 
@@ -163,9 +165,11 @@ export class ApiClient {
     );
   }
 
-  async getAllDigestDrafts(): Promise<HttpResult<DigestDraft[]>> {
+  async getAllDigestDrafts(
+    themeId: string
+  ): Promise<HttpResult<DigestDraft[]>> {
     return this.withRetry(() =>
-      this.httpClient.get<DigestDraft[]>("/digest-drafts")
+      this.httpClient.get<DigestDraft[]>(`/themes/${themeId}/digest-drafts`)
     );
   }
 

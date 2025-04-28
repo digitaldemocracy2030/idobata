@@ -37,7 +37,14 @@ function AdminPanel() {
     setIsLoadingQuestions(true);
     setError(null);
 
-    const result = await apiClient.getAllQuestions();
+    const themeId = localStorage.getItem("defaultThemeId");
+    if (!themeId) {
+      setError("デフォルトテーマが見つかりません。");
+      setIsLoadingQuestions(false);
+      return;
+    }
+
+    const result = await apiClient.getAllQuestions(themeId);
 
     if (result.isErr()) {
       const apiError = result.error;
@@ -55,7 +62,14 @@ function AdminPanel() {
     setIsLoadingProblems(true);
     setError(null);
 
-    const result = await apiClient.getAllProblems();
+    const themeId = localStorage.getItem("defaultThemeId");
+    if (!themeId) {
+      setError("デフォルトテーマが見つかりません。");
+      setIsLoadingProblems(false);
+      return;
+    }
+
+    const result = await apiClient.getAllProblems(themeId);
 
     if (result.isErr()) {
       const apiError = result.error;
@@ -73,7 +87,14 @@ function AdminPanel() {
     setIsLoadingSolutions(true);
     setError(null);
 
-    const result = await apiClient.getAllSolutions();
+    const themeId = localStorage.getItem("defaultThemeId");
+    if (!themeId) {
+      setError("デフォルトテーマが見つかりません。");
+      setIsLoadingSolutions(false);
+      return;
+    }
+
+    const result = await apiClient.getAllSolutions(themeId);
 
     if (result.isErr()) {
       const apiError = result.error;
@@ -91,7 +112,14 @@ function AdminPanel() {
     setIsLoadingPolicyDrafts(true);
     setError(null);
 
-    const result = await apiClient.getAllPolicyDrafts();
+    const themeId = localStorage.getItem("defaultThemeId");
+    if (!themeId) {
+      setError("デフォルトテーマが見つかりません。");
+      setIsLoadingPolicyDrafts(false);
+      return;
+    }
+
+    const result = await apiClient.getAllPolicyDrafts(themeId);
 
     if (result.isErr()) {
       const apiError = result.error;
@@ -109,7 +137,14 @@ function AdminPanel() {
     setIsLoadingDigestDrafts(true);
     setError(null);
 
-    const result = await apiClient.getAllDigestDrafts();
+    const themeId = localStorage.getItem("defaultThemeId");
+    if (!themeId) {
+      setError("デフォルトテーマが見つかりません。");
+      setIsLoadingDigestDrafts(false);
+      return;
+    }
+
+    const result = await apiClient.getAllDigestDrafts(themeId);
 
     if (result.isErr()) {
       const apiError = result.error;
@@ -128,7 +163,14 @@ function AdminPanel() {
     setError(null);
     setSuccessMessage(null);
 
-    const result = await apiClient.generateQuestions();
+    const themeId = localStorage.getItem("defaultThemeId");
+    if (!themeId) {
+      setError("デフォルトテーマが見つかりません。");
+      setIsGeneratingQuestions(false);
+      return;
+    }
+
+    const result = await apiClient.generateQuestions(themeId);
 
     if (result.isErr()) {
       const apiError = result.error;
