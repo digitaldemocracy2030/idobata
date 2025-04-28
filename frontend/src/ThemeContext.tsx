@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import {
+  type ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import type { Theme } from "./types";
 import { apiClient } from './services/api/apiClient';
 import { ApiErrorType } from './services/api/apiError';
 
@@ -33,19 +40,19 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
       if (result.isErr()) {
         const apiError = result.error;
-        console.error('Failed to fetch default theme:', apiError);
+        console.error("Failed to fetch default theme:", apiError);
 
-        const cachedThemeId = localStorage.getItem('defaultThemeId');
+        const cachedThemeId = localStorage.getItem("defaultThemeId");
         if (cachedThemeId) {
           setDefaultThemeId(cachedThemeId);
           setError(null);
         } else {
-          let errorMessage = 'テーマの取得に失敗しました。しばらく経ってからリロードしてください。';
+          let errorMessage = "テーマの取得に失敗しました。しばらく経ってからリロードしてください。";
 
           if (apiError.type === ApiErrorType.NETWORK_ERROR) {
-            errorMessage = 'ネットワーク接続を確認してください。';
+            errorMessage = "ネットワーク接続を確認してください。";
           } else if (apiError.type === ApiErrorType.SERVER_ERROR) {
-            errorMessage = 'サーバーエラーが発生しました。しばらく経ってからリロードしてください。';
+            errorMessage = "サーバーエラーが発生しました。しばらく経ってからリロードしてください。";
           }
 
           setError(errorMessage);
@@ -56,13 +63,13 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
       const defaultTheme = result.value;
       setDefaultThemeId(defaultTheme._id);
-      localStorage.setItem('defaultThemeId', defaultTheme._id);
+      localStorage.setItem("defaultThemeId", defaultTheme._id);
       setError(null);
 
       setIsLoading(false);
     };
 
-    const cachedThemeId = localStorage.getItem('defaultThemeId');
+    const cachedThemeId = localStorage.getItem("defaultThemeId");
     if (cachedThemeId) {
       setDefaultThemeId(cachedThemeId);
       setIsLoading(false);

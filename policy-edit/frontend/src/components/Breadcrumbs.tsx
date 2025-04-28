@@ -1,8 +1,8 @@
 // src/components/Breadcrumbs.tsx
-import React from 'react';
-import { Link } from 'react-router-dom';
-import useContentStore from '../store/contentStore';
-import { FaHome } from 'react-icons/fa'; // Home icon
+import React from "react";
+import { FaHome } from "react-icons/fa"; // Home icon
+import { Link } from "react-router-dom";
+import useContentStore from "../store/contentStore";
 
 const Breadcrumbs: React.FC = () => {
   // Select individual state slices
@@ -11,12 +11,12 @@ const Breadcrumbs: React.FC = () => {
   const repoName = useContentStore((state) => state.repoName);
 
   // パスを '/' で分割し、空の要素を除去
-  const pathSegments = currentPath.split('/').filter(Boolean);
+  const pathSegments = currentPath.split("/").filter(Boolean);
 
   // パンくずリストの要素を生成
   const breadcrumbItems = pathSegments.map((segment, index) => {
     // 現在のセグメントまでのパスを再構築
-    const pathToSegment = pathSegments.slice(0, index + 1).join('/');
+    const pathToSegment = pathSegments.slice(0, index + 1).join("/");
     const isLast = index === pathSegments.length - 1;
 
     return (
@@ -39,7 +39,10 @@ const Breadcrumbs: React.FC = () => {
   });
 
   return (
-    <nav aria-label="Breadcrumb" className="p-2 mb-4 bg-gray-100 rounded text-sm">
+    <nav
+      aria-label="Breadcrumb"
+      className="p-2 mb-4 bg-gray-100 rounded text-sm"
+    >
       <ol className="flex items-center space-x-1 text-gray-600">
         <li>
           {/* ルートへのリンク */}

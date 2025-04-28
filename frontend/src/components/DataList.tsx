@@ -1,7 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Problem, Solution, Question, PolicyDraft, TabType } from '../types';
-import { apiClient } from '../services/api/apiClient';
-import { ApiErrorType } from '../services/api/apiError';
+import { useEffect, useState } from "react";
+import type {
+  PolicyDraft,
+  Problem,
+  Question,
+  Solution,
+  TabType,
+} from "../types";
+import { apiClient } from "../services/api/apiClient";
 
 function DataList() {
   const [problems, setProblems] = useState<Problem[]>([]);
@@ -11,9 +16,11 @@ function DataList() {
   const [isLoadingProblems, setIsLoadingProblems] = useState<boolean>(false);
   const [isLoadingSolutions, setIsLoadingSolutions] = useState<boolean>(false);
   const [isLoadingQuestions, setIsLoadingQuestions] = useState<boolean>(false);
-  const [isLoadingPolicyDrafts, setIsLoadingPolicyDrafts] = useState<boolean>(false);
-  const [isGeneratingQuestions, setIsGeneratingQuestions] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<TabType>('questions');
+  const [isLoadingPolicyDrafts, setIsLoadingPolicyDrafts] =
+    useState<boolean>(false);
+  const [isGeneratingQuestions, setIsGeneratingQuestions] =
+    useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<TabType>("questions");
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -25,9 +32,9 @@ function DataList() {
 
   // Fetch problems and solutions when those tabs are selected
   useEffect(() => {
-    if (activeTab === 'problems' && problems.length === 0) {
+    if (activeTab === "problems" && problems.length === 0) {
       fetchProblems();
-    } else if (activeTab === 'solutions' && solutions.length === 0) {
+    } else if (activeTab === "solutions" && solutions.length === 0) {
       fetchSolutions();
     }
   }, [activeTab]);
@@ -36,20 +43,19 @@ function DataList() {
     setIsLoadingQuestions(true);
     setError(null);
     
-    const themeId = localStorage.getItem('defaultThemeId');
+    const themeId = localStorage.getItem("defaultThemeId");
     if (!themeId) {
-      setError('デフォルトテーマが見つかりません。');
+      setError("デフォルトテーマが見つかりません。");
       setIsLoadingQuestions(false);
       return;
     }
-    
     
     const result = await apiClient.getQuestionsByTheme(themeId);
     
     if (result.isErr()) {
       const apiError = result.error;
-      console.error('Failed to fetch questions:', apiError);
-      setError('問いの読み込みに失敗しました。');
+      console.error("Failed to fetch questions:", apiError);
+      setError("問いの読み込みに失敗しました。");
       setIsLoadingQuestions(false);
       return;
     }
@@ -62,9 +68,9 @@ function DataList() {
     setIsLoadingProblems(true);
     setError(null);
     
-    const themeId = localStorage.getItem('defaultThemeId');
+    const themeId = localStorage.getItem("defaultThemeId");
     if (!themeId) {
-      setError('デフォルトテーマが見つかりません。');
+      setError("デフォルトテーマが見つかりません。");
       setIsLoadingProblems(false);
       return;
     }
@@ -73,8 +79,8 @@ function DataList() {
     
     if (result.isErr()) {
       const apiError = result.error;
-      console.error('Failed to fetch problems:', apiError);
-      setError('課題の読み込みに失敗しました。');
+      console.error("Failed to fetch problems:", apiError);
+      setError("課題の読み込みに失敗しました。");
       setIsLoadingProblems(false);
       return;
     }
@@ -87,9 +93,9 @@ function DataList() {
     setIsLoadingSolutions(true);
     setError(null);
     
-    const themeId = localStorage.getItem('defaultThemeId');
+    const themeId = localStorage.getItem("defaultThemeId");
     if (!themeId) {
-      setError('デフォルトテーマが見つかりません。');
+      setError("デフォルトテーマが見つかりません。");
       setIsLoadingSolutions(false);
       return;
     }
@@ -98,8 +104,8 @@ function DataList() {
     
     if (result.isErr()) {
       const apiError = result.error;
-      console.error('Failed to fetch solutions:', apiError);
-      setError('解決策の読み込みに失敗しました。');
+      console.error("Failed to fetch solutions:", apiError);
+      setError("解決策の読み込みに失敗しました。");
       setIsLoadingSolutions(false);
       return;
     }
@@ -112,9 +118,9 @@ function DataList() {
     setIsLoadingPolicyDrafts(true);
     setError(null);
     
-    const themeId = localStorage.getItem('defaultThemeId');
+    const themeId = localStorage.getItem("defaultThemeId");
     if (!themeId) {
-      setError('デフォルトテーマが見つかりません。');
+      setError("デフォルトテーマが見つかりません。");
       setIsLoadingPolicyDrafts(false);
       return;
     }
@@ -123,8 +129,8 @@ function DataList() {
     
     if (result.isErr()) {
       const apiError = result.error;
-      console.error('Failed to fetch policy drafts:', apiError);
-      setError('政策ドラフトの読み込みに失敗しました。');
+      console.error("Failed to fetch policy drafts:", apiError);
+      setError("政策ドラフトの読み込みに失敗しました。");
       setIsLoadingPolicyDrafts(false);
       return;
     }
@@ -138,9 +144,9 @@ function DataList() {
     setError(null);
     setSuccessMessage(null);
     
-    const themeId = localStorage.getItem('defaultThemeId');
+    const themeId = localStorage.getItem("defaultThemeId");
     if (!themeId) {
-      setError('デフォルトテーマが見つかりません。');
+      setError("デフォルトテーマが見つかりません。");
       setIsGeneratingQuestions(false);
       return;
     }
@@ -149,14 +155,14 @@ function DataList() {
     
     if (result.isErr()) {
       const apiError = result.error;
-      console.error('Failed to generate questions:', apiError);
-      setError('問いの生成に失敗しました。');
+      console.error("Failed to generate questions:", apiError);
+      setError("問いの生成に失敗しました。");
       setIsGeneratingQuestions(false);
       return;
     }
     
     setSuccessMessage(
-      'シャープな問いの生成を開始しました。しばらくすると問いリストに表示されます。'
+      "シャープな問いの生成を開始しました。しばらくすると問いリストに表示されます。"
     );
     
     // Fetch questions after a delay to allow time for generation
@@ -169,19 +175,21 @@ function DataList() {
 
   // Helper function to format dates
   const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleString('ja-JP', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Date(dateString).toLocaleString("ja-JP", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   // Helper function to truncate text
   const truncateText = (text: string, maxLength = 100): string => {
-    if (!text) return '';
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    if (!text) return "";
+    return text.length > maxLength
+      ? `${text.substring(0, maxLength)}...`
+      : text;
   };
 
   return (
@@ -199,6 +207,7 @@ function DataList() {
               viewBox="0 0 20 20"
               fill="currentColor"
             >
+              <title>エラー</title>
               <path
                 fillRule="evenodd"
                 d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -219,6 +228,7 @@ function DataList() {
               viewBox="0 0 20 20"
               fill="currentColor"
             >
+              <title>成功</title>
               <path
                 fillRule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -234,12 +244,15 @@ function DataList() {
       <div className="mb-6 p-4 bg-white rounded-lg border border-neutral-200 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-lg font-semibold text-primary-dark mb-1">シャープな問い生成</h3>
+            <h3 className="text-lg font-semibold text-primary-dark mb-1">
+              シャープな問い生成
+            </h3>
             <p className="text-sm text-neutral-600">
               課題データから新しいシャープな問いを生成します
             </p>
           </div>
           <button
+            type="button"
             onClick={handleGenerateQuestions}
             disabled={isGeneratingQuestions}
             className="btn bg-primary text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm whitespace-nowrap hover:bg-primary-dark"
@@ -252,6 +265,7 @@ function DataList() {
                   fill="none"
                   viewBox="0 0 24 24"
                 >
+                  <title>生成中</title>
                   <circle
                     className="opacity-25"
                     cx="12"
@@ -259,17 +273,17 @@ function DataList() {
                     r="10"
                     stroke="currentColor"
                     strokeWidth="4"
-                  ></circle>
+                  />
                   <path
                     className="opacity-75"
                     fill="currentColor"
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
+                  />
                 </svg>
                 生成中...
               </span>
             ) : (
-              'シャープな問い生成'
+              "シャープな問い生成"
             )}
           </button>
         </div>
@@ -280,48 +294,52 @@ function DataList() {
         <ul className="flex flex-wrap -mb-px text-sm font-medium text-center">
           <li className="mr-2">
             <button
-              onClick={() => setActiveTab('questions' as TabType)}
+              onClick={() => setActiveTab("questions" as TabType)}
               className={`inline-block p-4 rounded-t-lg ${
-                activeTab === 'questions'
-                  ? 'text-primary border-b-2 border-primary'
-                  : 'text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+                activeTab === "questions"
+                  ? "text-primary border-b-2 border-primary"
+                  : "text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
               }`}
+              type="button"
             >
               シャープな問い
             </button>
           </li>
           <li className="mr-2">
             <button
-              onClick={() => setActiveTab('problems' as TabType)}
+              onClick={() => setActiveTab("problems" as TabType)}
               className={`inline-block p-4 rounded-t-lg ${
-                activeTab === 'problems'
-                  ? 'text-primary border-b-2 border-primary'
-                  : 'text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+                activeTab === "problems"
+                  ? "text-primary border-b-2 border-primary"
+                  : "text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
               }`}
+              type="button"
             >
               課題
             </button>
           </li>
           <li className="mr-2">
             <button
-              onClick={() => setActiveTab('solutions' as TabType)}
+              onClick={() => setActiveTab("solutions" as TabType)}
               className={`inline-block p-4 rounded-t-lg ${
-                activeTab === 'solutions'
-                  ? 'text-primary border-b-2 border-primary'
-                  : 'text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+                activeTab === "solutions"
+                  ? "text-primary border-b-2 border-primary"
+                  : "text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
               }`}
+              type="button"
             >
               解決策
             </button>
           </li>
           <li>
             <button
-              onClick={() => setActiveTab('policies' as TabType)}
+              onClick={() => setActiveTab("policies" as TabType)}
               className={`inline-block p-4 rounded-t-lg ${
-                activeTab === 'policies'
-                  ? 'text-primary border-b-2 border-primary'
-                  : 'text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+                activeTab === "policies"
+                  ? "text-primary border-b-2 border-primary"
+                  : "text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
               }`}
+              type="button"
             >
               政策ドラフト
             </button>
@@ -332,7 +350,7 @@ function DataList() {
       {/* Tab Content */}
       <div className="bg-white p-4 rounded-lg border border-neutral-200 shadow-sm">
         {/* Questions Tab */}
-        {activeTab === 'questions' && (
+        {activeTab === "questions" && (
           <div>
             <h3 className="text-lg font-semibold mb-4 text-primary-dark">
               シャープな問い一覧 ({questions.length})
@@ -340,9 +358,9 @@ function DataList() {
             {isLoadingQuestions ? (
               <div className="flex items-center justify-center p-8">
                 <div className="animate-pulse-slow flex space-x-2">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
                 </div>
               </div>
             ) : questions.length > 0 ? (
@@ -365,7 +383,7 @@ function DataList() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-neutral-200">
-                    {questions.map(question => (
+                    {questions.map((question) => (
                       <tr key={question._id} className="hover:bg-neutral-50">
                         <td className="px-6 py-4 whitespace-normal text-sm text-neutral-700">
                           {question.questionText}
@@ -381,14 +399,16 @@ function DataList() {
             ) : (
               <div className="p-6 text-center text-neutral-500 text-sm border border-dashed border-neutral-300 rounded-lg">
                 <p>まだ問いが生成されていません</p>
-                <p className="mt-2 text-xs">上部の「シャープな問い生成」ボタンから生成できます</p>
+                <p className="mt-2 text-xs">
+                  上部の「シャープな問い生成」ボタンから生成できます
+                </p>
               </div>
             )}
           </div>
         )}
 
         {/* Problems Tab */}
-        {activeTab === 'problems' && (
+        {activeTab === "problems" && (
           <div>
             <h3 className="text-lg font-semibold mb-4 text-primary-dark">
               課題一覧 ({problems.length})
@@ -396,9 +416,9 @@ function DataList() {
             {isLoadingProblems ? (
               <div className="flex items-center justify-center p-8">
                 <div className="animate-pulse-slow flex space-x-2">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
                 </div>
               </div>
             ) : problems.length > 0 ? (
@@ -427,7 +447,7 @@ function DataList() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-neutral-200">
-                    {problems.map(problem => (
+                    {problems.map((problem) => (
                       <tr key={problem._id} className="hover:bg-neutral-50">
                         <td className="px-6 py-4 whitespace-normal text-sm text-neutral-700">
                           {problem.statement}
@@ -455,7 +475,7 @@ function DataList() {
         )}
 
         {/* Solutions Tab */}
-        {activeTab === 'solutions' && (
+        {activeTab === "solutions" && (
           <div>
             <h3 className="text-lg font-semibold mb-4 text-primary-dark">
               解決策一覧 ({solutions.length})
@@ -463,9 +483,9 @@ function DataList() {
             {isLoadingSolutions ? (
               <div className="flex items-center justify-center p-8">
                 <div className="animate-pulse-slow flex space-x-2">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
                 </div>
               </div>
             ) : solutions.length > 0 ? (
@@ -494,7 +514,7 @@ function DataList() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-neutral-200">
-                    {solutions.map(solution => (
+                    {solutions.map((solution) => (
                       <tr key={solution._id} className="hover:bg-neutral-50">
                         <td className="px-6 py-4 whitespace-normal text-sm text-neutral-700">
                           {solution.statement}
@@ -522,7 +542,7 @@ function DataList() {
         )}
 
         {/* Policy Drafts Tab */}
-        {activeTab === 'policies' && (
+        {activeTab === "policies" && (
           <div>
             <h3 className="text-lg font-semibold mb-4 text-primary-dark">
               政策ドラフト一覧 ({policyDrafts.length})
@@ -530,22 +550,24 @@ function DataList() {
             {isLoadingPolicyDrafts ? (
               <div className="flex items-center justify-center p-8">
                 <div className="animate-pulse-slow flex space-x-2">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <div className="w-2 h-2 bg-primary rounded-full" />
                 </div>
               </div>
             ) : policyDrafts.length > 0 ? (
               <div className="space-y-4">
-                {policyDrafts.map(draft => (
+                {policyDrafts.map((draft) => (
                   <div
                     key={draft._id}
                     className="p-4 border border-neutral-200 rounded-lg hover:shadow-md transition-all duration-200"
                   >
-                    <h4 className="font-semibold text-primary-dark text-lg mb-2">{draft.title}</h4>
+                    <h4 className="font-semibold text-primary-dark text-lg mb-2">
+                      {draft.title}
+                    </h4>
                     <div className="flex items-center gap-2 mb-3">
                       <span className="bg-primary text-white text-xs px-2 py-1 rounded-full">
-                        v{draft.version || '1'}
+                        v{draft.version || "1"}
                       </span>
                       <span className="text-xs text-neutral-500">
                         {formatDate(draft.createdAt)}

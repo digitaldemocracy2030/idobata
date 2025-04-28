@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from "react";
 
 // React関連の型定義
 export interface OutletContext {
@@ -79,10 +79,18 @@ export interface QuestionDetails {
 }
 
 // UI関連の型定義
-export type TabType = 'questions' | 'problems' | 'solutions' | 'policies';
+export type TabType = "questions" | "problems" | "solutions" | "policies";
 
 export interface Theme {
   _id: string;
   title: string;
   slug: string;
+}
+
+export type MessageType = "user" | "system" | "system-message";
+
+export interface ExtendedMessage extends Message {
+  type: MessageType;
+  isStreaming?: boolean;
+  id?: string;
 }

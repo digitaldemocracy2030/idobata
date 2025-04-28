@@ -1,12 +1,14 @@
 {
-  "name": "backend",
+  "name": "idobata-idea-discussion-backend",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run --passWithNoTests",
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "lint": "biome check .",
+    "format": "biome check --write .",
     "migrate-themes": "node scripts/migrateToThemes.js"
   },
   "keywords": [],
@@ -19,9 +21,11 @@
     "express": "^5.1.0",
     "mongoose": "^8.13.2",
     "openai": "^4.93.0",
+    "p-limit": "^6.2.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "vitest": "^3.1.2"
   }
 }

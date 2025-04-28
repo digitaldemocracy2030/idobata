@@ -1,12 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Link, Outlet, useOutletContext } from 'react-router-dom';
-import { OutletContext, Message, NotificationType, PreviousExtractions } from '../types';
-import ChatInput from './ChatInput';
-import ChatHistory from './ChatHistory';
-import ThreadExtractions from './ThreadExtractions';
-import Notification from './Notification';
-import { apiClient } from '../services/api/apiClient';
-import { ApiErrorType } from '../services/api/apiError';
+import { useCallback, useEffect, useState } from "react";
+import { Link, Outlet, useOutletContext } from "react-router-dom";
+import type {
+  Message,
+  NotificationType,
+  OutletContext,
+  PreviousExtractions,
+} from "../types";
+import ChatHistory from "./ChatHistory";
+import ChatInput from "./ChatInput";
+import Notification from "./Notification";
+import ThreadExtractions from "./ThreadExtractions";
+import { apiClient } from "../services/api/apiClient";
 
 function AppLayout() {
   const { userId, setUserId } = useOutletContext<OutletContext>();
@@ -14,26 +18,31 @@ function AppLayout() {
   // Initialize currentThreadId from localStorage if available
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentThreadId, setCurrentThreadId] = useState<string | null>(
-    localStorage.getItem('currentThreadId') || null
+    localStorage.getItem("currentThreadId") || null
   );
   const [showExtractions, setShowExtractions] = useState<boolean>(false);
-  const [notification, setNotification] = useState<NotificationType | null>(null);
-  const [previousExtractions, setPreviousExtractions] = useState<PreviousExtractions>({
-    problems: [],
-    solutions: [],
-  });
+  const [notification, setNotification] = useState<NotificationType | null>(
+    null
+  );
+  const [previousExtractions, setPreviousExtractions] =
+    useState<PreviousExtractions>({
+      problems: [],
+      solutions: [],
+    });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleSendMessage = async (newMessageContent: string): Promise<void> => {
+  const handleSendMessage = async (
+    newMessageContent: string
+  ): Promise<void> => {
     const currentUserId = userId;
 
     const newUserMessage = {
-      role: 'user',
+      role: "user",
       content: newMessageContent,
       timestamp: new Date(),
     };
 
-    setMessages(prevMessages => [...prevMessages, newUserMessage]);
+    setMessages((prevMessages) => [...prevMessages, newUserMessage]);
 
     try {
       const result = await apiClient.sendMessage(
@@ -50,29 +59,29 @@ function AppLayout() {
       const responseData = result.value;
 
       const assistantMessage = {
-        role: 'assistant',
+        role: "assistant",
         content: responseData.response,
         timestamp: new Date(),
       };
 
-      setMessages(prevMessages => [...prevMessages, assistantMessage]);
+      setMessages((prevMessages) => [...prevMessages, assistantMessage]);
 
       if (responseData.threadId) {
         setCurrentThreadId(responseData.threadId);
         // Store threadId in localStorage for persistence
-        localStorage.setItem('currentThreadId', responseData.threadId);
+        localStorage.setItem("currentThreadId", responseData.threadId);
       }
       if (responseData.userId && !userId) {
         setUserId(responseData.userId);
       }
-    } catch (error: any) {
-      console.error('Failed to send message:', error);
+    } catch (error) {
+      console.error("Failed to send message:", error);
       const errorMessage = {
-        role: 'assistant',
+        role: "assistant",
         content: `メッセージ送信エラー: ${error.message}`,
         timestamp: new Date(),
       };
-      setMessages(prevMessages => [...prevMessages, errorMessage]);
+      setMessages((prevMessages) => [...prevMessages, errorMessage]);
     }
   };
 
@@ -94,21 +103,24 @@ function AppLayout() {
 
       // Check for new problems
       for (const problem of currentProblems) {
-        const existingProblem = previousExtractions.problems.find(p => p._id === problem._id);
+        const existingProblem = previousExtractions.problems.find(
+          (p) => p._id === problem._id
+        );
 
         if (!existingProblem) {
           // New problem added
           setNotification({
-            message: `ありがとうございます！新しい課題「${problem.statement.substring(0, 30)}${problem.statement.length > 30 ? '...' : ''}」についてのあなたの声が追加されました。`,
-            type: 'problem',
+            message: `ありがとうございます！新しい課題「${problem.statement.substring(0, 30)}${problem.statement.length > 30 ? "..." : ""}」についてのあなたの声が追加されました。`,
+            type: "problem",
             id: problem._id,
           });
           break;
-        } else if (existingProblem.version !== problem.version) {
+        }
+        if (existingProblem.version !== problem.version) {
           // Problem updated
           setNotification({
-            message: `ありがとうございます！課題「${problem.statement.substring(0, 30)}${problem.statement.length > 30 ? '...' : ''}」についてのあなたの声が更新されました。`,
-            type: 'problem',
+            message: `ありがとうございます！課題「${problem.statement.substring(0, 30)}${problem.statement.length > 30 ? "..." : ""}」についてのあなたの声が更新されました。`,
+            type: "problem",
             id: problem._id,
           });
           break;
@@ -118,21 +130,24 @@ function AppLayout() {
       // If no new/updated problems, check for new solutions
       if (!notification) {
         for (const solution of currentSolutions) {
-          const existingSolution = previousExtractions.solutions.find(s => s._id === solution._id);
+          const existingSolution = previousExtractions.solutions.find(
+            (s) => s._id === solution._id
+          );
 
           if (!existingSolution) {
             // New solution added
             setNotification({
-              message: `ありがとうございます！新しい解決策「${solution.statement.substring(0, 30)}${solution.statement.length > 30 ? '...' : ''}」についてのあなたの声が追加されました。`,
-              type: 'solution',
+              message: `ありがとうございます！新しい解決策「${solution.statement.substring(0, 30)}${solution.statement.length > 30 ? "..." : ""}」についてのあなたの声が追加されました。`,
+              type: "solution",
               id: solution._id,
             });
             break;
-          } else if (existingSolution.version !== solution.version) {
+          }
+          if (existingSolution.version !== solution.version) {
             // Solution updated
             setNotification({
-              message: `ありがとうございます！解決策「${solution.statement.substring(0, 30)}${solution.statement.length > 30 ? '...' : ''}」についてのあなたの声が更新されました。`,
-              type: 'solution',
+              message: `ありがとうございます！解決策「${solution.statement.substring(0, 30)}${solution.statement.length > 30 ? "..." : ""}」についてのあなたの声が更新されました。`,
+              type: "solution",
               id: solution._id,
             });
             break;
@@ -141,9 +156,12 @@ function AppLayout() {
       }
 
       // Update previous extractions for next comparison
-      setPreviousExtractions({ problems: currentProblems, solutions: currentSolutions });
-    } catch (error: any) {
-      console.error('Failed to check for new extractions:', error);
+      setPreviousExtractions({
+        problems: currentProblems,
+        solutions: currentSolutions,
+      });
+    } catch (error) {
+      console.error("Failed to check for new extractions:", error);
     }
   }, [currentThreadId, previousExtractions, notification]);
 
@@ -185,7 +203,7 @@ function AppLayout() {
           
           // If thread not found, clear the stored threadId
           if (apiError.statusCode === 404) {
-            localStorage.removeItem('currentThreadId');
+            localStorage.removeItem("currentThreadId");
             setCurrentThreadId(null);
           }
           
@@ -196,8 +214,8 @@ function AppLayout() {
         if (data.messages && data.messages.length > 0) {
           setMessages(data.messages);
         }
-      } catch (error: any) {
-        console.error('Failed to load thread messages:', error);
+      } catch (error) {
+        console.error("Failed to load thread messages:", error);
       } finally {
         setIsLoading(false);
       }
@@ -220,7 +238,9 @@ function AppLayout() {
       {/* Header */}
       <header className="absolute top-0 left-0 right-0 z-20 border-b border-neutral-200 bg-white py-2 px-4 shadow-sm">
         <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-lg font-semibold text-primary">いどばた新分析システム案</h1>
+          <h1 className="text-lg font-semibold text-primary">
+            いどばた新分析システム案
+          </h1>
           <nav className="flex items-center space-x-4">
             <Link
               to="/legacy/data"
@@ -265,18 +285,19 @@ function AppLayout() {
               disabled={!currentThreadId}
               className={`px-2 py-1 rounded-md text-xs border border-neutral-300 transition-colors duration-200 ${
                 !currentThreadId
-                  ? 'bg-neutral-100 text-neutral-300 cursor-not-allowed'
+                  ? "bg-neutral-100 text-neutral-300 cursor-not-allowed"
                   : showExtractions
-                    ? 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300' // Active state
-                    : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200' // Default state
+                    ? "bg-neutral-200 text-neutral-700 hover:bg-neutral-300" // Active state
+                    : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200" // Default state
               }`}
               title={
                 !currentThreadId
-                  ? '最初にメッセージを送信してください'
+                  ? "最初にメッセージを送信してください"
                   : showExtractions
-                    ? '抽出結果を非表示'
-                    : '抽出結果を表示'
+                    ? "抽出結果を非表示"
+                    : "抽出結果を表示"
               }
+              type="button"
             >
               抽出された課題/解決策を表示
             </button>
@@ -286,13 +307,14 @@ function AppLayout() {
               <button
                 onClick={() => {
                   // Clear current thread and start a new conversation
-                  localStorage.removeItem('currentThreadId');
+                  localStorage.removeItem("currentThreadId");
                   setCurrentThreadId(null);
                   setMessages([]);
                   setPreviousExtractions({ problems: [], solutions: [] });
                 }}
                 className="px-2 py-1 rounded-md text-xs border border-neutral-300 transition-colors duration-200 bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
                 title="新しい会話"
+                type="button"
               >
                 会話をリセット
               </button>

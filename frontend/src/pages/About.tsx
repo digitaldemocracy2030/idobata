@@ -1,11 +1,26 @@
-import BreadcrumbView from '../components/common/BreadcrumbView';
-import AboutSection from '../components/common/AboutSection';
+import { useRef } from "react";
+import {
+  FloatingChat,
+  type FloatingChatRef,
+} from "../components/chat/FloatingChat";
+import AboutSection from "../components/common/AboutSection";
+import BreadcrumbView from "../components/common/BreadcrumbView";
 
 const About = () => {
   const breadcrumbItems = [
-    { label: 'TOP', href: '/' },
-    { label: 'このサイトについて', href: '/about' },
+    { label: "TOP", href: "/" },
+    { label: "このサイトについて", href: "/about" },
   ];
+
+  const chatRef = useRef<FloatingChatRef>(null);
+
+  const handleSendMessage = (message: string) => {
+    console.log("Message sent:", message);
+
+    setTimeout(() => {
+      chatRef.current?.addMessage("メッセージを受け取りました。", "system");
+    }, 500);
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -26,12 +41,16 @@ const About = () => {
         title="話し合いの流れ"
         body={
           <>
-            <h3 className="text-xl font-semibold mb-2">ステップ1：問題を見つける</h3>
+            <h3 className="text-xl font-semibold mb-2">
+              ステップ1：問題を見つける
+            </h3>
             <p className="mb-4">
               日常生活で感じる課題や問題点を投稿してください。
               他の参加者の投稿を見て、共感できる問題に「いいね」をつけることもできます。
             </p>
-            <h3 className="text-xl font-semibold mb-2">ステップ2：アイデアをつくる</h3>
+            <h3 className="text-xl font-semibold mb-2">
+              ステップ2：アイデアをつくる
+            </h3>
             <p>
               問題に対する解決策やアイデアを提案してください。
               他の参加者のアイデアにコメントを付けたり、改善案を提案することもできます。
@@ -80,6 +99,8 @@ const About = () => {
           © xxparty-policy.com
         </a>
       </div>
+
+      <FloatingChat ref={chatRef} onSendMessage={handleSendMessage} />
     </div>
   );
 };

@@ -1,0 +1,21 @@
+{
+  "name": "idobata",
+  "version": "1.0.0",
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4"
+  },
+  "workspaces": [
+    "policy-edit/backend",
+    "policy-edit/frontend",
+    "policy-edit/mcp",
+    "idea-discussion/backend",
+    "frontend"
+  ],
+  "scripts": {
+    "test": "npm run test -ws",
+    "lint": "biome check .",
+    "format": "biome check --write ."
+  }
+}

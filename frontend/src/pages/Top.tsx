@@ -1,26 +1,26 @@
-import HeroSection from '../components/home/HeroSection';
-import SectionTitle from '../components/home/SectionTitle';
-import DiscussionCard from '../components/home/DiscussionCard';
-import ThemeCard from '../components/home/ThemeCard';
-import SeeMoreButton from '../components/home/SeeMoreButton';
+import DiscussionCard from "../components/home/DiscussionCard";
+import HeroSection from "../components/home/HeroSection";
+import SectionTitle from "../components/home/SectionTitle";
+import SeeMoreButton from "../components/home/SeeMoreButton";
+import ThemeCard from "../components/home/ThemeCard";
 
 const Top = () => {
   const discussionData = [
     {
       id: 1,
-      title: 'どうすれば若者が安心してキャリアを築ける社会を実現できるか？',
+      title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },
     {
       id: 2,
-      title: 'どうすれば若者が安心してキャリアを築ける社会を実現できるか？',
+      title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },
     {
       id: 3,
-      title: 'どうすれば若者が安心してキャリアを築ける社会を実現できるか？',
+      title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },
@@ -29,19 +29,19 @@ const Top = () => {
   const themeData = [
     {
       id: 1,
-      title: 'どうすれば若者が安心してキャリアを築ける社会を実現できるか？',
+      title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },
     {
       id: 2,
-      title: 'どうすれば若者が安心してキャリアを築ける社会を実現できるか？',
+      title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },
     {
       id: 3,
-      title: 'どうすれば若者が安心してキャリアを築ける社会を実現できるか？',
+      title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },
@@ -58,7 +58,7 @@ const Top = () => {
             いま最も注目が集まっている論点はこちらです。中身を見てみましょう。
           </p>
           <div className="space-y-3">
-            {discussionData.map(item => (
+            {discussionData.map((item) => (
               <DiscussionCard
                 key={item.id}
                 title={item.title}
@@ -76,7 +76,7 @@ const Top = () => {
             今募集されているテーマはこちらです。気軽にご意見を教えてください！
           </p>
           <div className="space-y-3">
-            {themeData.map(item => (
+            {themeData.map((item) => (
               <ThemeCard
                 key={item.id}
                 id={item.id}
