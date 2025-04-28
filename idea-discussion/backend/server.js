@@ -35,7 +35,7 @@ const PORT = process.env.PORT || 3000; // Use port from env or default to 3000
 // CORS: Allow requests from the frontend development server
 app.use(
   cors({
-    origin: "http://localhost:5173", // Default Vite frontend dev server port
+    origin: ["http://localhost:5173", "http://localhost:5175"], // Allow both frontend and admin panel
     // Add other origins (e.g., production frontend URL) if needed
   })
 );
