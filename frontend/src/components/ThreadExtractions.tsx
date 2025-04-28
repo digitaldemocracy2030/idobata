@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Problem, Solution } from '../types';
+import { useEffect, useState } from "react";
+import type { Problem, Solution } from "../types";
 
 interface ThreadExtractionsProps {
   threadId: string | null;
@@ -25,12 +25,16 @@ const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
       try {
         // Construct the correct API URL using the backend port (default 3000)
         const apiUrl = import.meta.env.VITE_API_BASE_URL;
-        const response = await fetch(`${apiUrl}/api/chat/threads/${threadId}/extractions`);
+        const response = await fetch(
+          `${apiUrl}/api/chat/threads/${threadId}/extractions`
+        );
 
         if (!response.ok) {
           // Handle specific errors like 404 Not Found
           if (response.status === 404) {
-            console.warn(`No extractions found for thread ${threadId} or thread does not exist.`);
+            console.warn(
+              `No extractions found for thread ${threadId} or thread does not exist.`
+            );
             setProblems([]);
             setSolutions([]);
           } else {
@@ -41,9 +45,9 @@ const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
           setProblems(data.problems || []);
           setSolutions(data.solutions || []);
         }
-      } catch (err: any) {
-        console.error('Failed to fetch extractions:', err);
-        setError('抽出結果の読み込みに失敗しました。'); // Translated error
+      } catch (err) {
+        console.error("Failed to fetch extractions:", err);
+        setError("抽出結果の読み込みに失敗しました。"); // Translated error
         // Keep stale data? Or clear? Clearing might be less confusing.
         // setProblems([]);
         // setSolutions([]);
@@ -83,7 +87,9 @@ const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
   return (
     <div className="text-xs md:text-sm text-neutral-700 animate-slide-up custom-scrollbar">
       <div className="flex items-center justify-between mb-2 md:mb-3">
-        <h3 className="font-semibold text-primary text-sm md:text-base">抽出されたインサイト</h3>
+        <h3 className="font-semibold text-primary text-sm md:text-base">
+          抽出されたインサイト
+        </h3>
         <span className="badge badge-secondary text-xs">自動抽出</span>
       </div>
 
@@ -97,16 +103,16 @@ const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
         {problems.length > 0 && (
           <div className="bg-white p-2 md:p-3 border border-neutral-200 rounded-lg shadow-sm">
             <h4 className="font-medium text-primary-dark flex items-center gap-1 md:gap-2 mb-1 md:mb-2 text-xs md:text-sm">
-              <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-primary inline-block"></span>
+              <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-primary inline-block" />
               課題 ({problems.length})
             </h4>
             <ul className="space-y-2">
-              {problems.map(p => (
+              {problems.map((p) => (
                 <li
                   key={p._id}
                   className="bg-neutral-50 p-1.5 md:p-2 rounded-md border border-neutral-200 text-neutral-800 text-xs md:text-sm"
                 >
-                  {p.statement || 'ステートメントが見つかりません'}
+                  {p.statement || "ステートメントが見つかりません"}
                 </li>
               ))}
             </ul>
@@ -116,16 +122,16 @@ const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
         {solutions.length > 0 && (
           <div className="bg-white p-2 md:p-3 border border-neutral-200 rounded-lg shadow-sm">
             <h4 className="font-medium text-success flex items-center gap-1 md:gap-2 mb-1 md:mb-2 text-xs md:text-sm">
-              <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-success inline-block"></span>
+              <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-success inline-block" />
               解決策 ({solutions.length})
             </h4>
             <ul className="space-y-2">
-              {solutions.map(s => (
+              {solutions.map((s) => (
                 <li
                   key={s._id}
                   className="bg-neutral-50 p-1.5 md:p-2 rounded-md border border-neutral-200 text-neutral-800 text-xs md:text-sm"
                 >
-                  {s.statement || 'ステートメントが見つかりません'}
+                  {s.statement || "ステートメントが見つかりません"}
                 </li>
               ))}
             </ul>

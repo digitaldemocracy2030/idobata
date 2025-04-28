@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 interface DraggableOptions {
   minHeight: number;
@@ -16,18 +16,21 @@ export const useDraggable = (options: DraggableOptions) => {
     setStartY(clientY);
   }, []);
 
-  const handleDrag = useCallback((clientY: number) => {
-    if (!isDragging) return;
+  const handleDrag = useCallback(
+    (clientY: number) => {
+      if (!isDragging) return;
 
-    const deltaY = startY - clientY;
-    const newHeight = Math.min(
-      Math.max(options.minHeight, height + deltaY),
-      options.maxHeight
-    );
+      const deltaY = startY - clientY;
+      const newHeight = Math.min(
+        Math.max(options.minHeight, height + deltaY),
+        options.maxHeight
+      );
 
-    setHeight(newHeight);
-    setStartY(clientY);
-  }, [isDragging, startY, height, options.minHeight, options.maxHeight]);
+      setHeight(newHeight);
+      setStartY(clientY);
+    },
+    [isDragging, startY, height, options.minHeight, options.maxHeight]
+  );
 
   const handleDragEnd = useCallback(() => {
     setIsDragging(false);
@@ -54,16 +57,16 @@ export const useDraggable = (options: DraggableOptions) => {
       handleDragEnd();
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('touchmove', handleTouchMove);
-    document.addEventListener('mouseup', handleMouseUp);
-    document.addEventListener('touchend', handleTouchEnd);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("touchmove", handleTouchMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("touchend", handleTouchEnd);
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('touchend', handleTouchEnd);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchend", handleTouchEnd);
     };
   }, [handleDrag, handleDragEnd, isDragging]);
 

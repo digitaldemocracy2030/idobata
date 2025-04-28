@@ -56,5 +56,5 @@
 .chat-bubble-bot .markdown-body code {
   /* Bot bubble is light, maybe slightly darker background for code? */
   /* background-color: rgba(0, 0, 0, 0.05) !important; */
-   color: inherit !important; /* Ensure text color is dark */
+  color: inherit !important; /* Ensure text color is dark */
 }

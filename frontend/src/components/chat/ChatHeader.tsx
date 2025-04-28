@@ -1,7 +1,7 @@
-import React from 'react';
-import { SheetClose } from '../ui/sheet';
-import { Button } from '../ui/button';
-import { X } from 'lucide-react';
+import { X } from "lucide-react";
+import type React from "react";
+import { Button } from "../ui/button";
+import { SheetClose } from "../ui/sheet";
 
 interface ChatHeaderProps {
   onDragStart: (clientY: number) => void;
@@ -29,7 +29,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ onDragStart }) => {
       </div>
       <div className="absolute right-2 top-2">
         <SheetClose asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8 flex items-center justify-center">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 flex items-center justify-center"
+          >
             <X className="h-5 w-5" />
           </Button>
         </SheetClose>
