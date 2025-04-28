@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
+import type { ChangeEvent, FC, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import type { FC, ChangeEvent, FormEvent } from "react";
 import { apiClient } from "../../services/api/apiClient";
 import { ApiErrorType } from "../../services/api/apiError";
 import type {
@@ -141,7 +141,12 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
       />
 
       <div className="mb-4">
-        <label htmlFor="description" className="block text-gray-700 font-medium mb-2">説明</label>
+        <label
+          htmlFor="description"
+          className="block text-gray-700 font-medium mb-2"
+        >
+          説明
+        </label>
         <textarea
           id="description"
           name="description"
