@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { FC } from "react";
 import { Link } from "react-router-dom";
 import ThemeTable from "../components/theme/ThemeTable";

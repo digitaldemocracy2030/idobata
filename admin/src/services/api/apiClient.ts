@@ -1,6 +1,6 @@
-import { err, ok, type Result } from "neverthrow";
+import { type Result, err, ok } from "neverthrow";
 import { ApiError, ApiErrorType } from "./apiError";
-import type { Theme, CreateThemePayload, UpdateThemePayload } from "./types";
+import type { CreateThemePayload, Theme, UpdateThemePayload } from "./types";
 
 export type ApiResult<T> = Result<T, ApiError>;
 
