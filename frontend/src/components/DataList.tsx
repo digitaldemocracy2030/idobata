@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { apiClient } from "../services/api/apiClient";
 import type {
   PolicyDraft,
   Problem,
@@ -6,7 +7,6 @@ import type {
   Solution,
   TabType,
 } from "../types";
-import { apiClient } from "../services/api/apiClient";
 
 function DataList() {
   const [problems, setProblems] = useState<Problem[]>([]);
@@ -42,16 +42,16 @@ function DataList() {
   const fetchQuestions = async (): Promise<void> => {
     setIsLoadingQuestions(true);
     setError(null);
-    
+
     const themeId = localStorage.getItem("defaultThemeId");
     if (!themeId) {
       setError("デフォルトテーマが見つかりません。");
       setIsLoadingQuestions(false);
       return;
     }
-    
+
     const result = await apiClient.getQuestionsByTheme(themeId);
-    
+
     if (result.isErr()) {
       const apiError = result.error;
       console.error("Failed to fetch questions:", apiError);
@@ -59,7 +59,7 @@ function DataList() {
       setIsLoadingQuestions(false);
       return;
     }
-    
+
     setQuestions(result.value);
     setIsLoadingQuestions(false);
   };
@@ -67,16 +67,16 @@ function DataList() {
   const fetchProblems = async (): Promise<void> => {
     setIsLoadingProblems(true);
     setError(null);
-    
+
     const themeId = localStorage.getItem("defaultThemeId");
     if (!themeId) {
       setError("デフォルトテーマが見つかりません。");
       setIsLoadingProblems(false);
       return;
     }
-    
+
     const result = await apiClient.getProblemsByTheme(themeId);
-    
+
     if (result.isErr()) {
       const apiError = result.error;
       console.error("Failed to fetch problems:", apiError);
@@ -84,7 +84,7 @@ function DataList() {
       setIsLoadingProblems(false);
       return;
     }
-    
+
     setProblems(result.value);
     setIsLoadingProblems(false);
   };
@@ -92,16 +92,16 @@ function DataList() {
   const fetchSolutions = async (): Promise<void> => {
     setIsLoadingSolutions(true);
     setError(null);
-    
+
     const themeId = localStorage.getItem("defaultThemeId");
     if (!themeId) {
       setError("デフォルトテーマが見つかりません。");
       setIsLoadingSolutions(false);
       return;
     }
-    
+
     const result = await apiClient.getSolutionsByTheme(themeId);
-    
+
     if (result.isErr()) {
       const apiError = result.error;
       console.error("Failed to fetch solutions:", apiError);
@@ -109,7 +109,7 @@ function DataList() {
       setIsLoadingSolutions(false);
       return;
     }
-    
+
     setSolutions(result.value);
     setIsLoadingSolutions(false);
   };
@@ -117,16 +117,16 @@ function DataList() {
   const fetchPolicyDrafts = async (): Promise<void> => {
     setIsLoadingPolicyDrafts(true);
     setError(null);
-    
+
     const themeId = localStorage.getItem("defaultThemeId");
     if (!themeId) {
       setError("デフォルトテーマが見つかりません。");
       setIsLoadingPolicyDrafts(false);
       return;
     }
-    
+
     const result = await apiClient.getPolicyDraftsByTheme(themeId);
-    
+
     if (result.isErr()) {
       const apiError = result.error;
       console.error("Failed to fetch policy drafts:", apiError);
@@ -134,7 +134,7 @@ function DataList() {
       setIsLoadingPolicyDrafts(false);
       return;
     }
-    
+
     setPolicyDrafts(result.value);
     setIsLoadingPolicyDrafts(false);
   };
@@ -143,16 +143,16 @@ function DataList() {
     setIsGeneratingQuestions(true);
     setError(null);
     setSuccessMessage(null);
-    
+
     const themeId = localStorage.getItem("defaultThemeId");
     if (!themeId) {
       setError("デフォルトテーマが見つかりません。");
       setIsGeneratingQuestions(false);
       return;
     }
-    
+
     const result = await apiClient.generateQuestions(themeId);
-    
+
     if (result.isErr()) {
       const apiError = result.error;
       console.error("Failed to generate questions:", apiError);
@@ -160,16 +160,16 @@ function DataList() {
       setIsGeneratingQuestions(false);
       return;
     }
-    
+
     setSuccessMessage(
       "シャープな問いの生成を開始しました。しばらくすると問いリストに表示されます。"
     );
-    
+
     // Fetch questions after a delay to allow time for generation
     setTimeout(() => {
       fetchQuestions();
     }, 5000);
-    
+
     setIsGeneratingQuestions(false);
   };
 

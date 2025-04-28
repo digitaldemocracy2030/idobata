@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { Problem, Solution } from "../types";
 import { apiClient } from "../services/api/apiClient";
+import type { Problem, Solution } from "../types";
 
 interface ThreadExtractionsProps {
   threadId: string | null;
@@ -21,13 +21,13 @@ const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
 
     const fetchExtractions = async (): Promise<void> => {
       setError(null);
-      
+
       const result = await apiClient.getThreadExtractions(threadId);
-      
+
       if (result.isErr()) {
         const apiError = result.error;
         console.error("Failed to fetch extractions:", apiError);
-        
+
         if (apiError.statusCode === 404) {
           console.warn(
             `No extractions found for thread ${threadId} or thread does not exist.`
@@ -36,11 +36,11 @@ const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
           setSolutions([]);
           return;
         }
-        
+
         setError("抽出結果の読み込みに失敗しました。");
         return;
       }
-      
+
       const data = result.value;
       setProblems(data.problems || []);
       setSolutions(data.solutions || []);

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, Outlet, useOutletContext } from "react-router-dom";
+import { apiClient } from "../services/api/apiClient";
 import type {
   Message,
   NotificationType,
@@ -10,7 +11,6 @@ import ChatHistory from "./ChatHistory";
 import ChatInput from "./ChatInput";
 import Notification from "./Notification";
 import ThreadExtractions from "./ThreadExtractions";
-import { apiClient } from "../services/api/apiClient";
 
 function AppLayout() {
   const { userId, setUserId } = useOutletContext<OutletContext>();
@@ -91,7 +91,7 @@ function AppLayout() {
 
     try {
       const result = await apiClient.getThreadExtractions(currentThreadId);
-      
+
       if (result.isErr()) {
         const apiError = result.error;
         throw new Error(`API error: ${apiError.message}`);
@@ -197,16 +197,16 @@ function AppLayout() {
       setIsLoading(true);
       try {
         const result = await apiClient.getThreadMessages(currentThreadId);
-        
+
         if (result.isErr()) {
           const apiError = result.error;
-          
+
           // If thread not found, clear the stored threadId
           if (apiError.statusCode === 404) {
             localStorage.removeItem("currentThreadId");
             setCurrentThreadId(null);
           }
-          
+
           throw new Error(`API error: ${apiError.message}`);
         }
 

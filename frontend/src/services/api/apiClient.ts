@@ -1,15 +1,15 @@
-import { ok, err } from "neverthrow";
-import { HttpClient, HttpResult } from "./httpClient";
-import { ApiError, ApiErrorType } from "./apiError";
-import {
-  Theme,
+import { err, ok } from "neverthrow";
+import type {
+  DigestDraft,
+  PolicyDraft,
+  Problem,
   Question,
   QuestionDetails,
-  Problem,
   Solution,
-  PolicyDraft,
-  DigestDraft
+  Theme,
 } from "../../types";
+import { ApiError, ApiErrorType } from "./apiError";
+import { HttpClient, type HttpResult } from "./httpClient";
 
 interface RetryOptions {
   maxRetries: number;
@@ -25,7 +25,7 @@ const defaultRetryOptions: RetryOptions = {
       error.type === ApiErrorType.NETWORK_ERROR ||
       error.type === ApiErrorType.SERVER_ERROR
     );
-  }
+  },
 };
 
 export class ApiClient {
@@ -57,14 +57,20 @@ export class ApiClient {
 
       lastError = result.error;
 
-      if (attempt >= retryOpts.maxRetries || !retryOpts.shouldRetry(lastError)) {
+      if (
+        attempt >= retryOpts.maxRetries ||
+        !retryOpts.shouldRetry(lastError)
+      ) {
         return err(lastError);
       }
 
       await new Promise((resolve) => setTimeout(resolve, retryOpts.delayMs));
     }
 
-    return err(lastError || new ApiError(ApiErrorType.UNKNOWN_ERROR, "Unknown error occurred"));
+    return err(
+      lastError ||
+        new ApiError(ApiErrorType.UNKNOWN_ERROR, "Unknown error occurred")
+    );
   }
 
   async getAllThemes(): Promise<HttpResult<Theme[]>> {
@@ -79,9 +85,12 @@ export class ApiClient {
     const themesResult = await this.getAllThemes();
 
     return themesResult.andThen((themes) => {
-      const defaultTheme = themes.find((theme) => theme.slug === "default") || themes[0];
+      const defaultTheme =
+        themes.find((theme) => theme.slug === "default") || themes[0];
       if (!defaultTheme) {
-        return err(new ApiError(ApiErrorType.NOT_FOUND, "Default theme not found"));
+        return err(
+          new ApiError(ApiErrorType.NOT_FOUND, "Default theme not found")
+        );
       }
       return ok(defaultTheme);
     });
@@ -97,7 +106,10 @@ export class ApiClient {
     );
   }
 
-  async getQuestionDetails(questionId: string, themeId?: string): Promise<HttpResult<QuestionDetails>> {
+  async getQuestionDetails(
+    questionId: string,
+    themeId?: string
+  ): Promise<HttpResult<QuestionDetails>> {
     const endpoint = themeId
       ? `/themes/${themeId}/questions/${questionId}/details`
       : `/questions/${questionId}/details`;
@@ -114,7 +126,9 @@ export class ApiClient {
   }
 
   async getAllProblems(): Promise<HttpResult<Problem[]>> {
-    return this.withRetry(() => this.httpClient.get<Problem[]>("/admin/problems"));
+    return this.withRetry(() =>
+      this.httpClient.get<Problem[]>("/admin/problems")
+    );
   }
 
   async getProblemsByTheme(themeId: string): Promise<HttpResult<Problem[]>> {
@@ -124,7 +138,9 @@ export class ApiClient {
   }
 
   async getAllSolutions(): Promise<HttpResult<Solution[]>> {
-    return this.withRetry(() => this.httpClient.get<Solution[]>("/admin/solutions"));
+    return this.withRetry(() =>
+      this.httpClient.get<Solution[]>("/admin/solutions")
+    );
   }
 
   async getSolutionsByTheme(themeId: string): Promise<HttpResult<Solution[]>> {
@@ -134,20 +150,28 @@ export class ApiClient {
   }
 
   async getAllPolicyDrafts(): Promise<HttpResult<PolicyDraft[]>> {
-    return this.withRetry(() => this.httpClient.get<PolicyDraft[]>("/policy-drafts"));
+    return this.withRetry(() =>
+      this.httpClient.get<PolicyDraft[]>("/policy-drafts")
+    );
   }
 
-  async getPolicyDraftsByTheme(themeId: string): Promise<HttpResult<PolicyDraft[]>> {
+  async getPolicyDraftsByTheme(
+    themeId: string
+  ): Promise<HttpResult<PolicyDraft[]>> {
     return this.withRetry(() =>
       this.httpClient.get<PolicyDraft[]>(`/themes/${themeId}/policy-drafts`)
     );
   }
 
   async getAllDigestDrafts(): Promise<HttpResult<DigestDraft[]>> {
-    return this.withRetry(() => this.httpClient.get<DigestDraft[]>("/digest-drafts"));
+    return this.withRetry(() =>
+      this.httpClient.get<DigestDraft[]>("/digest-drafts")
+    );
   }
 
-  async getDigestDraftsByTheme(themeId: string): Promise<HttpResult<DigestDraft[]>> {
+  async getDigestDraftsByTheme(
+    themeId: string
+  ): Promise<HttpResult<DigestDraft[]>> {
     return this.withRetry(() =>
       this.httpClient.get<DigestDraft[]>(`/themes/${themeId}/digest-drafts`)
     );
@@ -193,27 +217,47 @@ export class ApiClient {
     );
   }
 
-  async getPolicyDraftsByQuestion(themeId: string, questionId: string): Promise<HttpResult<PolicyDraft[]>> {
+  async getPolicyDraftsByQuestion(
+    themeId: string,
+    questionId: string
+  ): Promise<HttpResult<PolicyDraft[]>> {
     return this.withRetry(() =>
-      this.httpClient.get<PolicyDraft[]>(`/themes/${themeId}/policy-drafts?questionId=${questionId}`)
+      this.httpClient.get<PolicyDraft[]>(
+        `/themes/${themeId}/policy-drafts?questionId=${questionId}`
+      )
     );
   }
 
-  async getDigestDraftsByQuestion(themeId: string, questionId: string): Promise<HttpResult<DigestDraft[]>> {
+  async getDigestDraftsByQuestion(
+    themeId: string,
+    questionId: string
+  ): Promise<HttpResult<DigestDraft[]>> {
     return this.withRetry(() =>
-      this.httpClient.get<DigestDraft[]>(`/themes/${themeId}/digest-drafts?questionId=${questionId}`)
+      this.httpClient.get<DigestDraft[]>(
+        `/themes/${themeId}/digest-drafts?questionId=${questionId}`
+      )
     );
   }
 
-  async generatePolicy(themeId: string, questionId: string): Promise<HttpResult<void>> {
+  async generatePolicy(
+    themeId: string,
+    questionId: string
+  ): Promise<HttpResult<void>> {
     return this.withRetry(() =>
-      this.httpClient.post<void>(`/themes/${themeId}/questions/${questionId}/generate-policy`)
+      this.httpClient.post<void>(
+        `/themes/${themeId}/questions/${questionId}/generate-policy`
+      )
     );
   }
 
-  async generateDigest(themeId: string, questionId: string): Promise<HttpResult<void>> {
+  async generateDigest(
+    themeId: string,
+    questionId: string
+  ): Promise<HttpResult<void>> {
     return this.withRetry(() =>
-      this.httpClient.post<void>(`/themes/${themeId}/questions/${questionId}/generate-digest`)
+      this.httpClient.post<void>(
+        `/themes/${themeId}/questions/${questionId}/generate-digest`
+      )
     );
   }
 }

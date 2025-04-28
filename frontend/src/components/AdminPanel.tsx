@@ -36,9 +36,9 @@ function AdminPanel() {
   const fetchQuestions = async () => {
     setIsLoadingQuestions(true);
     setError(null);
-    
+
     const result = await apiClient.getAllQuestions();
-    
+
     if (result.isErr()) {
       const apiError = result.error;
       console.error("Failed to fetch questions:", apiError);
@@ -46,7 +46,7 @@ function AdminPanel() {
       setIsLoadingQuestions(false);
       return;
     }
-    
+
     setQuestions(result.value);
     setIsLoadingQuestions(false);
   };
@@ -54,9 +54,9 @@ function AdminPanel() {
   const fetchProblems = async () => {
     setIsLoadingProblems(true);
     setError(null);
-    
+
     const result = await apiClient.getAllProblems();
-    
+
     if (result.isErr()) {
       const apiError = result.error;
       console.error("Failed to fetch problems:", apiError);
@@ -64,7 +64,7 @@ function AdminPanel() {
       setIsLoadingProblems(false);
       return;
     }
-    
+
     setProblems(result.value);
     setIsLoadingProblems(false);
   };
@@ -72,9 +72,9 @@ function AdminPanel() {
   const fetchSolutions = async () => {
     setIsLoadingSolutions(true);
     setError(null);
-    
+
     const result = await apiClient.getAllSolutions();
-    
+
     if (result.isErr()) {
       const apiError = result.error;
       console.error("Failed to fetch solutions:", apiError);
@@ -82,7 +82,7 @@ function AdminPanel() {
       setIsLoadingSolutions(false);
       return;
     }
-    
+
     setSolutions(result.value);
     setIsLoadingSolutions(false);
   };
@@ -90,9 +90,9 @@ function AdminPanel() {
   const fetchPolicyDrafts = async () => {
     setIsLoadingPolicyDrafts(true);
     setError(null);
-    
+
     const result = await apiClient.getAllPolicyDrafts();
-    
+
     if (result.isErr()) {
       const apiError = result.error;
       console.error("Failed to fetch policy drafts:", apiError);
@@ -100,7 +100,7 @@ function AdminPanel() {
       setIsLoadingPolicyDrafts(false);
       return;
     }
-    
+
     setPolicyDrafts(result.value);
     setIsLoadingPolicyDrafts(false);
   };
@@ -108,9 +108,9 @@ function AdminPanel() {
   const fetchDigestDrafts = async () => {
     setIsLoadingDigestDrafts(true);
     setError(null);
-    
+
     const result = await apiClient.getAllDigestDrafts();
-    
+
     if (result.isErr()) {
       const apiError = result.error;
       console.error("Failed to fetch digest drafts:", apiError);
@@ -118,7 +118,7 @@ function AdminPanel() {
       setIsLoadingDigestDrafts(false);
       return;
     }
-    
+
     setDigestDrafts(result.value);
     setIsLoadingDigestDrafts(false);
   };
@@ -127,9 +127,9 @@ function AdminPanel() {
     setIsGeneratingQuestions(true);
     setError(null);
     setSuccessMessage(null);
-    
+
     const result = await apiClient.generateQuestions();
-    
+
     if (result.isErr()) {
       const apiError = result.error;
       console.error("Failed to generate questions:", apiError);
@@ -137,16 +137,16 @@ function AdminPanel() {
       setIsGeneratingQuestions(false);
       return;
     }
-    
+
     setSuccessMessage(
       "シャープな問いの生成を開始しました。しばらくすると問いリストに表示されます。"
     );
-    
+
     // Fetch questions after a delay to allow time for generation
     setTimeout(() => {
       fetchQuestions();
     }, 5000);
-    
+
     setIsGeneratingQuestions(false);
   };
 

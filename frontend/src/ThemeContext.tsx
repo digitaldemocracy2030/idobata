@@ -47,12 +47,14 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
           setDefaultThemeId(cachedThemeId);
           setError(null);
         } else {
-          let errorMessage = "テーマの取得に失敗しました。しばらく経ってからリロードしてください。";
+          let errorMessage =
+            "テーマの取得に失敗しました。しばらく経ってからリロードしてください。";
 
           if (apiError.type === ApiErrorType.NETWORK_ERROR) {
             errorMessage = "ネットワーク接続を確認してください。";
           } else if (apiError.type === ApiErrorType.SERVER_ERROR) {
-            errorMessage = "サーバーエラーが発生しました。しばらく経ってからリロードしてください。";
+            errorMessage =
+              "サーバーエラーが発生しました。しばらく経ってからリロードしてください。";
           }
 
           setError(errorMessage);

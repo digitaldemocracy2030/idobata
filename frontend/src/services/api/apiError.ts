@@ -6,7 +6,7 @@ export enum ApiErrorType {
   VALIDATION_ERROR = "VALIDATION_ERROR",
   UNAUTHORIZED = "UNAUTHORIZED",
   FORBIDDEN = "FORBIDDEN",
-  UNKNOWN_ERROR = "UNKNOWN_ERROR"
+  UNKNOWN_ERROR = "UNKNOWN_ERROR",
 }
 
 export class ApiError extends Error {
@@ -82,7 +82,8 @@ export class ApiError extends Error {
   }
 
   static fromUnknownError(error: unknown): ApiError {
-    const message = error instanceof Error ? error.message : "Unknown error occurred";
+    const message =
+      error instanceof Error ? error.message : "Unknown error occurred";
     return new ApiError(ApiErrorType.UNKNOWN_ERROR, message, {
       originalError: error,
     });
