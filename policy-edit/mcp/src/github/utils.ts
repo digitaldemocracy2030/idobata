@@ -1,6 +1,6 @@
-import type { Octokit } from '@octokit/rest';
-import config from '../config.js';
-import logger from '../logger.js';
+import type { Octokit } from "@octokit/rest";
+import config from "../config.js";
+import logger from "../logger.js";
 
 /**
  * 指定されたブランチが存在することを確認し、存在しない場合は作成する。
@@ -29,7 +29,7 @@ export async function ensureBranchExists(
     branchExists = true;
     logger.info(`Branch ${branchName} already exists.`);
   } catch (error: unknown) {
-    if (error instanceof Error && 'status' in error && error.status === 404) {
+    if (error instanceof Error && "status" in error && error.status === 404) {
       logger.info(`Branch ${branchName} does not exist. Creating...`);
       // ブランチが存在しない場合は作成に進む
     } else {
@@ -95,7 +95,7 @@ export async function findOrCreateDraftPr(
     const { data: existingPrs } = await octokit.rest.pulls.list({
       owner,
       repo,
-      state: 'open',
+      state: "open",
       head: head,
       base: baseBranch,
     });

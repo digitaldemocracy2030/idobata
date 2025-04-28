@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef } from 'react';
-import type { Message } from '../types';
+import { useCallback, useEffect, useRef } from "react";
+import type { Message } from "../types";
 
 interface ChatHistoryProps {
   messages: Message[];
@@ -9,7 +9,7 @@ function ChatHistory({ messages }: ChatHistoryProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
   useEffect(() => {
@@ -26,14 +26,14 @@ function ChatHistory({ messages }: ChatHistoryProps) {
       {messages.map((msg, index) => (
         <div
           key={`${msg.timestamp}-${index}`}
-          className={`${msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'} animate-fade-in`}
+          className={`${msg.role === "user" ? "flex justify-end" : "flex justify-start"} animate-fade-in`}
         >
           <div className="flex flex-col max-w-[85%] sm:max-w-[75%] md:max-w-[65%]">
             <div
               className={`inline-block py-2 md:py-3 px-3 md:px-4 break-words ${
-                msg.role === 'user'
-                  ? 'bg-neutral-700 text-white shadow-sm rounded-2xl rounded-tr-sm'
-                  : 'bg-white border border-neutral-200 text-neutral-800 shadow-sm rounded-2xl rounded-tl-sm'
+                msg.role === "user"
+                  ? "bg-neutral-700 text-white shadow-sm rounded-2xl rounded-tr-sm"
+                  : "bg-white border border-neutral-200 text-neutral-800 shadow-sm rounded-2xl rounded-tl-sm"
               }`}
             >
               <div className="text-xs md:text-sm whitespace-pre-wrap">
@@ -41,11 +41,11 @@ function ChatHistory({ messages }: ChatHistoryProps) {
               </div>
             </div>
             <div
-              className={`text-xs text-neutral-500 mt-1 ${msg.role === 'user' ? 'text-right mr-1' : 'ml-1'}`}
+              className={`text-xs text-neutral-500 mt-1 ${msg.role === "user" ? "text-right mr-1" : "ml-1"}`}
             >
               {new Date(msg.timestamp).toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
+                hour: "2-digit",
+                minute: "2-digit",
               })}
             </div>
           </div>

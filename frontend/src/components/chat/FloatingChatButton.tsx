@@ -1,7 +1,7 @@
-import { Send } from 'lucide-react';
-import type React from 'react';
-import { cn } from '../../lib/utils';
-import { Button } from '../ui/button';
+import { Send } from "lucide-react";
+import type React from "react";
+import { cn } from "../../lib/utils";
+import { Button } from "../ui/button";
 
 interface FloatingChatButtonProps {
   onClick: () => void;
@@ -16,8 +16,8 @@ export const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
     <div className="fixed bottom-4 left-4 right-4 z-50">
       <div
         className={cn(
-          'flex items-center bg-white border border-neutral-200 rounded-full shadow-lg p-1 pr-2',
-          hasUnread && 'animate-pulse'
+          "flex items-center bg-white border border-neutral-200 rounded-full shadow-lg p-1 pr-2",
+          hasUnread && "animate-pulse"
         )}
       >
         <input

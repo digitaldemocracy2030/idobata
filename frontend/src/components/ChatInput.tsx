@@ -1,17 +1,17 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
 }
 
 function ChatInput({ onSendMessage }: ChatInputProps) {
-  const [message, setMessage] = useState<string>('');
+  const [message, setMessage] = useState<string>("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
       onSendMessage(message);
-      setMessage('');
+      setMessage("");
     }
   };
 
@@ -32,7 +32,7 @@ function ChatInput({ onSendMessage }: ChatInputProps) {
         ) => {
           // Only handle Enter key press when not in IME composition
           if (
-            e.key === 'Enter' &&
+            e.key === "Enter" &&
             !e.shiftKey &&
             !e.isComposing &&
             !e.nativeEvent.isComposing &&

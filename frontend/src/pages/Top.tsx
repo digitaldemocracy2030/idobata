@@ -1,26 +1,26 @@
-import DiscussionCard from '../components/home/DiscussionCard';
-import HeroSection from '../components/home/HeroSection';
-import SectionTitle from '../components/home/SectionTitle';
-import SeeMoreButton from '../components/home/SeeMoreButton';
-import ThemeCard from '../components/home/ThemeCard';
+import DiscussionCard from "../components/home/DiscussionCard";
+import HeroSection from "../components/home/HeroSection";
+import SectionTitle from "../components/home/SectionTitle";
+import SeeMoreButton from "../components/home/SeeMoreButton";
+import ThemeCard from "../components/home/ThemeCard";
 
 const Top = () => {
   const discussionData = [
     {
       id: 1,
-      title: 'どうすれば若者が安心してキャリアを築ける社会を実現できるか？',
+      title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },
     {
       id: 2,
-      title: 'どうすれば若者が安心してキャリアを築ける社会を実現できるか？',
+      title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },
     {
       id: 3,
-      title: 'どうすれば若者が安心してキャリアを築ける社会を実現できるか？',
+      title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },
@@ -29,19 +29,19 @@ const Top = () => {
   const themeData = [
     {
       id: 1,
-      title: 'どうすれば若者が安心してキャリアを築ける社会を実現できるか？',
+      title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },
     {
       id: 2,
-      title: 'どうすれば若者が安心してキャリアを築ける社会を実現できるか？',
+      title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },
     {
       id: 3,
-      title: 'どうすれば若者が安心してキャリアを築ける社会を実現できるか？',
+      title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },

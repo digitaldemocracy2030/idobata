@@ -1,13 +1,13 @@
-import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom';
-import ContentExplorer from './components/ContentExplorer';
-import Layout from './components/Layout';
-import NotFound from './components/NotFound'; // 404 page component
+import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
+import ContentExplorer from "./components/ContentExplorer";
+import Layout from "./components/Layout";
+import NotFound from "./components/NotFound"; // 404 page component
 
 // Wrapper component to extract path from URL splat and pass it to ContentExplorer
 function ContentExplorerWrapper() {
   const params = useParams();
   // Get the path after /view/. If no path, default to empty string (root)
-  const path = params['*'] || '';
+  const path = params["*"] || "";
   // Use key={path} to force re-render/remount of ContentExplorer when the path changes
   return <ContentExplorer key={path} initialPath={path} />;
 }

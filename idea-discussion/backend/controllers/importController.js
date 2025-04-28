@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
-import ImportedItem from '../models/ImportedItem.js';
-import { processExtraction } from '../workers/extractionWorker.js';
+import mongoose from "mongoose";
+import ImportedItem from "../models/ImportedItem.js";
+import { processExtraction } from "../workers/extractionWorker.js";
 
 /**
  * @description Handle theme-specific generic data import
@@ -14,14 +14,14 @@ export const importGenericDataByTheme = async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(themeId)) {
     return res
       .status(400)
-      .json({ success: false, message: 'Invalid theme ID format' });
+      .json({ success: false, message: "Invalid theme ID format" });
   }
 
   // Basic validation
   if (!sourceType || !content) {
     return res.status(400).json({
       success: false,
-      message: 'Missing required fields: sourceType and content',
+      message: "Missing required fields: sourceType and content",
     });
   }
 
@@ -31,7 +31,7 @@ export const importGenericDataByTheme = async (req, res, next) => {
       sourceType,
       content,
       metadata: metadata || {},
-      status: 'pending',
+      status: "pending",
       themeId, // Add themeId to the imported item
     });
 
@@ -61,7 +61,7 @@ export const importGenericDataByTheme = async (req, res, next) => {
     console.error(`Error importing generic data for theme ${themeId}:`, error);
     res.status(500).json({
       success: false,
-      message: 'Server error during import',
+      message: "Server error during import",
       error: error.message,
     });
   }

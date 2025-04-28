@@ -1,5 +1,5 @@
 // src/components/ErrorDisplay.tsx
-import type React from 'react';
+import type React from "react";
 
 interface ErrorDisplayProps {
   error: Error | null; // Accept Error object or null
@@ -12,15 +12,15 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({ error }) => {
 
   // Try to extract specific messages for common errors
   let displayMessage = error.message;
-  if (error.message.includes('404')) {
+  if (error.message.includes("404")) {
     displayMessage =
-      'コンテンツが見つかりません (404)。パスを確認してください。';
-  } else if (error.message.includes('Rate limit exceeded')) {
+      "コンテンツが見つかりません (404)。パスを確認してください。";
+  } else if (error.message.includes("Rate limit exceeded")) {
     displayMessage =
-      'GitHub APIのレート制限を超えました。しばらく待ってから再試行するか、パーソナルアクセストークンを設定してください。';
-  } else if (error.message.includes('403')) {
+      "GitHub APIのレート制限を超えました。しばらく待ってから再試行するか、パーソナルアクセストークンを設定してください。";
+  } else if (error.message.includes("403")) {
     displayMessage =
-      'アクセスが禁止されています (403)。権限またはレート制限が原因である可能性があります。';
+      "アクセスが禁止されています (403)。権限またはレート制限が原因である可能性があります。";
   }
 
   return (

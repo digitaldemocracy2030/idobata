@@ -1,24 +1,24 @@
-import { useRef } from 'react';
+import { useRef } from "react";
 import {
   FloatingChat,
   type FloatingChatRef,
-} from '../components/chat/FloatingChat';
-import AboutSection from '../components/common/AboutSection';
-import BreadcrumbView from '../components/common/BreadcrumbView';
+} from "../components/chat/FloatingChat";
+import AboutSection from "../components/common/AboutSection";
+import BreadcrumbView from "../components/common/BreadcrumbView";
 
 const About = () => {
   const breadcrumbItems = [
-    { label: 'TOP', href: '/' },
-    { label: 'このサイトについて', href: '/about' },
+    { label: "TOP", href: "/" },
+    { label: "このサイトについて", href: "/about" },
   ];
 
   const chatRef = useRef<FloatingChatRef>(null);
 
   const handleSendMessage = (message: string) => {
-    console.log('Message sent:', message);
+    console.log("Message sent:", message);
 
     setTimeout(() => {
-      chatRef.current?.addMessage('メッセージを受け取りました。', 'system');
+      chatRef.current?.addMessage("メッセージを受け取りました。", "system");
     }, 500);
   };
 

@@ -4,11 +4,11 @@ import React, {
   useRef,
   useImperativeHandle,
   forwardRef,
-} from 'react';
-import { ExtendedMessage, type MessageType } from '../../types';
-import { ChatProvider, useChat } from './ChatProvider';
-import { ChatSheet } from './ChatSheet';
-import { FloatingChatButton } from './FloatingChatButton';
+} from "react";
+import { ExtendedMessage, type MessageType } from "../../types";
+import { ChatProvider, useChat } from "./ChatProvider";
+import { ChatSheet } from "./ChatSheet";
+import { FloatingChatButton } from "./FloatingChatButton";
 
 interface FloatingChatProps {
   onSendMessage?: (message: string) => void;
@@ -91,4 +91,4 @@ export const FloatingChat = forwardRef<FloatingChatRef, FloatingChatProps>(
   }
 );
 
-FloatingChat.displayName = 'FloatingChat';
+FloatingChat.displayName = "FloatingChat";

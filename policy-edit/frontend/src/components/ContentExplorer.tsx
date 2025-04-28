@@ -1,13 +1,13 @@
-import type React from 'react';
-import { useEffect } from 'react';
-import type { GitHubFile } from '../lib/github'; // Import the GitHubFile type
-import useContentStore from '../store/contentStore';
-import Breadcrumbs from './Breadcrumbs';
-import DirectoryView from './DirectoryView';
-import ErrorDisplay from './ErrorDisplay';
-import FileView from './FileView';
+import type React from "react";
+import { useEffect } from "react";
+import type { GitHubFile } from "../lib/github"; // Import the GitHubFile type
+import useContentStore from "../store/contentStore";
+import Breadcrumbs from "./Breadcrumbs";
+import DirectoryView from "./DirectoryView";
+import ErrorDisplay from "./ErrorDisplay";
+import FileView from "./FileView";
 // No need for shallow import when selecting primitives individually
-import LoadingIndicator from './LoadingIndicator';
+import LoadingIndicator from "./LoadingIndicator";
 
 interface ContentExplorerProps {
   initialPath: string;
@@ -30,7 +30,7 @@ const ContentExplorer: React.FC<ContentExplorerProps> = ({ initialPath }) => {
     let refToFetch: string | undefined = undefined;
 
     // Check if it's a markdown file
-    if (initialPath.endsWith('.md')) {
+    if (initialPath.endsWith(".md")) {
       const thread = chatThreads[initialPath];
       if (thread?.branchId) {
         refToFetch = thread.branchId;
@@ -61,12 +61,12 @@ const ContentExplorer: React.FC<ContentExplorerProps> = ({ initialPath }) => {
       // ここでは汎用的なエラー表示とする
       return <ErrorDisplay error={error} />;
     }
-    if (contentType === 'dir' && Array.isArray(content)) {
+    if (contentType === "dir" && Array.isArray(content)) {
       return <DirectoryView data={content} />;
     }
     if (
-      contentType === 'file' &&
-      typeof content === 'object' &&
+      contentType === "file" &&
+      typeof content === "object" &&
       content !== null &&
       !Array.isArray(content)
     ) {
@@ -94,7 +94,7 @@ const ContentExplorer: React.FC<ContentExplorerProps> = ({ initialPath }) => {
         // Determine the branchId being used for the current view
         let viewingBranchId: string | null = null;
         // Check if the current content is a file and ends with .md
-        if (contentType === 'file' && currentPath.endsWith('.md')) {
+        if (contentType === "file" && currentPath.endsWith(".md")) {
           const thread = chatThreads[currentPath];
           // Check if there's a specific branchId associated with this file's thread
           if (thread?.branchId) {
@@ -105,7 +105,7 @@ const ContentExplorer: React.FC<ContentExplorerProps> = ({ initialPath }) => {
         if (viewingBranchId) {
           return (
             <div className="mt-2 mb-3 px-3 py-1 bg-yellow-100 border border-yellow-300 text-yellow-800 rounded-md text-sm inline-block">
-              <span className="font-semibold">更新用下書き</span> (ブランチ:{' '}
+              <span className="font-semibold">更新用下書き</span> (ブランチ:{" "}
               {viewingBranchId})
             </div>
           );

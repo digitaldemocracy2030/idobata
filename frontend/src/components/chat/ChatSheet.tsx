@@ -1,15 +1,15 @@
-import { Loader2, Send } from 'lucide-react';
-import type React from 'react';
-import { useState } from 'react';
-import { useDraggable } from '../../hooks/useDraggable';
-import { Button } from '../ui/button';
+import { Loader2, Send } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import { useDraggable } from "../../hooks/useDraggable";
+import { Button } from "../ui/button";
 import {
   ChatSheet as BaseChatSheet,
   ChatSheetContent,
-} from '../ui/chat/chat-sheet';
-import { ChatHeader } from './ChatHeader';
-import { useChat } from './ChatProvider';
-import ExtendedChatHistory from './ExtendedChatHistory';
+} from "../ui/chat/chat-sheet";
+import { ChatHeader } from "./ChatHeader";
+import { useChat } from "./ChatProvider";
+import ExtendedChatHistory from "./ExtendedChatHistory";
 
 interface ChatSheetProps {
   isOpen: boolean;
@@ -23,7 +23,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
   onSendMessage,
 }) => {
   const { messages, addMessage } = useChat();
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
   const { height, handleDragStart } = useDraggable({
     minHeight: 300,
@@ -34,10 +34,10 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
   const handleSendMessage = () => {
     if (inputValue.trim() && !isSending) {
       setIsSending(true);
-      addMessage(inputValue, 'user');
+      addMessage(inputValue, "user");
 
       const message = inputValue;
-      setInputValue('');
+      setInputValue("");
 
       if (onSendMessage) {
         try {
@@ -46,7 +46,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
             setIsSending(false);
           }, 1000);
         } catch (error) {
-          console.error('Error sending message:', error);
+          console.error("Error sending message:", error);
           setIsSending(false);
         }
       } else {
@@ -58,7 +58,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey && !isSending) {
+    if (e.key === "Enter" && !e.shiftKey && !isSending) {
       e.preventDefault();
       handleSendMessage();
     }

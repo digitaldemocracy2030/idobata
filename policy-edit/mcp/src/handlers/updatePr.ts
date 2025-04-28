@@ -1,9 +1,9 @@
-import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { z } from 'zod';
-import config from '../config.js';
-import { getAuthenticatedOctokit } from '../github/client.js';
-import { findOrCreateDraftPr } from '../github/utils.js'; // findOrCreateDraftPr をインポート
-import logger from '../logger.js';
+import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import { z } from "zod";
+import config from "../config.js";
+import { getAuthenticatedOctokit } from "../github/client.js";
+import { findOrCreateDraftPr } from "../github/utils.js"; // findOrCreateDraftPr をインポート
+import logger from "../logger.js";
 
 export const updatePrSchema = z.object({
   branchName: z.string().min(1),
@@ -23,7 +23,7 @@ export async function handleUpdatePr(
 
   logger.info(
     { owner, repo, branchName, title: !!title },
-    'Handling update_pr request'
+    "Handling update_pr request"
   );
 
   try {
@@ -70,7 +70,7 @@ export async function handleUpdatePr(
 
     // findOrCreateDraftPr で作成された場合、description は既に設定されているが、
     // 既存PRの場合に更新が必要なため、常に update を呼び出す (冪等性のため問題ない)
-    const updatedFields = title ? 'title and description' : 'description';
+    const updatedFields = title ? "title and description" : "description";
     logger.info(
       `Successfully ensured PR #${pull_number} exists and updated ${updatedFields}. URL: ${prHtmlUrl}`
     );
@@ -78,7 +78,7 @@ export async function handleUpdatePr(
     return {
       content: [
         {
-          type: 'text',
+          type: "text",
           text: `Successfully updated pull request ${updatedFields}. View PR: ${prHtmlUrl}`, // 取得したURLを使用
         },
       ],
@@ -89,16 +89,16 @@ export async function handleUpdatePr(
       `Error processing update_pr for branch ${branchName}`
     );
     const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error';
+      error instanceof Error ? error.message : "Unknown error";
     const status =
-      error instanceof Error && 'status' in error
+      error instanceof Error && "status" in error
         ? ` (Status: ${error.status})`
-        : '';
+        : "";
     return {
       isError: true,
       content: [
         {
-          type: 'text',
+          type: "text",
           text: `Error updating PR for branch ${branchName}: ${errorMessage}${status}`,
         },
       ],

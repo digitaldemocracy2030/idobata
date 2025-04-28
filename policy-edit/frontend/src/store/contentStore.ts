@@ -1,16 +1,16 @@
-import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
 import {
   type GitHubDirectoryItem,
   type GitHubFile,
   fetchGitHubContent,
-} from '../lib/github';
+} from "../lib/github";
 
 // Define Message type (assuming structure from ChatPanel.tsx)
 interface Message {
   id: number;
   text: string;
-  sender: 'user' | 'bot';
+  sender: "user" | "bot";
 }
 
 // Use specific types from the API client
@@ -28,7 +28,7 @@ interface ContentState {
   repoName: string;
   currentPath: string;
   content: GitHubContent;
-  contentType: 'file' | 'dir' | null;
+  contentType: "file" | "dir" | null;
   isLoading: boolean;
   error: Error | null;
   chatThreads: Record<string, ChatThread>; // Map file path to chat thread
@@ -37,11 +37,11 @@ interface ContentState {
   fetchContent: (path: string, ref?: string) => Promise<void>; // Add optional ref parameter
   // Chat related actions
   getOrCreateChatThread: (path: string) => ChatThread;
-  addMessageToThread: (path: string, message: Omit<Message, 'id'>) => void; // Pass message content, ID is generated internally
+  addMessageToThread: (path: string, message: Omit<Message, "id">) => void; // Pass message content, ID is generated internally
   ensureBranchIdForThread: (path: string) => string; // Ensures branchId exists and returns it
   reloadCurrentContent: () => Promise<void>; // Action to reload content for the current path
   // Internal actions (optional, kept for consistency)
-  _setContent: (content: GitHubContent, type: 'file' | 'dir' | null) => void;
+  _setContent: (content: GitHubContent, type: "file" | "dir" | null) => void;
   _setLoading: (loading: boolean) => void;
   _setError: (error: Error | null) => void;
   _setCurrentPath: (path: string) => void;
@@ -51,9 +51,9 @@ const useContentStore = create<ContentState>()(
   devtools(
     (set, get) => ({
       // --- State ---
-      repoOwner: import.meta.env.VITE_GITHUB_REPO_OWNER || '',
-      repoName: import.meta.env.VITE_GITHUB_REPO_NAME || '',
-      currentPath: '',
+      repoOwner: import.meta.env.VITE_GITHUB_REPO_OWNER || "",
+      repoName: import.meta.env.VITE_GITHUB_REPO_NAME || "",
+      currentPath: "",
       content: null,
       contentType: null,
       isLoading: false,
@@ -72,7 +72,7 @@ const useContentStore = create<ContentState>()(
           const { repoOwner, repoName } = get(); // Get owner/name from state
           if (!repoOwner || !repoName) {
             throw new Error(
-              'Repository owner and name are not set in the store.'
+              "Repository owner and name are not set in the store."
             );
           }
           // Pass the ref to the API call if provided
@@ -85,34 +85,34 @@ const useContentStore = create<ContentState>()(
               if (a.type === b.type) {
                 return a.name.localeCompare(b.name); // Sort alphabetically if types are the same
               }
-              return a.type === 'dir' ? -1 : 1; // Put 'dir' type first
+              return a.type === "dir" ? -1 : 1; // Put 'dir' type first
             });
-            set({ content: sortedData, contentType: 'dir', isLoading: false });
+            set({ content: sortedData, contentType: "dir", isLoading: false });
           } else if (
-            typeof data === 'object' &&
+            typeof data === "object" &&
             data !== null &&
-            data.type === 'file'
+            data.type === "file"
           ) {
             // File content
-            set({ content: data, contentType: 'file', isLoading: false });
+            set({ content: data, contentType: "file", isLoading: false });
           } else {
             // Should not happen with the current API client, but good practice
-            console.error('Unexpected API response format:', data);
-            throw new Error('Unexpected API response format');
+            console.error("Unexpected API response format:", data);
+            throw new Error("Unexpected API response format");
           }
         } catch (fetchError) {
-          console.error('Error in fetchContent action:', fetchError);
+          console.error("Error in fetchContent action:", fetchError);
           const error =
             fetchError instanceof Error
               ? fetchError
-              : new Error('An unknown error occurred');
+              : new Error("An unknown error occurred");
 
           // Check if a ref was provided and the error is a 404 indicating the ref doesn't exist
           if (
             ref &&
-            error.message.includes('404') &&
-            (error.message.includes('Not Found') ||
-              error.message.includes('No commit found for the ref'))
+            error.message.includes("404") &&
+            (error.message.includes("Not Found") ||
+              error.message.includes("No commit found for the ref"))
           ) {
             console.warn(
               `Ref '${ref}' not found for path '${path}'. Falling back to default branch.`
@@ -121,7 +121,7 @@ const useContentStore = create<ContentState>()(
             try {
               const { repoOwner, repoName } = get();
               if (!repoOwner || !repoName) {
-                throw new Error('Repository owner and name are not set.');
+                throw new Error("Repository owner and name are not set.");
               }
               // Fetch without ref
               const fallbackData = await fetchGitHubContent(
@@ -134,30 +134,30 @@ const useContentStore = create<ContentState>()(
                 // Directory
                 const sortedData = [...fallbackData].sort((a, b) => {
                   if (a.type === b.type) return a.name.localeCompare(b.name);
-                  return a.type === 'dir' ? -1 : 1;
+                  return a.type === "dir" ? -1 : 1;
                 });
-                set({ content: sortedData, contentType: 'dir', error: null }); // Clear previous error
+                set({ content: sortedData, contentType: "dir", error: null }); // Clear previous error
               } else if (
-                typeof fallbackData === 'object' &&
+                typeof fallbackData === "object" &&
                 fallbackData !== null &&
-                fallbackData.type === 'file'
+                fallbackData.type === "file"
               ) {
                 // File
                 set({
                   content: fallbackData,
-                  contentType: 'file',
+                  contentType: "file",
                   error: null,
                 }); // Clear previous error
               } else {
-                throw new Error('Unexpected fallback API response format');
+                throw new Error("Unexpected fallback API response format");
               }
             } catch (fallbackFetchError) {
-              console.error('Error during fallback fetch:', fallbackFetchError);
+              console.error("Error during fallback fetch:", fallbackFetchError);
               const finalError =
                 fallbackFetchError instanceof Error
                   ? fallbackFetchError
                   : new Error(
-                      'An unknown error occurred during fallback fetch'
+                      "An unknown error occurred during fallback fetch"
                     );
               // On final fallback error, reset content/type
               set({
@@ -262,7 +262,7 @@ const useContentStore = create<ContentState>()(
           await fetchContent(currentPath, ref); // Pass ref if available
         } else {
           console.warn(
-            'Attempted to reload content, but currentPath is not set.'
+            "Attempted to reload content, but currentPath is not set."
           );
         }
       },
@@ -275,7 +275,7 @@ const useContentStore = create<ContentState>()(
       _setCurrentPath: (path) => set({ currentPath: path }),
     }),
     {
-      name: 'github-content-store', // devtoolsでの表示名
+      name: "github-content-store", // devtoolsでの表示名
     }
   )
 );

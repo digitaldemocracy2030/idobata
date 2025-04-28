@@ -1,24 +1,24 @@
-import { useEffect, useState } from 'react';
-import { Navigate, Outlet, createBrowserRouter } from 'react-router-dom';
-import { ThemeProvider } from './ThemeContext';
-import AppLayout from './components/AppLayout';
-import PageLayout from './components/layout/PageLayout';
-import About from './pages/About';
-import DataPage from './pages/DataPage';
-import MainPage from './pages/MainPage';
-import QuestionDetail from './pages/QuestionDetail';
-import ThemeDetail from './pages/ThemeDetail';
-import Themes from './pages/Themes';
-import Top from './pages/Top';
+import { useEffect, useState } from "react";
+import { Navigate, Outlet, createBrowserRouter } from "react-router-dom";
+import { ThemeProvider } from "./ThemeContext";
+import AppLayout from "./components/AppLayout";
+import PageLayout from "./components/layout/PageLayout";
+import About from "./pages/About";
+import DataPage from "./pages/DataPage";
+import MainPage from "./pages/MainPage";
+import QuestionDetail from "./pages/QuestionDetail";
+import ThemeDetail from "./pages/ThemeDetail";
+import Themes from "./pages/Themes";
+import Top from "./pages/Top";
 
 function App() {
   const [userId, setUserId] = useState<string | null>(
-    localStorage.getItem('policyChatUserId') || null
+    localStorage.getItem("policyChatUserId") || null
   );
 
   useEffect(() => {
     if (userId) {
-      localStorage.setItem('policyChatUserId', userId);
+      localStorage.setItem("policyChatUserId", userId);
     } else {
       // Optional: Clear localStorage if userId becomes null (e.g., on logout)
       // localStorage.removeItem('policyChatUserId');
@@ -30,7 +30,7 @@ function App() {
 
 export const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: (
       <ThemeProvider>
         <App />
@@ -39,16 +39,16 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/top" replace /> },
       {
-        path: 'legacy',
+        path: "legacy",
         element: <AppLayout />,
         children: [
           { index: true, element: <MainPage /> },
-          { path: 'data', element: <DataPage /> },
-          { path: '*', element: <Navigate to="/old" replace /> },
+          { path: "data", element: <DataPage /> },
+          { path: "*", element: <Navigate to="/old" replace /> },
         ],
       },
       {
-        path: 'top',
+        path: "top",
         element: (
           <PageLayout>
             <Top />
@@ -56,7 +56,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'about',
+        path: "about",
         element: (
           <PageLayout>
             <About />
@@ -64,7 +64,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'themes',
+        path: "themes",
         element: (
           <PageLayout>
             <Themes />
@@ -72,7 +72,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'themes/:themeId',
+        path: "themes/:themeId",
         element: (
           <PageLayout>
             <ThemeDetail />
@@ -80,7 +80,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'themes/:themeId/questions/:qId',
+        path: "themes/:themeId/questions/:qId",
         element: (
           <PageLayout>
             <QuestionDetail />

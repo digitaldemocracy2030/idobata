@@ -1,6 +1,6 @@
-import { ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Button } from '../ui/button';
+import { ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "../ui/button";
 
 interface SeeMoreButtonProps {
   to: string;

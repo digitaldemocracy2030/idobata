@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import type { Problem, Solution } from '../types';
+import { useEffect, useState } from "react";
+import type { Problem, Solution } from "../types";
 
 interface ThreadExtractionsProps {
   threadId: string | null;
@@ -46,8 +46,8 @@ const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
           setSolutions(data.solutions || []);
         }
       } catch (err) {
-        console.error('Failed to fetch extractions:', err);
-        setError('抽出結果の読み込みに失敗しました。'); // Translated error
+        console.error("Failed to fetch extractions:", err);
+        setError("抽出結果の読み込みに失敗しました。"); // Translated error
         // Keep stale data? Or clear? Clearing might be less confusing.
         // setProblems([]);
         // setSolutions([]);
@@ -112,7 +112,7 @@ const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
                   key={p._id}
                   className="bg-neutral-50 p-1.5 md:p-2 rounded-md border border-neutral-200 text-neutral-800 text-xs md:text-sm"
                 >
-                  {p.statement || 'ステートメントが見つかりません'}
+                  {p.statement || "ステートメントが見つかりません"}
                 </li>
               ))}
             </ul>
@@ -131,7 +131,7 @@ const ThreadExtractions = ({ threadId }: ThreadExtractionsProps) => {
                   key={s._id}
                   className="bg-neutral-50 p-1.5 md:p-2 rounded-md border border-neutral-200 text-neutral-800 text-xs md:text-sm"
                 >
-                  {s.statement || 'ステートメントが見つかりません'}
+                  {s.statement || "ステートメントが見つかりません"}
                 </li>
               ))}
             </ul>

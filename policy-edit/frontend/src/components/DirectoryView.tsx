@@ -1,14 +1,14 @@
 // src/components/DirectoryView.tsx
-import type React from 'react';
-import { FaFileAlt, FaFolder } from 'react-icons/fa'; // Folder and File icons
-import { Link } from 'react-router-dom';
+import type React from "react";
+import { FaFileAlt, FaFolder } from "react-icons/fa"; // Folder and File icons
+import { Link } from "react-router-dom";
 
 // Define the expected structure of items in the directory data array
 // This should align with the GitHub API response for directory contents
 interface DirectoryItem {
   name: string;
   path: string;
-  type: 'file' | 'dir' | 'symlink' | 'submodule'; // GitHub API types
+  type: "file" | "dir" | "symlink" | "submodule"; // GitHub API types
   sha: string; // Use sha as key
   // Add other properties if needed, e.g., size, download_url
 }
@@ -39,9 +39,9 @@ const DirectoryView: React.FC<DirectoryViewProps> = ({ data }) => {
             <Link
               to={`/view/${item.path}`} // Navigate to the item's path
               className="flex items-center p-3 text-sm"
-              title={`${item.type === 'dir' ? 'ディレクトリ' : 'ファイル'} ${item.name} へ移動`}
+              title={`${item.type === "dir" ? "ディレクトリ" : "ファイル"} ${item.name} へ移動`}
             >
-              {item.type === 'dir' ? (
+              {item.type === "dir" ? (
                 <FaFolder className="w-5 h-5 mr-3 text-blue-500 flex-shrink-0" />
               ) : (
                 <FaFileAlt className="w-5 h-5 mr-3 text-gray-500 flex-shrink-0" />

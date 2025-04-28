@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle, ListFilter } from 'lucide-react';
+import { ArrowRight, CheckCircle, ListFilter } from "lucide-react";
 
 interface DiscussionCardProps {
   title: string;

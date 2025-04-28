@@ -1,15 +1,15 @@
-import mongoose from 'mongoose';
-import Theme from '../models/Theme.js';
+import mongoose from "mongoose";
+import Theme from "../models/Theme.js";
 
 export const getAllThemes = async (req, res) => {
   try {
     const themes = await Theme.find({ isActive: true }).sort({ createdAt: -1 });
     res.status(200).json(themes);
   } catch (error) {
-    console.error('Error fetching all themes:', error);
+    console.error("Error fetching all themes:", error);
     res
       .status(500)
-      .json({ message: 'Error fetching themes', error: error.message });
+      .json({ message: "Error fetching themes", error: error.message });
   }
 };
 
@@ -17,20 +17,20 @@ export const getThemeById = async (req, res) => {
   const { themeId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(themeId)) {
-    return res.status(400).json({ message: 'Invalid theme ID format' });
+    return res.status(400).json({ message: "Invalid theme ID format" });
   }
 
   try {
     const theme = await Theme.findById(themeId);
     if (!theme) {
-      return res.status(404).json({ message: 'Theme not found' });
+      return res.status(404).json({ message: "Theme not found" });
     }
     res.status(200).json(theme);
   } catch (error) {
     console.error(`Error fetching theme ${themeId}:`, error);
     res
       .status(500)
-      .json({ message: 'Error fetching theme', error: error.message });
+      .json({ message: "Error fetching theme", error: error.message });
   }
 };
 
@@ -38,7 +38,7 @@ export const createTheme = async (req, res) => {
   const { title, description, slug, isActive } = req.body;
 
   if (!title || !slug) {
-    return res.status(400).json({ message: 'Title and slug are required' });
+    return res.status(400).json({ message: "Title and slug are required" });
   }
 
   try {
@@ -46,7 +46,7 @@ export const createTheme = async (req, res) => {
     if (existingTheme) {
       return res
         .status(400)
-        .json({ message: 'A theme with this slug already exists' });
+        .json({ message: "A theme with this slug already exists" });
     }
 
     const theme = new Theme({
@@ -59,10 +59,10 @@ export const createTheme = async (req, res) => {
     const savedTheme = await theme.save();
     res.status(201).json(savedTheme);
   } catch (error) {
-    console.error('Error creating theme:', error);
+    console.error("Error creating theme:", error);
     res
       .status(500)
-      .json({ message: 'Error creating theme', error: error.message });
+      .json({ message: "Error creating theme", error: error.message });
   }
 };
 
@@ -71,13 +71,13 @@ export const updateTheme = async (req, res) => {
   const { title, description, slug, isActive } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(themeId)) {
-    return res.status(400).json({ message: 'Invalid theme ID format' });
+    return res.status(400).json({ message: "Invalid theme ID format" });
   }
 
   try {
     const theme = await Theme.findById(themeId);
     if (!theme) {
-      return res.status(404).json({ message: 'Theme not found' });
+      return res.status(404).json({ message: "Theme not found" });
     }
 
     if (slug && slug !== theme.slug) {
@@ -85,7 +85,7 @@ export const updateTheme = async (req, res) => {
       if (existingTheme && existingTheme._id.toString() !== themeId) {
         return res
           .status(400)
-          .json({ message: 'A theme with this slug already exists' });
+          .json({ message: "A theme with this slug already exists" });
       }
     }
 
@@ -106,7 +106,7 @@ export const updateTheme = async (req, res) => {
     console.error(`Error updating theme ${themeId}:`, error);
     res
       .status(500)
-      .json({ message: 'Error updating theme', error: error.message });
+      .json({ message: "Error updating theme", error: error.message });
   }
 };
 
@@ -114,21 +114,21 @@ export const deleteTheme = async (req, res) => {
   const { themeId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(themeId)) {
-    return res.status(400).json({ message: 'Invalid theme ID format' });
+    return res.status(400).json({ message: "Invalid theme ID format" });
   }
 
   try {
     const theme = await Theme.findById(themeId);
     if (!theme) {
-      return res.status(404).json({ message: 'Theme not found' });
+      return res.status(404).json({ message: "Theme not found" });
     }
 
     await Theme.findByIdAndDelete(themeId);
-    res.status(200).json({ message: 'Theme deleted successfully' });
+    res.status(200).json({ message: "Theme deleted successfully" });
   } catch (error) {
     console.error(`Error deleting theme ${themeId}:`, error);
     res
       .status(500)
-      .json({ message: 'Error deleting theme', error: error.message });
+      .json({ message: "Error deleting theme", error: error.message });
   }
 };

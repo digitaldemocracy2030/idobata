@@ -9,7 +9,7 @@ export interface GitHubDirectoryItem {
   html_url: string;
   git_url: string;
   download_url: string | null;
-  type: 'file' | 'dir' | 'symlink' | 'submodule';
+  type: "file" | "dir" | "symlink" | "submodule";
   _links: {
     self: string;
     git: string;
@@ -27,9 +27,9 @@ export interface GitHubFile {
   html_url: string;
   git_url: string;
   download_url: string | null;
-  type: 'file';
+  type: "file";
   content: string; // Base64 encoded content
-  encoding: 'base64';
+  encoding: "base64";
   _links: {
     self: string;
     git: string;
@@ -54,11 +54,11 @@ interface GitHubApiError {
 export async function fetchGitHubContent(
   owner: string,
   repo: string,
-  path = '',
+  path = "",
   ref?: string // Add optional ref parameter
 ): Promise<GitHubFile | GitHubDirectoryItem[]> {
   if (!owner || !repo) {
-    throw new Error('Repository owner and name are required.');
+    throw new Error("Repository owner and name are required.");
   }
 
   let apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
@@ -73,7 +73,7 @@ export async function fetchGitHubContent(
         // パブリックリポジトリなので認証は不要だが、レート制限緩和のために
         // トークンがある場合は設定することも可能 (今回は不要)
         // 'Authorization': `token YOUR_GITHUB_TOKEN`
-        Accept: 'application/vnd.github.v3+json', // APIバージョン指定
+        Accept: "application/vnd.github.v3+json", // APIバージョン指定
       },
     });
 
@@ -85,11 +85,11 @@ export async function fetchGitHubContent(
         errorMessage += ` - ${errorData.message}`;
         if (
           response.status === 403 &&
-          errorData.message.includes('rate limit exceeded')
+          errorData.message.includes("rate limit exceeded")
         ) {
-          errorMessage += ' (Rate limit exceeded)';
+          errorMessage += " (Rate limit exceeded)";
         } else if (response.status === 404) {
-          errorMessage += ' (Not Found)';
+          errorMessage += " (Not Found)";
         }
       } catch (jsonError) {
         // JSONパース失敗時はステータス情報のみ
@@ -101,12 +101,12 @@ export async function fetchGitHubContent(
     const data: GitHubFile | GitHubDirectoryItem[] = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching GitHub content:', error);
+    console.error("Error fetching GitHub content:", error);
     // fetch自体が失敗した場合 (ネットワークエラーなど)
     if (error instanceof Error) {
       throw error; // 元のエラーを再スロー
     }
-    throw new Error('An unknown error occurred during fetch.');
+    throw new Error("An unknown error occurred during fetch.");
   }
 }
 
@@ -125,13 +125,13 @@ export function decodeBase64Content(base64String: string): string {
     }
     return new TextDecoder().decode(bytes);
   } catch (error) {
-    console.error('Error decoding Base64 content:', error);
+    console.error("Error decoding Base64 content:", error);
     if (
       error instanceof DOMException &&
-      error.name === 'InvalidCharacterError'
+      error.name === "InvalidCharacterError"
     ) {
-      return 'Error: Invalid Base64 string';
+      return "Error: Invalid Base64 string";
     }
-    return 'Error decoding content'; // General error message
+    return "Error decoding content"; // General error message
   }
 }

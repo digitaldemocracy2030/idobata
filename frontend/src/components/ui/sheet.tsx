@@ -16,7 +16,7 @@ import {
   SheetPortal,
   SheetTitle,
   SheetTrigger,
-} from './base/sheet';
+} from "./base/sheet";
 
 export {
   Sheet,

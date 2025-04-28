@@ -1,9 +1,9 @@
-import PolicyDraft from '../models/PolicyDraft.js';
-import Problem from '../models/Problem.js';
-import QuestionLink from '../models/QuestionLink.js';
-import SharpQuestion from '../models/SharpQuestion.js';
-import Solution from '../models/Solution.js';
-import { callLLM } from '../services/llmService.js';
+import PolicyDraft from "../models/PolicyDraft.js";
+import Problem from "../models/Problem.js";
+import QuestionLink from "../models/QuestionLink.js";
+import SharpQuestion from "../models/SharpQuestion.js";
+import Solution from "../models/Solution.js";
+import { callLLM } from "../services/llmService.js";
 
 async function generatePolicyDraft(questionId) {
   console.log(
@@ -25,10 +25,10 @@ async function generatePolicyDraft(questionId) {
 
     // Separate problem and solution links
     const problemLinks = links.filter(
-      (link) => link.linkedItemType === 'problem'
+      (link) => link.linkedItemType === "problem"
     );
     const solutionLinks = links.filter(
-      (link) => link.linkedItemType === 'solution'
+      (link) => link.linkedItemType === "solution"
     );
 
     // Sort links by relevanceScore (highest first)
@@ -76,7 +76,7 @@ async function generatePolicyDraft(questionId) {
     // 3. Prepare the prompt for LLM
     const messages = [
       {
-        role: 'system',
+        role: "system",
         content: `あなたはAIアシスタントです。中心的な問い（「私たちはどのようにして...できるか？」）、関連する問題点のリスト、そして市民からの意見を通じて特定された潜在的な解決策のリストに基づいて、政策文書を作成する任務を負っています。
 あなたの出力は、'content'フィールド内に明確に2つのパートで構成されなければなりません。
 
@@ -101,40 +101,40 @@ Part 2: 政策提案
 応答は、"title"（文字列、文書全体に適したタイトル）と "content"（文字列、'市民意見のレポート'と'政策提案'の両セクションを含み、Markdownヘッダー（例：## 市民意見のレポート、## 政策提案）などを使用して明確に区切られ、フォーマットされたもの）のキーを含むJSONオブジェクトのみで行ってください。JSON構造外に他のテキストや説明を含めないでください。`,
       },
       {
-        role: 'user',
+        role: "user",
         content: `Generate a report for the following question:
 Question: ${question.questionText}
 
 Related Problems (sorted by relevance - higher items are more relevant to the question):
-${problemStatements.length > 0 ? problemStatements.map((p) => `- ${p}`).join('\n') : '- None provided'}
+${problemStatements.length > 0 ? problemStatements.map((p) => `- ${p}`).join("\n") : "- None provided"}
 
 Related Solutions (sorted by relevance - higher items are more relevant to the question):
-${solutionStatements.length > 0 ? solutionStatements.map((s) => `- ${s}`).join('\n') : '- None provided'}
+${solutionStatements.length > 0 ? solutionStatements.map((s) => `- ${s}`).join("\n") : "- None provided"}
 
 Please provide the output as a JSON object with "title" and "content" keys. When considering the problems and solutions, prioritize those listed at the top as they are more relevant to the question.`,
       },
     ];
 
     // 4. Call LLM
-    console.log('[PolicyGenerator] Calling LLM to generate policy draft...');
+    console.log("[PolicyGenerator] Calling LLM to generate policy draft...");
     const llmResponse = await callLLM(
       messages,
       true,
-      'google/gemini-2.5-pro-preview-03-25'
+      "google/gemini-2.5-pro-preview-03-25"
     ); // Request JSON output with specific model
 
     if (
       !llmResponse ||
-      typeof llmResponse !== 'object' ||
+      typeof llmResponse !== "object" ||
       !llmResponse.title ||
       !llmResponse.content
     ) {
       console.error(
-        '[PolicyGenerator] Failed to get valid JSON response from LLM:',
+        "[PolicyGenerator] Failed to get valid JSON response from LLM:",
         llmResponse
       );
       throw new Error(
-        'Invalid response format from LLM for policy draft generation.'
+        "Invalid response format from LLM for policy draft generation."
       );
     }
 

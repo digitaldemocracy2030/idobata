@@ -1,6 +1,6 @@
-import type React from 'react';
-import { createContext, useCallback, useContext, useState } from 'react';
-import type { ExtendedMessage, MessageType } from '../../types';
+import type React from "react";
+import { createContext, useCallback, useContext, useState } from "react";
+import type { ExtendedMessage, MessageType } from "../../types";
 
 interface ChatContextType {
   messages: ExtendedMessage[];
@@ -20,7 +20,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addMessage = useCallback((content: string, type: MessageType) => {
     const newMessage: ExtendedMessage = {
-      role: type === 'user' ? 'user' : 'assistant',
+      role: type === "user" ? "user" : "assistant",
       content,
       type,
       timestamp: new Date(),
@@ -33,7 +33,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     (content: string, type: MessageType) => {
       const id = Date.now().toString();
       const newMessage: ExtendedMessage = {
-        role: type === 'user' ? 'user' : 'assistant',
+        role: type === "user" ? "user" : "assistant",
         content,
         type,
         timestamp: new Date(),
@@ -78,7 +78,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 export const useChat = () => {
   const context = useContext(ChatContext);
   if (context === undefined) {
-    throw new Error('useChat must be used within a ChatProvider');
+    throw new Error("useChat must be used within a ChatProvider");
   }
   return context;
 };

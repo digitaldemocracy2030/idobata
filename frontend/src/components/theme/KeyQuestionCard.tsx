@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle, ThumbsUp } from 'lucide-react';
+import { AlertTriangle, CheckCircle, ThumbsUp } from "lucide-react";
 
 interface KeyQuestionCardProps {
   question: string;

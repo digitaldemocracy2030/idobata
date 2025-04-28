@@ -1,12 +1,12 @@
-import mongoose from 'mongoose';
-import Problem from '../models/Problem.js';
-import Solution from '../models/Solution.js';
-import { generateSharpQuestions } from '../workers/questionGenerator.js';
+import mongoose from "mongoose";
+import Problem from "../models/Problem.js";
+import Solution from "../models/Solution.js";
+import { generateSharpQuestions } from "../workers/questionGenerator.js";
 
 // Controller to trigger the sharp question generation process
 const triggerQuestionGeneration = async (req, res) => {
   console.log(
-    '[AdminController] Received request to generate sharp questions.'
+    "[AdminController] Received request to generate sharp questions."
   );
   try {
     // Call the generation function (non-blocking, but we'll wait for it here for simplicity in manual trigger)
@@ -14,16 +14,16 @@ const triggerQuestionGeneration = async (req, res) => {
     await generateSharpQuestions();
 
     res.status(202).json({
-      message: 'Sharp question generation process started successfully.',
+      message: "Sharp question generation process started successfully.",
     });
   } catch (error) {
     console.error(
-      '[AdminController] Error triggering question generation:',
+      "[AdminController] Error triggering question generation:",
       error
     );
     res
       .status(500)
-      .json({ message: 'Failed to start sharp question generation process.' });
+      .json({ message: "Failed to start sharp question generation process." });
   }
 };
 
@@ -31,7 +31,7 @@ const getProblemsByTheme = async (req, res) => {
   const { themeId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(themeId)) {
-    return res.status(400).json({ message: 'Invalid theme ID format' });
+    return res.status(400).json({ message: "Invalid theme ID format" });
   }
 
   console.log(`[AdminController] Fetching problems for theme ${themeId}`);
@@ -44,7 +44,7 @@ const getProblemsByTheme = async (req, res) => {
       error
     );
     res.status(500).json({
-      message: 'Failed to fetch problems for theme',
+      message: "Failed to fetch problems for theme",
       error: error.message,
     });
   }
@@ -54,7 +54,7 @@ const getSolutionsByTheme = async (req, res) => {
   const { themeId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(themeId)) {
-    return res.status(400).json({ message: 'Invalid theme ID format' });
+    return res.status(400).json({ message: "Invalid theme ID format" });
   }
 
   console.log(`[AdminController] Fetching solutions for theme ${themeId}`);
@@ -67,7 +67,7 @@ const getSolutionsByTheme = async (req, res) => {
       error
     );
     res.status(500).json({
-      message: 'Failed to fetch solutions for theme',
+      message: "Failed to fetch solutions for theme",
       error: error.message,
     });
   }
@@ -77,7 +77,7 @@ const triggerQuestionGenerationByTheme = async (req, res) => {
   const { themeId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(themeId)) {
-    return res.status(400).json({ message: 'Invalid theme ID format' });
+    return res.status(400).json({ message: "Invalid theme ID format" });
   }
 
   console.log(
@@ -87,7 +87,7 @@ const triggerQuestionGenerationByTheme = async (req, res) => {
     await generateSharpQuestions(themeId);
 
     res.status(202).json({
-      message: 'Sharp question generation process started successfully.',
+      message: "Sharp question generation process started successfully.",
     });
   } catch (error) {
     console.error(
@@ -95,7 +95,7 @@ const triggerQuestionGenerationByTheme = async (req, res) => {
       error
     );
     res.status(500).json({
-      message: 'Failed to start sharp question generation process for theme',
+      message: "Failed to start sharp question generation process for theme",
       error: error.message,
     });
   }

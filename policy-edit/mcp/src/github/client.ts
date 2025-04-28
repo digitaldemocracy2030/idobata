@@ -1,11 +1,11 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { App } from '@octokit/app';
-import { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods';
-import type { RestEndpointMethodTypes } from '@octokit/plugin-rest-endpoint-methods'; // Use the documented type export
-import { Octokit } from '@octokit/rest';
-import config from '../config.js';
-import logger from '../logger.js';
+import fs from "node:fs";
+import path from "node:path";
+import { App } from "@octokit/app";
+import { restEndpointMethods } from "@octokit/plugin-rest-endpoint-methods";
+import type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods"; // Use the documented type export
+import { Octokit } from "@octokit/rest";
+import config from "../config.js";
+import logger from "../logger.js";
 
 let app: App | null = null;
 // Define a more specific type for the cached Octokit instance
@@ -19,14 +19,14 @@ let installationOctokit: InstallationOctokit | null = null;
 // tokenExpiration is removed as getInstallationOctokit likely handles token refresh.
 
 function getPrivateKey(): string {
-  const keyPath = '/app/secrets/github-key.pem'; // Fixed path inside the container
+  const keyPath = "/app/secrets/github-key.pem"; // Fixed path inside the container
   try {
     logger.info(`Reading private key from file: ${keyPath}`);
-    return fs.readFileSync(keyPath, 'utf8');
+    return fs.readFileSync(keyPath, "utf8");
   } catch (error) {
     logger.error(
       { error, path: keyPath },
-      'Failed to read private key from file'
+      "Failed to read private key from file"
     );
     throw new Error(
       `Could not read GitHub App private key file from ${keyPath}. Ensure the file exists and has correct permissions.`
@@ -40,13 +40,13 @@ function getApp(): App {
     app = new App({
       appId: config.GITHUB_APP_ID,
       privateKey: privateKey,
-      webhooks: { secret: 'dummy-secret' }, // Webhookを使わない場合でも必要
+      webhooks: { secret: "dummy-secret" }, // Webhookを使わない場合でも必要
       // Use the custom Octokit class that includes the REST plugin
       Octokit: OctokitWithRest.defaults({
         baseUrl: config.GITHUB_API_BASE_URL, // Apply base URL if provided
       }),
     });
-    logger.info('GitHub App initialized.');
+    logger.info("GitHub App initialized.");
   }
   return app;
 }
@@ -56,12 +56,12 @@ export async function getAuthenticatedOctokit(): Promise<InstallationOctokit> {
   // Check if we already have a cached Octokit instance.
   // getInstallationOctokit might handle caching/refresh, but this adds a layer.
   if (!installationOctokit) {
-    logger.info('Initializing GitHub installation Octokit instance...');
+    logger.info("Initializing GitHub installation Octokit instance...");
     try {
       const appInstance = getApp();
       const installationId = Number.parseInt(config.GITHUB_INSTALLATION_ID, 10);
       if (Number.isNaN(installationId)) {
-        throw new Error('Invalid GITHUB_INSTALLATION_ID. Must be a number.');
+        throw new Error("Invalid GITHUB_INSTALLATION_ID. Must be a number.");
       }
 
       // Directly get the authenticated Octokit instance for the installation
@@ -75,11 +75,11 @@ export async function getAuthenticatedOctokit(): Promise<InstallationOctokit> {
         `Initialized Octokit instance for installation ID: ${installationId}`
       );
     } catch (error) {
-      logger.error({ error }, 'Failed to get GitHub installation token');
-      throw new Error('Could not authenticate with GitHub App.');
+      logger.error({ error }, "Failed to get GitHub installation token");
+      throw new Error("Could not authenticate with GitHub App.");
     }
   } else {
-    logger.debug('Using cached GitHub installation token.');
+    logger.debug("Using cached GitHub installation token.");
   }
   return installationOctokit;
 }
