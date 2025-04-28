@@ -1,14 +1,15 @@
 import React from "react";
+import type { FC } from "react";
 import { Link } from "react-router-dom";
-import Button from "../ui/Button";
 import type { Theme } from "../../services/api/types";
+import Button from "../ui/Button";
 
 interface ThemeTableProps {
   themes: Theme[];
   onDelete: (id: string) => void;
 }
 
-const ThemeTable: React.FC<ThemeTableProps> = ({ themes, onDelete }) => {
+const ThemeTable: FC<ThemeTableProps> = ({ themes, onDelete }) => {
   const formatDate = (dateString?: string) => {
     if (!dateString) return "N/A";
     return new Date(dateString).toLocaleString("ja-JP");
@@ -56,10 +57,7 @@ const ThemeTable: React.FC<ThemeTableProps> = ({ themes, onDelete }) => {
                   <Link to={`/themes/${theme._id}`}>
                     <Button variant="secondary">編集</Button>
                   </Link>
-                  <Button
-                    variant="danger"
-                    onClick={() => onDelete(theme._id)}
-                  >
+                  <Button variant="danger" onClick={() => onDelete(theme._id)}>
                     削除
                   </Button>
                 </td>

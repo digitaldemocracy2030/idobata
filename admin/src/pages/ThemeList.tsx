@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import type { FC } from "react";
 import Button from "../components/ui/Button";
 import ThemeTable from "../components/theme/ThemeTable";
 import { apiClient } from "../services/api/apiClient";
 import type { Theme } from "../services/api/types";
 
-const ThemeList: React.FC = () => {
+const ThemeList: FC = () => {
   const [themes, setThemes] = useState<Theme[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

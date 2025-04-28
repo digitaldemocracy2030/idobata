@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Button from "../ui/Button";
-import Input from "../ui/Input";
+import type { FC, ChangeEvent, FormEvent } from "react";
 import { apiClient } from "../../services/api/apiClient";
 import { ApiErrorType } from "../../services/api/apiError";
 import type {
-  Theme,
   CreateThemePayload,
+  Theme,
   UpdateThemePayload,
 } from "../../services/api/types";
+import Button from "../ui/Button";
+import Input from "../ui/Input";
 
 interface ThemeFormProps {
   theme?: Theme;
   isEdit?: boolean;
 }
 
-const ThemeForm: React.FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
+const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<
     CreateThemePayload | UpdateThemePayload
@@ -40,7 +41,7 @@ const ThemeForm: React.FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
   }, [isEdit, theme]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = e.target;
 
@@ -72,7 +73,7 @@ const ThemeForm: React.FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!validate()) {

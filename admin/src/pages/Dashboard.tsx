@@ -1,6 +1,7 @@
 import React from "react";
+import type { FC } from "react";
 
-const Dashboard: React.FC = () => {
+const Dashboard: FC = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">ダッシュボード</h1>

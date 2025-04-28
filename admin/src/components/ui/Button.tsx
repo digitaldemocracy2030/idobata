@@ -1,14 +1,15 @@
 import React from "react";
+import type { FC, ReactNode } from "react";
 
 interface ButtonProps {
-  children: React.ReactNode;
+  children: ReactNode;
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
   variant?: "primary" | "secondary" | "danger";
 }
 
-const Button: React.FC<ButtonProps> = ({
+const Button: FC<ButtonProps> = ({
   children,
   onClick,
   type = "button",
@@ -19,7 +20,8 @@ const Button: React.FC<ButtonProps> = ({
   
   const variantStyles = {
     primary: "bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-300",
-    secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300 disabled:bg-gray-100",
+    secondary: 
+      "bg-gray-200 text-gray-800 hover:bg-gray-300 disabled:bg-gray-100",
     danger: "bg-red-600 text-white hover:bg-red-700 disabled:bg-red-300",
   };
 
