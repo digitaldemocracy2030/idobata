@@ -41,15 +41,21 @@ const ThemeEdit: FC = () => {
   }, [themeId, navigate]);
 
   if (loading) {
-    return <div className="text-center py-4">読み込み中...</div>;
+    return (
+      <div className="text-center py-4">読み込み中...</div>
+    );
   }
 
   if (error) {
-    return <div className="bg-red-100 text-red-700 p-4 rounded mb-4">{error}</div>;
+    return (
+      <div className="bg-red-100 text-red-700 p-4 rounded mb-4">{error}</div>
+    );
   }
 
   if (!theme) {
-    return <div className="text-center py-4">テーマが見つかりません。</div>;
+    return (
+      <div className="text-center py-4">テーマが見つかりません。</div>
+    );
   }
 
   return (
