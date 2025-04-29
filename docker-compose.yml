@@ -25,6 +25,7 @@ services:
       - GITHUB_TARGET_REPO=${GITHUB_TARGET_REPO}
       - GITHUB_BASE_BRANCH=${GITHUB_BASE_BRANCH}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - IDEA_CORS_ORIGIN=${IDEA_CORS_ORIGIN}
     command: npm run dev # Command defined in Dockerfile.dev, but explicit here
 
   # --- policy-edit ---
@@ -61,7 +62,7 @@ services:
     environment:
       - NODE_ENV=development
       # Ensure CORS allows the frontend origin (running on host port 5174)
-      - CORS_ORIGIN=http://localhost:5174
+      - POLICY_CORS_ORIGIN=${POLICY_CORS_ORIGIN}
     # Run the production start command
     command: npm start
 
