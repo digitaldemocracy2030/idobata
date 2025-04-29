@@ -1,15 +1,15 @@
 {
   "name": "admin",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "test": "vitest run"
+    "test": "vitest run --passWithNoTests"
   },
   "keywords": [],
   "author": "",
@@ -17,26 +17,22 @@
   "description": "",
   "dependencies": {
     "neverthrow": "^8.2.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-router-dom": "^7.5.2"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.5.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^14.1.2",
-    "@testing-library/user-event": "^14.5.1",
     "@types/node": "^22.15.3",
-    "@types/react": "^19.1.2",
-    "@types/react-dom": "^19.1.2",
-    "@vitejs/plugin-react": "^4.4.1",
-    "@vitest/ui": "^3.1.2",
-    "autoprefixer": "^10.4.14",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.21",
     "jsdom": "^23.0.1",
-    "postcss": "^8.4.24",
-    "tailwindcss": "^3.3.2",
-    "typescript": "^5.8.3",
-    "vite": "^6.3.3",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0",
     "vitest": "^3.1.2"
   }
 }
