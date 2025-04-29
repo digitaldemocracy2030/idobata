@@ -1,6 +1,48 @@
 import authService from "../services/auth/authService.js";
 import AdminUser from "../models/AdminUser.js";
 
+const initializeAdminUser = async (req, res) => {
+  try {
+    const adminCount = await AdminUser.countDocuments();
+    
+    if (adminCount > 0) {
+      return res.status(403).json({
+        message: "管理者ユーザーは既に初期化されています",
+      });
+    }
+    
+    const { name, email, password } = req.body;
+    
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        message: "名前、メールアドレス、パスワードは必須です",
+      });
+    }
+    
+    const newUser = new AdminUser({
+      name,
+      email,
+      password,
+      role: "admin", // 初期ユーザーは常に管理者権限
+    });
+    
+    await newUser.save();
+    
+    res.status(201).json({
+      message: "初期管理者ユーザーが正常に作成されました",
+      user: {
+        id: newUser._id,
+        email: newUser.email,
+        name: newUser.name,
+        role: newUser.role,
+      },
+    });
+  } catch (error) {
+    console.error("[AuthController] Initialize admin user error:", error);
+    res.status(500).json({ message: "サーバーエラーが発生しました" });
+  }
+};
+
 const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -99,4 +141,4 @@ const createAdminUser = async (req, res) => {
   }
 };
 
-export { login, getCurrentUser, createAdminUser };
+export { login, getCurrentUser, createAdminUser, initializeAdminUser };
