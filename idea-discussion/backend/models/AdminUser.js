@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
+import mongoose from "mongoose";
 
 const adminUserSchema = new mongoose.Schema(
   {
@@ -44,10 +44,10 @@ adminUserSchema.pre("save", async function (next) {
 
   try {
     const pepperPassword = this.password + process.env.PASSWORD_PEPPER;
-    
+
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(pepperPassword, salt);
-    
+
     this.password = hash;
     next();
   } catch (error) {
