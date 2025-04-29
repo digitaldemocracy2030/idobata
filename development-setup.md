@@ -1,14 +1,18 @@
 # Idobata プロジェクト - 開発環境構築手順
 
-このドキュメントでは、`idea-discussion` および `policy-edit` アプリケーションの開発環境を Docker Compose を使用してセットアップし、実行する方法について説明します。これらは独立してセットアップ・実行可能です。
+## 重要なドキュメント
 
-プロジェクトの概要については、[README.md](./README.md)を参照してください。
+- [プロジェクト概要](./README.md)
+- [プロジェクト状況](./project_status.md) (開発者向け)
+- [開発環境構築ガイド](./development-setup.md) (開発者向け、本ドキュメント)
+
+このドキュメントでは、`idea-discussion` および `policy-edit` アプリケーションの開発環境を Docker Compose を使用してセットアップし、実行する方法について説明します。これらは独立してセットアップ・実行可能です。
 
 ## プロジェクト構成
 
 このプロジェクトは以下のコンポーネントで構成されています：
 
-- **ルートレベルの frontend**: idea-discussion 用のフロントエンドとして機能しています。将来的に policy-edit のフロントエンドと統合することを見据えて、トップレベルに配置されています。TypeScript をサポートし、JSX と TSX の両方のファイル形式を扱えます。（かつて idea-discussion/frontend だったものです）
+- **ルートレベルの frontend**: idea-discussion 用のフロントエンドとして機能しています。将来的に policy-edit のフロントエンドと統合することを見据えて、トップレベルに配置されています。（かつて idea-discussion/frontend だったものです）
 - **idea-discussion/backend**: アイデア議論のためのバックエンド（Node.js）
 - **policy-edit**: ポリシー編集のためのフロントエンド（React + TypeScript）とバックエンド（Node.js）
 - **MongoDB**: データベース
