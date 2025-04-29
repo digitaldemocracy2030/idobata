@@ -1,5 +1,6 @@
 import { Menu, User } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useThemes } from "../../hooks/useThemes";
 import { Button } from "../ui/button";
 import {
   NavigationRouterLink,
@@ -9,6 +10,7 @@ import {
 } from "../ui/navigation/menu-sheet";
 
 const Header = () => {
+  const { themes, isLoading, error } = useThemes();
   return (
     <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b border-purple-200 py-3 px-4">
       <div className="flex justify-between items-center">
@@ -25,7 +27,7 @@ const Header = () => {
                 to="/"
                 className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md border-l-4 border-purple-500"
               >
-                ホーム
+                TOP
               </NavigationRouterLink>
               <NavigationRouterLink
                 to="/about"
@@ -34,11 +36,43 @@ const Header = () => {
                 このサイトについて
               </NavigationRouterLink>
               <NavigationRouterLink
-                to="/themes"
+                to="/mypage"
                 className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md"
               >
-                テーマ一覧
+                マイページ
               </NavigationRouterLink>
+
+              <div className="mt-4 mb-2">
+                <h3 className="text-lg font-semibold px-4">テーマ一覧</h3>
+              </div>
+
+              {isLoading && (
+                <div className="px-4 py-2 text-sm text-gray-500">
+                  読み込み中...
+                </div>
+              )}
+
+              {error && (
+                <div className="px-4 py-2 text-sm text-red-500">{error}</div>
+              )}
+
+              {!isLoading && !error && themes.length === 0 && (
+                <div className="px-4 py-2 text-sm text-gray-500">
+                  テーマがありません
+                </div>
+              )}
+
+              {!isLoading &&
+                !error &&
+                themes.map((theme) => (
+                  <NavigationRouterLink
+                    key={theme._id}
+                    to={`/themes/${theme._id}`}
+                    className="text-sm py-2 px-4 hover:bg-purple-50 rounded-md"
+                  >
+                    {theme.title}
+                  </NavigationRouterLink>
+                ))}
             </nav>
           </NavigationSheetContent>
         </NavigationSheet>
