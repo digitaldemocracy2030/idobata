@@ -6,6 +6,8 @@ import Button from "./Button";
 describe("Button component", () => {
   it("renders with children", () => {
     render(<Button>Test Button</Button>);
-    expect(screen.getByText("Test Button")).toBeInTheDocument();
+    const buttonElement = screen.getByText("Test Button");
+    expect(buttonElement).toBeDefined();
+    expect(buttonElement.textContent).toBe("Test Button");
   });
 });
