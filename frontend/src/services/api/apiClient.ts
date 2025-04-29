@@ -8,6 +8,18 @@ import type {
   Solution,
   Theme,
 } from "../../types";
+
+// テーマ詳細データのレスポンス型
+export interface ThemeDetailResponse {
+  theme: Theme;
+  keyQuestions: (Question & {
+    voteCount: number;
+    issueCount: number;
+    solutionCount: number;
+  })[];
+  issues: Problem[];
+  solutions: Solution[];
+}
 import { ApiError, ApiErrorType } from "./apiError";
 import { HttpClient, type HttpResult } from "./httpClient";
 
@@ -265,6 +277,12 @@ export class ApiClient {
       this.httpClient.post<void>(
         `/themes/${themeId}/questions/${questionId}/generate-digest`
       )
+    );
+  }
+
+  async getThemeDetail(id: string): Promise<HttpResult<ThemeDetailResponse>> {
+    return this.withRetry(() =>
+      this.httpClient.get<ThemeDetailResponse>(`/themes/${id}/detail`)
     );
   }
 }
