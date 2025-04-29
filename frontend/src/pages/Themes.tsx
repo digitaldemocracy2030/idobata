@@ -15,6 +15,7 @@ const Themes = () => {
 
   const chatRef = useRef<FloatingChatRef>(null);
   const { themes, isLoading, error } = useThemes();
+  console.log(themes);
 
   const handleSendMessage = (message: string) => {
     console.log("Message sent:", message);
@@ -58,7 +59,7 @@ const Themes = () => {
           {themes.map((theme) => (
             <ThemeCard
               key={theme._id}
-              id={Number(theme._id)} // ThemeCardがnumber型を期待しているため変換
+              id={theme._id}
               title={theme.title}
               description={theme.description || ""}
               keyQuestionCount={theme.keyQuestionCount || 0}
