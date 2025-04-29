@@ -28,19 +28,19 @@ const Top = () => {
 
   const themeData = [
     {
-      id: 1,
+      id: "1",
       title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },
     {
-      id: 2,
+      id: "2",
       title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },
     {
-      id: 3,
+      id: "3",
       title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,

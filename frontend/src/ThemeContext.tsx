@@ -7,7 +7,6 @@ import {
 } from "react";
 import { apiClient } from "./services/api/apiClient";
 import { ApiErrorType } from "./services/api/apiError";
-import type { Theme } from "./types";
 
 interface ThemeContextType {
   defaultThemeId: string | null;
@@ -64,8 +63,8 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
       }
 
       const defaultTheme = result.value;
-      setDefaultThemeId(defaultTheme._id);
-      localStorage.setItem("defaultThemeId", defaultTheme._id);
+      setDefaultThemeId(defaultTheme.id);
+      localStorage.setItem("defaultThemeId", defaultTheme.id);
       setError(null);
 
       setIsLoading(false);
