@@ -4,28 +4,28 @@ import AdminUser from "../models/AdminUser.js";
 export const protect = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ message: "認証が必要です" });
     }
-    
+
     const token = authHeader.split(" ")[1];
-    
+
     try {
       const decoded = authService.verifyToken(token);
-      
+
       const user = await AdminUser.findById(decoded.id);
-      
+
       if (!user) {
         return res.status(401).json({ message: "ユーザーが見つかりません" });
       }
-      
+
       req.user = {
         id: user._id,
         email: user.email,
         role: user.role,
       };
-      
+
       next();
     } catch (error) {
       return res.status(401).json({ message: "トークンが無効です" });
