@@ -2,7 +2,7 @@
 
 ## 概要
 
-本ドキュメントでは、idea-discussion バックエンドと admin フロントエンド間での管理者ログイン機能の実装手順について説明します。初期実装ではメールアドレスとパスワードによる認証を行い、将来的に Google OAuth などの認証方法にも対応できる拡張性を持たせます。
+本ドキュメントでは、idea-discussion バックエンドと admin フロントエンド間での管理者ログイン機能の実装手順について説明します。初期実装ではメールアドレスとパスワードによる認証を行い、将来的に Google OAuth などの認証方法にも対応できる拡張性を持たせます。セキュリティ強化のため、パスワード保護には salt と pepper の両方を使用します。
 
 ## 目次
 
@@ -31,6 +31,22 @@ idea-discussion/backend/models/AdminUser.js ファイルを作成し、以下の
 ````javascript
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
+
+// 環境変数からpepperを取得（.envファイルに追加が必要）
+const PEPPER = process.env.PASSWORD_PEPPER || "default-pepper-value-change-in-production";
+
+/**
+ * パスワードにpepperを適用してからハッシュ化する関数
+ * @param {string} password - 元のパスワード
+ * @returns {string} - pepperを適用した後のパスワード
+ */
+const applyPepper = (password) => {
+  return crypto
+    .createHmac("sha256", PEPPER)
+    .update(password)
+    .digest("hex");
+};
 
 const adminUserSchema = new mongoose.Schema(
   {
@@ -81,14 +97,20 @@ adminUserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   try {
-    // パスワードをハッシュ化
+    // パスワードにpepperを適用してからハッシュ化
+    const pepperedPassword = applyPepper(this.password);
     const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    this.password = await bcrypt.hash(pepperedPassword, salt);
     next();
   } catch (error) {
     next(error);
   }
-});
+// パスワード検証メソッド
+adminUserSchema.methods.comparePassword = async function (candidatePassword) {
+  // 検証時も同じようにpepperを適用
+  const pepperedPassword = applyPepper(candidatePassword);
+  return bcrypt.compare(pepperedPassword, this.password);
+};
 
 ### 1.2 認証コントローラーの作成
 
@@ -314,6 +336,16 @@ import authRoutes from "./routes/authRoutes.js";
 // ルートの設定
 app.use("/api/auth", authRoutes);
 ```
+.env ファイルに以下の環境変数を追加します。
+
+```
+JWT_SECRET=your-secure-secret-key
+JWT_EXPIRES_IN=1d
+PASSWORD_PEPPER=your-secure-pepper-value
+```
+
+> **重要**: PASSWORD_PEPPERは非常に安全な場所に保管し、漏洩しないようにしてください。この値が漏洩すると、パスワードセキュリティが大幅に低下します。
+
 ## フロントエンド実装
 
 ### 2.1 認証コンテキストの作成
@@ -1198,6 +1230,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 2. **パスワードハッシュ化**
    - bcrypt などの安全なハッシュアルゴリズムを使用（実装済み）
    - ソルトの自動生成と適用（bcrypt に組み込み済み）
+   - pepperの適用（アプリケーション設定に保存される秘密の値）
+   - 二重のセキュリティレイヤー（salt + pepper）による保護
 
 3. **パスワードリセット機能の実装**
    - 安全なトークン生成
