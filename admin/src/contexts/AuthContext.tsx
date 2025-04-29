@@ -33,7 +33,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       const storedToken = localStorage.getItem("auth_token");
-      
+
       if (storedToken) {
         setToken(storedToken);
         try {
@@ -50,10 +50,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setToken(null);
         }
       }
-      
+
       setIsLoading(false);
     };
-    
+
     initAuth();
   }, []);
 

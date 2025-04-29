@@ -19,20 +19,20 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email) {
       setError("メールアドレスを入力してください");
       return;
     }
-    
+
     if (!password) {
       setError("パスワードを入力してください");
       return;
     }
-    
+
     setError("");
     setIsLoading(true);
-    
+
     try {
       const success = await login(email, password);
       if (success) {
@@ -81,11 +81,7 @@ const Login: React.FC = () => {
             placeholder="••••••••"
           />
 
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isLoading}
-          >
+          <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "ログイン中..." : "ログイン"}
           </Button>
         </form>

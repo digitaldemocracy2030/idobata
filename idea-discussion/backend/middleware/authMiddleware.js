@@ -1,5 +1,5 @@
-import authService from "../services/auth/authService.js";
 import AdminUser from "../models/AdminUser.js";
+import authService from "../services/auth/authService.js";
 
 export const protect = async (req, res, next) => {
   try {

@@ -30,7 +30,10 @@ const App: React.FC = () => {
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/themes" element={<ThemeList />} />
                         <Route path="/themes/new" element={<ThemeCreate />} />
-                        <Route path="/themes/:themeId" element={<ThemeEdit />} />
+                        <Route
+                          path="/themes/:themeId"
+                          element={<ThemeEdit />}
+                        />
                       </Routes>
                     </MainContent>
                   </div>
