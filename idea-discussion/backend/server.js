@@ -58,9 +58,12 @@ import themeProblemRoutes from "./routes/themeProblemRoutes.js";
 // Import theme-based routes
 import themeQuestionRoutes from "./routes/themeQuestionRoutes.js";
 import themeSolutionRoutes from "./routes/themeSolutionRoutes.js";
+import authRoutes from "./routes/authRoutes.js"; // 追加: 認証ルート
 
 // Theme management routes
 app.use("/api/themes", themeRoutes);
+
+app.use("/api/auth", authRoutes);
 
 app.use("/api/themes/:themeId/questions", themeQuestionRoutes);
 app.use("/api/themes/:themeId/problems", themeProblemRoutes);

@@ -1,6 +1,14 @@
 import { type Result, err, ok } from "neverthrow";
 import { ApiError, ApiErrorType } from "./apiError";
-import type { CreateThemePayload, Theme, UpdateThemePayload } from "./types";
+import type {
+  CreateThemePayload,
+  CreateUserPayload,
+  LoginCredentials,
+  LoginResponse,
+  Theme,
+  UpdateThemePayload,
+  UserResponse,
+} from "./types";
 
 export type ApiResult<T> = Result<T, ApiError>;
 
@@ -20,6 +28,11 @@ export class ApiClient {
       "Content-Type": "application/json",
       ...options.headers,
     };
+
+    const token = localStorage.getItem("auth_token");
+    if (token) {
+      (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
+    }
 
     const config = {
       ...options,
@@ -101,6 +114,29 @@ export class ApiClient {
   async deleteTheme(id: string): Promise<ApiResult<{ message: string }>> {
     return this.request<{ message: string }>(`/themes/${id}`, {
       method: "DELETE",
+    });
+  }
+
+  async login(
+    email: string,
+    password: string
+  ): Promise<ApiResult<LoginResponse>> {
+    return this.request<LoginResponse>("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    });
+  }
+
+  async getCurrentUser(): Promise<ApiResult<UserResponse>> {
+    return this.request<UserResponse>("/auth/me");
+  }
+
+  async createUser(
+    userData: CreateUserPayload
+  ): Promise<ApiResult<UserResponse>> {
+    return this.request<UserResponse>("/auth/users", {
+      method: "POST",
+      body: JSON.stringify(userData),
     });
   }
 }
