@@ -1,8 +1,6 @@
 import { Menu, User } from "lucide-react";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { apiClient } from "../../services/api/apiClient";
-import type { Theme } from "../../types";
+import { useThemes } from "../../hooks/useThemes";
 import { Button } from "../ui/button";
 import {
   NavigationRouterLink,
@@ -12,30 +10,7 @@ import {
 } from "../ui/navigation/menu-sheet";
 
 const Header = () => {
-  const [themes, setThemes] = useState<Theme[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchThemes = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      const result = await apiClient.getAllThemes();
-
-      if (!result.isOk()) {
-        setError(`テーマの取得に失敗しました: ${result.error.message}`);
-        console.error("Error fetching themes:", result.error);
-        setIsLoading(false);
-        return;
-      }
-
-      setThemes(result.value);
-      setIsLoading(false);
-    };
-
-    fetchThemes();
-  }, []);
+  const { themes, isLoading, error } = useThemes();
   return (
     <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b border-purple-200 py-3 px-4">
       <div className="flex justify-between items-center">

@@ -1,12 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import {
   FloatingChat,
   type FloatingChatRef,
 } from "../components/chat/FloatingChat";
 import BreadcrumbView from "../components/common/BreadcrumbView";
 import ThemeCard from "../components/home/ThemeCard";
-import { apiClient } from "../services/api/apiClient";
-import type { Theme } from "../types";
+import { useThemes } from "../hooks/useThemes";
 
 const Themes = () => {
   const breadcrumbItems = [
@@ -15,30 +14,7 @@ const Themes = () => {
   ];
 
   const chatRef = useRef<FloatingChatRef>(null);
-  const [themes, setThemes] = useState<Theme[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchThemes = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      const result = await apiClient.getAllThemes();
-
-      if (!result.isOk()) {
-        setError(`テーマの取得に失敗しました: ${result.error.message}`);
-        console.error("Error fetching themes:", result.error);
-        setIsLoading(false);
-        return;
-      }
-
-      setThemes(result.value);
-      setIsLoading(false);
-    };
-
-    fetchThemes();
-  }, []);
+  const { themes, isLoading, error } = useThemes();
 
   const handleSendMessage = (message: string) => {
     console.log("Message sent:", message);
