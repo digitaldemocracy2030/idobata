@@ -51,6 +51,7 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date() });
 });
 
+import authRoutes from "./routes/authRoutes.js"; // 追加: 認証ルート
 import themeChatRoutes from "./routes/themeChatRoutes.js";
 import themeDigestRoutes from "./routes/themeDigestRoutes.js";
 import themeGenerateQuestionsRoutes from "./routes/themeGenerateQuestionsRoutes.js";
@@ -63,6 +64,8 @@ import themeSolutionRoutes from "./routes/themeSolutionRoutes.js";
 
 // Theme management routes
 app.use("/api/themes", themeRoutes);
+
+app.use("/api/auth", authRoutes);
 
 app.use("/api/themes/:themeId/questions", themeQuestionRoutes);
 app.use("/api/themes/:themeId/problems", themeProblemRoutes);
