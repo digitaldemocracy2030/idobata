@@ -21,7 +21,8 @@ export const GITHUB_REPO_OWNER = process.env.GITHUB_REPO_OWNER;
 export const GITHUB_REPO_NAME = process.env.GITHUB_REPO_NAME;
 
 // CORS settings
-export const CORS_ORIGIN = process.env.POLICY_CORS_ORIGIN || "http://localhost:5174";
+export const CORS_ORIGIN =
+  process.env.POLICY_CORS_ORIGIN || "http://localhost:5174";
 
 // Validate required environment variables
 if (!OPENROUTER_API_KEY) {

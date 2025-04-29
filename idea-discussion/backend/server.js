@@ -35,7 +35,9 @@ const PORT = process.env.PORT || 3000; // Use port from env or default to 3000
 // CORS: Allow requests from the frontend development server
 app.use(
   cors({
-    origin: process.env.IDEA_CORS_ORIGIN ? process.env.IDEA_CORS_ORIGIN.split(',') : ["http://localhost:5173", "http://localhost:5175"],
+    origin: process.env.IDEA_CORS_ORIGIN
+      ? process.env.IDEA_CORS_ORIGIN.split(",")
+      : ["http://localhost:5173", "http://localhost:5175"],
     // Add other origins (e.g., production frontend URL) if needed
   })
 );
