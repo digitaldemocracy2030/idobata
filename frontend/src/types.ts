@@ -83,8 +83,12 @@ export type TabType = "questions" | "problems" | "solutions" | "policies";
 
 export interface Theme {
   _id: string;
+  id?: string; // バックエンドとの互換性のため
   title: string;
+  description?: string;
   slug: string;
+  keyQuestionCount?: number;
+  commentCount?: number;
 }
 
 export type MessageType = "user" | "system" | "system-message";
