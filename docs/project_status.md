@@ -64,7 +64,7 @@ idobata プロジェクトは、
 ```
 .
 ├── admin    # いどばたビジョンの管理画面
-├── frontend # いどばたビジョンのユーザー画面
+├── frontend # いどばたビジョンといどばた政策のユーザー画面
 ├── idea-discussion
 │             └── backend（いどばたビジョンのバックエンド）
 └── policy-edit
