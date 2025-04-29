@@ -6,6 +6,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
-    allowedHosts: process.env.VITE_POLICY_FRONTEND_ALLOWED_HOSTS?.split(",") || []
-  }
+    allowedHosts: 
+      process.env.VITE_POLICY_FRONTEND_ALLOWED_HOSTS?.split(",") || [],
+  },
 });
