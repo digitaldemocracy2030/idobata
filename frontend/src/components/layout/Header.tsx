@@ -66,13 +66,20 @@ const Header = () => {
                 !error &&
                 themes.map((theme) => (
                   <NavigationRouterLink
-                    key={theme._id}
-                    to={`/themes/${theme._id}`}
+                    key={theme.id}
+                    to={`/themes/${theme.id}`}
                     className="text-sm py-2 px-4 hover:bg-purple-50 rounded-md"
                   >
                     {theme.title}
                   </NavigationRouterLink>
                 ))}
+              <NavigationRouterLink
+                key={999}
+                to={"/themes/99999/?mock=true"}
+                className="text-sm py-2 px-4 hover:bg-purple-50 rounded-md"
+              >
+                モックテーマ（デザイン確認用）
+              </NavigationRouterLink>
             </nav>
           </NavigationSheetContent>
         </NavigationSheet>

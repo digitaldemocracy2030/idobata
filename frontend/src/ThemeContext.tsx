@@ -63,8 +63,8 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
       }
 
       const defaultTheme = result.value;
-      setDefaultThemeId(defaultTheme._id);
-      localStorage.setItem("defaultThemeId", defaultTheme._id);
+      setDefaultThemeId(defaultTheme.id);
+      localStorage.setItem("defaultThemeId", defaultTheme.id);
       setError(null);
 
       setIsLoading(false);
