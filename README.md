@@ -3,9 +3,9 @@
 ## 重要なドキュメント
 
 - [プロジェクト概要](./README.md) (本ドキュメント)
-- [プロジェクト状況](./project_status.md) (開発者向け)
-- [開発環境構築ガイド](./development-setup.md) (開発者向け)
-- [コントリビューションガイド](./CONTRIBUTING.md) (開発者向け)
+- [プロジェクト状況](./docs/project_status.md) (開発者向け)
+- [開発環境構築ガイド](./docs/development-setup.md) (開発者向け)
+- [コントリビューションガイド](./docs/CONTRIBUTING.md) (開発者向け)
 
 ## プロジェクトの概要
 
