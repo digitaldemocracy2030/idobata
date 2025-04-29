@@ -19,12 +19,12 @@ class AuthService {
   async authenticate(providerName, credentials) {
     const provider = this.getProvider(providerName);
     const user = await provider.authenticate(credentials);
-    
+
     user.lastLogin = new Date();
     await user.save();
-    
+
     const token = this.generateToken(user);
-    
+
     return {
       user,
       token,
