@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import ChatThread from "../models/ChatThread.js";
+import Problem from "../models/Problem.js";
+import QuestionLink from "../models/QuestionLink.js";
 import SharpQuestion from "../models/SharpQuestion.js";
+import Solution from "../models/Solution.js";
 import Theme from "../models/Theme.js";
 
 export const getAllThemes = async (req, res) => {
@@ -161,5 +164,70 @@ export const deleteTheme = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Error deleting theme", error: error.message });
+  }
+};
+
+export const getThemeDetail = async (req, res) => {
+  const { themeId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(themeId)) {
+    return res.status(400).json({ message: "Invalid theme ID format" });
+  }
+
+  try {
+    // テーマの基本情報を取得
+    const theme = await Theme.findById(themeId);
+    if (!theme) {
+      return res.status(404).json({ message: "Theme not found" });
+    }
+
+    // キークエスチョンを取得
+    const keyQuestions = await SharpQuestion.find({ themeId });
+
+    // 課題（問題点）を取得
+    const issues = await Problem.find({ themeId });
+
+    // 解決策を取得
+    const solutions = await Solution.find({ themeId });
+
+    // 各キークエスチョンに関連する課題と解決策の数を計算
+    const keyQuestionsWithCounts = await Promise.all(
+      keyQuestions.map(async (question) => {
+        const questionId = question._id;
+
+        // このキークエスチョンに関連する課題数を取得
+        const issueCount = await QuestionLink.countDocuments({
+          questionId,
+          linkedItemType: "problem",
+        });
+
+        // このキークエスチョンに関連する解決策数を取得
+        const solutionCount = await QuestionLink.countDocuments({
+          questionId,
+          linkedItemType: "solution",
+        });
+
+        // 投票数（仮実装 - 実際のデータモデルに合わせて調整が必要）
+        const voteCount = 0; // 現在のモデルには投票数がないため0を設定
+
+        return {
+          ...question.toObject(),
+          issueCount,
+          solutionCount,
+          voteCount,
+        };
+      })
+    );
+
+    // 最適化されたレスポンスを返す
+    res.status(200).json({
+      theme,
+      keyQuestions: keyQuestionsWithCounts,
+      issues,
+      solutions,
+    });
+  } catch (error) {
+    console.error("Error fetching theme detail:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
