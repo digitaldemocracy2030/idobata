@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { Navigate, useNavigate } from "react-router-dom";
 import Alert from "../components/ui/Alert";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
+import { useAuth } from "../contexts/AuthContext";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -81,7 +81,7 @@ const Login: React.FC = () => {
             placeholder="••••••••"
           />
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading}>
             {isLoading ? "ログイン中..." : "ログイン"}
           </Button>
         </form>

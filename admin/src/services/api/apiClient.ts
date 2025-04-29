@@ -31,7 +31,7 @@ export class ApiClient {
 
     const token = localStorage.getItem("auth_token");
     if (token) {
-      (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
+      (headers as Record<string, string>).Authorization = `Bearer ${token}`;
     }
 
     const config = {
