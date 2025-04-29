@@ -37,11 +37,6 @@
 3. **認証管理**
    - **jsonwebtoken**: JWT の生成と検証のためのライブラリ（現在使用中）
 
-#### フロントエンド（React）
-
-1. **HTTP 通信**
-   - **axios**: 高機能な HTTP クライアント（クッキー対応、インターセプター機能あり）
-
 ## 実装計画
 
 ### 1. バックエンドの実装
@@ -227,274 +222,42 @@ export const admin = (req, res, next) => {
 
 ### 2. フロントエンドの実装
 
-#### a. 必要なライブラリのインストール
+#### a. フロントエンド設定
 
-```bash
-npm install axios
-```
+#### b. API クライアントの修正
 
-#### b. API クライアントの実装（apiClient.ts）
+フロントエンドの API クライアントを修正して、以下の変更を行います：
 
-```typescript
-import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
-import { ApiError, ApiErrorType } from "./apiError";
-import type {
-  CreateThemePayload,
-  CreateUserPayload,
-  LoginCredentials,
-  LoginResponse,
-  Theme,
-  UpdateThemePayload,
-  UserResponse,
-} from "./types";
-import { Result, err, ok } from "neverthrow";
+1. **Cookie の送受信を有効にする**
 
-export type ApiResult<T> = Result<T, ApiError>;
+   - リクエスト時に`credentials: 'include'`を設定し、Cookie を自動的に送信
+   - これにより、HttpOnly Cookie に保存された認証トークンがリクエストに含まれる
 
-export class ApiClient {
-  private api: AxiosInstance;
-  private csrfToken: string | null = null;
+2. **CSRF トークンの管理**
 
-  constructor() {
-    this.api = axios.create({
-      baseURL: `${import.meta.env.VITE_API_BASE_URL}/api`,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      withCredentials: true, // クッキーを含める
-    });
+   - CSRF トークンを取得するメソッドを追加
+   - 状態変更を伴うリクエスト（POST、PUT、DELETE など）に CSRF トークンを含める
+   - 401 エラー時に CSRF トークンを再取得する仕組み
 
-    // レスポンスインターセプター
-    this.api.interceptors.response.use(
-      (response) => response,
-      (error: AxiosError) => {
-        // 401エラーの場合、CSRFトークンが無効かもしれないので再取得
-        if (error.response?.status === 401) {
-          this.csrfToken = null;
-        }
-        return Promise.reject(error);
-      }
-    );
-  }
+3. **localStorage の使用を削除**
+   - トークンの保存と取得に localStorage を使用しない
 
-  // CSRFトークンを取得
-  private async ensureCSRFToken(): Promise<string> {
-    if (!this.csrfToken) {
-      const response = await this.api.get<{ csrfToken: string }>(
-        "/auth/csrf-token"
-      );
-      this.csrfToken = response.data.csrfToken;
-    }
-    return this.csrfToken;
-  }
+#### c. 認証コンテキストの修正
 
-  // APIリクエスト共通処理
-  private async request<T>(
-    method: string,
-    endpoint: string,
-    data?: any
-  ): Promise<ApiResult<T>> {
-    try {
-      // 変更が必要なリクエストの場合、CSRFトークンを取得
-      let headers = {};
-      if (method !== "GET" && method !== "HEAD" && method !== "OPTIONS") {
-        const token = await this.ensureCSRFToken();
-        headers = { "X-CSRF-Token": token };
-      }
+認証コンテキスト（AuthContext.tsx）を修正して、以下の変更を行います：
 
-      const response = await this.api.request<T>({
-        method,
-        url: endpoint,
-        data,
-        headers,
-      });
+1. **localStorage の使用を削除**
 
-      return ok(response.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError;
-        const status = axiosError.response?.status || 0;
-        const message =
-          (axiosError.response?.data as any)?.message ||
-          axiosError.message ||
-          "Unknown error";
+   - トークンの保存と取得に localStorage を使用しない
+   - 認証状態はユーザー情報のみで管理
 
-        let errorType: ApiErrorType;
-        switch (status) {
-          case 400:
-            errorType = ApiErrorType.VALIDATION_ERROR;
-            break;
-          case 401:
-            errorType = ApiErrorType.UNAUTHORIZED;
-            break;
-          case 403:
-            errorType = ApiErrorType.FORBIDDEN;
-            break;
-          case 404:
-            errorType = ApiErrorType.NOT_FOUND;
-            break;
-          case 500:
-          case 502:
-          case 503:
-            errorType = ApiErrorType.SERVER_ERROR;
-            break;
-          default:
-            errorType = ApiErrorType.UNKNOWN_ERROR;
-        }
+2. **ログアウト機能の追加**
 
-        return err(new ApiError(errorType, message, status));
-      }
+   - サーバーサイドのログアウトエンドポイントを呼び出す
+   - サーバー側で Cookie を削除する
 
-      return err(
-        new ApiError(
-          ApiErrorType.NETWORK_ERROR,
-          error instanceof Error ? error.message : "Network error occurred"
-        )
-      );
-    }
-  }
-
-  // 各APIメソッド
-  async getAllThemes(): Promise<ApiResult<Theme[]>> {
-    return this.request<Theme[]>("GET", "/themes");
-  }
-
-  async getThemeById(id: string): Promise<ApiResult<Theme>> {
-    return this.request<Theme>("GET", `/themes/${id}`);
-  }
-
-  async createTheme(theme: CreateThemePayload): Promise<ApiResult<Theme>> {
-    return this.request<Theme>("POST", "/themes", theme);
-  }
-
-  async updateTheme(
-    id: string,
-    theme: UpdateThemePayload
-  ): Promise<ApiResult<Theme>> {
-    return this.request<Theme>("PUT", `/themes/${id}`, theme);
-  }
-
-  async deleteTheme(id: string): Promise<ApiResult<{ message: string }>> {
-    return this.request<{ message: string }>("DELETE", `/themes/${id}`);
-  }
-
-  async login(
-    email: string,
-    password: string
-  ): Promise<ApiResult<LoginResponse>> {
-    return this.request<LoginResponse>("POST", "/auth/login", {
-      email,
-      password,
-    });
-  }
-
-  async logout(): Promise<ApiResult<{ message: string }>> {
-    return this.request<{ message: string }>("POST", "/auth/logout");
-  }
-
-  async getCurrentUser(): Promise<ApiResult<UserResponse>> {
-    return this.request<UserResponse>("GET", "/auth/me");
-  }
-
-  async createUser(
-    userData: CreateUserPayload
-  ): Promise<ApiResult<UserResponse>> {
-    return this.request<UserResponse>("POST", "/auth/users", userData);
-  }
-}
-
-export const apiClient = new ApiClient();
-```
-
-#### c. 認証コンテキストの修正（AuthContext.tsx）
-
-```typescript
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { apiClient } from "../services/api/apiClient";
-import type { User } from "../services/api/types";
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
-
-interface AuthProviderProps {
-  children: React.ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const initAuth = async () => {
-      try {
-        const result = await apiClient.getCurrentUser();
-        if (result.isOk()) {
-          setUser(result.value.user);
-        }
-      } catch (error) {
-        console.error("Failed to get current user:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    initAuth();
-  }, []);
-
-  const login = async (email: string, password: string): Promise<boolean> => {
-    try {
-      const result = await apiClient.login(email, password);
-      if (result.isOk()) {
-        setUser(result.value.user);
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error("Login failed:", error);
-      return false;
-    }
-  };
-
-  const logout = async (): Promise<void> => {
-    try {
-      await apiClient.logout();
-    } catch (error) {
-      console.error("Logout failed:", error);
-    } finally {
-      setUser(null);
-    }
-  };
-
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        isLoading,
-        login,
-        logout,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
-};
-```
+3. **初期認証チェックの修正**
+   - アプリケーション起動時に Cookie ベースの認証状態を確認
 
 ## この実装のメリット
 
@@ -504,19 +267,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
    - 二重送信クッキーパターンによる強力な CSRF 保護
    - SameSite 属性によるクロスサイトリクエスト制限
 
-2. **開発体験の向上**:
-
-   - axios による簡潔な API 通信
-   - CSRF トークンの自動管理（インターセプターによる）
-   - エラーハンドリングの改善
-
-3. **保守性の向上**:
+2. **保守性の向上**:
 
    - 明確な責任分離
    - モジュール化された設計
    - 標準的なライブラリの使用
 
-4. **拡張性**:
+3. **拡張性**:
    - 将来的な認証方法の追加が容易（OAuth、多要素認証など）
    - 異なる環境（開発/本番）での適切な設定
 
