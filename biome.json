@@ -3,7 +3,7 @@
   "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": true },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["node_modules", "dist", "*.d.ts"]
+    "ignore": ["node_modules", "dist", "*.d.ts", ".mypy_cache"]
   },
 
   "formatter": { "enabled": true, "indentStyle": "space", "indentWidth": 2 },
