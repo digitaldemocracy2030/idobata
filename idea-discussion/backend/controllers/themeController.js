@@ -28,8 +28,7 @@ export const getAllThemes = async (req, res) => {
 
       // 拡張されたテーマ情報を追加
       enhancedThemes.push({
-        _id: theme._id,
-        id: theme._id, // フロントエンドの互換性のため
+        id: theme._id,
         title: theme.title,
         description: theme.description || "",
         slug: theme.slug,

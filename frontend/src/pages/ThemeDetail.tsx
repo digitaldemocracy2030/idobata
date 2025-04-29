@@ -101,7 +101,7 @@ const ThemeDetail = () => {
         }
       : {
           theme: {
-            id: themeDetail?.theme?._id ?? "",
+            id: themeDetail?.theme?.id ?? "",
             title: themeDetail?.theme?.title ?? "",
             description: themeDetail?.theme?.description ?? "",
           },

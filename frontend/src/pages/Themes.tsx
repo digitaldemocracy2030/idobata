@@ -58,8 +58,8 @@ const Themes = () => {
         <div className="grid grid-cols-1 gap-4 mb-12">
           {themes.map((theme) => (
             <ThemeCard
-              key={theme._id}
-              id={theme._id}
+              key={theme.id}
+              id={theme.id}
               title={theme.title}
               description={theme.description || ""}
               keyQuestionCount={theme.keyQuestionCount || 0}
