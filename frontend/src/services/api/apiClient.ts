@@ -4,10 +4,10 @@ import type {
   PolicyDraft,
   Problem,
   Question,
-  QuestionDetails,
   Solution,
   Theme,
 } from "../../types";
+import type { QuestionDetailResponse } from "../../hooks/useQuestionDetail";
 
 // テーマ詳細データのレスポンス型
 export interface ThemeDetailResponse {
@@ -123,9 +123,9 @@ export class ApiClient {
   async getQuestionDetails(
     questionId: string,
     themeId: string
-  ): Promise<HttpResult<QuestionDetails>> {
+  ): Promise<HttpResult<QuestionDetailResponse>> {
     return this.withRetry(() =>
-      this.httpClient.get<QuestionDetails>(
+      this.httpClient.get<QuestionDetailResponse>(
         `/themes/${themeId}/questions/${questionId}/details`
       )
     );
