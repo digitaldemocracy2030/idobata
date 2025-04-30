@@ -7,10 +7,10 @@ import Sidebar from "./components/layout/Sidebar";
 import { AuthProvider } from "./contexts/AuthContext";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import SiteConfigEdit from "./pages/SiteConfigEdit";
 import ThemeCreate from "./pages/ThemeCreate";
 import ThemeEdit from "./pages/ThemeEdit";
 import ThemeList from "./pages/ThemeList";
-import SiteConfigEdit from "./pages/SiteConfigEdit";
 
 const App: React.FC = () => {
   return (

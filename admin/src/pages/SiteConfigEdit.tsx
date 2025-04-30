@@ -23,7 +23,7 @@ const SiteConfigEdit: FC = () => {
           setError(null);
         },
         (error) => {
-          console.error(`Failed to fetch site config:`, error);
+          console.error("Failed to fetch site config:", error);
           setError("サイト設定の取得に失敗しました。");
         }
       );
