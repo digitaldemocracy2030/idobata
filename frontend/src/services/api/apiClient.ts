@@ -1,4 +1,5 @@
 import { err, ok } from "neverthrow";
+import type { QuestionDetailResponse } from "../../hooks/useQuestionDetail";
 import type {
   DigestDraft,
   PolicyDraft,
@@ -7,7 +8,6 @@ import type {
   Solution,
   Theme,
 } from "../../types";
-import type { QuestionDetailResponse } from "../../hooks/useQuestionDetail";
 
 // テーマ詳細データのレスポンス型
 export interface ThemeDetailResponse {
