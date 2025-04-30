@@ -1,5 +1,6 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { FloatingChat, type FloatingChatRef } from "../chat/FloatingChat";
+import { apiClient } from "../../services/api/apiClient";
 import BreadcrumbView from "../common/BreadcrumbView";
 import CommentCard from "./CommentCard";
 import KeyQuestionCard from "./KeyQuestionCard";
@@ -35,13 +36,44 @@ const ThemeDetailTemplate = ({
 }: ThemeDetailTemplateProps) => {
   const [activeTab, setActiveTab] = useState<"issues" | "solutions">("issues");
   const chatRef = useRef<FloatingChatRef>(null);
+  const [threadId, setThreadId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string>(
+    localStorage.getItem("userId") || crypto.randomUUID()
+  );
 
-  const handleSendMessage = (message: string) => {
+  const handleSendMessage = async (message: string) => {
     console.log("Message sent:", message);
 
-    setTimeout(() => {
-      chatRef.current?.addMessage("メッセージを受け取りました。", "system");
-    }, 500);
+    chatRef.current?.addMessage(message, "user");
+
+    const result = await apiClient.sendMessage(
+      userId,
+      message,
+      theme._id,
+      threadId || undefined
+    );
+
+    if (result.isErr()) {
+      console.error("Failed to send message:", result.error);
+      chatRef.current?.addMessage(
+        `メッセージ送信エラー: ${result.error.message}`,
+        "system"
+      );
+      return;
+    }
+
+    const responseData = result.value;
+
+    chatRef.current?.addMessage(responseData.response, "system");
+
+    if (responseData.threadId) {
+      setThreadId(responseData.threadId);
+    }
+
+    if (responseData.userId && responseData.userId !== userId) {
+      setUserId(responseData.userId);
+      localStorage.setItem("userId", responseData.userId);
+    }
   };
 
   const breadcrumbItems = [
@@ -49,6 +81,12 @@ const ThemeDetailTemplate = ({
     { label: "テーマ一覧", href: "/themes" },
     { label: theme.title, href: `/themes/${theme._id}` },
   ];
+
+  useEffect(() => {
+    if (!localStorage.getItem("userId")) {
+      localStorage.setItem("userId", userId);
+    }
+  }, [userId]);
 
   return (
     <div className="container mx-auto px-4 py-8">
