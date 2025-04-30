@@ -286,17 +286,19 @@ export class ApiClient {
     );
   }
 
-  async getSiteConfig(): Promise<HttpResult<{
-    _id: string;
-    title: string;
-    aboutMessage: string;
-  }>> {
+  async getSiteConfig(): Promise<
+    HttpResult<{
+      _id: string;
+      title: string;
+      aboutMessage: string;
+    }>
+  > {
     return this.withRetry(() =>
       this.httpClient.get<{
         _id: string;
         title: string;
         aboutMessage: string;
-      }>(`/site-config`)
+      }>("/site-config")
     );
   }
 }
