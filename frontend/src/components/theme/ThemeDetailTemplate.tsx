@@ -70,6 +70,8 @@ const ThemeDetailTemplate = ({
               voteCount={question.voteCount}
               issueCount={question.issueCount}
               solutionCount={question.solutionCount}
+              themeId={theme._id}
+              qid={question.id.toString()}
             />
           ))}
         </div>

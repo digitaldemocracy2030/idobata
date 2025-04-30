@@ -15,7 +15,6 @@ const Themes = () => {
 
   const chatRef = useRef<FloatingChatRef>(null);
   const { themes, isLoading, error } = useThemes();
-  console.log(themes);
 
   const handleSendMessage = (message: string) => {
     console.log("Message sent:", message);

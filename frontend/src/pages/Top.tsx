@@ -61,6 +61,7 @@ const Top = () => {
             {discussionData.map((item) => (
               <DiscussionCard
                 key={item.id}
+                id={item.id}
                 title={item.title}
                 problemCount={item.problemCount}
                 solutionCount={item.solutionCount}
