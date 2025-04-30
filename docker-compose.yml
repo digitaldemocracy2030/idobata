@@ -72,7 +72,7 @@ services:
   # --- Unified Frontend ---
   frontend:
     container_name: frontend-dev
-    image: node:20-alpine
+    image: node:20-slim
     working_dir: /app
     volumes:
       - ./frontend:/app
@@ -116,5 +116,6 @@ services:
 
 volumes:
   mongo_data: # Define the named volume for MongoDB
-  idea_backend_node_modules: # Define the named volume for idea-backend node_modules
-  # Removed node_modules volumes as they are part of the production image
+  idea_backend_node_modules:
+    # Define the named volume for idea-backend node_modules
+    # Removed node_modules volumes as they are part of the production image
