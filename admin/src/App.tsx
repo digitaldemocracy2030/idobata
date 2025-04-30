@@ -7,6 +7,7 @@ import Sidebar from "./components/layout/Sidebar";
 import { AuthProvider } from "./contexts/AuthContext";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import SiteConfigEdit from "./pages/SiteConfigEdit";
 import ThemeCreate from "./pages/ThemeCreate";
 import ThemeEdit from "./pages/ThemeEdit";
 import ThemeList from "./pages/ThemeList";
@@ -33,6 +34,10 @@ const App: React.FC = () => {
                         <Route
                           path="/themes/:themeId"
                           element={<ThemeEdit />}
+                        />
+                        <Route
+                          path="/siteConfig/edit"
+                          element={<SiteConfigEdit />}
                         />
                       </Routes>
                     </MainContent>

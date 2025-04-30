@@ -1,5 +1,6 @@
 import { Menu, User } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useSiteConfig } from "../../contexts/SiteConfigContext";
 import { useThemes } from "../../hooks/useThemes";
 import { Button } from "../ui/button";
 import {
@@ -11,6 +12,7 @@ import {
 
 const Header = () => {
   const { themes, isLoading, error } = useThemes();
+  const { siteConfig } = useSiteConfig();
   return (
     <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b border-purple-200 py-3 px-4">
       <div className="flex justify-between items-center">
@@ -87,7 +89,7 @@ const Header = () => {
         {/* サイトタイトル（中央） */}
         <Link to="/top">
           <h1 className="text-base font-semibold text-center">
-            XX党 みんなの政策フォーラム
+            {siteConfig?.title || "XX党 みんなの政策フォーラム"}
           </h1>
         </Link>
 

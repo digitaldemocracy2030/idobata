@@ -52,6 +52,7 @@ app.get("/api/health", (req, res) => {
 });
 
 import authRoutes from "./routes/authRoutes.js"; // 追加: 認証ルート
+import siteConfigRoutes from "./routes/siteConfigRoutes.js";
 import themeChatRoutes from "./routes/themeChatRoutes.js";
 import themeDigestRoutes from "./routes/themeDigestRoutes.js";
 import themeGenerateQuestionsRoutes from "./routes/themeGenerateQuestionsRoutes.js";
@@ -78,6 +79,8 @@ app.use("/api/themes/:themeId/policy-drafts", themePolicyRoutes);
 app.use("/api/themes/:themeId/digest-drafts", themeDigestRoutes);
 app.use("/api/themes/:themeId/import", themeImportRoutes);
 app.use("/api/themes/:themeId/chat", themeChatRoutes);
+
+app.use("/api/site-config", siteConfigRoutes);
 
 // --- Serve static files in production ---
 // This section will be useful when deploying to production
