@@ -82,7 +82,7 @@ export interface QuestionDetails {
 export type TabType = "questions" | "problems" | "solutions" | "policies";
 
 export interface Theme {
-  id: string;
+  _id: string;
   title: string;
   description?: string;
   slug: string;

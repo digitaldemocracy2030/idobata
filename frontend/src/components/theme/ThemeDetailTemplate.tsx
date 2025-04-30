@@ -6,7 +6,7 @@ import KeyQuestionCard from "./KeyQuestionCard";
 
 interface ThemeDetailTemplateProps {
   theme: {
-    id: string;
+    _id: string;
     title: string;
     description: string;
   };
@@ -47,7 +47,7 @@ const ThemeDetailTemplate = ({
   const breadcrumbItems = [
     { label: "TOP", href: "/" },
     { label: "テーマ一覧", href: "/themes" },
-    { label: theme.title, href: `/themes/${theme.id}` },
+    { label: theme.title, href: `/themes/${theme._id}` },
   ];
 
   return (
