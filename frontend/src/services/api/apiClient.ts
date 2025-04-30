@@ -285,6 +285,20 @@ export class ApiClient {
       this.httpClient.get<ThemeDetailResponse>(`/themes/${id}/detail`)
     );
   }
+
+  async getSiteConfig(): Promise<HttpResult<{
+    _id: string;
+    title: string;
+    aboutMessage: string;
+  }>> {
+    return this.withRetry(() =>
+      this.httpClient.get<{
+        _id: string;
+        title: string;
+        aboutMessage: string;
+      }>(`/site-config`)
+    );
+  }
 }
 
 export const apiClient = new ApiClient();

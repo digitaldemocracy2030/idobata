@@ -49,3 +49,16 @@ export interface CreateUserPayload {
   password: string;
   role?: string;
 }
+
+export interface SiteConfig {
+  _id: string;
+  title: string;
+  aboutMessage: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface UpdateSiteConfigPayload {
+  title: string;
+  aboutMessage: string;
+}

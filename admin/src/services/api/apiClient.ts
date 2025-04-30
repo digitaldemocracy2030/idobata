@@ -5,7 +5,9 @@ import type {
   CreateUserPayload,
   LoginCredentials,
   LoginResponse,
+  SiteConfig,
   Theme,
+  UpdateSiteConfigPayload,
   UpdateThemePayload,
   UserResponse,
 } from "./types";
@@ -137,6 +139,19 @@ export class ApiClient {
     return this.request<UserResponse>("/auth/users", {
       method: "POST",
       body: JSON.stringify(userData),
+    });
+  }
+
+  async getSiteConfig(): Promise<ApiResult<SiteConfig>> {
+    return this.request<SiteConfig>("/site-config");
+  }
+
+  async updateSiteConfig(
+    config: UpdateSiteConfigPayload
+  ): Promise<ApiResult<SiteConfig>> {
+    return this.request<SiteConfig>("/site-config", {
+      method: "PUT",
+      body: JSON.stringify(config),
     });
   }
 }

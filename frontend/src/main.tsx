@@ -4,11 +4,14 @@ import { RouterProvider } from "react-router-dom";
 import "./index.css";
 import "./App.css";
 import { router } from "./App";
+import { SiteConfigProvider } from "./contexts/SiteConfigContext";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Failed to find the root element");
 createRoot(rootElement).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <SiteConfigProvider>
+      <RouterProvider router={router} />
+    </SiteConfigProvider>
   </StrictMode>
 );

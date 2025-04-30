@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import ThemeCreate from "./pages/ThemeCreate";
 import ThemeEdit from "./pages/ThemeEdit";
 import ThemeList from "./pages/ThemeList";
+import SiteConfigEdit from "./pages/SiteConfigEdit";
 
 const App: React.FC = () => {
   return (
@@ -33,6 +34,10 @@ const App: React.FC = () => {
                         <Route
                           path="/themes/:themeId"
                           element={<ThemeEdit />}
+                        />
+                        <Route
+                          path="/siteConfig/edit"
+                          element={<SiteConfigEdit />}
                         />
                       </Routes>
                     </MainContent>
