@@ -7,7 +7,7 @@ WORKDIR /app
 # Copy backend package files
 COPY idea-discussion/backend/package.json idea-discussion/backend/package-lock.json* ./
 
-# Install dependencies directly in the current directory
+# Install dependencies
 RUN npm install
 
 # Expose the port the backend will run on

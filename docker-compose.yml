@@ -28,7 +28,7 @@ services:
       - GITHUB_BASE_BRANCH=${GITHUB_BASE_BRANCH}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - IDEA_CORS_ORIGIN=${IDEA_CORS_ORIGIN}
-    command: npm run dev # Command defined in Dockerfile.dev, but explicit here
+    command: npm run dev # Command defined in Dockerfile.dev
 
   # --- policy-edit ---
   policy-frontend:
