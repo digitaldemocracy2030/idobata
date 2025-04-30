@@ -29,9 +29,8 @@ export interface QuestionDetailResponse {
 }
 
 export function useQuestionDetail(themeId: string, questionId: string) {
-  const [questionDetail, setQuestionDetail] = useState<QuestionDetailResponse | null>(
-    null
-  );
+  const [questionDetail, setQuestionDetail] =
+    useState<QuestionDetailResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

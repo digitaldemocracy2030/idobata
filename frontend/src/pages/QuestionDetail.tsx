@@ -199,33 +199,35 @@ const QuestionDetail = () => {
 
     const debateData = useMockData
       ? mockDebateData
-      : questionDetail?.debateData ?? {
+      : (questionDetail?.debateData ?? {
           axes: [],
           agreementPoints: [],
           disagreementPoints: [],
-        };
+        });
 
     const opinions = useMockData
       ? mockOpinions
       : {
-          issues: questionDetail?.relatedProblems?.map((p) => ({
-            id: p._id,
-            text: p.statement,
-            relevance: Math.round(p.relevanceScore * 100) || 0,
-          })) ?? [],
-          solutions: questionDetail?.relatedSolutions?.map((s) => ({
-            id: s._id,
-            text: s.statement,
-            relevance: Math.round(s.relevanceScore * 100) || 0,
-          })) ?? [],
+          issues:
+            questionDetail?.relatedProblems?.map((p) => ({
+              id: p._id,
+              text: p.statement,
+              relevance: Math.round(p.relevanceScore * 100) || 0,
+            })) ?? [],
+          solutions:
+            questionDetail?.relatedSolutions?.map((s) => ({
+              id: s._id,
+              text: s.statement,
+              relevance: Math.round(s.relevanceScore * 100) || 0,
+            })) ?? [],
         };
 
     const reportExample = useMockData
       ? mockReportExample
-      : questionDetail?.reportExample ?? {
+      : (questionDetail?.reportExample ?? {
           introduction: "",
           issues: [],
-        };
+        });
 
     const breadcrumbItems = [
       { label: "TOP", href: "/" },
