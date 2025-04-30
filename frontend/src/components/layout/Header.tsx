@@ -66,8 +66,8 @@ const Header = () => {
                 !error &&
                 themes.map((theme) => (
                   <NavigationRouterLink
-                    key={theme.id}
-                    to={`/themes/${theme.id}`}
+                    key={theme._id}
+                    to={`/themes/${theme._id}`}
                     className="text-sm py-2 px-4 hover:bg-purple-50 rounded-md"
                   >
                     {theme.title}

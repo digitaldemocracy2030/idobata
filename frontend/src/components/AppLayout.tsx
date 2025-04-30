@@ -53,8 +53,8 @@ function AppLayout() {
         const themeResult = await apiClient.getDefaultTheme();
         if (themeResult.isOk()) {
           const defaultTheme = themeResult.value;
-          setCurrentThemeId(defaultTheme.id);
-          localStorage.setItem("currentThemeId", defaultTheme.id);
+          setCurrentThemeId(defaultTheme._id);
+          localStorage.setItem("currentThemeId", defaultTheme._id);
         } else {
           throw new Error(
             `テーマの取得に失敗しました: ${themeResult.error.message}`
@@ -277,8 +277,8 @@ function AppLayout() {
           const themeResult = await apiClient.getDefaultTheme();
           if (themeResult.isOk()) {
             const defaultTheme = themeResult.value;
-            setCurrentThemeId(defaultTheme.id);
-            localStorage.setItem("currentThemeId", defaultTheme.id);
+            setCurrentThemeId(defaultTheme._id);
+            localStorage.setItem("currentThemeId", defaultTheme._id);
           }
         } catch (error) {
           console.error("Failed to load default theme:", error);
