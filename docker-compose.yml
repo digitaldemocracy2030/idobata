@@ -106,7 +106,7 @@ services:
       - ./admin:/app
       - /app/node_modules
     ports:
-      - "5175:5173" # 他のサービスとポートが重複しないようにする
+      - "5175:5175"
     command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
     env_file:
       - .env
