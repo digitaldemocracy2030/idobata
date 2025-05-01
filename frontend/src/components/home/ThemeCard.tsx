@@ -52,8 +52,8 @@ const ThemeCard = ({
 
   return (
     <Link to={`/themes/${id}`} className="block">
-      <div className="border border-neutral-200 rounded-lg p-4 bg-white hover:shadow-md transition-all duration-200 hover:border-purple-300">
-        <div className="mb-2">
+      <div className="border border-neutral-200 rounded-xl p-4 bg-white hover:shadow-md transition-all duration-200 hover:border-purple-300">
+        <div className="mb-3">
           <h3 className="font-semibold text-base">{title}</h3>
         </div>
         <div className="flex justify-between items-center">
@@ -67,7 +67,7 @@ const ThemeCard = ({
               解決策: {solutionCount}
             </span>
           </div>
-          <div className="bg-purple-500 text-white p-1 rounded-md inline-block">
+          <div className="bg-purple-500 text-white p-1 rounded-lg inline-block">
             <ArrowRight className="h-5 w-5" />
           </div>
         </div>

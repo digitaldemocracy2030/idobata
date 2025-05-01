@@ -1,4 +1,3 @@
-import { MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 
@@ -16,20 +15,13 @@ const HeroSection = () => {
             社会をもっと良くするヒントは、あなたの実感にあります。
           </p>
 
-          {/* ハッシュタグイメージ */}
-          <div className="relative w-full h-40 bg-gradient-to-br from-purple-400 to-cyan-300 mb-4 rounded-lg flex items-center justify-center">
-            <span className="text-white text-5xl font-bold">#</span>
-
-            {/* 吹き出しアイコン */}
-            <div className="absolute top-4 right-4">
-              <MessageSquare className="h-6 w-6 text-purple-200" />
-            </div>
-            <div className="absolute bottom-8 left-4">
-              <MessageSquare className="h-5 w-5 text-cyan-200" />
-            </div>
-            <div className="absolute top-1/2 right-8">
-              <MessageSquare className="h-8 w-8 text-purple-100" />
-            </div>
+          {/* メインイメージ */}
+          <div className="relative w-full mb-4 rounded-lg overflow-hidden">
+            <img
+              src="/images/MainImage.png"
+              alt="いどばたのメインイメージ"
+              className="w-full h-auto"
+            />
           </div>
 
           <p className="text-xs text-neutral-600 mb-4">
@@ -41,7 +33,7 @@ const HeroSection = () => {
               asChild
               className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-full"
             >
-              <Link to="/about" className="flex items-center">
+              <Link to="/about" className="flex items-center justify-center">
                 このサイトについて
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
