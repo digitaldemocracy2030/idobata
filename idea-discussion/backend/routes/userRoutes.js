@@ -1,10 +1,13 @@
 import express from "express";
-import { getUserInfo, updateUserDisplayName } from "../controllers/userController.js";
+import {
+  getUserInfo,
+  updateUserDisplayName,
+} from "../controllers/userController.js";
 
 const router = express.Router();
 
-router.get('/:userId', getUserInfo);
+router.get("/:userId", getUserInfo);
 
-router.put('/:userId', updateUserDisplayName);
+router.put("/:userId", updateUserDisplayName);
 
 export default router;

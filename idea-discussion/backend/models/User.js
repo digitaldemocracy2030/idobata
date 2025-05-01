@@ -5,25 +5,25 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    index: true
+    index: true,
   },
   displayName: {
     type: String,
-    default: null
+    default: null,
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updatedAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-UserSchema.pre('save', function(next) {
+UserSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
   next();
 });
 
-export default mongoose.model('User', UserSchema);
+export default mongoose.model("User", UserSchema);
