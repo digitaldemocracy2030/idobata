@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 import { cn } from "../../lib/utils";
-import { 
-  Message, 
-  UserMessage, 
-  SystemMessage, 
-  SystemNotification 
+import {
+  Message,
+  SystemMessage,
+  SystemNotification,
+  UserMessage
 } from "../../types";
 import { StreamingText } from "./StreamingText";
 
@@ -23,19 +23,21 @@ function ExtendedChatHistory({ messages }: ExtendedChatHistoryProps) {
     scrollToBottom();
   }, [messages]);
 
-  const hasSystemNotification = messages.some(msg => msg instanceof SystemNotification);
+  const hasSystemNotification = messages.some(
+    (msg) => msg instanceof SystemNotification
+  );
   
-  const displayMessages = hasSystemNotification 
-    ? messages 
+  const displayMessages = hasSystemNotification
+    ? messages
     : [
         new SystemNotification(
           "「どうすれば若者が安心してキャリアを築ける社会を実現できるか？」がチャット対象になったよ。"
         ),
-        ...messages
+        ...messages,
       ];
   
-  const sortedMessages = [...displayMessages].sort((a, b) => 
-    a.createdAt.getTime() - b.createdAt.getTime()
+  const sortedMessages = [...displayMessages].sort(
+    (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
   );
 
   return (

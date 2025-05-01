@@ -149,9 +149,3 @@ export interface Theme {
 }
 
 export type MessageType = "user" | "system" | "system-message";
-
-export interface ExtendedMessage extends Message {
-  type: MessageType;
-  role: string;
-  timestamp: string | Date;
-}
