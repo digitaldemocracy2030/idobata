@@ -62,3 +62,24 @@ export interface UpdateSiteConfigPayload {
   title: string;
   aboutMessage: string;
 }
+
+export interface Question {
+  _id: string;
+  themeId: string;
+  questionText: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Problem {
+  _id: string;
+  statement: string;
+  themeId: string;
+  sourceType: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface QuestionWithProblems extends Question {
+  relatedProblems?: Problem[];
+}
