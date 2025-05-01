@@ -22,7 +22,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     new Date(Date.now() - 1000 * 60 * 60) // 1時間前の日付で作成
   );
   
-  const [messages, setMessages] = useState<Message[]>([initialSystemNotification]);
+  const [messages, setMessages] = useState<Message[]>([
+    initialSystemNotification,
+  ]);
 
   const addMessage = useCallback((content: string, type: MessageType) => {
     let newMessage: Message;
