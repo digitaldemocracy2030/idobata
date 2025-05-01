@@ -1,12 +1,12 @@
 import { apiClient } from "../services/api/apiClient";
 import { socketClient } from "../services/socket/socketClient";
 import type { NewExtractionEvent } from "../services/socket/socketClient";
-import { 
+import {
   Message,
-  MessageType, 
-  SystemMessage, 
-  SystemNotification, 
-  UserMessage 
+  MessageType,
+  SystemMessage,
+  SystemNotification,
+  UserMessage,
 } from "../types";
 
 export interface ThemeDetailChatManagerOptions {
@@ -25,7 +25,7 @@ export class ThemeDetailChatManager {
   private threadId?: string;
   private unsubscribeNewExtraction?: () => void;
   private unsubscribeExtractionUpdate?: () => void;
-  private userId: string = "user-" + Date.now(); // 仮のユーザーID
+  private userId: string = `user-${Date.now()}`; // 仮のユーザーID
 
   constructor(options: ThemeDetailChatManagerOptions) {
     this.themeId = options.themeId;
@@ -49,10 +49,10 @@ export class ThemeDetailChatManager {
       case "user": {
         this.subscribeToExtraction();
         const userMessage = new UserMessage(content);
-        
+
         this.messages.push(userMessage);
         this.onNewMessage?.(userMessage);
-        
+
         await this.sendMessageToBackend(content);
         return;
       }
@@ -75,7 +75,7 @@ export class ThemeDetailChatManager {
       }
     }
   }
-  
+
   private async sendMessageToBackend(userMessage: string): Promise<void> {
     try {
       const processingMessage = new SystemMessage(
@@ -83,21 +83,21 @@ export class ThemeDetailChatManager {
       );
       this.messages.push(processingMessage);
       this.onNewMessage?.(processingMessage);
-      
+
       const result = await apiClient.sendMessage(
         this.userId,
         userMessage,
         this.themeId,
         this.threadId
       );
-      
+
       if (result.isOk()) {
         const { response, threadId } = result.value;
-        
+
         if (threadId && !this.threadId) {
           this.setThreadId(threadId);
         }
-        
+
         if (response) {
           const systemResponse = new SystemMessage(response);
           this.messages.push(systemResponse);

@@ -109,10 +109,13 @@ const ThemeDetail = () => {
 
   const handleNewMessage = (message: Message) => {
     if (floatingChatRef.current) {
-      const messageType = 
-        message instanceof SystemNotification ? "system-message" :
-        message instanceof SystemMessage ? "system" : "user";
-      
+      const messageType =
+        message instanceof SystemNotification
+          ? "system-message"
+          : message instanceof SystemMessage
+            ? "system"
+            : "user";
+
       floatingChatRef.current.addMessage(message.content, messageType);
     }
   };
@@ -184,10 +187,7 @@ const ThemeDetail = () => {
     return (
       <>
         <ThemeDetailTemplate {...templateProps} />
-        <FloatingChat
-          ref={floatingChatRef}
-          onSendMessage={handleSendMessage}
-        />
+        <FloatingChat ref={floatingChatRef} onSendMessage={handleSendMessage} />
       </>
     );
   }
