@@ -30,7 +30,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
   const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false);
@@ -47,7 +47,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
       });
     }
   }, [isEdit, theme]);
-  
+
   useEffect(() => {
     if (isEdit && theme?._id) {
       fetchQuestions(theme._id);
@@ -272,7 +272,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
           <h2 className="text-xl font-semibold mb-4">
             このテーマに紐づくシャープな問い
           </h2>
-          
+
           {questionsError && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
               <p className="flex items-center">
