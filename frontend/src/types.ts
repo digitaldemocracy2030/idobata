@@ -20,7 +20,12 @@ export class UserMessage implements Message {
   isStreaming?: boolean;
   id?: string;
   
-  constructor(content: string, createdAt: Date = new Date(), isStreaming: boolean = false, id?: string) {
+  constructor(
+    content: string,
+    createdAt: Date = new Date(),
+    isStreaming = false,
+    id?: string
+  ) {
     this.content = content;
     this.createdAt = createdAt;
     this.isStreaming = isStreaming;
@@ -34,7 +39,12 @@ export class SystemMessage implements Message {
   isStreaming?: boolean;
   id?: string;
   
-  constructor(content: string, createdAt: Date = new Date(), isStreaming: boolean = false, id?: string) {
+  constructor(
+    content: string,
+    createdAt: Date = new Date(),
+    isStreaming = false,
+    id?: string
+  ) {
     this.content = content;
     this.createdAt = createdAt;
     this.isStreaming = isStreaming;
@@ -48,7 +58,12 @@ export class SystemNotification implements Message {
   isStreaming?: boolean;
   id?: string;
   
-  constructor(content: string, createdAt: Date = new Date(), isStreaming: boolean = false, id?: string) {
+  constructor(
+    content: string,
+    createdAt: Date = new Date(),
+    isStreaming = false,
+    id?: string
+  ) {
     this.content = content;
     this.createdAt = createdAt;
     this.isStreaming = isStreaming;
