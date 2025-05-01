@@ -81,25 +81,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       // バックエンドからユーザー情報を取得
       const result = await apiClient.getUserInfo(userId);
       
-      result.match(
-        (data) => {
-          setUser({
-            id: userId!,
-            displayName: data.displayName,
-          });
-          setError(null);
-          setLoading(false);
-        },
-        (error) => {
-          console.error("Failed to fetch user info:", error);
-          setUser({
-            id: userId!,
-            displayName: null,
-          });
-          setError("ユーザー情報の取得に失敗しました");
-          setLoading(false);
-        }
-      );
+      if (result.isErr()) {
+        console.error("Failed to fetch user info:", result.error);
+        setUser({
+          id: userId!,
+          displayName: null,
+        });
+        setError("ユーザー情報の取得に失敗しました");
+        setLoading(false);
+        return;
+      }
+      
+      const data = result.value;
+      setUser({
+        id: userId!,
+        displayName: data.displayName,
+      });
+      setError(null);
+      setLoading(false);
     };
 
     initializeUser();
@@ -109,17 +108,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const setDisplayName = async (name: string): Promise<boolean> => {
     const result = await apiClient.updateUserDisplayName(user.id, name);
     
-    return result.match(
-      () => {
-        setUser({ ...user, displayName: name });
-        return true;
-      },
-      (error) => {
-        console.error("Failed to update display name:", error);
-        setError("表示名の更新に失敗しました");
-        return false;
-      }
-    );
+    if (result.isErr()) {
+      console.error("Failed to update display name:", result.error);
+      setError("表示名の更新に失敗しました");
+      return false;
+    }
+    
+    setUser({ ...user, displayName: name });
+    return true;
   };
 
   return (
@@ -394,52 +390,12 @@ const Header: React.FC = () => {
 ```javascript
 // controllers/userController.js
 const User = require('../models/User');
-const { Result, ok, err } = require('neverthrow');
 
 // ユーザー情報を取得
 exports.getUserInfo = async (req, res) => {
-  const { userId } = req.params;
-  
-  const userResult = await getUserById(userId);
-  
-  userResult.match(
-    (user) => {
-      res.status(200).json({
-        displayName: user.displayName,
-      });
-    },
-    (error) => {
-      console.error('Error fetching user info:', error);
-      res.status(500).json({ message: 'ユーザー情報の取得に失敗しました' });
-    }
-  );
-};
-
-// ユーザーの表示名を更新
-exports.updateUserDisplayName = async (req, res) => {
-  const { userId } = req.params;
-  const { displayName } = req.body;
-  
-  if (!displayName) {
-    return res.status(400).json({ message: '表示名は必須です' });
-  }
-  
-  const updateResult = await updateUserName(userId, displayName);
-  
-  updateResult.match(
-    () => {
-      res.status(200).json({ message: '表示名を更新しました' });
-    },
-    (error) => {
-      console.error('Error updating display name:', error);
-      res.status(500).json({ message: '表示名の更新に失敗しました' });
-    }
-  );
-};
-
-// ユーザーをIDで取得するヘルパー関数
-const getUserById = async (userId) => {
   try {
+    const { userId } = req.params;
+    
     // ユーザーをデータベースから検索
     let user = await User.findOne({ userId });
     
@@ -453,15 +409,25 @@ const getUserById = async (userId) => {
       await user.save();
     }
     
-    return ok(user);
+    res.status(200).json({
+      displayName: user.displayName,
+    });
   } catch (error) {
-    return err(error);
+    console.error('Error fetching user info:', error);
+    res.status(500).json({ message: 'ユーザー情報の取得に失敗しました' });
   }
 };
 
-// ユーザー名を更新するヘルパー関数
-const updateUserName = async (userId, displayName) => {
+// ユーザーの表示名を更新
+exports.updateUserDisplayName = async (req, res) => {
   try {
+    const { userId } = req.params;
+    const { displayName } = req.body;
+    
+    if (!displayName) {
+      return res.status(400).json({ message: '表示名は必須です' });
+    }
+    
     // ユーザーをデータベースから検索し、なければ作成
     let user = await User.findOne({ userId });
     if (!user) {
@@ -476,9 +442,11 @@ const updateUserName = async (userId, displayName) => {
     }
     
     await user.save();
-    return ok();
+    
+    res.status(200).json({ message: '表示名を更新しました' });
   } catch (error) {
-    return err(error);
+    console.error('Error updating display name:', error);
+    res.status(500).json({ message: '表示名の更新に失敗しました' });
   }
 };
 ```
