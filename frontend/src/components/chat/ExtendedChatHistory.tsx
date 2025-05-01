@@ -4,7 +4,7 @@ import {
   Message,
   SystemMessage,
   SystemNotification,
-  UserMessage
+  UserMessage,
 } from "../../types";
 import { StreamingText } from "./StreamingText";
 
@@ -26,7 +26,7 @@ function ExtendedChatHistory({ messages }: ExtendedChatHistoryProps) {
   const hasSystemNotification = messages.some(
     (msg) => msg instanceof SystemNotification
   );
-  
+
   const displayMessages = hasSystemNotification
     ? messages
     : [
@@ -35,7 +35,7 @@ function ExtendedChatHistory({ messages }: ExtendedChatHistoryProps) {
         ),
         ...messages,
       ];
-  
+
   const sortedMessages = [...displayMessages].sort(
     (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
   );

@@ -19,7 +19,6 @@ export class UserMessage implements Message {
   createdAt: Date;
   isStreaming?: boolean;
   id?: string;
-  
   constructor(
     content: string,
     createdAt: Date = new Date(),
@@ -38,7 +37,6 @@ export class SystemMessage implements Message {
   createdAt: Date;
   isStreaming?: boolean;
   id?: string;
-  
   constructor(
     content: string,
     createdAt: Date = new Date(),
@@ -57,7 +55,6 @@ export class SystemNotification implements Message {
   createdAt: Date;
   isStreaming?: boolean;
   id?: string;
-  
   constructor(
     content: string,
     createdAt: Date = new Date(),
