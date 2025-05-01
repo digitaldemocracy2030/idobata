@@ -87,7 +87,9 @@ function AppLayout() {
       }
     } catch (error) {
       console.error("Failed to send message:", error);
-      const errorMessage = new SystemMessage(`メッセージ送信エラー: ${error.message}`);
+      const errorMessage = new SystemMessage(
+        `メッセージ送信エラー: ${error.message}`
+      );
       setMessages((prevMessages) => [...prevMessages, errorMessage]);
     }
   };
