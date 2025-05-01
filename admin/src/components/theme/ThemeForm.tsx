@@ -5,8 +5,8 @@ import { apiClient } from "../../services/api/apiClient";
 import { ApiErrorType } from "../../services/api/apiError";
 import type {
   CreateThemePayload,
-  Question,
   Problem,
+  Question,
   Theme,
   UpdateThemePayload,
 } from "../../services/api/types";
@@ -73,7 +73,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
 
   const handleGenerateQuestions = async () => {
     if (!theme?._id) return;
-    
+
     setIsGeneratingQuestions(true);
     setQuestionsError(null);
     setSuccessMessage(null);
@@ -269,7 +269,9 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
       {/* Sharp Questions Section - Only show in edit mode */}
       {isEdit && theme?._id && (
         <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">このテーマに紐づくシャープな問い</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            このテーマに紐づくシャープな問い
+          </h2>
           
           {questionsError && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
@@ -279,7 +281,10 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                   className="h-5 w-5 mr-2"
                   viewBox="0 0 20 20"
                   fill="currentColor"
+                  aria-label="エラーアイコン"
+                  role="img"
                 >
+                  <title>エラーアイコン</title>
                   <path
                     fillRule="evenodd"
                     d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -299,7 +304,10 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                   className="h-5 w-5 mr-2"
                   viewBox="0 0 20 20"
                   fill="currentColor"
+                  aria-label="成功アイコン"
+                  role="img"
                 >
+                  <title>成功アイコン</title>
                   <path
                     fillRule="evenodd"
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -335,7 +343,10 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
+                      aria-label="読み込み中"
+                      role="img"
                     >
+                      <title>読み込み中</title>
                       <circle
                         className="opacity-25"
                         cx="12"
@@ -352,8 +363,10 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                     </svg>
                     生成中...
                   </span>
+                ) : questions.length === 0 ? (
+                  "生成する"
                 ) : (
-                  questions.length === 0 ? "生成する" : "さらに生成する"
+                  "さらに生成する"
                 )}
               </button>
             </div>
@@ -411,7 +424,9 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                         </td>
                         <td className="px-6 py-4 whitespace-normal text-sm text-neutral-500">
                           {/* We would fetch related problems here in a real implementation */}
-                          <span className="text-neutral-400 italic">関連データは取得中...</span>
+                          <span className="text-neutral-400 italic">
+                            関連データは取得中...
+                          </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
                           {formatDate(question.createdAt)}
