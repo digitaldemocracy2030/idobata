@@ -20,7 +20,7 @@ const MyPage: React.FC = () => {
     } else {
       setSaveError("表示名の保存に失敗しました。もう一度お試しください。");
     }
-    
+
     setIsSaving(false);
   };
 
@@ -31,15 +31,16 @@ const MyPage: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">マイページ</h1>
-      
+
       <div className="bg-white shadow rounded-lg p-6 mb-6">
         <h2 className="text-xl font-semibold mb-4">ユーザー情報</h2>
         <div className="mb-4">
           <p className="text-gray-600">ユーザーID:</p>
           <p className="font-mono bg-gray-100 p-2 rounded">{user.id}</p>
-          <p className="text-sm text-gray-500 mt-1">※ユーザーIDはリセットできません</p>
+          <p className="text-sm text-gray-500 mt-1">
+            ※ユーザーIDはリセットできません
+          </p>
         </div>
-        
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="displayName" className="block text-gray-600 mb-2">
@@ -58,25 +59,24 @@ const MyPage: React.FC = () => {
               ※表示名は他のユーザーに表示されます
             </p>
           </div>
-          
           {saveSuccess && (
             <div className="bg-green-100 text-green-700 p-2 rounded mb-4">
               表示名を保存しました！
             </div>
           )}
-          
+
           {saveError && (
             <div className="bg-red-100 text-red-700 p-2 rounded mb-4">
               {saveError}
             </div>
           )}
-          
+
           {error && (
             <div className="bg-red-100 text-red-700 p-2 rounded mb-4">
               {error}
             </div>
           )}
-          
+
           <button
             type="submit"
             disabled={isSaving}

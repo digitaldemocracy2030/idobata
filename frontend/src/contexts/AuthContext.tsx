@@ -33,28 +33,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const initializeUser = async () => {
       let userId = localStorage.getItem("idobataUserId");
-      
+
       if (!userId) {
         userId = uuidv4();
         localStorage.setItem("idobataUserId", userId);
       }
-      
+
       const result = await apiClient.getUserInfo(userId);
-      
+
       if (result.isErr()) {
         console.error("Failed to fetch user info:", result.error);
         setUser({
-          id: userId!,
+          id: userId,
           displayName: null,
         });
         setError("ユーザー情報の取得に失敗しました");
         setLoading(false);
         return;
       }
-      
+
       const data = result.value;
       setUser({
-        id: userId!,
+        id: userId,
         displayName: data.displayName,
       });
       setError(null);
