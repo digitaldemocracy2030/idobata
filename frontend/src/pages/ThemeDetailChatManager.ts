@@ -25,7 +25,7 @@ export class ThemeDetailChatManager {
   private threadId?: string;
   private unsubscribeNewExtraction?: () => void;
   private unsubscribeExtractionUpdate?: () => void;
-  private userId: string = `user-${Date.now()}`; // 仮のユーザーID
+  private userId = `user-${Date.now()}`; // 仮のユーザーID
 
   constructor(options: ThemeDetailChatManagerOptions) {
     this.themeId = options.themeId;
