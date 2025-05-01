@@ -301,6 +301,18 @@ export class ApiClient {
       }>("/site-config")
     );
   }
+
+  async getUserInfo(userId: string): Promise<HttpResult<{ displayName: string | null }>> {
+    return this.withRetry(() =>
+      this.httpClient.get<{ displayName: string | null }>(`/users/${userId}`)
+    );
+  }
+
+  async updateUserDisplayName(userId: string, displayName: string): Promise<HttpResult<void>> {
+    return this.withRetry(() =>
+      this.httpClient.put<void>(`/users/${userId}`, { displayName })
+    );
+  }
 }
 
 export const apiClient = new ApiClient();
