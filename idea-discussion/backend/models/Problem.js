@@ -43,6 +43,11 @@ const problemSchema = new mongoose.Schema(
       ref: "Theme",
       required: true,
     },
+    embeddingGenerated: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
   },
   { timestamps: true }
 ); // createdAt, updatedAt を自動追加

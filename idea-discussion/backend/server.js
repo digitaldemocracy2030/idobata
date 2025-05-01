@@ -62,6 +62,8 @@ import themeProblemRoutes from "./routes/themeProblemRoutes.js";
 // Import theme-based routes
 import themeQuestionRoutes from "./routes/themeQuestionRoutes.js";
 import themeSolutionRoutes from "./routes/themeSolutionRoutes.js";
+import themeEmbeddingRoutes from "./routes/themeEmbeddingRoutes.js";
+import questionEmbeddingRoutes from "./routes/questionEmbeddingRoutes.js";
 
 // Theme management routes
 app.use("/api/themes", themeRoutes);
@@ -79,6 +81,8 @@ app.use("/api/themes/:themeId/policy-drafts", themePolicyRoutes);
 app.use("/api/themes/:themeId/digest-drafts", themeDigestRoutes);
 app.use("/api/themes/:themeId/import", themeImportRoutes);
 app.use("/api/themes/:themeId/chat", themeChatRoutes);
+app.use("/api/themes/:themeId", themeEmbeddingRoutes);
+app.use("/api/questions/:questionId", questionEmbeddingRoutes);
 
 app.use("/api/site-config", siteConfigRoutes);
 
