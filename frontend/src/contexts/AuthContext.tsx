@@ -66,13 +66,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const setDisplayName = async (name: string): Promise<boolean> => {
     const result = await apiClient.updateUserDisplayName(user.id, name);
-    
+
     if (result.isErr()) {
       console.error("Failed to update display name:", result.error);
       setError("表示名の更新に失敗しました");
       return false;
     }
-    
+
     setUser({ ...user, displayName: name });
     return true;
   };

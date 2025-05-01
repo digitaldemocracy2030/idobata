@@ -1,16 +1,16 @@
 import { Navigate, Outlet, createBrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "./ThemeContext";
-import { AuthProvider } from "./contexts/AuthContext";
 import AppLayout from "./components/AppLayout";
 import PageLayout from "./components/layout/PageLayout";
+import { AuthProvider } from "./contexts/AuthContext";
 import About from "./pages/About";
 import DataPage from "./pages/DataPage";
 import MainPage from "./pages/MainPage";
+import MyPage from "./pages/MyPage";
 import QuestionDetail from "./pages/QuestionDetail";
 import ThemeDetail from "./pages/ThemeDetail";
 import Themes from "./pages/Themes";
 import Top from "./pages/Top";
-import MyPage from "./pages/MyPage";
 
 function App() {
   return <Outlet />;
