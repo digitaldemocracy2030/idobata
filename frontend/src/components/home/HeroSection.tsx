@@ -11,9 +11,6 @@ const HeroSection = () => {
             <br />
             政策が動き出す
           </h1>
-          <p className="text-sm text-neutral-600 mb-4">
-            社会をもっと良くするヒントは、あなたの実感にあります。
-          </p>
 
           {/* メインイメージ */}
           <div className="relative w-full mb-4 rounded-lg overflow-hidden">
@@ -24,7 +21,10 @@ const HeroSection = () => {
             />
           </div>
 
-          <p className="text-xs text-neutral-600 mb-4">
+          <p className="text-sm text-neutral-600">
+            社会をもっと良くするヒントは、あなたの実感にあります。
+          </p>
+          <p className="text-sm text-neutral-600 mb-4">
             今、全国で寄せられている声と、動き出した政策案をご覧ください。
           </p>
 
@@ -35,21 +35,6 @@ const HeroSection = () => {
             >
               <Link to="/about" className="flex items-center justify-center">
                 このサイトについて
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 ml-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <title>このサイトについて</title>
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
               </Link>
             </Button>
           </div>
