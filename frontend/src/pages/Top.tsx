@@ -51,11 +51,11 @@ const Top = () => {
     <>
       <HeroSection />
 
-      <div className="bg-purple-100/30 py-6">
+      <div className="py-4">
         <div className="px-4">
-          <section className="mb-8 rounded-3xl p-5">
+          <section className="mb-6 bg-purple-200/70 rounded-3xl p-3">
             <SectionTitle title="人気の重要論点" />
-            <p className="text-xs text-neutral-600 mb-5">
+            <p className="text-xs text-neutral-600 mb-3">
               いま最も注目が集まっている論点はこちらです。中身を見てみましょう。
             </p>
             <div className="space-y-4">
@@ -72,9 +72,10 @@ const Top = () => {
             <SeeMoreButton to="/" />
           </section>
 
-          <section className="mb-8 rounded-3xl p-5">
+          <div className="py-4"></div>
+          <section className="mb-6 bg-purple-200/70 rounded-3xl p-3">
             <SectionTitle title="意見募集中テーマ" />
-            <p className="text-xs text-neutral-600 mb-5">
+            <p className="text-xs text-neutral-600 mb-3">
               今募集されているテーマはこちらです。気軽にご意見を教えてください！
             </p>
             <div className="space-y-4">
