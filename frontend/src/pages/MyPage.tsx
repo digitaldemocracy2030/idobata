@@ -41,7 +41,6 @@ const MyPage: React.FC = () => {
             ※ユーザーIDはリセットできません
           </p>
         </div>
-        
         <div className="mb-6">
           <p className="text-gray-600">現在の表示名:</p>
           {user.displayName ? (
@@ -54,7 +53,6 @@ const MyPage: React.FC = () => {
             </p>
           )}
         </div>
-        
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="displayName" className="block text-gray-600 mb-2">
