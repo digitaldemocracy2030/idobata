@@ -115,7 +115,21 @@ services:
     environment:
       - NODE_ENV=development
       - VITE_API_BASE_URL=http://localhost:3000 # idea-discussionバックエンドを指す
+      
+  # --- Python Embedding Service ---
+  python-service:
+    container_name: idobata-python-service
+    build:
+      context: ./python-service
+    ports:
+      - "8000:8000" # Expose port for debugging
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY} # Pass from host environment
+    volumes:
+      - ./python-service:/app # Mount source code for development
+      - chroma_data:/data/chroma # ChromaDB data persistence
 
 volumes:
   mongo_data: # Define the named volume for MongoDB
+  chroma_data: # Define the named volume for ChromaDB
   # Named volume for idea_backend_node_modules removed as we're using the multi-stage build approach
