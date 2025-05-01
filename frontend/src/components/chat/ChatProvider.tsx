@@ -37,10 +37,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     setMessages((prev) =>
-        [...prev, newMessage].sort(
-          (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
-        )
-      );
+      [...prev, newMessage].sort(
+        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+      )
+    );
   }, []);
 
   const startStreamingMessage = useCallback(

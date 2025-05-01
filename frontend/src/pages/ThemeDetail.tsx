@@ -12,7 +12,7 @@ const ThemeDetail = () => {
     isLoading: apiIsLoading,
     error: apiError,
   } = useThemeDetail(themeId || "");
-  
+
   // モックデータを使用する場合は、APIデータの代わりにモックデータを使用
   const themeDetail = useMockData ? null : apiThemeDetail;
   const isLoading = useMockData ? false : apiIsLoading;
