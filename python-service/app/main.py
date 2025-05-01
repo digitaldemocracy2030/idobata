@@ -213,9 +213,10 @@ async def cluster_vectors(request: ClusteringRequest):
     
     clusters = []
     for i, label in enumerate(labels):
+        item_id = results["ids"][0][i] if isinstance(results["ids"][0], list) else results["ids"][i]
         clusters.append(
             ClusterItem(
-                id=results["ids"][i],
+                id=item_id,
                 cluster=int(label)
             )
         )
