@@ -78,37 +78,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         localStorage.setItem("idobataUserId", userId);
       }
       
-      try {
-        // バックエンドからユーザー情報を取得
-        const result = await apiClient.getUserInfo(userId);
-        
-        result.match(
-          (data) => {
-            setUser({
-              id: userId!,
-              displayName: data.displayName,
-            });
-            setError(null);
-          },
-          (error) => {
-            console.error("Failed to fetch user info:", error);
-            setUser({
-              id: userId!,
-              displayName: null,
-            });
-            setError("ユーザー情報の取得に失敗しました");
-          }
-        );
-      } catch (e) {
-        console.error("Error initializing user:", e);
-        setUser({
-          id: userId!,
-          displayName: null,
-        });
-        setError("ユーザー初期化中にエラーが発生しました");
-      } finally {
-        setLoading(false);
-      }
+      // バックエンドからユーザー情報を取得
+      const result = await apiClient.getUserInfo(userId);
+      
+      result.match(
+        (data) => {
+          setUser({
+            id: userId!,
+            displayName: data.displayName,
+          });
+          setError(null);
+          setLoading(false);
+        },
+        (error) => {
+          console.error("Failed to fetch user info:", error);
+          setUser({
+            id: userId!,
+            displayName: null,
+          });
+          setError("ユーザー情報の取得に失敗しました");
+          setLoading(false);
+        }
+      );
     };
 
     initializeUser();
@@ -116,25 +107,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // 表示名を設定する関数
   const setDisplayName = async (name: string): Promise<boolean> => {
-    try {
-      const result = await apiClient.updateUserDisplayName(user.id, name);
-      
-      return result.match(
-        () => {
-          setUser({ ...user, displayName: name });
-          return true;
-        },
-        (error) => {
-          console.error("Failed to update display name:", error);
-          setError("表示名の更新に失敗しました");
-          return false;
-        }
-      );
-    } catch (e) {
-      console.error("Error updating display name:", e);
-      setError("表示名の更新中にエラーが発生しました");
-      return false;
-    }
+    const result = await apiClient.updateUserDisplayName(user.id, name);
+    
+    return result.match(
+      () => {
+        setUser({ ...user, displayName: name });
+        return true;
+      },
+      (error) => {
+        console.error("Failed to update display name:", error);
+        setError("表示名の更新に失敗しました");
+        return false;
+      }
+    );
   };
 
   return (
@@ -285,19 +270,14 @@ const MyPage: React.FC = () => {
     setSaveError(null);
     setSaveSuccess(false);
 
-    try {
-      const success = await setDisplayName(newDisplayName);
-      if (success) {
-        setSaveSuccess(true);
-      } else {
-        setSaveError("表示名の保存に失敗しました。もう一度お試しください。");
-      }
-    } catch (e) {
-      setSaveError("エラーが発生しました。もう一度お試しください。");
-      console.error(e);
-    } finally {
-      setIsSaving(false);
+    const success = await setDisplayName(newDisplayName);
+    if (success) {
+      setSaveSuccess(true);
+    } else {
+      setSaveError("表示名の保存に失敗しました。もう一度お試しください。");
     }
+    
+    setIsSaving(false);
   };
 
   if (loading) {
@@ -414,12 +394,52 @@ const Header: React.FC = () => {
 ```javascript
 // controllers/userController.js
 const User = require('../models/User');
+const { Result, ok, err } = require('neverthrow');
 
 // ユーザー情報を取得
 exports.getUserInfo = async (req, res) => {
+  const { userId } = req.params;
+  
+  const userResult = await getUserById(userId);
+  
+  userResult.match(
+    (user) => {
+      res.status(200).json({
+        displayName: user.displayName,
+      });
+    },
+    (error) => {
+      console.error('Error fetching user info:', error);
+      res.status(500).json({ message: 'ユーザー情報の取得に失敗しました' });
+    }
+  );
+};
+
+// ユーザーの表示名を更新
+exports.updateUserDisplayName = async (req, res) => {
+  const { userId } = req.params;
+  const { displayName } = req.body;
+  
+  if (!displayName) {
+    return res.status(400).json({ message: '表示名は必須です' });
+  }
+  
+  const updateResult = await updateUserName(userId, displayName);
+  
+  updateResult.match(
+    () => {
+      res.status(200).json({ message: '表示名を更新しました' });
+    },
+    (error) => {
+      console.error('Error updating display name:', error);
+      res.status(500).json({ message: '表示名の更新に失敗しました' });
+    }
+  );
+};
+
+// ユーザーをIDで取得するヘルパー関数
+const getUserById = async (userId) => {
   try {
-    const { userId } = req.params;
-    
     // ユーザーをデータベースから検索
     let user = await User.findOne({ userId });
     
@@ -433,25 +453,15 @@ exports.getUserInfo = async (req, res) => {
       await user.save();
     }
     
-    res.status(200).json({
-      displayName: user.displayName,
-    });
+    return ok(user);
   } catch (error) {
-    console.error('Error fetching user info:', error);
-    res.status(500).json({ message: 'ユーザー情報の取得に失敗しました' });
+    return err(error);
   }
 };
 
-// ユーザーの表示名を更新
-exports.updateUserDisplayName = async (req, res) => {
+// ユーザー名を更新するヘルパー関数
+const updateUserName = async (userId, displayName) => {
   try {
-    const { userId } = req.params;
-    const { displayName } = req.body;
-    
-    if (!displayName) {
-      return res.status(400).json({ message: '表示名は必須です' });
-    }
-    
     // ユーザーをデータベースから検索し、なければ作成
     let user = await User.findOne({ userId });
     if (!user) {
@@ -466,11 +476,9 @@ exports.updateUserDisplayName = async (req, res) => {
     }
     
     await user.save();
-    
-    res.status(200).json({ message: '表示名を更新しました' });
+    return ok();
   } catch (error) {
-    console.error('Error updating display name:', error);
-    res.status(500).json({ message: '表示名の更新に失敗しました' });
+    return err(error);
   }
 };
 ```
