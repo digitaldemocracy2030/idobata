@@ -1,11 +1,18 @@
 import { useLocation, useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import ThemeDetailTemplate from "../components/theme/ThemeDetailTemplate";
 import { useThemeDetail } from "../hooks/useThemeDetail";
+import { ThemeDetailChatManager } from "./ThemeDetailChatManager";
+import { FloatingChat, type FloatingChatRef } from "../components/chat/FloatingChat";
+import type { ExtendedMessage } from "../types";
+import type { NewExtractionEvent } from "../services/socket/socketClient";
 
 const ThemeDetail = () => {
   const { themeId } = useParams<{ themeId: string }>();
   const location = useLocation();
   const useMockData = location.search.includes("mock=true");
+  const floatingChatRef = useRef<FloatingChatRef>(null);
+  const [chatManager, setChatManager] = useState<ThemeDetailChatManager | null>(null);
 
   const {
     themeDetail: apiThemeDetail,
@@ -73,6 +80,45 @@ const ThemeDetail = () => {
     { id: 5, text: "若者の起業支援と失敗しても再チャレンジできる制度の整備" },
   ];
 
+  useEffect(() => {
+    if (!themeId) return;
+
+    const themeName = useMockData
+      ? mockThemeData.title
+      : themeDetail?.theme?.title ?? "";
+
+    if (themeName) {
+      const manager = new ThemeDetailChatManager({
+        themeId,
+        themeName,
+        onNewMessage: handleNewMessage,
+        onNewExtraction: handleNewExtraction,
+      });
+
+      setChatManager(manager);
+
+      return () => {
+        manager.cleanup();
+      };
+    }
+  }, [themeId, useMockData, themeDetail?.theme?.title]);
+
+  const handleNewMessage = (message: ExtendedMessage) => {
+    if (floatingChatRef.current) {
+      floatingChatRef.current.addMessage(message.content, message.type);
+    }
+  };
+
+  const handleNewExtraction = (extraction: NewExtractionEvent) => {
+    console.log("New extraction received:", extraction);
+  };
+
+  const handleSendMessage = (message: string) => {
+    if (chatManager) {
+      chatManager.addMessage(message, "user");
+    }
+  };
+
   // ローディング状態
   if (!useMockData && isLoading) {
     return (
@@ -131,7 +177,15 @@ const ThemeDetail = () => {
             })) ?? [],
         };
 
-    return <ThemeDetailTemplate {...templateProps} />;
+    return (
+      <>
+        <ThemeDetailTemplate {...templateProps} />
+        <FloatingChat
+          ref={floatingChatRef}
+          onSendMessage={handleSendMessage}
+        />
+      </>
+    );
   }
 
   // 予期しない状態の場合のフォールバック
