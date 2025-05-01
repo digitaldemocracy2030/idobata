@@ -125,7 +125,6 @@ services:
       - "8000:8000" # Expose port for debugging
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY} # Pass from host environment
-      - CHROMA_DB_PATH=/data/chroma # ChromaDB data path
     volumes:
       - ./python-service:/app # Mount source code for development
       - chroma_data:/data/chroma # ChromaDB data persistence

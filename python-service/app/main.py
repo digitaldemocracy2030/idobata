@@ -26,7 +26,7 @@ client = OpenAI(
     base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
 )
 
-CHROMA_DB_PATH = os.getenv("CHROMA_DB_PATH", "/data/chroma")
+CHROMA_DB_PATH = "/data/chroma"
 chroma_client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
 collection = chroma_client.get_or_create_collection(
     name="problems_solutions",
