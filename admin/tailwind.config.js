@@ -6,8 +6,8 @@ module.exports = {
       colors: {
         primary: {
           DEFAULT: "#3B82F6", // Blue-500
-          dark: "#2563EB",    // Blue-600
-          light: "#60A5FA",   // Blue-400
+          dark: "#2563EB", // Blue-600
+          light: "#60A5FA", // Blue-400
         },
         gray: {
           50: "#F9FAFB",
