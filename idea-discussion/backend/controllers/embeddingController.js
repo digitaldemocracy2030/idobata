@@ -88,10 +88,7 @@ const generateThemeEmbeddings = async (req, res) => {
       processedCount: items.length,
     });
   } catch (error) {
-    console.error(
-      `Error generating embeddings for theme ${themeId}:`,
-      error
-    );
+    console.error(`Error generating embeddings for theme ${themeId}:`, error);
     return res.status(500).json({
       message: "Error generating embeddings",
       error: error.message,
@@ -265,10 +262,7 @@ const searchTheme = async (req, res) => {
 
     return res.status(200).json(resultsWithDetails);
   } catch (error) {
-    console.error(
-      `Error searching theme ${themeId}:`,
-      error
-    );
+    console.error(`Error searching theme ${themeId}:`, error);
     return res.status(500).json({
       message: "Error searching",
       error: error.message,
@@ -343,10 +337,7 @@ const searchQuestion = async (req, res) => {
 
     return res.status(200).json(resultsWithDetails);
   } catch (error) {
-    console.error(
-      `Error searching question ${questionId}:`,
-      error
-    );
+    console.error(`Error searching question ${questionId}:`, error);
     return res.status(500).json({
       message: "Error searching",
       error: error.message,
@@ -403,10 +394,7 @@ const clusterTheme = async (req, res) => {
 
     return res.status(200).json(clusterResult);
   } catch (error) {
-    console.error(
-      `Error clustering theme ${themeId}:`,
-      error
-    );
+    console.error(`Error clustering theme ${themeId}:`, error);
     return res.status(500).json({
       message: "Error clustering",
       error: error.message,
@@ -465,10 +453,7 @@ const clusterQuestion = async (req, res) => {
 
     return res.status(200).json(clusterResult);
   } catch (error) {
-    console.error(
-      `Error clustering question ${questionId}:`,
-      error
-    );
+    console.error(`Error clustering question ${questionId}:`, error);
     return res.status(500).json({
       message: "Error clustering",
       error: error.message,
