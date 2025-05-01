@@ -51,7 +51,12 @@ export class ThemeDetailChatManager {
           timestamp: new Date(),
           type,
         };
-        break;
+        
+        this.messages.push(newMessage);
+        this.onNewMessage?.(newMessage);
+        
+        this.addSystemResponse(content);
+        return;
       case "system":
         newMessage = {
           role: "system",
@@ -79,6 +84,20 @@ export class ThemeDetailChatManager {
 
     this.messages.push(newMessage);
     this.onNewMessage?.(newMessage);
+  }
+  
+  private addSystemResponse(userMessage: string): void {
+    const systemResponse: ExtendedMessage = {
+      role: "system",
+      content: `「${this.themeName}」に関する「${userMessage}」を受け付けました。抽出処理を開始します。`,
+      timestamp: new Date(),
+      type: "system",
+    };
+    
+    setTimeout(() => {
+      this.messages.push(systemResponse);
+      this.onNewMessage?.(systemResponse);
+    }, 500);
   }
 
   private subscribeToExtraction(): void {
