@@ -25,12 +25,10 @@ const ThemeDetail = () => {
     error: apiError,
   } = useThemeDetail(themeId || "");
 
-  // モックデータを使用する場合は、APIデータの代わりにモックデータを使用
   const themeDetail = useMockData ? null : apiThemeDetail;
   const isLoading = useMockData ? false : apiIsLoading;
   const error = useMockData ? null : apiError;
 
-  // モックデータ
   const mockThemeData = {
     _id: themeId || "",
     title: "若者の雇用とキャリア支援",
@@ -124,7 +122,6 @@ const ThemeDetail = () => {
     }
   };
 
-  // ローディング状態
   if (!useMockData && isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -135,7 +132,6 @@ const ThemeDetail = () => {
     );
   }
 
-  // エラー状態
   if (!useMockData && error) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -146,9 +142,7 @@ const ThemeDetail = () => {
     );
   }
 
-  // モックデータまたはAPIデータが利用可能な場合、テンプレートをレンダリング
   if (useMockData || themeDetail) {
-    // テンプレートのpropsにデータをマッピング
     const templateProps = useMockData
       ? {
           theme: mockThemeData,
@@ -185,12 +179,14 @@ const ThemeDetail = () => {
     return (
       <>
         <ThemeDetailTemplate {...templateProps} />
-        <FloatingChat ref={floatingChatRef} onSendMessage={handleSendMessage} />
+        <FloatingChat
+          ref={floatingChatRef}
+          onSendMessage={handleSendMessage}
+        />
       </>
     );
   }
 
-  // 予期しない状態の場合のフォールバック
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center py-8">
