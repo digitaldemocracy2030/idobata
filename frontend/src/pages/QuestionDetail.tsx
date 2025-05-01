@@ -1,3 +1,4 @@
+import { ChevronRight } from "lucide-react";
 import { useRef, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import {
@@ -10,7 +11,6 @@ import DebateSummary from "../components/question/DebateSummary";
 import KeyQuestionHeader from "../components/question/KeyQuestionHeader";
 import OpinionCard from "../components/question/OpinionCard";
 import { Button } from "../components/ui/button";
-import { ChevronRight } from "lucide-react";
 import { useQuestionDetail } from "../hooks/useQuestionDetail";
 
 const QuestionDetail = () => {
@@ -259,7 +259,10 @@ const QuestionDetail = () => {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">寄せられた意見</h2>
-            <Link to={`/themes/${themeId}/questions/${qId}/comments`} className="text-sm text-purple-500 hover:underline">
+            <Link
+              to={`/themes/${themeId}/questions/${qId}/comments`}
+              className="text-sm text-purple-500 hover:underline"
+            >
               すべて見る
             </Link>
           </div>
@@ -283,25 +286,29 @@ const QuestionDetail = () => {
 
           <div className="space-y-3">
             {activeTab === "issues"
-              ? opinions.issues.slice(0, 3).map((issue) => (
-                  <OpinionCard
-                    key={issue.id}
-                    text={issue.text}
-                    type="課題点"
-                    relevance={issue.relevance}
-                  />
-                ))
-              : opinions.solutions.slice(0, 3).map((solution) => (
-                  <OpinionCard
-                    key={solution.id}
-                    text={solution.text}
-                    type="解決策"
-                    relevance={solution.relevance}
-                  />
-                ))}
+              ? opinions.issues
+                  .slice(0, 3)
+                  .map((issue) => (
+                    <OpinionCard
+                      key={issue.id}
+                      text={issue.text}
+                      type="課題点"
+                      relevance={issue.relevance}
+                    />
+                  ))
+              : opinions.solutions
+                  .slice(0, 3)
+                  .map((solution) => (
+                    <OpinionCard
+                      key={solution.id}
+                      text={solution.text}
+                      type="解決策"
+                      relevance={solution.relevance}
+                    />
+                  ))}
           </div>
           
-          {((activeTab === "issues" && opinions.issues.length > 3) || 
+          {((activeTab === "issues" && opinions.issues.length > 3) ||
             (activeTab === "solutions" && opinions.solutions.length > 3)) && (
             <div className="text-center mt-4">
               <Link to={`/themes/${themeId}/questions/${qId}/comments`}>

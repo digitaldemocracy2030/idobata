@@ -10,7 +10,7 @@ const CommentsPage = () => {
   const [activeTab, setActiveTab] = useState<"issues" | "solutions">("issues");
   
   const { questionDetail, isLoading, error } = useQuestionDetail(
-    themeId || "", 
+    themeId || "",
     qId || ""
   );
 
@@ -38,9 +38,9 @@ const CommentsPage = () => {
     const breadcrumbItems = [
       { label: "TOP", href: "/" },
       { label: "テーマ一覧", href: "/themes" },
-      { 
-        label: "テーマ詳細", 
-        href: `/themes/${themeId}` 
+      {
+        label: "テーマ詳細",
+        href: `/themes/${themeId}`,
       },
       {
         label: questionDetail.question.questionText,
