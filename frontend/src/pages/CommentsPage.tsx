@@ -8,7 +8,7 @@ import { useQuestionDetail } from "../hooks/useQuestionDetail";
 const CommentsPage = () => {
   const { themeId, qId } = useParams<{ themeId: string; qId: string }>();
   const [activeTab, setActiveTab] = useState<"issues" | "solutions">("issues");
-  
+
   const { questionDetail, isLoading, error } = useQuestionDetail(
     themeId || "",
     qId || ""
@@ -68,7 +68,7 @@ const CommentsPage = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <BreadcrumbView items={breadcrumbItems} />
-        
+
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-semibold">コメント一覧</h1>

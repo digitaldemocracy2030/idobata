@@ -307,7 +307,7 @@ const QuestionDetail = () => {
                     />
                   ))}
           </div>
-          
+
           {((activeTab === "issues" && opinions.issues.length > 3) ||
             (activeTab === "solutions" && opinions.solutions.length > 3)) && (
             <div className="text-center mt-4">
