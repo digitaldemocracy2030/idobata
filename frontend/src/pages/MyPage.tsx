@@ -41,10 +41,24 @@ const MyPage: React.FC = () => {
             ※ユーザーIDはリセットできません
           </p>
         </div>
+        
+        <div className="mb-6">
+          <p className="text-gray-600">現在の表示名:</p>
+          {user.displayName ? (
+            <p className="font-semibold bg-blue-50 p-2 rounded border border-blue-100">
+              {user.displayName}
+            </p>
+          ) : (
+            <p className="italic text-gray-500 p-2">
+              表示名が設定されていません
+            </p>
+          )}
+        </div>
+        
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="displayName" className="block text-gray-600 mb-2">
-              表示名:
+              表示名を{user.displayName ? "変更" : "設定"}:
             </label>
             <input
               type="text"
