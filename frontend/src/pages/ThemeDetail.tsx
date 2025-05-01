@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
-import { FloatingChat, type FloatingChatRef } from "../components/chat/FloatingChat";
+import {
+  FloatingChat,
+  type FloatingChatRef,
+} from "../components/chat/FloatingChat";
 import ThemeDetailTemplate from "../components/theme/ThemeDetailTemplate";
 import { useThemeDetail } from "../hooks/useThemeDetail";
 import type { NewExtractionEvent } from "../services/socket/socketClient";
