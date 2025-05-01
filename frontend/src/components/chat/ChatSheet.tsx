@@ -34,7 +34,6 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
   const handleSendMessage = () => {
     if (inputValue.trim() && !isSending) {
       setIsSending(true);
-      addMessage(inputValue, "user");
 
       const message = inputValue;
       setInputValue("");
@@ -50,6 +49,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
           setIsSending(false);
         }
       } else {
+        addMessage(message, "user");
         setTimeout(() => {
           setIsSending(false);
         }, 1000);
