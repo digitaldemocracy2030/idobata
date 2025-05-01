@@ -1,10 +1,15 @@
 import { useEffect, useRef } from "react";
 import { cn } from "../../lib/utils";
-import type { ExtendedMessage } from "../../types";
+import { 
+  Message, 
+  UserMessage, 
+  SystemMessage, 
+  SystemNotification 
+} from "../../types";
 import { StreamingText } from "./StreamingText";
 
 interface ExtendedChatHistoryProps {
-  messages: ExtendedMessage[];
+  messages: Message[];
 }
 
 function ExtendedChatHistory({ messages }: ExtendedChatHistoryProps) {
@@ -18,45 +23,47 @@ function ExtendedChatHistory({ messages }: ExtendedChatHistoryProps) {
     scrollToBottom();
   }, [messages]);
 
-  const initialMessages =
-    messages.length > 0
-      ? messages
-      : [
-          {
-            role: "assistant",
-            content:
-              "「どうすれば若者が安心してキャリアを築ける社会を実現できるか？」がチャット対象になったよ。",
-            type: "system-message",
-            timestamp: new Date(),
-          },
-        ];
+  const hasSystemNotification = messages.some(msg => msg instanceof SystemNotification);
+  
+  const displayMessages = hasSystemNotification 
+    ? messages 
+    : [
+        new SystemNotification(
+          "「どうすれば若者が安心してキャリアを築ける社会を実現できるか？」がチャット対象になったよ。"
+        ),
+        ...messages
+      ];
+  
+  const sortedMessages = [...displayMessages].sort((a, b) => 
+    a.createdAt.getTime() - b.createdAt.getTime()
+  );
 
   return (
     <div className="flex-grow p-3 overflow-y-auto space-y-4 custom-scrollbar">
-      {initialMessages.map((msg, index) => (
+      {sortedMessages.map((msg, index) => (
         <div
-          key={`${msg.timestamp}-${index}`}
+          key={`${msg.createdAt.toISOString()}-${index}`}
           className={cn("animate-fade-in mb-3", {
-            "flex justify-end": msg.type === "user",
-            "flex justify-start": msg.type === "system",
-            "flex justify-center": msg.type === "system-message",
+            "flex justify-end": msg instanceof UserMessage,
+            "flex justify-start": msg instanceof SystemMessage,
+            "flex justify-center": msg instanceof SystemNotification,
           })}
         >
           <div
             className={cn("flex flex-col max-w-[90%]", {
-              "items-end": msg.type === "user",
-              "items-start": msg.type === "system",
-              "items-center": msg.type === "system-message",
+              "items-end": msg instanceof UserMessage,
+              "items-start": msg instanceof SystemMessage,
+              "items-center": msg instanceof SystemNotification,
             })}
           >
             <div
               className={cn("inline-block py-2 px-3 break-words", {
                 "bg-neutral-700 text-white rounded-2xl rounded-tr-sm":
-                  msg.type === "user",
+                  msg instanceof UserMessage,
                 "bg-white border border-neutral-200 text-neutral-800 rounded-2xl rounded-tl-sm":
-                  msg.type === "system",
+                  msg instanceof SystemMessage,
                 "bg-neutral-100 border border-neutral-200 text-neutral-800 rounded-2xl":
-                  msg.type === "system-message",
+                  msg instanceof SystemNotification,
               })}
             >
               <div className="text-sm whitespace-pre-wrap">

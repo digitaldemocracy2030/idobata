@@ -1,9 +1,10 @@
 import type React from "react";
 import { createContext, useCallback, useContext, useState } from "react";
-import type { ExtendedMessage, MessageType } from "../../types";
+import type { Message, MessageType } from "../../types";
+import { UserMessage, SystemMessage, SystemNotification } from "../../types";
 
 interface ChatContextType {
-  messages: ExtendedMessage[];
+  messages: Message[];
   addMessage: (content: string, type: MessageType) => void;
   startStreamingMessage: (content: string, type: MessageType) => string;
   updateStreamingMessage: (id: string, content: string) => void;
@@ -16,32 +17,48 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined);
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [messages, setMessages] = useState<ExtendedMessage[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const addMessage = useCallback((content: string, type: MessageType) => {
-    const newMessage: ExtendedMessage = {
-      role: type === "user" ? "user" : "assistant",
-      content,
-      type,
-      timestamp: new Date(),
-    };
+    let newMessage: Message;
+    
+    switch(type) {
+      case "user":
+        newMessage = new UserMessage(content);
+        break;
+      case "system":
+        newMessage = new SystemMessage(content);
+        break;
+      case "system-message":
+        newMessage = new SystemNotification(content);
+        break;
+      default:
+        newMessage = new SystemMessage(content);
+    }
 
-    setMessages((prev) => [...prev, newMessage]);
+    setMessages((prev) => [...prev, newMessage].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()));
   }, []);
 
   const startStreamingMessage = useCallback(
     (content: string, type: MessageType) => {
       const id = Date.now().toString();
-      const newMessage: ExtendedMessage = {
-        role: type === "user" ? "user" : "assistant",
-        content,
-        type,
-        timestamp: new Date(),
-        isStreaming: true,
-        id,
-      };
+      let newMessage: Message;
+      
+      switch(type) {
+        case "user":
+          newMessage = new UserMessage(content, new Date(), true, id);
+          break;
+        case "system":
+          newMessage = new SystemMessage(content, new Date(), true, id);
+          break;
+        case "system-message":
+          newMessage = new SystemNotification(content, new Date(), true, id);
+          break;
+        default:
+          newMessage = new SystemMessage(content, new Date(), true, id);
+      }
 
-      setMessages((prev) => [...prev, newMessage]);
+      setMessages((prev) => [...prev, newMessage].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()));
       return id;
     },
     []
