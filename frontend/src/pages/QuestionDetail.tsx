@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import {
   FloatingChat,
   type FloatingChatRef,
@@ -9,6 +9,8 @@ import CitizenReportExample from "../components/question/CitizenReportExample";
 import DebateSummary from "../components/question/DebateSummary";
 import KeyQuestionHeader from "../components/question/KeyQuestionHeader";
 import OpinionCard from "../components/question/OpinionCard";
+import { Button } from "../components/ui/button";
+import { ChevronRight } from "lucide-react";
 import { useQuestionDetail } from "../hooks/useQuestionDetail";
 
 const QuestionDetail = () => {
@@ -255,7 +257,12 @@ const QuestionDetail = () => {
         />
 
         <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">寄せられた意見</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">寄せられた意見</h2>
+            <Link to={`/themes/${themeId}/questions/${qId}/comments`} className="text-sm text-purple-500 hover:underline">
+              すべて見る
+            </Link>
+          </div>
 
           <div className="flex border-b border-neutral-200 mb-4">
             <button
@@ -276,7 +283,7 @@ const QuestionDetail = () => {
 
           <div className="space-y-3">
             {activeTab === "issues"
-              ? opinions.issues.map((issue) => (
+              ? opinions.issues.slice(0, 3).map((issue) => (
                   <OpinionCard
                     key={issue.id}
                     text={issue.text}
@@ -284,7 +291,7 @@ const QuestionDetail = () => {
                     relevance={issue.relevance}
                   />
                 ))
-              : opinions.solutions.map((solution) => (
+              : opinions.solutions.slice(0, 3).map((solution) => (
                   <OpinionCard
                     key={solution.id}
                     text={solution.text}
@@ -293,6 +300,22 @@ const QuestionDetail = () => {
                   />
                 ))}
           </div>
+          
+          {((activeTab === "issues" && opinions.issues.length > 3) || 
+            (activeTab === "solutions" && opinions.solutions.length > 3)) && (
+            <div className="text-center mt-4">
+              <Link to={`/themes/${themeId}/questions/${qId}/comments`}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-sm text-purple-500 border-purple-300 hover:bg-purple-50 rounded-full px-4 py-1 flex items-center mx-auto"
+                >
+                  もっと見る
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
 
         <CitizenReportExample
