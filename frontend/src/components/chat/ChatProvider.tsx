@@ -17,7 +17,12 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined);
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const initialSystemNotification = new SystemNotification(
+    "「どうすれば若者が安心してキャリアを築ける社会を実現できるか？」がチャット対象になったよ。",
+    new Date(Date.now() - 1000 * 60 * 60) // 1時間前の日付で作成
+  );
+  
+  const [messages, setMessages] = useState<Message[]>([initialSystemNotification]);
 
   const addMessage = useCallback((content: string, type: MessageType) => {
     let newMessage: Message;

@@ -23,20 +23,7 @@ function ExtendedChatHistory({ messages }: ExtendedChatHistoryProps) {
     scrollToBottom();
   }, [messages]);
 
-  const hasSystemNotification = messages.some(
-    (msg) => msg instanceof SystemNotification
-  );
-
-  const displayMessages = hasSystemNotification
-    ? messages
-    : [
-        new SystemNotification(
-          "「どうすれば若者が安心してキャリアを築ける社会を実現できるか？」がチャット対象になったよ。"
-        ),
-        ...messages,
-      ];
-
-  const sortedMessages = [...displayMessages].sort(
+  const sortedMessages = [...messages].sort(
     (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
   );
 
