@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import type { Message } from "../types";
-import { SystemMessage, UserMessage } from "../types";
+import { UserMessage } from "../types";
 
 interface ChatHistoryProps {
   messages: Message[];
