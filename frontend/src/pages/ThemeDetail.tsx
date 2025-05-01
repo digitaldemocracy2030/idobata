@@ -1,18 +1,20 @@
-import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import { FloatingChat, type FloatingChatRef } from "../components/chat/FloatingChat";
 import ThemeDetailTemplate from "../components/theme/ThemeDetailTemplate";
 import { useThemeDetail } from "../hooks/useThemeDetail";
-import { ThemeDetailChatManager } from "./ThemeDetailChatManager";
-import { FloatingChat, type FloatingChatRef } from "../components/chat/FloatingChat";
-import type { ExtendedMessage } from "../types";
 import type { NewExtractionEvent } from "../services/socket/socketClient";
+import type { ExtendedMessage } from "../types";
+import { ThemeDetailChatManager } from "./ThemeDetailChatManager";
 
 const ThemeDetail = () => {
   const { themeId } = useParams<{ themeId: string }>();
   const location = useLocation();
   const useMockData = location.search.includes("mock=true");
   const floatingChatRef = useRef<FloatingChatRef>(null);
-  const [chatManager, setChatManager] = useState<ThemeDetailChatManager | null>(null);
+  const [chatManager, setChatManager] = useState<ThemeDetailChatManager | null>(
+    null
+  );
 
   const {
     themeDetail: apiThemeDetail,
@@ -85,7 +87,7 @@ const ThemeDetail = () => {
 
     const themeName = useMockData
       ? mockThemeData.title
-      : themeDetail?.theme?.title ?? "";
+      : (themeDetail?.theme?.title ?? "");
 
     if (themeName) {
       const manager = new ThemeDetailChatManager({
@@ -180,10 +182,7 @@ const ThemeDetail = () => {
     return (
       <>
         <ThemeDetailTemplate {...templateProps} />
-        <FloatingChat
-          ref={floatingChatRef}
-          onSendMessage={handleSendMessage}
-        />
+        <FloatingChat ref={floatingChatRef} onSendMessage={handleSendMessage} />
       </>
     );
   }

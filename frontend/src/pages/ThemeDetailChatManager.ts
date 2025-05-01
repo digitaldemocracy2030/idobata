@@ -1,6 +1,6 @@
 import { socketClient } from "../services/socket/socketClient";
 import type { NewExtractionEvent } from "../services/socket/socketClient";
-import { MessageType, ExtendedMessage } from "../types";
+import { ExtendedMessage, MessageType } from "../types";
 
 export interface ThemeDetailChatManagerOptions {
   themeId: string;
@@ -83,7 +83,6 @@ export class ThemeDetailChatManager {
 
   private subscribeToExtraction(): void {
     socketClient.subscribeToTheme(this.themeId);
-    
     if (this.threadId) {
       socketClient.subscribeToThread(this.threadId);
     }
@@ -105,11 +104,11 @@ export class ThemeDetailChatManager {
 
   private handleNewExtraction(event: NewExtractionEvent): void {
     const { type, data } = event;
-    
-    const notificationContent = type === 'problem' 
-      ? `「${data.statement}」という課題が登録されました。`
-      : `「${data.statement}」という解決策が登録されました。`;
-    
+    const notificationContent =
+      type === "problem"
+        ? `「${data.statement}」という課題が登録されました。`
+        : `「${data.statement}」という解決策が登録されました。`;
+
     const notification: ExtendedMessage = {
       role: "system",
       content: notificationContent,
@@ -118,7 +117,6 @@ export class ThemeDetailChatManager {
     };
     this.messages.push(notification);
     this.onNewMessage?.(notification);
-    
     this.onNewExtraction?.(event);
   }
 
@@ -128,7 +126,6 @@ export class ThemeDetailChatManager {
 
   setThreadId(threadId: string): void {
     this.threadId = threadId;
-    
     socketClient.subscribeToThread(threadId);
   }
 
@@ -141,7 +138,6 @@ export class ThemeDetailChatManager {
     }
 
     socketClient.unsubscribeFromTheme(this.themeId);
-    
     if (this.threadId) {
       socketClient.unsubscribeFromThread(this.threadId);
     }
