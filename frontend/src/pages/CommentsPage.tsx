@@ -14,7 +14,6 @@ const CommentsPage = () => {
   const { questionDetail, isLoading, error } = useMockData
     ? { questionDetail: null, isLoading: false, error: null }
     : useQuestionDetail(themeId || "", qId || "");
-    
   const mockQuestionData = {
     question: {
       _id: qId,
@@ -101,8 +100,9 @@ const CommentsPage = () => {
   }
 
   if (useMockData || questionDetail) {
-    const currentQuestionDetail = useMockData ? mockQuestionData : questionDetail;
-    
+    const currentQuestionDetail = useMockData
+      ? mockQuestionData
+      : questionDetail;
     const breadcrumbItems = [
       { label: "TOP", href: "/" },
       { label: "テーマ一覧", href: "/themes" },
