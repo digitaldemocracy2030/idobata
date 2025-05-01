@@ -5,6 +5,7 @@ import type {
   CreateUserPayload,
   LoginCredentials,
   LoginResponse,
+  Question,
   SiteConfig,
   Theme,
   UpdateSiteConfigPayload,
@@ -152,6 +153,16 @@ export class ApiClient {
     return this.request<SiteConfig>("/site-config", {
       method: "PUT",
       body: JSON.stringify(config),
+    });
+  }
+
+  async getQuestionsByTheme(themeId: string): Promise<ApiResult<Question[]>> {
+    return this.request<Question[]>(`/themes/${themeId}/questions`);
+  }
+
+  async generateQuestions(themeId: string): Promise<ApiResult<void>> {
+    return this.request<void>(`/themes/${themeId}/generate-questions`, {
+      method: "POST",
     });
   }
 }
