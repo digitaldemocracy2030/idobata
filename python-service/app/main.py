@@ -169,10 +169,12 @@ async def cluster_vectors(request: ClusteringRequest):
     
     where_filter["$and"].append({"itemType": request.filter.itemType})
     
+    dummy_vector = [0.0] * 768  # Standard dimension for text-embedding-004
     results = collection.query(
-        query_embeddings=None,  # No query vector means get all
+        query_embeddings=[dummy_vector],
         where=where_filter,
-        include=["embeddings", "metadatas"]
+        include=["embeddings", "metadatas"],
+        n_results=1000  # Set a high number to get all results
     )
     
     if not results["ids"]:
