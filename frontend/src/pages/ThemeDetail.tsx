@@ -7,7 +7,11 @@ const ThemeDetail = () => {
   const location = useLocation();
   const useMockData = location.search.includes("mock=true");
 
-  const { themeDetail: apiThemeDetail, isLoading: apiIsLoading, error: apiError } = useThemeDetail(themeId || "");
+  const {
+    themeDetail: apiThemeDetail,
+    isLoading: apiIsLoading,
+    error: apiError,
+  } = useThemeDetail(themeId || "");
   
   // モックデータを使用する場合は、APIデータの代わりにモックデータを使用
   const themeDetail = useMockData ? null : apiThemeDetail;

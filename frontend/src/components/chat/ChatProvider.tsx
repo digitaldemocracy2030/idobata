@@ -1,7 +1,7 @@
 import type React from "react";
 import { createContext, useCallback, useContext, useState } from "react";
 import type { Message, MessageType } from "../../types";
-import { UserMessage, SystemMessage, SystemNotification } from "../../types";
+import { SystemMessage, SystemNotification, UserMessage } from "../../types";
 
 interface ChatContextType {
   messages: Message[];
@@ -21,7 +21,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addMessage = useCallback((content: string, type: MessageType) => {
     let newMessage: Message;
-    
+
     switch (type) {
       case "user":
         newMessage = new UserMessage(content);
@@ -37,17 +37,17 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     setMessages((prev) =>
-      [...prev, newMessage].sort(
-        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
-      )
-    );
+        [...prev, newMessage].sort(
+          (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+        )
+      );
   }, []);
 
   const startStreamingMessage = useCallback(
     (content: string, type: MessageType) => {
       const id = Date.now().toString();
       let newMessage: Message;
-      
+
       switch (type) {
         case "user":
           newMessage = new UserMessage(content, new Date(), true, id);
@@ -63,10 +63,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       setMessages((prev) =>
-      [...prev, newMessage].sort(
-        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
-      )
-    );
+        [...prev, newMessage].sort(
+          (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+        )
+      );
       return id;
     },
     []
