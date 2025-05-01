@@ -88,7 +88,10 @@ const generateThemeEmbeddings = async (req, res) => {
       processedCount: items.length,
     });
   } catch (error) {
-    console.error(`Error generating embeddings for theme ${themeId}:`, error);
+    console.error(
+      `Error generating embeddings for theme ${themeId}:`,
+      error
+    );
     return res.status(500).json({
       message: "Error generating embeddings",
       error: error.message,
@@ -193,7 +196,10 @@ const generateQuestionEmbeddings = async (req, res) => {
       processedCount: items.length,
     });
   } catch (error) {
-    console.error(`Error generating embeddings for question ${questionId}:`, error);
+    console.error(
+      `Error generating embeddings for question ${questionId}:`,
+      error
+    );
     return res.status(500).json({
       message: "Error generating embeddings",
       error: error.message,
@@ -242,22 +248,27 @@ const searchTheme = async (req, res) => {
       items = await Solution.find({ _id: { $in: ids } }).lean();
     }
 
-    const resultsWithDetails = searchResult.results.map((result) => {
-      const item = items.find((i) => i._id.toString() === result.id);
-      if (!item) return null;
+    const resultsWithDetails = searchResult.results
+      .map((result) => {
+        const item = items.find((i) => i._id.toString() === result.id);
+        if (!item) return null;
 
-      return {
-        id: result.id,
-        text: item.statement,
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,
-        similarity: result.similarity,
-      };
-    }).filter(Boolean);
+        return {
+          id: result.id,
+          text: item.statement,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
+          similarity: result.similarity,
+        };
+      })
+      .filter(Boolean);
 
     return res.status(200).json(resultsWithDetails);
   } catch (error) {
-    console.error(`Error searching theme ${themeId}:`, error);
+    console.error(
+      `Error searching theme ${themeId}:`,
+      error
+    );
     return res.status(500).json({
       message: "Error searching",
       error: error.message,
@@ -315,22 +326,27 @@ const searchQuestion = async (req, res) => {
       items = await Solution.find({ _id: { $in: ids } }).lean();
     }
 
-    const resultsWithDetails = searchResult.results.map((result) => {
-      const item = items.find((i) => i._id.toString() === result.id);
-      if (!item) return null;
+    const resultsWithDetails = searchResult.results
+      .map((result) => {
+        const item = items.find((i) => i._id.toString() === result.id);
+        if (!item) return null;
 
-      return {
-        id: result.id,
-        text: item.statement,
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,
-        similarity: result.similarity,
-      };
-    }).filter(Boolean);
+        return {
+          id: result.id,
+          text: item.statement,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
+          similarity: result.similarity,
+        };
+      })
+      .filter(Boolean);
 
     return res.status(200).json(resultsWithDetails);
   } catch (error) {
-    console.error(`Error searching question ${questionId}:`, error);
+    console.error(
+      `Error searching question ${questionId}:`,
+      error
+    );
     return res.status(500).json({
       message: "Error searching",
       error: error.message,
@@ -387,7 +403,10 @@ const clusterTheme = async (req, res) => {
 
     return res.status(200).json(clusterResult);
   } catch (error) {
-    console.error(`Error clustering theme ${themeId}:`, error);
+    console.error(
+      `Error clustering theme ${themeId}:`,
+      error
+    );
     return res.status(500).json({
       message: "Error clustering",
       error: error.message,
@@ -446,7 +465,10 @@ const clusterQuestion = async (req, res) => {
 
     return res.status(200).json(clusterResult);
   } catch (error) {
-    console.error(`Error clustering question ${questionId}:`, error);
+    console.error(
+      `Error clustering question ${questionId}:`,
+      error
+    );
     return res.status(500).json({
       message: "Error clustering",
       error: error.message,
