@@ -1,13 +1,13 @@
 import Problem from "../models/Problem.js";
+import QuestionLink from "../models/QuestionLink.js";
+import SharpQuestion from "../models/SharpQuestion.js";
 import Solution from "../models/Solution.js";
 import Theme from "../models/Theme.js";
-import SharpQuestion from "../models/SharpQuestion.js";
-import QuestionLink from "../models/QuestionLink.js";
 import {
+  clusterVectors,
   generateEmbeddings,
   generateTransientEmbedding,
   searchVectors,
-  clusterVectors,
 } from "../services/embedding/embeddingService.js";
 
 /**
@@ -18,7 +18,7 @@ const generateThemeEmbeddings = async (req, res) => {
   const { itemType } = req.body || {};
 
   try {
-    let query = { themeId, embeddingGenerated: { $ne: true } };
+    const query = { themeId, embeddingGenerated: { $ne: true } };
     if (itemType) {
       if (itemType !== "problem" && itemType !== "solution") {
         return res.status(400).json({
@@ -65,7 +65,6 @@ const generateThemeEmbeddings = async (req, res) => {
     const problemIds = items
       .filter((item) => item.itemType === "problem")
       .map((item) => item.id);
-    
     const solutionIds = items
       .filter((item) => item.itemType === "solution")
       .map((item) => item.id);
@@ -171,7 +170,6 @@ const generateQuestionEmbeddings = async (req, res) => {
     const problemIds = items
       .filter((item) => item.itemType === "problem")
       .map((item) => item.id);
-    
     const solutionIds = items
       .filter((item) => item.itemType === "solution")
       .map((item) => item.id);
@@ -232,7 +230,7 @@ const searchTheme = async (req, res) => {
         questionId: null,
         itemType,
       },
-      parseInt(k)
+      Number.parseInt(k)
     );
 
     const ids = searchResult.results.map((item) => item.id);
@@ -305,7 +303,7 @@ const searchQuestion = async (req, res) => {
         questionId: questionId,
         itemType,
       },
-      parseInt(k)
+      Number.parseInt(k)
     );
 
     const ids = searchResult.results.map((item) => item.id);
