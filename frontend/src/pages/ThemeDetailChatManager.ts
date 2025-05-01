@@ -1,23 +1,31 @@
+import { apiClient } from "../services/api/apiClient";
 import { socketClient } from "../services/socket/socketClient";
 import type { NewExtractionEvent } from "../services/socket/socketClient";
-import { ExtendedMessage, MessageType } from "../types";
+import { 
+  Message,
+  MessageType, 
+  SystemMessage, 
+  SystemNotification, 
+  UserMessage 
+} from "../types";
 
 export interface ThemeDetailChatManagerOptions {
   themeId: string;
   themeName: string;
-  onNewMessage?: (message: ExtendedMessage) => void;
+  onNewMessage?: (message: Message) => void;
   onNewExtraction?: (extraction: NewExtractionEvent) => void;
 }
 
 export class ThemeDetailChatManager {
   private themeId: string;
   private themeName: string;
-  private messages: ExtendedMessage[] = [];
-  private onNewMessage?: (message: ExtendedMessage) => void;
+  private messages: Message[] = [];
+  private onNewMessage?: (message: Message) => void;
   private onNewExtraction?: (extraction: NewExtractionEvent) => void;
   private threadId?: string;
   private unsubscribeNewExtraction?: () => void;
   private unsubscribeExtractionUpdate?: () => void;
+  private userId: string = "user-" + Date.now(); // 仮のユーザーID
 
   constructor(options: ThemeDetailChatManagerOptions) {
     this.themeId = options.themeId;
@@ -29,75 +37,88 @@ export class ThemeDetailChatManager {
   }
 
   private showThemeNotification(): void {
-    const notification: ExtendedMessage = {
-      role: "system",
-      content: `「${this.themeName}」がチャット対象になりました。`,
-      timestamp: new Date(),
-      type: "system-message",
-    };
+    const notification = new SystemNotification(
+      `「${this.themeName}」がチャット対象になりました。`
+    );
     this.messages.push(notification);
     this.onNewMessage?.(notification);
   }
 
-  addMessage(content: string, type: MessageType): void {
-    let newMessage: ExtendedMessage;
-
+  async addMessage(content: string, type: MessageType): Promise<void> {
     switch (type) {
-      case "user":
+      case "user": {
         this.subscribeToExtraction();
-        newMessage = {
-          role: "user",
-          content,
-          timestamp: new Date(),
-          type,
-        };
+        const userMessage = new UserMessage(content);
         
-        this.messages.push(newMessage);
-        this.onNewMessage?.(newMessage);
+        this.messages.push(userMessage);
+        this.onNewMessage?.(userMessage);
         
-        this.addSystemResponse(content);
+        await this.sendMessageToBackend(content);
         return;
-      case "system":
-        newMessage = {
-          role: "system",
-          content,
-          timestamp: new Date(),
-          type,
-        };
+      }
+      case "system": {
+        const systemMessage = new SystemMessage(content);
+        this.messages.push(systemMessage);
+        this.onNewMessage?.(systemMessage);
         break;
-      case "system-message":
-        newMessage = {
-          role: "system",
-          content,
-          timestamp: new Date(),
-          type,
-        };
+      }
+      case "system-message": {
+        const systemNotification = new SystemNotification(content);
+        this.messages.push(systemNotification);
+        this.onNewMessage?.(systemNotification);
         break;
-      default:
-        newMessage = {
-          role: "system",
-          content,
-          timestamp: new Date(),
-          type: "system",
-        };
+      }
+      default: {
+        const defaultMessage = new SystemMessage(content);
+        this.messages.push(defaultMessage);
+        this.onNewMessage?.(defaultMessage);
+      }
     }
-
-    this.messages.push(newMessage);
-    this.onNewMessage?.(newMessage);
   }
   
-  private addSystemResponse(userMessage: string): void {
-    const systemResponse: ExtendedMessage = {
-      role: "system",
-      content: `「${this.themeName}」に関する「${userMessage}」を受け付けました。抽出処理を開始します。`,
-      timestamp: new Date(),
-      type: "system",
-    };
-    
-    setTimeout(() => {
-      this.messages.push(systemResponse);
-      this.onNewMessage?.(systemResponse);
-    }, 500);
+  private async sendMessageToBackend(userMessage: string): Promise<void> {
+    try {
+      const processingMessage = new SystemMessage(
+        `「${this.themeName}」に関する「${userMessage}」を受け付けました。抽出処理を開始します。`
+      );
+      this.messages.push(processingMessage);
+      this.onNewMessage?.(processingMessage);
+      
+      const result = await apiClient.sendMessage(
+        this.userId,
+        userMessage,
+        this.themeId,
+        this.threadId
+      );
+      
+      if (result.isOk()) {
+        const { response, threadId } = result.value;
+        
+        if (threadId && !this.threadId) {
+          this.setThreadId(threadId);
+        }
+        
+        if (response) {
+          const systemResponse = new SystemMessage(response);
+          this.messages.push(systemResponse);
+          this.onNewMessage?.(systemResponse);
+        }
+      } else {
+        const errorMessage = new SystemMessage(
+          "メッセージの送信中にエラーが発生しました。"
+        );
+        this.messages.push(errorMessage);
+        this.onNewMessage?.(errorMessage);
+        console.error("Error sending message:", result.error);
+      }
+    } catch (error) {
+      console.error("Error in sendMessageToBackend:", error);
+      const errorMessage = new SystemMessage(
+        "メッセージの送信中にエラーが発生しました。"
+      );
+      this.messages.push(errorMessage);
+      this.onNewMessage?.(errorMessage);
+    }
   }
 
   private subscribeToExtraction(): void {
@@ -128,12 +149,7 @@ export class ThemeDetailChatManager {
         ? `「${data.statement}」という課題が登録されました。`
         : `「${data.statement}」という解決策が登録されました。`;
 
-    const notification: ExtendedMessage = {
-      role: "system",
-      content: notificationContent,
-      timestamp: new Date(),
-      type: "system-message",
-    };
+    const notification = new SystemNotification(notificationContent);
     this.messages.push(notification);
     this.onNewMessage?.(notification);
     this.onNewExtraction?.(event);
@@ -162,7 +178,7 @@ export class ThemeDetailChatManager {
     }
   }
 
-  getMessages(): ExtendedMessage[] {
+  getMessages(): Message[] {
     return [...this.messages];
   }
 

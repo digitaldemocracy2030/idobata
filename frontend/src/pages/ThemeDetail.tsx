@@ -7,7 +7,8 @@ import {
 import ThemeDetailTemplate from "../components/theme/ThemeDetailTemplate";
 import { useThemeDetail } from "../hooks/useThemeDetail";
 import type { NewExtractionEvent } from "../services/socket/socketClient";
-import type { ExtendedMessage } from "../types";
+import type { Message } from "../types";
+import { SystemMessage, SystemNotification } from "../types";
 import { ThemeDetailChatManager } from "./ThemeDetailChatManager";
 
 const ThemeDetail = () => {
@@ -106,9 +107,13 @@ const ThemeDetail = () => {
     }
   }, [themeId, useMockData, themeDetail?.theme?.title]);
 
-  const handleNewMessage = (message: ExtendedMessage) => {
+  const handleNewMessage = (message: Message) => {
     if (floatingChatRef.current) {
-      floatingChatRef.current.addMessage(message.content, message.type);
+      const messageType = 
+        message instanceof SystemNotification ? "system-message" :
+        message instanceof SystemMessage ? "system" : "user";
+      
+      floatingChatRef.current.addMessage(message.content, messageType);
     }
   };
 
@@ -116,9 +121,9 @@ const ThemeDetail = () => {
     console.log("New extraction received:", extraction);
   };
 
-  const handleSendMessage = (message: string) => {
+  const handleSendMessage = async (message: string) => {
     if (chatManager) {
-      chatManager.addMessage(message, "user");
+      await chatManager.addMessage(message, "user");
     }
   };
 
