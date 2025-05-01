@@ -180,7 +180,7 @@ async def cluster_vectors(request: ClusteringRequest):
     if not results["ids"]:
         return ClusteringResponse(clusters=[])
     
-    embeddings_array = np.array(results["embeddings"])
+    embeddings_array = np.array(results["embeddings"][0])
     
     if request.method == "kmeans":
         n_clusters = request.params.get("n_clusters", 3)
