@@ -293,7 +293,7 @@ const QuestionDetail = () => {
                       key={issue.id}
                       text={issue.text}
                       type="課題点"
-                      relevance={issue.relevance}
+                      relevance={issue.relevance || 0}
                     />
                   ))
               : opinions.solutions
@@ -303,7 +303,7 @@ const QuestionDetail = () => {
                       key={solution.id}
                       text={solution.text}
                       type="解決策"
-                      relevance={solution.relevance}
+                      relevance={solution.relevance || 0}
                     />
                   ))}
           </div>
