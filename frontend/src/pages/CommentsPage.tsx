@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import BreadcrumbView from "../components/common/BreadcrumbView";
 import OpinionCard from "../components/question/OpinionCard";
 import { Button } from "../components/ui/button";
@@ -7,14 +7,80 @@ import { useQuestionDetail } from "../hooks/useQuestionDetail";
 
 const CommentsPage = () => {
   const { themeId, qId } = useParams<{ themeId: string; qId: string }>();
+  const location = useLocation();
+  const useMockData = location.search.includes("mock=true");
   const [activeTab, setActiveTab] = useState<"issues" | "solutions">("issues");
 
-  const { questionDetail, isLoading, error } = useQuestionDetail(
-    themeId || "",
-    qId || ""
-  );
+  const { questionDetail, isLoading, error } = useMockData
+    ? { questionDetail: null, isLoading: false, error: null }
+    : useQuestionDetail(themeId || "", qId || "");
+    
+  const mockQuestionData = {
+    question: {
+      _id: qId,
+      questionText:
+        "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
+      themeId: themeId,
+      voteCount: 42,
+    },
+    relatedProblems: [
+      {
+        _id: "p1",
+        statement: "新卒一括採用の仕組みが、若者のキャリア選択の幅を狭めている",
+        relevanceScore: 0.95,
+      },
+      {
+        _id: "p2",
+        statement: "大学教育と実社会で求められるスキルにギャップがある",
+        relevanceScore: 0.87,
+      },
+      {
+        _id: "p3",
+        statement: "若者の非正規雇用が増加し、将来設計が立てにくい",
+        relevanceScore: 0.82,
+      },
+      {
+        _id: "p4",
+        statement:
+          "キャリア教育が不十分で、自分に合った仕事を見つけられない若者が多い",
+        relevanceScore: 0.78,
+      },
+      {
+        _id: "p5",
+        statement: "地方の若者は都市部に比べて就職機会が限られている",
+        relevanceScore: 0.75,
+      },
+    ],
+    relatedSolutions: [
+      {
+        _id: "s1",
+        statement: "インターンシップ制度の拡充と単位認定の推進",
+        relevanceScore: 0.92,
+      },
+      {
+        _id: "s2",
+        statement: "職業体験プログラムを中高生から段階的に導入する",
+        relevanceScore: 0.88,
+      },
+      {
+        _id: "s3",
+        statement: "若者向けのキャリアカウンセリングサービスの無料提供",
+        relevanceScore: 0.84,
+      },
+      {
+        _id: "s4",
+        statement: "リモートワークの推進による地方在住若者の就業機会拡大",
+        relevanceScore: 0.79,
+      },
+      {
+        _id: "s5",
+        statement: "若者の起業支援と失敗しても再チャレンジできる制度の整備",
+        relevanceScore: 0.76,
+      },
+    ],
+  };
 
-  if (isLoading) {
+  if (!useMockData && isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center py-8">
@@ -24,7 +90,7 @@ const CommentsPage = () => {
     );
   }
 
-  if (error) {
+  if (!useMockData && error) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -34,31 +100,33 @@ const CommentsPage = () => {
     );
   }
 
-  if (questionDetail) {
+  if (useMockData || questionDetail) {
+    const currentQuestionDetail = useMockData ? mockQuestionData : questionDetail;
+    
     const breadcrumbItems = [
       { label: "TOP", href: "/" },
       { label: "テーマ一覧", href: "/themes" },
       {
         label: "テーマ詳細",
-        href: `/themes/${themeId}`,
+        href: `/themes/${themeId}${useMockData ? "?mock=true" : ""}`,
       },
       {
-        label: questionDetail.question.questionText,
-        href: `/themes/${themeId}/questions/${qId}`,
+        label: currentQuestionDetail.question.questionText,
+        href: `/themes/${themeId}/questions/${qId}${useMockData ? "?mock=true" : ""}`,
       },
       {
         label: "コメント一覧",
-        href: `/themes/${themeId}/questions/${qId}/comments`,
+        href: `/themes/${themeId}/questions/${qId}/comments${useMockData ? "?mock=true" : ""}`,
       },
     ];
 
     const opinions = {
-      issues: questionDetail.relatedProblems.map((p) => ({
+      issues: currentQuestionDetail.relatedProblems.map((p) => ({
         id: p._id,
         text: p.statement,
         relevance: Math.round(p.relevanceScore * 100) || 0,
       })),
-      solutions: questionDetail.relatedSolutions.map((s) => ({
+      solutions: currentQuestionDetail.relatedSolutions.map((s) => ({
         id: s._id,
         text: s.statement,
         relevance: Math.round(s.relevanceScore * 100) || 0,
