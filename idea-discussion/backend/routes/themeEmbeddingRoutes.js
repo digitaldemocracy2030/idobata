@@ -1,8 +1,8 @@
 import express from "express";
 import {
+  clusterTheme,
   generateThemeEmbeddings,
   searchTheme,
-  clusterTheme,
 } from "../controllers/embeddingController.js";
 
 const router = express.Router({ mergeParams: true });
