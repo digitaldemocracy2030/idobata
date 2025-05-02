@@ -95,8 +95,10 @@ const Header = () => {
 
         {/* マイページアイコン（右） */}
         <Link to="/mypage">
-          <Button variant="ghost" size="icon">
-            <User className="h-6 w-6" />
+          <Button variant="ghost" size="icon" className="relative">
+            <div className="rounded-full border-2 border-black flex items-center justify-center w-6 h-6">
+              <User className="h-6 w-6" />
+            </div>
           </Button>
         </Link>
       </div>
