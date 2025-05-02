@@ -20,6 +20,11 @@ const sharpQuestionSchema = new mongoose.Schema(
       ref: "Theme",
       required: true,
     },
+    clusteringResults: {
+      type: Map,
+      of: Object,
+      default: {},
+    },
   },
   { timestamps: true }
 ); // createdAt, updatedAt を自動追加 (todo.md指示)

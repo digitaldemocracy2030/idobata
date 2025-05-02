@@ -52,9 +52,11 @@ app.get("/api/health", (req, res) => {
 });
 
 import authRoutes from "./routes/authRoutes.js"; // 追加: 認証ルート
+import questionEmbeddingRoutes from "./routes/questionEmbeddingRoutes.js";
 import siteConfigRoutes from "./routes/siteConfigRoutes.js";
 import themeChatRoutes from "./routes/themeChatRoutes.js";
 import themeDigestRoutes from "./routes/themeDigestRoutes.js";
+import themeEmbeddingRoutes from "./routes/themeEmbeddingRoutes.js";
 import themeGenerateQuestionsRoutes from "./routes/themeGenerateQuestionsRoutes.js";
 import themeImportRoutes from "./routes/themeImportRoutes.js";
 import themePolicyRoutes from "./routes/themePolicyRoutes.js";
@@ -62,6 +64,7 @@ import themeProblemRoutes from "./routes/themeProblemRoutes.js";
 // Import theme-based routes
 import themeQuestionRoutes from "./routes/themeQuestionRoutes.js";
 import themeSolutionRoutes from "./routes/themeSolutionRoutes.js";
+import userRoutes from "./routes/userRoutes.js"; // Import user routes
 
 // Theme management routes
 app.use("/api/themes", themeRoutes);
@@ -79,8 +82,11 @@ app.use("/api/themes/:themeId/policy-drafts", themePolicyRoutes);
 app.use("/api/themes/:themeId/digest-drafts", themeDigestRoutes);
 app.use("/api/themes/:themeId/import", themeImportRoutes);
 app.use("/api/themes/:themeId/chat", themeChatRoutes);
+app.use("/api/themes/:themeId", themeEmbeddingRoutes);
+app.use("/api/questions/:questionId", questionEmbeddingRoutes);
 
 app.use("/api/site-config", siteConfigRoutes);
+app.use("/api/users", userRoutes);
 
 // --- Serve static files in production ---
 // This section will be useful when deploying to production
