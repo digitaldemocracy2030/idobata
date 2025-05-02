@@ -83,6 +83,7 @@ export const uploadProfileImage = async (req, res) => {
   try {
     const { userId } = req.params;
     const file = req.file;
+    console.log("Upload request:", { params: req.params, file: req.file, body: req.body });
 
     if (!file) {
       return res.status(400).json({
