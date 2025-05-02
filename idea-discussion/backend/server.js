@@ -1,9 +1,9 @@
+import { createServer } from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
-import { createServer } from "http";
 import { Server } from "socket.io";
 import themeRoutes from "./routes/themeRoutes.js"; // Import theme routes
 import { callLLM } from "./services/llmService.js"; // Import LLM service
@@ -38,8 +38,8 @@ const io = new Server(httpServer, {
       ? process.env.IDEA_CORS_ORIGIN.split(",")
       : ["http://localhost:5173", "http://localhost:5175"],
     methods: ["GET", "POST"],
-    credentials: true
-  }
+    credentials: true,
+  },
 });
 const PORT = process.env.PORT || 3000; // Use port from env or default to 3000
 

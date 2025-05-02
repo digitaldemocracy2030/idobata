@@ -325,11 +325,21 @@ async function processExtraction(job) {
         if (savedItem) {
           if (item.type === "problem") {
             addedProblemIds.push(savedItem._id);
-            emitNewExtraction(thread.themeId, sourceOriginId, "problem", savedItem);
+            emitNewExtraction(
+              thread.themeId,
+              sourceOriginId,
+              "problem",
+              savedItem
+            );
           }
           if (item.type === "solution") {
             addedSolutionIds.push(savedItem._id);
-            emitNewExtraction(thread.themeId, sourceOriginId, "solution", savedItem);
+            emitNewExtraction(
+              thread.themeId,
+              sourceOriginId,
+              "solution",
+              savedItem
+            );
           }
         }
       }
@@ -474,11 +484,21 @@ async function processExtraction(job) {
         if (savedItem) {
           if (item.type === "problem") {
             addedProblemIds.push(savedItem._id);
-            emitNewExtraction(importItem.themeId, sourceOriginId, "problem", savedItem);
+            emitNewExtraction(
+              importItem.themeId,
+              sourceOriginId,
+              "problem",
+              savedItem
+            );
           }
           if (item.type === "solution") {
             addedSolutionIds.push(savedItem._id);
-            emitNewExtraction(importItem.themeId, sourceOriginId, "solution", savedItem);
+            emitNewExtraction(
+              importItem.themeId,
+              sourceOriginId,
+              "solution",
+              savedItem
+            );
           }
         }
       }
