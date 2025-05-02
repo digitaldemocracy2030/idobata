@@ -54,11 +54,11 @@ export default class LocalStorageService extends StorageServiceInterface {
    */
   getFileUrl(filePath) {
     if (!filePath) return null;
-    
+
     const relativePath = path.relative(process.cwd(), filePath);
-    
-    const urlPath = relativePath.split(path.sep).join('/');
-    
+
+    const urlPath = relativePath.split(path.sep).join("/");
+
     return `${this.baseUrl}/${urlPath}`;
   }
 }

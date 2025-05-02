@@ -32,6 +32,7 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",

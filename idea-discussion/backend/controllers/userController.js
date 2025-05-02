@@ -1,6 +1,6 @@
+import path from "node:path";
 import User from "../models/User.js";
 import { createStorageService } from "../services/storage/storageServiceFactory.js";
-import path from "path";
 
 const storageService = createStorageService("local", {
   baseUrl: process.env.API_BASE_URL || "http://localhost:3001",
@@ -24,8 +24,9 @@ export const getUserInfo = async (req, res) => {
 
     return res.status(200).json({
       displayName: user.displayName,
-      profileImagePath: user.profileImagePath ? 
-        storageService.getFileUrl(user.profileImagePath) : null,
+      profileImagePath: user.profileImagePath
+        ? storageService.getFileUrl(user.profileImagePath)
+        : null,
     });
   } catch (error) {
     console.error("Error getting user info:", error);
@@ -101,7 +102,7 @@ export const uploadProfileImage = async (req, res) => {
 
     const uploadDir = path.join(process.cwd(), "uploads/profile-images");
     const filePath = await storageService.saveFile(file, uploadDir);
-    
+
     user.profileImagePath = filePath;
     await user.save();
 
