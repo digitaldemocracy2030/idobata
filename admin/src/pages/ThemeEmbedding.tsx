@@ -8,7 +8,10 @@ const ThemeEmbedding: FC = () => {
   const { themeId } = useParams<{ themeId: string }>();
   const [itemType, setItemType] = useState<"problem" | "solution" | "">("");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<{ status: string; processedCount: number } | null>(null);
+  const [result, setResult] = useState<{
+    status: string;
+    processedCount: number;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -17,7 +20,7 @@ const ThemeEmbedding: FC = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
+
     if (!themeId) {
       setError("テーマIDが見つかりません。");
       return;
@@ -28,7 +31,7 @@ const ThemeEmbedding: FC = () => {
     setResult(null);
 
     const result = await apiClient.generateThemeEmbeddings(
-      themeId, 
+      themeId,
       itemType || undefined
     );
 
@@ -48,16 +51,20 @@ const ThemeEmbedding: FC = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">埋め込み生成</h1>
-      
+
       <div className="bg-blue-50 p-4 rounded mb-6">
         <p className="text-sm">
-          注: ベクトル検索やクラスタリングを使用する前に、アイテムの埋め込みを生成する必要があります。
+          注:
+          ベクトル検索やクラスタリングを使用する前に、アイテムの埋め込みを生成する必要があります。
         </p>
       </div>
-      
+
       <form onSubmit={handleSubmit} className="max-w-2xl mb-8">
         <div className="mb-4">
-          <label htmlFor="itemType" className="block text-gray-700 font-medium mb-2">
+          <label
+            htmlFor="itemType"
+            className="block text-gray-700 font-medium mb-2"
+          >
             アイテムタイプ（オプション）
           </label>
           <select

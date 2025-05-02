@@ -4,7 +4,10 @@ import { useParams } from "react-router-dom";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import { apiClient } from "../services/api/apiClient";
-import type { VectorSearchParams, VectorSearchResult } from "../services/api/types";
+import type {
+  VectorSearchParams,
+  VectorSearchResult,
+} from "../services/api/types";
 
 const ThemeVectorSearch: FC = () => {
   const { themeId } = useParams<{ themeId: string }>();
@@ -17,18 +20,20 @@ const ThemeVectorSearch: FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    
+
     setSearchParams((prev) => ({
       ...prev,
-      [name]: name === "k" ? parseInt(value, 10) : value,
+      [name]: name === "k" ? Number.parseInt(value, 10) : value,
     }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
+
     if (!themeId) {
       setError("テーマIDが見つかりません。");
       return;
@@ -64,7 +69,7 @@ const ThemeVectorSearch: FC = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">ベクトル検索</h1>
-      
+
       <form onSubmit={handleSubmit} className="max-w-2xl mb-8">
         <Input
           label="検索テキスト"
@@ -76,7 +81,10 @@ const ThemeVectorSearch: FC = () => {
         />
 
         <div className="mb-4">
-          <label htmlFor="itemType" className="block text-gray-700 font-medium mb-2">
+          <label
+            htmlFor="itemType"
+            className="block text-gray-700 font-medium mb-2"
+          >
             アイテムタイプ
           </label>
           <select
@@ -118,7 +126,9 @@ const ThemeVectorSearch: FC = () => {
 
       {results.length > 0 && (
         <div>
-          <h2 className="text-xl font-bold mb-4">検索結果 ({results.length}件)</h2>
+          <h2 className="text-xl font-bold mb-4">
+            検索結果 ({results.length}件)
+          </h2>
           <div className="bg-white rounded-lg shadow overflow-hidden">
             {results.map((result) => (
               <div key={result.id} className="p-4 border-b last:border-b-0">

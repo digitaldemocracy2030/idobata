@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import type { FC } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ThemeForm from "../components/theme/ThemeForm";
 import { apiClient } from "../services/api/apiClient";
 import type { Theme } from "../services/api/types";
@@ -58,13 +58,28 @@ const ThemeEdit: FC = () => {
     <div>
       <h1 className="text-2xl font-bold mb-6">テーマ編集: {theme.title}</h1>
       <ThemeForm theme={theme} isEdit />
-      
+
       <div className="mt-8 border-t pt-6">
         <h2 className="text-xl font-bold mb-4">埋め込み機能</h2>
         <div className="flex space-x-4">
-          <Link to={`/themes/${theme._id}/embeddings`} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">埋め込み生成</Link>
-          <Link to={`/themes/${theme._id}/vector-search`} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">ベクトル検索</Link>
-          <Link to={`/themes/${theme._id}/clustering`} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">クラスタリング</Link>
+          <Link
+            to={`/themes/${theme._id}/embeddings`}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            埋め込み生成
+          </Link>
+          <Link
+            to={`/themes/${theme._id}/vector-search`}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            ベクトル検索
+          </Link>
+          <Link
+            to={`/themes/${theme._id}/clustering`}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            クラスタリング
+          </Link>
         </div>
       </div>
     </div>
