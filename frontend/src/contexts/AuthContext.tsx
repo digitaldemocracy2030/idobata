@@ -29,7 +29,11 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<User>({ id: "", displayName: null, profileImageUrl: null });
+  const [user, setUser] = useState<User>({
+    id: "",
+    displayName: null,
+    profileImageUrl: null,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -96,7 +100,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <AuthContext.Provider value={{ user, setDisplayName, uploadProfileImage, loading, error }}>
+    <AuthContext.Provider
+      value={{ user, setDisplayName, uploadProfileImage, loading, error }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -2,7 +2,8 @@ import React, { useState, useRef } from "react";
 import { useAuth } from "../contexts/AuthContext";
 
 const MyPage: React.FC = () => {
-  const { user, setDisplayName, uploadProfileImage, loading, error } = useAuth();
+  const { user, setDisplayName, uploadProfileImage, loading, error } =
+    useAuth();
   const [newDisplayName, setNewDisplayName] = useState(user.displayName || "");
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -28,16 +29,18 @@ const MyPage: React.FC = () => {
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
-    
+
     const file = e.target.files[0];
     setIsUploading(true);
     setSaveError(null);
-    
+
     const success = await uploadProfileImage(file);
     if (!success) {
-      setSaveError("画像のアップロードに失敗しました。もう一度お試しください。");
+      setSaveError(
+        "画像のアップロードに失敗しました。もう一度お試しください。"
+      );
     }
-    
+
     setIsUploading(false);
   };
 
@@ -51,23 +54,36 @@ const MyPage: React.FC = () => {
 
       <div className="bg-white shadow rounded-lg p-6 mb-6">
         <h2 className="text-xl font-semibold mb-4">ユーザー情報</h2>
-        
+
         {/* プロフィール画像セクション */}
         <div className="mb-6">
           <p className="text-gray-600 mb-2">プロフィール画像:</p>
           <div className="flex items-center space-x-4">
             <div className="w-24 h-24 bg-gray-100 rounded-full overflow-hidden border">
               {user.profileImageUrl ? (
-                <img 
-                  src={user.profileImageUrl} 
-                  alt="プロフィール" 
+                <img
+                  src={user.profileImageUrl}
+                  alt="プロフィール"
                   className="w-full h-full object-cover"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12" role="img" aria-label="ユーザーアイコン">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-12 h-12"
+                    role="img"
+                    aria-label="ユーザーアイコン"
+                  >
                     <title>ユーザーアイコン</title>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                    />
                   </svg>
                 </div>
               )}
@@ -91,7 +107,7 @@ const MyPage: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="mb-4">
           <p className="text-gray-600">ユーザーID:</p>
           <p className="font-mono bg-gray-100 p-2 rounded">{user.id}</p>

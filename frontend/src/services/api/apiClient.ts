@@ -304,9 +304,14 @@ export class ApiClient {
 
   async getUserInfo(
     userId: string
-  ): Promise<HttpResult<{ displayName: string | null, profileImagePath: string | null }>> {
+  ): Promise<
+    HttpResult<{ displayName: string | null; profileImagePath: string | null }>
+  > {
     return this.withRetry(() =>
-      this.httpClient.get<{ displayName: string | null, profileImagePath: string | null }>(`/users/${userId}`)
+      this.httpClient.get<{
+        displayName: string | null;
+        profileImagePath: string | null;
+      }>(`/users/${userId}`)
     );
   }
 
