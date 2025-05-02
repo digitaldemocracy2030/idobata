@@ -57,7 +57,6 @@ const Top = () => {
 
       <div className="flex flex-col gap-16">
         <HeroSection />
-        
         <Section
           title="人気の重要論点"
           description="いま最も注目が集まっている論点はこちらです。中身を見てみましょう。"
