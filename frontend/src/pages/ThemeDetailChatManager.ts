@@ -134,19 +134,27 @@ export class ThemeDetailChatManager {
     }
 
     if (this.unsubscribeNewExtraction) {
-      console.log("[ThemeDetailChatManager] Unsubscribing from previous new-extraction");
+      console.log(
+        "[ThemeDetailChatManager] Unsubscribing from previous new-extraction"
+      );
       this.unsubscribeNewExtraction();
     }
     if (this.unsubscribeExtractionUpdate) {
-      console.log("[ThemeDetailChatManager] Unsubscribing from previous extraction-update");
+      console.log(
+        "[ThemeDetailChatManager] Unsubscribing from previous extraction-update"
+      );
       this.unsubscribeExtractionUpdate();
     }
 
-    console.log("[ThemeDetailChatManager] Registering new-extraction handler");
+    console.log(
+      "[ThemeDetailChatManager] Registering new-extraction handler"
+    );
     this.unsubscribeNewExtraction = socketClient.onNewExtraction(
       this.handleNewExtraction.bind(this)
     );
-    console.log("[ThemeDetailChatManager] Registering extraction-update handler");
+    console.log(
+      "[ThemeDetailChatManager] Registering extraction-update handler"
+    );
     this.unsubscribeExtractionUpdate = socketClient.onExtractionUpdate(
       this.handleExtractionUpdate.bind(this)
     );
@@ -168,10 +176,10 @@ export class ThemeDetailChatManager {
     );
     const notification = new SystemNotification(notificationContent);
     this.messages.push(notification);
-    
+
     console.log("[ThemeDetailChatManager] Calling onNewMessage callback");
     this.onNewMessage?.(notification);
-    
+
     console.log("[ThemeDetailChatManager] Calling onNewExtraction callback");
     this.onNewExtraction?.(event);
   }
