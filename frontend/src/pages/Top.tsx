@@ -1,9 +1,9 @@
 import BreadcrumbView from "../components/common/BreadcrumbView";
 import DiscussionCard from "../components/home/DiscussionCard";
 import HeroSection from "../components/home/HeroSection";
-import SectionTitle from "../components/home/SectionTitle";
 import SeeMoreButton from "../components/home/SeeMoreButton";
 import ThemeCard from "../components/home/ThemeCard";
+import { Section } from "../components/ui/section";
 
 const Top = () => {
   const discussionData = [
@@ -57,11 +57,11 @@ const Top = () => {
 
       <div className="flex flex-col gap-16">
         <HeroSection />
-        <section className="mb-6 bg-[#EADFFF] rounded-3xl px-4 py-8">
-          <SectionTitle title="人気の重要論点" />
-          <p className="text-xs text-neutral-600 mb-3">
-            いま最も注目が集まっている論点はこちらです。中身を見てみましょう。
-          </p>
+        <Section
+          title="人気の重要論点"
+          description="いま最も注目が集まっている論点はこちらです。中身を見てみましょう。"
+          className="mb-6 bg-[#EADFFF] rounded-3xl"
+        >
           <div className="space-y-4">
             {discussionData.map((item) => (
               <DiscussionCard
@@ -76,13 +76,13 @@ const Top = () => {
           <div className="flex justify-start">
             <SeeMoreButton to="/" />
           </div>
-        </section>
+        </Section>
 
-        <section className="mb-6 bg-[#EADFFF] rounded-3xl px-4 py-8">
-          <SectionTitle title="意見募集中テーマ" />
-          <p className="text-xs text-neutral-600 mb-3">
-            今募集されているテーマはこちらです。気軽にご意見を教えてください！
-          </p>
+        <Section
+          title="意見募集中テーマ"
+          description="今募集されているテーマはこちらです。気軽にご意見を教えてください！"
+          className="mb-6 bg-[#EADFFF] rounded-3xl"
+        >
           <div className="space-y-4">
             {themeData.map((item) => (
               <ThemeCard
@@ -97,7 +97,7 @@ const Top = () => {
           <div className="flex justify-start">
             <SeeMoreButton to="/" />
           </div>
-        </section>
+        </Section>
       </div>
     </div>
   );
