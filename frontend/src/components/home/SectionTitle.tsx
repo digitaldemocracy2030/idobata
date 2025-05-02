@@ -4,8 +4,9 @@ interface SectionTitleProps {
 
 const SectionTitle = ({ title }: SectionTitleProps) => {
   return (
-    <div className="flex items-center py-3 border-l-4 border-purple-500 pl-2 mb-2">
-      <h2 className="text-lg font-bold text-neutral-900">{title}</h2>
+    <div className="flex items-center py-2 mb-3">
+      <div className="w-1 h-6 bg-purple-500 rounded-full mr-2" />
+      <h2 className="text-xl font-bold text-neutral-900 font-biz">{title}</h2>
     </div>
   );
 };

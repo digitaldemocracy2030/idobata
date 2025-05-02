@@ -14,7 +14,7 @@ const Header = () => {
   const { themes, isLoading, error } = useThemes();
   const { siteConfig } = useSiteConfig();
   return (
-    <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b border-purple-200 py-3 px-4">
+    <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b-2 border-[#9256F9] py-3 px-4">
       <div className="flex justify-between items-center">
         {/* ハンバーガーメニュー（左） */}
         <NavigationSheet>
@@ -95,8 +95,10 @@ const Header = () => {
 
         {/* マイページアイコン（右） */}
         <Link to="/mypage">
-          <Button variant="ghost" size="icon">
-            <User className="h-6 w-6" />
+          <Button variant="ghost" size="icon" className="relative">
+            <div className="rounded-full border-2 border-black flex items-center justify-center w-6 h-6">
+              <User className="h-6 w-6" />
+            </div>
           </Button>
         </Link>
       </div>
