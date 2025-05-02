@@ -33,7 +33,7 @@ describe("Socket.IO Server Tests", () => {
   beforeAll((done) => {
     app = express();
     httpServer = createServer(app);
-    
+
     io = new Server(httpServer, {
       cors: {
         origin: "*",
@@ -60,7 +60,9 @@ describe("Socket.IO Server Tests", () => {
       });
 
       socket.on("unsubscribe-thread", (threadId) => {
-        console.log(`Socket ${socket.id} unsubscribing from thread: ${threadId}`);
+        console.log(
+          `Socket ${socket.id} unsubscribing from thread: ${threadId}`
+        );
         socket.leave(`thread:${threadId}`);
       });
 
@@ -95,11 +97,11 @@ describe("Socket.IO Server Tests", () => {
 
   test("Client should be able to subscribe to a theme", (done) => {
     const themeId = "test-theme-id";
-    
+
     const joinSpy = jest.spyOn(io.sockets.adapter.rooms, "get");
-    
+
     clientSocket.emit("subscribe-theme", themeId);
-    
+
     setTimeout(() => {
       const roomName = `theme:${themeId}`;
       expect(joinSpy).toHaveBeenCalled();
@@ -110,11 +112,11 @@ describe("Socket.IO Server Tests", () => {
 
   test("Client should be able to subscribe to a thread", (done) => {
     const threadId = "test-thread-id";
-    
+
     const joinSpy = jest.spyOn(io.sockets.adapter.rooms, "get");
-    
+
     clientSocket.emit("subscribe-thread", threadId);
-    
+
     setTimeout(() => {
       const roomName = `thread:${threadId}`;
       expect(joinSpy).toHaveBeenCalled();
@@ -132,14 +134,14 @@ describe("Socket.IO Server Tests", () => {
         description: "テスト課題の説明",
       },
     };
-    
+
     clientSocket.emit("subscribe-theme", themeId);
-    
+
     clientSocket.on("new-extraction", (data) => {
       expect(data).toEqual(extractionData);
       done();
     });
-    
+
     setTimeout(() => {
       io.to(`theme:${themeId}`).emit("new-extraction", extractionData);
     }, 100);
@@ -154,14 +156,14 @@ describe("Socket.IO Server Tests", () => {
         description: "テスト解決策の説明",
       },
     };
-    
+
     clientSocket.emit("subscribe-theme", themeId);
-    
+
     clientSocket.on("extraction-update", (data) => {
       expect(data).toEqual(updateData);
       done();
     });
-    
+
     setTimeout(() => {
       io.to(`theme:${themeId}`).emit("extraction-update", updateData);
     }, 100);
@@ -170,12 +172,12 @@ describe("Socket.IO Server Tests", () => {
   test("Client should be able to unsubscribe from a theme", (done) => {
     const themeId = "test-theme-id";
     const roomName = `theme:${themeId}`;
-    
+
     clientSocket.emit("subscribe-theme", themeId);
-    
+
     setTimeout(() => {
       clientSocket.emit("unsubscribe-theme", themeId);
-      
+
       setTimeout(() => {
         const room = io.sockets.adapter.rooms.get(roomName);
         expect(room?.has(clientSocket.id)).toBe(false);
