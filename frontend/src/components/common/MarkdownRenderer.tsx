@@ -9,11 +9,14 @@ interface MarkdownRendererProps {
   className?: string;
 }
 
-export function MarkdownRenderer({ markdown, className }: MarkdownRendererProps) {
+export function MarkdownRenderer({
+  markdown,
+  className,
+}: MarkdownRendererProps) {
   if (!markdown) {
     return null;
   }
-  
+
   return (
     <div className={cn("prose prose-neutral max-w-none", className)}>
       <ReactMarkdown
