@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import SectionHeading from "../components/common/SectionHeading";
 import { useAuth } from "../contexts/AuthContext";
 
 const MyPage: React.FC = () => {
@@ -50,13 +51,11 @@ const MyPage: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">マイページ</h1>
+      <SectionHeading title="マイページ" />
 
-      <div className="bg-white shadow rounded-lg p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">ユーザー情報</h2>
-
+      <div className="flex flex-col gap-8">
         {/* プロフィール画像セクション */}
-        <div className="mb-6">
+        <div className="">
           <p className="text-gray-600 mb-2">プロフィール画像:</p>
           <div className="flex items-center space-x-4">
             <div className="w-24 h-24 bg-gray-100 rounded-full overflow-hidden border">
@@ -88,7 +87,7 @@ const MyPage: React.FC = () => {
                 </div>
               )}
             </div>
-            <div>
+            <div className="flex items-center gap-2">
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/gif"
@@ -100,7 +99,7 @@ const MyPage: React.FC = () => {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded disabled:opacity-50"
+                className="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded disabled:opacity-50"
               >
                 {isUploading ? "アップロード中..." : "画像を変更"}
               </button>
@@ -108,46 +107,34 @@ const MyPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="mb-4">
-          <p className="text-gray-600">ユーザーID:</p>
-          <p className="font-mono bg-gray-100 p-2 rounded">{user.id}</p>
-          <p className="text-sm text-gray-500 mt-1">
-            ※ユーザーIDはリセットできません
-          </p>
-        </div>
-        <div className="mb-6">
-          <p className="text-gray-600">現在の表示名:</p>
-          {user.displayName ? (
-            <p className="font-semibold bg-blue-50 p-2 rounded border border-blue-100">
-              {user.displayName}
-            </p>
-          ) : (
-            <p className="italic text-gray-500 p-2">
-              表示名が設定されていません
-            </p>
-          )}
-        </div>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="displayName" className="block text-gray-600 mb-2">
-              表示名を{user.displayName ? "変更" : "設定"}:
+              表示名（他のユーザーに表示されます）:
             </label>
-            <input
-              type="text"
-              id="displayName"
-              value={newDisplayName}
-              onChange={(e) => setNewDisplayName(e.target.value)}
-              className="w-full border rounded p-2"
-              placeholder="表示名を入力してください"
-              required
-            />
-            <p className="text-sm text-gray-500 mt-1">
-              ※表示名は他のユーザーに表示されます
-            </p>
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                id="displayName"
+                value={newDisplayName}
+                onChange={(e) => setNewDisplayName(e.target.value)}
+                className="w-full border rounded p-2"
+                placeholder="表示名を入力してください"
+                required
+              />
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded disabled:opacity-50 whitespace-nowrap"
+              >
+                {isSaving ? "保存中..." : "保存"}
+              </button>
+            </div>
           </div>
           {saveSuccess && (
             <div className="bg-green-100 text-green-700 p-2 rounded mb-4">
-              表示名を保存しました！
+              保存されました
             </div>
           )}
 
@@ -162,15 +149,14 @@ const MyPage: React.FC = () => {
               {error}
             </div>
           )}
-
-          <button
-            type="submit"
-            disabled={isSaving}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded disabled:opacity-50"
-          >
-            {isSaving ? "保存中..." : "保存"}
-          </button>
         </form>
+        <div className="mb-4">
+          <p className="text-gray-600">ユーザーID（デバッグ用）:</p>
+          <p className="font-mono bg-gray-100 p-2 rounded">{user.id}</p>
+          <p className="text-sm text-gray-500 mt-1">
+            ※ユーザーIDはリセットできません
+          </p>
+        </div>
       </div>
     </div>
   );
