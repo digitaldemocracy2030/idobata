@@ -21,7 +21,7 @@ const DiscussionCard = ({
       <Card className="hover:shadow-md transition-all duration-200">
         <CardContent className="pt-4">
           <CardTitle className="text-base mb-2">{title}</CardTitle>
-          <div className="h-[2px] bg-[#E4E4E7] w-full my-2"></div>
+          <div className="h-[2px] bg-[#E4E4E7] w-full my-2" />
         </CardContent>
         <CardFooter className="flex justify-between items-center pt-0">
           <div className="flex text-xs text-muted-foreground">
@@ -48,7 +48,7 @@ const DiscussionCard = ({
       <Card className="hover:shadow-md transition-all duration-200 hover:border-primary/50">
         <CardContent className="pt-4">
           <CardTitle className="text-base mb-2">{title}</CardTitle>
-          <div className="h-[2px] bg-[#E4E4E7] w-full my-2"></div>
+          <div className="h-[2px] bg-[#E4E4E7] w-full my-2" />
         </CardContent>
         <CardFooter className="flex justify-between items-center pt-0">
           <div className="flex text-xs text-muted-foreground">
