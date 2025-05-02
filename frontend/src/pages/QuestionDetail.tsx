@@ -1,4 +1,3 @@
-import { ChevronRight } from "lucide-react";
 import { useRef, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import {
@@ -7,11 +6,11 @@ import {
 } from "../components/chat/FloatingChat";
 import BreadcrumbView from "../components/common/BreadcrumbView";
 import SectionHeading from "../components/common/SectionHeading";
+import SeeMoreButton from "../components/home/SeeMoreButton";
 import CitizenReportExample from "../components/question/CitizenReportExample";
 import DebateSummary from "../components/question/DebateSummary";
 import KeyQuestionHeader from "../components/question/KeyQuestionHeader";
 import OpinionCard from "../components/question/OpinionCard";
-import { Button } from "../components/ui/button";
 import { useQuestionDetail } from "../hooks/useQuestionDetail";
 
 const QuestionDetail = () => {
@@ -313,18 +312,7 @@ const QuestionDetail = () => {
 
           {((activeTab === "issues" && opinions.issues.length > 3) ||
             (activeTab === "solutions" && opinions.solutions.length > 3)) && (
-            <div className="text-center mt-4">
-              <Link to={`/themes/${themeId}/questions/${qId}/comments`}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-sm text-purple-500 border-purple-300 hover:bg-purple-50 rounded-full px-4 py-1 flex items-center mx-auto"
-                >
-                  もっと見る
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
-              </Link>
-            </div>
+            <SeeMoreButton to={`/themes/${themeId}/questions/${qId}/comments`} />
           )}
         </div>
 
