@@ -1,7 +1,7 @@
 import { Menu, User } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useSiteConfig } from "../../contexts/SiteConfigContext";
 import { useAuth } from "../../contexts/AuthContext";
+import { useSiteConfig } from "../../contexts/SiteConfigContext";
 import { useThemes } from "../../hooks/useThemes";
 import { Button } from "../ui/button";
 import {
@@ -99,10 +99,10 @@ const Header = () => {
         <Link to="/mypage">
           <Button variant="ghost" size="icon" className="relative">
             {user.profileImageUrl ? (
-              <img 
-                src={user.profileImageUrl} 
-                alt="プロフィール画像" 
-                className="rounded-full border-2 border-black w-6 h-6 object-cover"
+              <img
+                src={user.profileImageUrl}
+                alt="プロフィール画像"
+                className="rounded-full w-6 h-6 object-cover"
               />
             ) : (
               <div className="rounded-full border-2 border-black flex items-center justify-center w-6 h-6">
