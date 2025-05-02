@@ -112,7 +112,7 @@ Analyze the relationship and provide the JSON output.`,
     console.log(
       `[LinkingWorker] Finished linking for ${itemType} ID: ${itemId}`
     );
-    
+
     const themeId = item.themeId;
     if (themeId) {
       emitExtractionUpdate(themeId, null, itemType, item);

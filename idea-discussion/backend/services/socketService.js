@@ -11,14 +11,14 @@ export function emitNewExtraction(themeId, threadId, type, data) {
   console.log(
     `[SocketService] Emitting new-extraction event for theme:${themeId}`
   );
-  
+
   const event = {
     type,
     data,
   };
 
   io.to(`theme:${themeId}`).emit("new-extraction", event);
-  
+
   if (threadId) {
     console.log(
       `[SocketService] Emitting new-extraction event for thread:${threadId}`
@@ -38,14 +38,14 @@ export function emitExtractionUpdate(themeId, threadId, type, data) {
   console.log(
     `[SocketService] Emitting extraction-update event for theme:${themeId}`
   );
-  
+
   const event = {
     type,
     data,
   };
 
   io.to(`theme:${themeId}`).emit("extraction-update", event);
-  
+
   if (threadId) {
     console.log(
       `[SocketService] Emitting extraction-update event for thread:${threadId}`
