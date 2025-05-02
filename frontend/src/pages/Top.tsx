@@ -60,7 +60,7 @@ const Top = () => {
         <Section
           title="人気の重要論点"
           description="いま最も注目が集まっている論点はこちらです。中身を見てみましょう。"
-          className="mb-6 bg-secondary rounded-3xl"
+          className="mb-6 bg-[#EADFFF] rounded-3xl"
         >
           <div className="space-y-4">
             {discussionData.map((item) => (
@@ -81,7 +81,7 @@ const Top = () => {
         <Section
           title="意見募集中テーマ"
           description="今募集されているテーマはこちらです。気軽にご意見を教えてください！"
-          className="mb-6 bg-secondary rounded-3xl"
+          className="mb-6 bg-[#EADFFF] rounded-3xl"
         >
           <div className="space-y-4">
             {themeData.map((item) => (
