@@ -4,6 +4,7 @@ import AppLayout from "./components/AppLayout";
 import PageLayout from "./components/layout/PageLayout";
 import { AuthProvider } from "./contexts/AuthContext";
 import About from "./pages/About";
+import CommentsPage from "./pages/CommentsPage";
 import DataPage from "./pages/DataPage";
 import MainPage from "./pages/MainPage";
 import MyPage from "./pages/MyPage";
@@ -74,6 +75,14 @@ export const router = createBrowserRouter([
         element: (
           <PageLayout>
             <QuestionDetail />
+          </PageLayout>
+        ),
+      },
+      {
+        path: "themes/:themeId/questions/:qId/comments",
+        element: (
+          <PageLayout>
+            <CommentsPage />
           </PageLayout>
         ),
       },
