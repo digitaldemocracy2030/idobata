@@ -1,6 +1,6 @@
-import Theme from "../models/Theme.js";
-import SharpQuestion from "../models/SharpQuestion.js";
 import ChatThread from "../models/ChatThread.js";
+import SharpQuestion from "../models/SharpQuestion.js";
+import Theme from "../models/Theme.js";
 
 /**
  * Get latest themes and questions for the top page
