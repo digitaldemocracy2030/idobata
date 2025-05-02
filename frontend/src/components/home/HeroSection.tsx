@@ -2,10 +2,10 @@ import SeeMoreButton from "./SeeMoreButton";
 
 const HeroSection = () => {
   return (
-    <div className="relative bg-white py-6">
+    <div className="relative bg-background py-6">
       <div className="px-4">
         <div className="text-left">
-          <h1 className="text-2xl font-bold text-neutral-900 mb-2">
+          <h1 className="text-2xl font-bold text-foreground mb-2">
             あなたの声から、
             <br />
             政策が動き出す
@@ -20,10 +20,10 @@ const HeroSection = () => {
             />
           </div>
 
-          <p className="text-sm text-neutral-600">
+          <p className="text-sm text-muted-foreground">
             社会をもっと良くするヒントは、あなたの実感にあります。
           </p>
-          <p className="text-sm text-neutral-600 mb-4">
+          <p className="text-sm text-muted-foreground mb-4">
             今、全国で寄せられている声と、動き出した政策案をご覧ください。
           </p>
 
