@@ -4,6 +4,7 @@ module.exports = {
   theme: {
     fontFamily: {
       sans: [
+        '"Inter"',
         '"BIZ UDGothic"',
         "system-ui",
         "-apple-system",
@@ -18,6 +19,7 @@ module.exports = {
     extend: {
       fontFamily: {
         biz: ['"BIZ UDGothic"', "sans-serif"],
+        inter: ['"Inter"', "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
