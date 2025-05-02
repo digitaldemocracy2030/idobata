@@ -318,6 +318,18 @@ export class ApiClient {
       this.httpClient.put<void>(`/users/${userId}`, { displayName })
     );
   }
+
+  async getTopPageData(): Promise<HttpResult<{
+    latestThemes: Theme[];
+    latestQuestions: Question[];
+  }>> {
+    return this.withRetry(() =>
+      this.httpClient.get<{
+        latestThemes: Theme[];
+        latestQuestions: Question[];
+      }>("/top-page-data")
+    );
+  }
 }
 
 export const apiClient = new ApiClient();
