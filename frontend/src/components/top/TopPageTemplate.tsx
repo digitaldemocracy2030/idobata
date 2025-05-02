@@ -4,6 +4,7 @@ import HeroSection from "../../components/home/HeroSection";
 import SeeMoreButton from "../../components/home/SeeMoreButton";
 import ThemeCard from "../../components/home/ThemeCard";
 import { Section } from "../../components/ui/section";
+import { useTheme } from "../../ThemeContext";
 
 export interface TopPageTemplateProps {
   discussions: {
@@ -21,6 +22,7 @@ export interface TopPageTemplateProps {
 }
 
 const TopPageTemplate = ({ discussions, themes }: TopPageTemplateProps) => {
+  const { defaultThemeId } = useTheme();
   const breadcrumbItems = [{ label: "TOP", href: "/" }];
 
   return (
@@ -44,6 +46,7 @@ const TopPageTemplate = ({ discussions, themes }: TopPageTemplateProps) => {
                 title={item.title}
                 problemCount={item.problemCount}
                 solutionCount={item.solutionCount}
+                themeId={defaultThemeId || undefined}
               />
             ))}
           </div>

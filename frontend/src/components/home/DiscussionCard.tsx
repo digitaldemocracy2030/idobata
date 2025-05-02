@@ -7,6 +7,7 @@ interface DiscussionCardProps {
   problemCount: number;
   solutionCount: number;
   id?: number | string;
+  themeId?: string;
 }
 
 const DiscussionCard = ({
@@ -14,6 +15,7 @@ const DiscussionCard = ({
   problemCount,
   solutionCount,
   id,
+  themeId,
 }: DiscussionCardProps) => {
   // If no id is provided, render a non-clickable card
   if (!id) {
@@ -44,7 +46,7 @@ const DiscussionCard = ({
 
   // If id is provided, render a clickable card
   return (
-    <Link to={`/themes/${id}`} className="block">
+    <Link to={`/themes/${themeId}/questions/${id}`} className="block">
       <Card className="hover:shadow-md transition-all duration-200 hover:border-primary/50">
         <CardContent className="pt-4">
           <CardTitle className="text-base mb-2">{title}</CardTitle>
