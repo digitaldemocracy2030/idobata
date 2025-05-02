@@ -44,7 +44,7 @@ export class HttpClient {
     headers?: Record<string, string>
   ): Promise<HttpResult<T>> {
     const formDataHeaders = { ...headers };
-    delete formDataHeaders["Content-Type"]; // Let browser set the correct boundary
+    formDataHeaders["Content-Type"] = undefined; // Let browser set the correct boundary
     return this.requestFormData<T>(endpoint, "POST", formData, formDataHeaders);
   }
 
