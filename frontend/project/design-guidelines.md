@@ -24,6 +24,8 @@
 - **TypeScript**: 型安全な開発環境の提供
 - **React Router**: アプリケーションのルーティング
 - **Tailwind CSS**: ユーティリティファーストのスタイリング
+- **shadcn/ui**: 高品質なUIコンポーネントライブラリ
+- **Lucide**: モダンでシンプルなアイコンライブラリ
 
 ### 開発ツール
 
@@ -109,79 +111,72 @@ src/
   - Regular (400): 通常のテキスト
   - Bold (700): 見出しや強調テキスト
 
-```css
-/* Tailwindでの設定例 */
-fontFamily: {
-  sans: [
-    '"BIZ UDGothic"',
-    "system-ui",
-    "-apple-system",
-    "BlinkMacSystemFont",
-    "Segoe UI",
-    "Roboto",
-    "Helvetica Neue",
-    "Arial",
-    "sans-serif",
-  ],
-  biz: ['"BIZ UDGothic"', "sans-serif"],
-}
-```
-
 ### 色管理の改善案
 
-現状では直接カラーコードを使用している箇所がありますが、以下のようにTailwindの設定で一元管理することを推奨します：
+現状では直接カラーコードを使用している箇所がありますが、shadcnのデフォルトカラーテーマ（紫色）を採用し、Tailwindの設定で一元管理することを推奨します：
 
 ```js
 // tailwind.config.js
 module.exports = {
   theme: {
-    colors: {
-      // ブランドカラー
-      primary: {
-        light: '#EADFFF', // 薄い紫（セクション背景）
-        DEFAULT: '#6B46C1', // 標準の紫
-        dark: '#553C9A', // 濃い紫
+    extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
       },
-      // ニュートラルカラー
-      neutral: {
-        50: '#F9FAFB',
-        100: '#F3F4F6',
-        200: '#E5E7EB',
-        300: '#D1D5DB',
-        400: '#9CA3AF',
-        500: '#6B7280',
-        600: '#4B5563',
-        700: '#374151',
-        800: '#1F2937',
-        900: '#111827',
-      },
-      // 機能カラー
-      success: '#10B981',
-      warning: '#F59E0B',
-      error: '#EF4444',
-      info: '#3B82F6',
     },
   },
 }
 ```
 
-これにより、ハードコードされた色値（例: `bg-[#EADFFF]`）を意味のある名前（例: `bg-primary-light`）に置き換えることができます。
+これにより、ハードコードされた色値（例: `bg-[#EADFFF]`）を意味のある名前（例: `bg-primary`）に置き換えることができます。
 
 ### 色の使用ガイドライン
 
 - **テキスト**:
-  - 本文: neutral-600 (`text-neutral-600`)
-  - 見出し: neutral-900 (`text-neutral-900`)
+  - 本文: foreground (`text-foreground`)
+  - 見出し: foreground (`text-foreground`)
   - リンク: primary (`text-primary`)
 
 - **背景**:
-  - ページ背景: white (`bg-white`)
-  - セクション背景: primary-light (`bg-primary-light`)
-  - カード背景: white (`bg-white`)
+  - ページ背景: background (`bg-background`)
+  - セクション背景: secondary (`bg-secondary`)
+  - カード背景: card (`bg-card`)
 
 - **アクセント**:
   - ボタン: primary (`bg-primary`)
-  - ハイライト: primary-light (`bg-primary-light`)
+  - ハイライト: accent (`bg-accent`)
 
 ## レイアウトとスペーシング
 
@@ -207,143 +202,112 @@ module.exports = {
 ### レイアウトパターン
 
 - **フレックスボックス**を使用して要素を水平・垂直に配置
+  - `flex`: フレックスコンテナを作成
+  - `flex-col`: 縦方向に配置
+  - `flex-row`: 横方向に配置
+  - `gap-{size}`: 要素間のスペース
+
 - **グリッド**を使用して複雑なレイアウトを構築
+  - `grid`: グリッドコンテナを作成
+  - `grid-cols-{n}`: 列数を指定
+  - `md:grid-cols-{n}`: 特定のブレイクポイントでの列数
+
 - **パディング**と**マージン**を一貫して適用
-
-```jsx
-// フレックスボックスの例
-<div className="flex flex-col gap-4">
-  <div>アイテム1</div>
-  <div>アイテム2</div>
-</div>
-
-// グリッドの例
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-  <div>アイテム1</div>
-  <div>アイテム2</div>
-  <div>アイテム3</div>
-</div>
-```
+  - `p-{size}`: パディング
+  - `m-{size}`: マージン
+  - `px-{size}`, `py-{size}`: 水平・垂直方向のパディング
 
 ## UIコンポーネント
 
-### 基本コンポーネント
+### shadcn/uiコンポーネント
 
-以下の基本コンポーネントを作成し、アプリケーション全体で再利用することを推奨します：
+shadcn/uiを活用して、一貫性のあるUIコンポーネントを構築します。以下は主要なコンポーネントとその使用方法です：
 
 #### ボタン
 
+shadcnのButtonコンポーネントを使用し、様々なバリエーションを活用します：
+
+- **バリアント**: default, destructive, outline, secondary, ghost, link
+- **サイズ**: default, sm, lg, icon
+
 ```jsx
-// components/common/Button/Button.tsx
-import { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "text";
-type ButtonSize = "sm" | "md" | "lg";
-
-interface ButtonProps {
-  children: ReactNode;
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  onClick?: () => void;
-  disabled?: boolean;
-  className?: string;
-}
-
-const Button = ({
-  children,
-  variant = "primary",
-  size = "md",
-  onClick,
-  disabled = false,
-  className = "",
-}: ButtonProps) => {
-  const baseClasses = "rounded font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2";
-  
-  const variantClasses = {
-    primary: "bg-primary text-white hover:bg-primary-dark focus:ring-primary",
-    secondary: "bg-neutral-200 text-neutral-800 hover:bg-neutral-300 focus:ring-neutral-300",
-    outline: "border border-primary text-primary hover:bg-primary-light focus:ring-primary",
-    text: "text-primary hover:bg-primary-light focus:ring-primary",
-  };
-  
-  const sizeClasses = {
-    sm: "px-2 py-1 text-sm",
-    md: "px-4 py-2",
-    lg: "px-6 py-3 text-lg",
-  };
-  
-  const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
-  
-  return (
-    <button
-      className={classes}
-      onClick={onClick}
-      disabled={disabled}
-    >
-      {children}
-    </button>
-  );
-};
-
-export default Button;
+// 使用例
+<Button variant="default">ボタン</Button>
+<Button variant="outline" size="sm">小さいボタン</Button>
+<Button variant="ghost" size="icon"><IconName /></Button>
 ```
 
 #### カード
 
+情報を表示するためのカードコンポーネント：
+
+- **Card**: カードのコンテナ
+- **CardHeader**: カードのヘッダー部分
+- **CardTitle**: カードのタイトル
+- **CardDescription**: カードの説明
+- **CardContent**: カードの主要コンテンツ
+- **CardFooter**: カードのフッター部分
+
 ```jsx
-// components/common/Card/Card.tsx
-import { ReactNode } from "react";
-
-interface CardProps {
-  children: ReactNode;
-  className?: string;
-}
-
-const Card = ({ children, className = "" }: CardProps) => {
-  return (
-    <div className={`bg-white rounded-lg shadow p-4 ${className}`}>
-      {children}
-    </div>
-  );
-};
-
-export default Card;
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 ```
 
-### セクションコンポーネント
+#### シート（モーダル/ドロワー）
 
-セクションコンポーネントは一貫したスタイルで作成します：
+サイドから表示されるパネルコンポーネント：
+
+- **Sheet**: シートのコンテナ
+- **SheetTrigger**: シートを開くトリガー
+- **SheetContent**: シートの内容
+- **SheetHeader**: シートのヘッダー
+- **SheetTitle**: シートのタイトル
+- **SheetDescription**: シートの説明
+- **SheetFooter**: シートのフッター
+- **SheetClose**: シートを閉じるボタン
 
 ```jsx
-// components/home/Section.tsx
-import { ReactNode } from "react";
-import SectionTitle from "./SectionTitle";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+```
 
-interface SectionProps {
-  title: string;
-  description?: string;
-  children: ReactNode;
-  className?: string;
-}
+### Lucideアイコン
 
-const Section = ({
-  title,
-  description,
-  children,
-  className = "",
-}: SectionProps) => {
-  return (
-    <section className={`bg-primary-light rounded-3xl px-4 py-8 ${className}`}>
-      <SectionTitle title={title} />
-      {description && (
-        <p className="text-xs text-neutral-600 mb-3">{description}</p>
-      )}
-      {children}
-    </section>
-  );
-};
+Lucideアイコンライブラリを使用して、一貫性のあるアイコンを実装します：
 
-export default Section;
+```jsx
+import { MessageSquare, ArrowRight, Send } from "lucide-react";
+
+// 使用例
+<MessageSquare className="w-4 h-4" />
+<ArrowRight className="ml-2" />
+```
+
+### カスタムコンポーネント
+
+プロジェクト固有のコンポーネントは、shadcn/uiコンポーネントを基盤として構築します：
+
+#### セクションコンポーネント
+
+```jsx
+// 使用例
+<Section 
+  title="セクションタイトル" 
+  description="セクションの説明文"
+>
+  {/* コンテンツ */}
+</Section>
 ```
 
 ## レスポンシブデザイン
@@ -362,13 +326,9 @@ Tailwindのデフォルトブレイクポイントを使用します：
 
 - **モバイルファースト**アプローチを採用
 - 基本スタイルはモバイル向けに設定し、ブレイクポイントを使用して大きな画面に対応
-
-```jsx
-// モバイルファーストの例
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-  {/* コンテンツ */}
-</div>
-```
+- レスポンシブクラスの命名規則:
+  - デフォルト: 全画面サイズに適用（例: `grid-cols-1`）
+  - ブレイクポイント接頭辞: 特定の画面サイズ以上に適用（例: `md:grid-cols-2`）
 
 ## アクセシビリティ
 
