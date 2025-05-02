@@ -31,6 +31,7 @@ const ThemeCard = ({
         <Card className="hover:shadow-md transition-all duration-200 hover:border-primary/50">
           <CardContent className="pt-4">
             <CardTitle className="text-lg mb-2">{title}</CardTitle>
+            <div className="h-[2px] bg-[#E4E4E7] w-full my-2"></div>
             <p className="text-sm text-muted-foreground mb-4">{description}</p>
           </CardContent>
           <CardFooter className="flex justify-between items-center pt-0">
@@ -58,6 +59,7 @@ const ThemeCard = ({
       <Card className="hover:shadow-md transition-all duration-200 hover:border-primary/50">
         <CardContent className="pt-4">
           <CardTitle className="text-base mb-2">{title}</CardTitle>
+          <div className="h-[2px] bg-[#E4E4E7] w-full my-2"></div>
         </CardContent>
         <CardFooter className="flex justify-between items-center pt-0">
           <div className="flex text-xs text-muted-foreground">
