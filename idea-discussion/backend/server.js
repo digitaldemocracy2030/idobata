@@ -123,20 +123,20 @@ app.use((req, res, next) => {
 
   // For all other routes in development, respond with a message
   res.status(200).send(`
-        <html>
-            <head><title>Development Mode</title></head>
-            <body>
-                <h1>Backend Development Server</h1>
-                <p>This is the backend server running in development mode.</p>
-                <p>For client-side routing to work properly in development:</p>
-                <ul>
-                    <li>Make sure your frontend Vite dev server is running (npm run dev in the frontend directory)</li>
-                    <li>Access your app through the Vite dev server URL (typically http://localhost:5173)</li>
-                    <li>The Vite dev server will proxy API requests to this backend server</li>
-                </ul>
-            </body>
-        </html>
-    `);
+<html>
+    <head><title>Development Mode</title></head>
+    <body>
+        <h1>Backend Development Server</h1>
+        <p>This is the backend server running in development mode.</p>
+        <p>For client-side routing to work properly in development:</p>
+        <ul>
+            <li>Make sure your frontend Vite dev server is running (npm run dev in the frontend directory)</li>
+            <li>Access your app through the Vite dev server URL (typically http://localhost:5173)</li>
+            <li>The Vite dev server will proxy API requests to this backend server</li>
+        </ul>
+    </body>
+</html>
+`);
 });
 
 // --- Error Handling Middleware (Example - Add more specific handlers later) ---
