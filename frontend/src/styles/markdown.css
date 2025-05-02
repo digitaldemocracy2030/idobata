@@ -42,7 +42,8 @@
   @apply w-full border-collapse mb-4;
 }
 
-.prose th, .prose td {
+.prose th,
+.prose td {
   @apply border border-neutral-300 p-2;
 }
 
