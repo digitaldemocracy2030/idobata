@@ -1,4 +1,5 @@
 import { MessageSquare } from "lucide-react";
+import { Card, CardContent } from "../../components/ui/card";
 
 interface CommentCardProps {
   text: string;
@@ -7,16 +8,18 @@ interface CommentCardProps {
 
 const CommentCard = ({ text, type = "issue" }: CommentCardProps) => {
   return (
-    <div className="border border-neutral-200 rounded-lg p-3 bg-white hover:shadow-sm transition-all duration-200">
-      <div className="flex items-start gap-2">
-        <div className="mt-1">
-          <MessageSquare
-            className={`h-4 w-4 ${type === "issue" ? "text-orange-500" : "text-green-500"}`}
-          />
+    <Card className="hover:shadow-sm transition-all duration-200">
+      <CardContent className="p-3">
+        <div className="flex items-start gap-2">
+          <div className="mt-1">
+            <MessageSquare
+              className={`h-4 w-4 ${type === "issue" ? "text-destructive" : "text-accent"}`}
+            />
+          </div>
+          <p className="text-sm text-foreground">{text}</p>
         </div>
-        <p className="text-sm text-neutral-700">{text}</p>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
