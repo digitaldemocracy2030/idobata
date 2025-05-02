@@ -110,15 +110,15 @@ const Top = () => {
             topPageData?.latestQuestions.map((q) => ({
               id: q._id,
               title: q.questionText,
-              problemCount: q.problemCount || 0,
-              solutionCount: q.solutionCount || 0,
+              problemCount: 0, // Default values since these don't exist in the Question type
+              solutionCount: 0,
             })) || [],
           themes:
             topPageData?.latestThemes.map((t) => ({
               id: t._id,
               title: t.title,
-              problemCount: t.problemCount || 0,
-              solutionCount: t.solutionCount || 0,
+              problemCount: t.keyQuestionCount || 0, // Using keyQuestionCount as problemCount
+              solutionCount: t.commentCount || 0, // Using commentCount as solutionCount
             })) || [],
         };
 

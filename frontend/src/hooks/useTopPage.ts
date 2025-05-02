@@ -1,19 +1,11 @@
 import { useEffect, useState } from "react";
 import { apiClient } from "../services/api/apiClient";
 
+import type { Question, Theme } from "../types";
+
 export interface TopPageResponse {
-  latestThemes: {
-    _id: string;
-    title: string;
-    problemCount: number;
-    solutionCount: number;
-  }[];
-  latestQuestions: {
-    _id: string;
-    questionText: string;
-    problemCount: number;
-    solutionCount: number;
-  }[];
+  latestThemes: Theme[];
+  latestQuestions: Question[];
 }
 
 export function useTopPage() {
