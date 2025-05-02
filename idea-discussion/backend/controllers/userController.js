@@ -3,7 +3,7 @@ import User from "../models/User.js";
 import { createStorageService } from "../services/storage/storageServiceFactory.js";
 
 const storageService = createStorageService("local", {
-  baseUrl: process.env.API_BASE_URL || "http://localhost:3001",
+  baseUrl: process.env.API_BASE_URL || "http://localhost:3000",
 });
 
 const inMemoryUsers = new Map();
