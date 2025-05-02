@@ -6,6 +6,49 @@ const storageService = createStorageService("local", {
   baseUrl: process.env.API_BASE_URL || "http://localhost:3001",
 });
 
+const inMemoryUsers = new Map();
+
+/**
+ * Get user from database or in-memory store
+ * @param {string} userId - User ID
+ * @returns {Object} User object
+ */
+const getUser = async (userId) => {
+  try {
+    const user = await User.findOne({ userId });
+    if (user) return user;
+  } catch (error) {
+    console.warn("MongoDB not available, using in-memory store");
+  }
+
+  if (!inMemoryUsers.has(userId)) {
+    inMemoryUsers.set(userId, {
+      userId,
+      displayName: null,
+      profileImagePath: null,
+    });
+  }
+  
+  return inMemoryUsers.get(userId);
+};
+
+/**
+ * Save user to database or in-memory store
+ * @param {Object} user - User object
+ */
+const saveUser = async (user) => {
+  try {
+    if (user.save) {
+      await user.save();
+      return;
+    }
+  } catch (error) {
+    console.warn("MongoDB not available, using in-memory store");
+  }
+
+  inMemoryUsers.set(user.userId, user);
+};
+
 /**
  * Get user information by userId
  * @param {Object} req - Express request object
@@ -14,13 +57,7 @@ const storageService = createStorageService("local", {
 export const getUserInfo = async (req, res) => {
   try {
     const { userId } = req.params;
-
-    let user = await User.findOne({ userId });
-
-    if (!user) {
-      user = new User({ userId });
-      await user.save();
-    }
+    const user = await getUser(userId);
 
     return res.status(200).json({
       displayName: user.displayName,
@@ -52,15 +89,9 @@ export const updateUserDisplayName = async (req, res) => {
       });
     }
 
-    let user = await User.findOne({ userId });
-
-    if (!user) {
-      user = new User({ userId, displayName });
-    } else {
-      user.displayName = displayName;
-    }
-
-    await user.save();
+    const user = await getUser(userId);
+    user.displayName = displayName;
+    await saveUser(user);
 
     return res.status(200).json({
       success: true,
@@ -95,11 +126,7 @@ export const uploadProfileImage = async (req, res) => {
       });
     }
 
-    let user = await User.findOne({ userId });
-
-    if (!user) {
-      user = new User({ userId });
-    }
+    const user = await getUser(userId);
 
     if (user.profileImagePath) {
       await storageService.deleteFile(user.profileImagePath);
@@ -109,7 +136,7 @@ export const uploadProfileImage = async (req, res) => {
     const filePath = await storageService.saveFile(file, uploadDir);
 
     user.profileImagePath = filePath;
-    await user.save();
+    await saveUser(user);
 
     return res.status(200).json({
       success: true,
