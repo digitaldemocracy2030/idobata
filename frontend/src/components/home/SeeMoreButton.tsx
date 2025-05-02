@@ -1,7 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "../../lib/utils";
-import { Button } from "../ui/button";
 
 interface SeeMoreButtonProps {
   to: string;
@@ -10,15 +9,15 @@ interface SeeMoreButtonProps {
 
 const SeeMoreButton = ({ to, className }: SeeMoreButtonProps) => {
   return (
-    <div className={cn("text-center mt-4", className)}>
+    <div className={cn("mt-4", className)}>
       <Link to={to}>
-        <Button
-          variant="default"
-          className="bg-primary text-primary-foreground hover:bg-primary/90"
+        <button
+          type="button"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-lg flex items-center transition-colors duration-200"
         >
           もっと見る
           <ArrowRight className="h-5 w-5 ml-2" />
-        </Button>
+        </button>
       </Link>
     </div>
   );
