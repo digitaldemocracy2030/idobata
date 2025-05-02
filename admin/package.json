@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
-    "format": "biome format --write .",
+    "format": "biome check --write .",
     "test": "vitest run --passWithNoTests"
   },
   "keywords": [],
