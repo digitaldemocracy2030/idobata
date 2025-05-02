@@ -62,3 +62,39 @@ export interface UpdateSiteConfigPayload {
   title: string;
   aboutMessage: string;
 }
+
+export interface VectorSearchResult {
+  id: string;
+  text: string;
+  createdAt: string;
+  updatedAt: string;
+  similarity: number;
+}
+
+export interface VectorSearchParams {
+  queryText: string;
+  itemType: "problem" | "solution";
+  k?: number;
+}
+
+export interface ClusteringParams {
+  itemType: "problem" | "solution";
+  method?: "kmeans" | "hierarchical";
+  params?: {
+    n_clusters: number;
+  };
+}
+
+export interface ClusterItem {
+  id: string;
+  text: string;
+}
+
+export interface Cluster {
+  id: number;
+  items: ClusterItem[];
+}
+
+export interface ClusteringResult {
+  clusters: Cluster[];
+}

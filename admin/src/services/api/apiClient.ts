@@ -1,6 +1,8 @@
 import { type Result, err, ok } from "neverthrow";
 import { ApiError, ApiErrorType } from "./apiError";
 import type {
+  ClusteringParams,
+  ClusteringResult,
   CreateThemePayload,
   CreateUserPayload,
   LoginCredentials,
@@ -10,6 +12,8 @@ import type {
   UpdateSiteConfigPayload,
   UpdateThemePayload,
   UserResponse,
+  VectorSearchParams,
+  VectorSearchResult,
 } from "./types";
 
 export type ApiResult<T> = Result<T, ApiError>;
@@ -152,6 +156,44 @@ export class ApiClient {
     return this.request<SiteConfig>("/site-config", {
       method: "PUT",
       body: JSON.stringify(config),
+    });
+  }
+
+  async generateThemeEmbeddings(
+    themeId: string,
+    itemType?: "problem" | "solution"
+  ): Promise<ApiResult<{ status: string; processedCount: number }>> {
+    return this.request<{ status: string; processedCount: number }>(
+      `/themes/${themeId}/embeddings/generate`,
+      {
+        method: "POST",
+        body: JSON.stringify({ itemType }),
+      }
+    );
+  }
+
+  async searchTheme(
+    themeId: string,
+    params: VectorSearchParams
+  ): Promise<ApiResult<VectorSearchResult[]>> {
+    const queryParams = new URLSearchParams({
+      queryText: params.queryText,
+      itemType: params.itemType,
+      ...(params.k ? { k: params.k.toString() } : {}),
+    });
+
+    return this.request<VectorSearchResult[]>(
+      `/themes/${themeId}/search?${queryParams.toString()}`
+    );
+  }
+
+  async clusterTheme(
+    themeId: string,
+    params: ClusteringParams
+  ): Promise<ApiResult<ClusteringResult>> {
+    return this.request<ClusteringResult>(`/themes/${themeId}/cluster`, {
+      method: "POST",
+      body: JSON.stringify(params),
     });
   }
 }

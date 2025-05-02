@@ -10,7 +10,10 @@ import Login from "./pages/Login";
 import SiteConfigEdit from "./pages/SiteConfigEdit";
 import ThemeCreate from "./pages/ThemeCreate";
 import ThemeEdit from "./pages/ThemeEdit";
+import ThemeClustering from "./pages/ThemeClustering";
+import ThemeEmbedding from "./pages/ThemeEmbedding";
 import ThemeList from "./pages/ThemeList";
+import ThemeVectorSearch from "./pages/ThemeVectorSearch";
 
 const App: React.FC = () => {
   return (
@@ -35,6 +38,9 @@ const App: React.FC = () => {
                           path="/themes/:themeId"
                           element={<ThemeEdit />}
                         />
+                        <Route path="/themes/:themeId/embeddings" element={<ThemeEmbedding />} />
+                        <Route path="/themes/:themeId/vector-search" element={<ThemeVectorSearch />} />
+                        <Route path="/themes/:themeId/clustering" element={<ThemeClustering />} />
                         <Route
                           path="/siteConfig/edit"
                           element={<SiteConfigEdit />}
