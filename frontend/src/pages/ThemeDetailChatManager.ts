@@ -146,15 +146,11 @@ export class ThemeDetailChatManager {
       this.unsubscribeExtractionUpdate();
     }
 
-    console.log(
-      "[ThemeDetailChatManager] Registering new-extraction handler"
-    );
+    console.log("[ThemeDetailChatManager] Registering new-extraction handler");
     this.unsubscribeNewExtraction = socketClient.onNewExtraction(
       this.handleNewExtraction.bind(this)
     );
-    console.log(
-      "[ThemeDetailChatManager] Registering extraction-update handler"
-    );
+    console.log("[ThemeDetailChatManager] Registering extraction-update handler");
     this.unsubscribeExtractionUpdate = socketClient.onExtractionUpdate(
       this.handleExtractionUpdate.bind(this)
     );
