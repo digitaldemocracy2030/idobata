@@ -1,5 +1,6 @@
 import { ArrowRight, CheckCircle, ListFilter } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Card, CardContent, CardFooter, CardTitle } from "../ui/card";
 
 interface DiscussionCardProps {
   title: string;
@@ -17,52 +18,54 @@ const DiscussionCard = ({
   // If no id is provided, render a non-clickable card
   if (!id) {
     return (
-      <div className="border border-neutral-200 rounded-lg p-4 bg-white hover:shadow-md transition-all duration-200">
-        <div className="mb-2">
-          <h3 className="font-semibold text-base">{title}</h3>
-        </div>
-        <div className="flex justify-between items-center">
-          <div className="flex text-xs text-neutral-600">
+      <Card className="hover:shadow-md transition-all duration-200">
+        <CardContent className="pt-4">
+          <CardTitle className="text-base mb-2">{title}</CardTitle>
+          <div className="h-[2px] bg-[#E4E4E7] w-full my-2" />
+        </CardContent>
+        <CardFooter className="flex justify-between items-center pt-0">
+          <div className="flex text-xs text-muted-foreground">
             <span className="flex items-center mr-4">
-              <ListFilter className="h-4 w-4 mr-1 text-purple-500" />
+              <ListFilter className="h-4 w-4 mr-1 text-primary" />
               課題点: {problemCount}
             </span>
             <span className="flex items-center">
-              <CheckCircle className="h-4 w-4 mr-1 text-purple-500" />
+              <CheckCircle className="h-4 w-4 mr-1 text-primary" />
               解決策: {solutionCount}
             </span>
           </div>
-          <div className="bg-purple-500 text-white p-1 rounded-md">
+          <div className="bg-primary text-primary-foreground p-1 rounded-md">
             <ArrowRight className="h-5 w-5" />
           </div>
-        </div>
-      </div>
+        </CardFooter>
+      </Card>
     );
   }
 
   // If id is provided, render a clickable card
   return (
     <Link to={`/themes/${id}`} className="block">
-      <div className="border border-neutral-200 rounded-lg p-4 bg-white hover:shadow-md transition-all duration-200 hover:border-purple-300">
-        <div className="mb-2">
-          <h3 className="font-semibold text-base">{title}</h3>
-        </div>
-        <div className="flex justify-between items-center">
-          <div className="flex text-xs text-neutral-600">
+      <Card className="hover:shadow-md transition-all duration-200 hover:border-primary/50">
+        <CardContent className="pt-4">
+          <CardTitle className="text-base mb-2">{title}</CardTitle>
+          <div className="h-[2px] bg-[#E4E4E7] w-full my-2" />
+        </CardContent>
+        <CardFooter className="flex justify-between items-center pt-0">
+          <div className="flex text-xs text-muted-foreground">
             <span className="flex items-center mr-4">
-              <ListFilter className="h-4 w-4 mr-1 text-purple-500" />
+              <ListFilter className="h-4 w-4 mr-1 text-primary" />
               課題点: {problemCount}
             </span>
             <span className="flex items-center">
-              <CheckCircle className="h-4 w-4 mr-1 text-purple-500" />
+              <CheckCircle className="h-4 w-4 mr-1 text-primary" />
               解決策: {solutionCount}
             </span>
           </div>
-          <div className="bg-purple-500 text-white p-1 rounded-md">
+          <div className="bg-primary text-primary-foreground p-1 rounded-md">
             <ArrowRight className="h-5 w-5" />
           </div>
-        </div>
-      </div>
+        </CardFooter>
+      </Card>
     </Link>
   );
 };
