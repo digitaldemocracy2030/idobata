@@ -36,28 +36,16 @@ export function MarkdownRenderer({
             </div>
           ),
           h3: ({ node, ...props }) => (
-            <h3
-              className="text-lg font-semibold mb-2"
-              {...props}
-            />
+            <h3 className="text-lg font-semibold mb-2" {...props} />
           ),
           p: ({ node, ...props }) => (
-            <p
-              className="mb-4 text-neutral-700"
-              {...props}
-            />
+            <p className="mb-4 text-neutral-700" {...props} />
           ),
           ul: ({ node, ...props }) => (
-            <ul
-              className="list-disc pl-5 mb-4"
-              {...props}
-            />
+            <ul className="list-disc pl-5 mb-4" {...props} />
           ),
           ol: ({ node, ...props }) => (
-            <ol
-              className="list-decimal pl-5 mb-4"
-              {...props}
-            />
+            <ol className="list-decimal pl-5 mb-4" {...props} />
           ),
           a: ({ node, ...props }) => (
             <a
@@ -83,18 +71,18 @@ export function MarkdownRenderer({
               {...props}
             />
           ),
-          img: ({ node, ...props }) => (
-            <img
-              className="max-w-full h-auto rounded"
-              alt={props.alt || "画像"}
-              {...props}
-            />
-          ),
+          img: ({ node, src, title, ...props }) => {
+            return (
+              <img
+                className="max-w-full h-auto rounded"
+                src={src}
+                alt={props.alt || title || "画像"}
+                title={title}
+              />
+            );
+          },
           table: ({ node, ...props }) => (
-            <table
-              className="w-full border-collapse mb-4"
-              {...props}
-            />
+            <table className="w-full border-collapse mb-4" {...props} />
           ),
           th: ({ node, ...props }) => (
             <th
@@ -103,10 +91,7 @@ export function MarkdownRenderer({
             />
           ),
           td: ({ node, ...props }) => (
-            <td
-              className="border border-neutral-300 p-2"
-              {...props}
-            />
+            <td className="border border-neutral-300 p-2" {...props} />
           ),
         }}
       >
