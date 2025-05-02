@@ -27,7 +27,7 @@ export function MarkdownRenderer({
             <h1 className="text-2xl font-bold mb-4 font-biz" {...props} />
           ),
           h2: ({ node, ...props }) => (
-            <div className="flex py-2 mb-3">
+            <div className="flex items-center py-2 mb-3">
               <div className="w-1 h-6 bg-primary rounded-full mr-2" />
               <h2
                 className="text-xl font-bold text-foreground font-biz leading-6"
