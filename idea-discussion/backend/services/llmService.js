@@ -11,21 +11,24 @@ class MockOpenAI {
     console.log("MockOpenAI initialized with options:", options);
     this.chat = {
       completions: {
-        create: this.mockCreateCompletion.bind(this)
-      }
+        create: this.mockCreateCompletion.bind(this),
+      },
     };
   }
 
   async mockCreateCompletion(options) {
-    console.log("Mock completion called with options:", JSON.stringify(options, null, 2));
+    console.log(
+      "Mock completion called with options:",
+      JSON.stringify(options, null, 2)
+    );
     return {
       choices: [
         {
           message: {
-            content: "This is a mock response from the LLM service."
-          }
-        }
-      ]
+            content: "This is a mock response from the LLM service.",
+          },
+        },
+      ],
     };
   }
 }
