@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import { Button } from "../ui/button";
+import SeeMoreButton from "./SeeMoreButton";
 
 const HeroSection = () => {
   return (
@@ -28,15 +27,8 @@ const HeroSection = () => {
             今、全国で寄せられている声と、動き出した政策案をご覧ください。
           </p>
 
-          <div className="text-center">
-            <Button
-              asChild
-              className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-full"
-            >
-              <Link to="/about" className="flex items-center justify-center">
-                このサイトについて
-              </Link>
-            </Button>
+          <div className="flex justify-start">
+            <SeeMoreButton to="/about" />
           </div>
         </div>
       </div>

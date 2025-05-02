@@ -1,3 +1,4 @@
+import BreadcrumbView from "../components/common/BreadcrumbView";
 import DiscussionCard from "../components/home/DiscussionCard";
 import HeroSection from "../components/home/HeroSection";
 import SectionTitle from "../components/home/SectionTitle";
@@ -46,13 +47,17 @@ const Top = () => {
       solutionCount: 99,
     },
   ];
+  const breadcrumbItems = [{ label: "TOP", href: "/" }];
 
   return (
-    <>
+    <div className="container mx-auto py-8">
+      <div className="px-4">
+        <BreadcrumbView items={breadcrumbItems} />
+      </div>
       <HeroSection />
 
       <div className="py-4">
-        <section className="mb-6 bg-purple-200/70 rounded-3xl p-3">
+        <section className="mb-6 bg-purple-200/70 rounded-3xl px-4 py-8">
           <SectionTitle title="人気の重要論点" />
           <p className="text-xs text-neutral-600 mb-3">
             いま最も注目が集まっている論点はこちらです。中身を見てみましょう。
@@ -68,7 +73,9 @@ const Top = () => {
               />
             ))}
           </div>
-          <SeeMoreButton to="/" />
+          <div className="flex justify-start">
+            <SeeMoreButton to="/" />
+          </div>
         </section>
 
         <section className="mb-6 bg-purple-200/70 rounded-3xl p-3">
@@ -87,10 +94,12 @@ const Top = () => {
               />
             ))}
           </div>
-          <SeeMoreButton to="/themes" />
+          <div className="flex justify-start">
+            <SeeMoreButton to="/" />
+          </div>
         </section>
       </div>
-    </>
+    </div>
   );
 };
 
