@@ -1,6 +1,7 @@
 import { Menu, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useSiteConfig } from "../../contexts/SiteConfigContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { useThemes } from "../../hooks/useThemes";
 import { Button } from "../ui/button";
 import {
@@ -13,6 +14,7 @@ import {
 const Header = () => {
   const { themes, isLoading, error } = useThemes();
   const { siteConfig } = useSiteConfig();
+  const { user } = useAuth();
   return (
     <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b-2 border-[#9256F9] py-3 px-4">
       <div className="flex justify-between items-center">
@@ -96,9 +98,17 @@ const Header = () => {
         {/* マイページアイコン（右） */}
         <Link to="/mypage">
           <Button variant="ghost" size="icon" className="relative">
-            <div className="rounded-full border-2 border-black flex items-center justify-center w-6 h-6">
-              <User className="h-6 w-6" />
-            </div>
+            {user.profileImageUrl ? (
+              <img 
+                src={user.profileImageUrl} 
+                alt="プロフィール画像" 
+                className="rounded-full border-2 border-black w-6 h-6 object-cover"
+              />
+            ) : (
+              <div className="rounded-full border-2 border-black flex items-center justify-center w-6 h-6">
+                <User className="h-6 w-6" />
+              </div>
+            )}
           </Button>
         </Link>
       </div>
