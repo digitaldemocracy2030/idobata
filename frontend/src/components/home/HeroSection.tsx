@@ -1,4 +1,6 @@
-import SeeMoreButton from "./SeeMoreButton";
+import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "../ui/button";
 
 const HeroSection = () => {
   return (
@@ -28,7 +30,17 @@ const HeroSection = () => {
           </p>
 
           <div className="flex justify-start">
-            <SeeMoreButton to="/about" />
+            <div className="text-center mt-4">
+              <Link to="/about">
+                <Button
+                  variant="default"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90"
+                >
+                  このサイトについて
+                  <ArrowRight className="h-5 w-5 ml-2" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

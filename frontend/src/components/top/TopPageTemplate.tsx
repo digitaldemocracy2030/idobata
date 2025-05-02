@@ -47,9 +47,10 @@ const TopPageTemplate = ({ discussions, themes }: TopPageTemplateProps) => {
               />
             ))}
           </div>
-          <div className="flex justify-start">
+          {/* 実は論点の一覧ページは存在していないからもっと見るボタンも今は飛び先がない */}
+          {/* <div className="flex justify-start">
             <SeeMoreButton to="/" />
-          </div>
+          </div> */}
         </Section>
 
         <Section
@@ -69,7 +70,7 @@ const TopPageTemplate = ({ discussions, themes }: TopPageTemplateProps) => {
             ))}
           </div>
           <div className="flex justify-start">
-            <SeeMoreButton to="/" />
+            <SeeMoreButton to="/themes" />
           </div>
         </Section>
       </div>
