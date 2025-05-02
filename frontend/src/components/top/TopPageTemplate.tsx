@@ -1,3 +1,4 @@
+import { useTheme } from "../../ThemeContext";
 import BreadcrumbView from "../../components/common/BreadcrumbView";
 import DiscussionCard from "../../components/home/DiscussionCard";
 import HeroSection from "../../components/home/HeroSection";
@@ -21,6 +22,7 @@ export interface TopPageTemplateProps {
 }
 
 const TopPageTemplate = ({ discussions, themes }: TopPageTemplateProps) => {
+  const { defaultThemeId } = useTheme();
   const breadcrumbItems = [{ label: "TOP", href: "/" }];
 
   return (
@@ -44,6 +46,7 @@ const TopPageTemplate = ({ discussions, themes }: TopPageTemplateProps) => {
                 title={item.title}
                 problemCount={item.problemCount}
                 solutionCount={item.solutionCount}
+                themeId={defaultThemeId || undefined}
               />
             ))}
           </div>
