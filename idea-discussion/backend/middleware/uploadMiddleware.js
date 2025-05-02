@@ -2,7 +2,7 @@ import path from "path";
 import multer from "multer";
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: (req, file, cb) => {
     cb(null, path.join(__dirname, "../uploads/temp"));
   },
   filename: (req, file, cb) => {
