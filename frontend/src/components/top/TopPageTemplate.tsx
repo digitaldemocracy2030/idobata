@@ -1,10 +1,10 @@
+import { useTheme } from "../../ThemeContext";
 import BreadcrumbView from "../../components/common/BreadcrumbView";
 import DiscussionCard from "../../components/home/DiscussionCard";
 import HeroSection from "../../components/home/HeroSection";
 import SeeMoreButton from "../../components/home/SeeMoreButton";
 import ThemeCard from "../../components/home/ThemeCard";
 import { Section } from "../../components/ui/section";
-import { useTheme } from "../../ThemeContext";
 
 export interface TopPageTemplateProps {
   discussions: {
