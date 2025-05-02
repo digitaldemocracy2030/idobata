@@ -1,11 +1,6 @@
 import { ArrowRight, HelpCircle, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
-import { 
-  Card, 
-  CardContent, 
-  CardFooter, 
-  CardTitle 
-} from "../ui/card";
+import { Card, CardContent, CardFooter, CardTitle } from "../ui/card";
 
 interface ThemeCardProps {
   id?: string;

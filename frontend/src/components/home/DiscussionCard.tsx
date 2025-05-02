@@ -1,11 +1,6 @@
 import { ArrowRight, CheckCircle, ListFilter } from "lucide-react";
 import { Link } from "react-router-dom";
-import { 
-  Card, 
-  CardContent, 
-  CardFooter, 
-  CardTitle 
-} from "../ui/card";
+import { Card, CardContent, CardFooter, CardTitle } from "../ui/card";
 
 interface DiscussionCardProps {
   title: string;

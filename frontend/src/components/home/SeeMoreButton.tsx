@@ -12,8 +12,8 @@ const SeeMoreButton = ({ to, className }: SeeMoreButtonProps) => {
   return (
     <div className={cn("text-center mt-4", className)}>
       <Link to={to}>
-        <Button 
-          variant="default" 
+        <Button
+          variant="default"
           className="bg-primary text-primary-foreground hover:bg-primary/90"
         >
           もっと見る

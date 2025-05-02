@@ -9,11 +9,7 @@ interface SectionProps extends React.HTMLAttributes<HTMLElement> {
 const Section = React.forwardRef<HTMLElement, SectionProps>(
   ({ className, title, description, children, ...props }, ref) => {
     return (
-      <section
-        ref={ref}
-        className={cn("rounded-lg p-6", className)}
-        {...props}
-      >
+      <section ref={ref} className={cn("rounded-lg p-6", className)} {...props}>
         {title && (
           <div className="flex items-center py-2 mb-3">
             <div className="w-1 h-6 bg-primary rounded-full mr-2" />
