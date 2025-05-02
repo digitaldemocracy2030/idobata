@@ -1,5 +1,6 @@
 import { AlertTriangle, CheckCircle, ThumbsUp } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Card, CardContent, CardTitle } from "../../components/ui/card";
 
 interface KeyQuestionCardProps {
   question: string;
@@ -20,23 +21,27 @@ const KeyQuestionCard = ({
 }: KeyQuestionCardProps) => {
   return (
     <Link to={`/themes/${themeId}/questions/${qid}`} className="block">
-      <div className="border border-neutral-200 rounded-lg p-4 bg-white hover:shadow-md transition-all duration-200 hover:border-purple-300">
-        <h3 className="font-semibold text-lg mb-3">{question}</h3>
-        <div className="flex flex-wrap gap-3 text-xs text-neutral-600">
-          <span className="flex items-center">
-            <ThumbsUp className="h-4 w-4 mr-1 text-purple-500" />
-            賛同: {voteCount}
-          </span>
-          <span className="flex items-center">
-            <AlertTriangle className="h-4 w-4 mr-1 text-purple-500" />
-            課題点: {issueCount}
-          </span>
-          <span className="flex items-center">
-            <CheckCircle className="h-4 w-4 mr-1 text-purple-500" />
-            解決策: {solutionCount}
-          </span>
-        </div>
-      </div>
+      <Card className="hover:shadow-md transition-all duration-200 hover:border-primary">
+        <CardContent className="p-4">
+          <CardTitle className="font-semibold text-lg mb-3">
+            {question}
+          </CardTitle>
+          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+            <span className="flex items-center">
+              <ThumbsUp className="h-4 w-4 mr-1 text-primary" />
+              賛同: {voteCount}
+            </span>
+            <span className="flex items-center">
+              <AlertTriangle className="h-4 w-4 mr-1 text-primary" />
+              課題点: {issueCount}
+            </span>
+            <span className="flex items-center">
+              <CheckCircle className="h-4 w-4 mr-1 text-primary" />
+              解決策: {solutionCount}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
     </Link>
   );
 };

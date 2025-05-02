@@ -338,6 +338,20 @@ export class ApiClient {
       )
     );
   }
+
+  async getTopPageData(): Promise<
+    HttpResult<{
+      latestThemes: Theme[];
+      latestQuestions: Question[];
+    }>
+  > {
+    return this.withRetry(() =>
+      this.httpClient.get<{
+        latestThemes: Theme[];
+        latestQuestions: Question[];
+      }>("/top-page-data")
+    );
+  }
 }
 
 export const apiClient = new ApiClient();

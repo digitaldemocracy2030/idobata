@@ -1,8 +1,10 @@
+import { createServer } from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
+import { Server } from "socket.io";
 import themeRoutes from "./routes/themeRoutes.js"; // Import theme routes
 import { callLLM } from "./services/llmService.js"; // Import LLM service
 
@@ -27,6 +29,16 @@ try {
 
 // --- Express App Setup ---
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: process.env.IDEA_CORS_ORIGIN
+      ? process.env.IDEA_CORS_ORIGIN.split(",")
+      : ["http://localhost:5173", "http://localhost:5175"],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
 const PORT = process.env.PORT || 3000; // Use port from env or default to 3000
 
 // --- Middleware ---
@@ -64,6 +76,7 @@ import themeProblemRoutes from "./routes/themeProblemRoutes.js";
 // Import theme-based routes
 import themeQuestionRoutes from "./routes/themeQuestionRoutes.js";
 import themeSolutionRoutes from "./routes/themeSolutionRoutes.js";
+import topPageRoutes from "./routes/topPageRoutes.js"; // Import top page routes
 import userRoutes from "./routes/userRoutes.js"; // Import user routes
 
 // Theme management routes
@@ -86,6 +99,7 @@ app.use("/api/themes/:themeId", themeEmbeddingRoutes);
 app.use("/api/questions/:questionId", questionEmbeddingRoutes);
 
 app.use("/api/site-config", siteConfigRoutes);
+app.use("/api/top-page-data", topPageRoutes); // Add top page routes
 app.use("/api/users", userRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -144,7 +158,38 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something broke!");
 });
 
+// --- Socket.IO Setup ---
+io.on("connection", (socket) => {
+  console.log(`Socket connected: ${socket.id}`);
+
+  socket.on("subscribe-theme", (themeId) => {
+    console.log(`Socket ${socket.id} subscribing to theme: ${themeId}`);
+    socket.join(`theme:${themeId}`);
+  });
+
+  socket.on("subscribe-thread", (threadId) => {
+    console.log(`Socket ${socket.id} subscribing to thread: ${threadId}`);
+    socket.join(`thread:${threadId}`);
+  });
+
+  socket.on("unsubscribe-theme", (themeId) => {
+    console.log(`Socket ${socket.id} unsubscribing from theme: ${themeId}`);
+    socket.leave(`theme:${themeId}`);
+  });
+
+  socket.on("unsubscribe-thread", (threadId) => {
+    console.log(`Socket ${socket.id} unsubscribing from thread: ${threadId}`);
+    socket.leave(`thread:${threadId}`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log(`Socket disconnected: ${socket.id}`);
+  });
+});
+
+export { io };
+
 // --- Start Server ---
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`Backend server listening on port ${PORT}`);
 });
