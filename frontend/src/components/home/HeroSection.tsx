@@ -1,8 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
-import SeeMoreButton from "./SeeMoreButton";
 
 const HeroSection = () => {
   return (
