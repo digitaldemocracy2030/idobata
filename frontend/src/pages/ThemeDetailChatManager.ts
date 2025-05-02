@@ -122,48 +122,57 @@ export class ThemeDetailChatManager {
   }
 
   private subscribeToExtraction(): void {
-    console.log(`[ThemeDetailChatManager] Subscribing to theme: ${this.themeId}`);
+    console.log(
+      `[ThemeDetailChatManager] Subscribing to theme: ${this.themeId}`
+    );
     socketClient.subscribeToTheme(this.themeId);
     if (this.threadId) {
-      console.log(`[ThemeDetailChatManager] Subscribing to thread: ${this.threadId}`);
+      console.log(
+        `[ThemeDetailChatManager] Subscribing to thread: ${this.threadId}`
+      );
       socketClient.subscribeToThread(this.threadId);
     }
 
     if (this.unsubscribeNewExtraction) {
-      console.log(`[ThemeDetailChatManager] Unsubscribing from previous new-extraction`);
+      console.log("[ThemeDetailChatManager] Unsubscribing from previous new-extraction");
       this.unsubscribeNewExtraction();
     }
     if (this.unsubscribeExtractionUpdate) {
-      console.log(`[ThemeDetailChatManager] Unsubscribing from previous extraction-update`);
+      console.log("[ThemeDetailChatManager] Unsubscribing from previous extraction-update");
       this.unsubscribeExtractionUpdate();
     }
 
-    console.log(`[ThemeDetailChatManager] Registering new-extraction handler`);
+    console.log("[ThemeDetailChatManager] Registering new-extraction handler");
     this.unsubscribeNewExtraction = socketClient.onNewExtraction(
       this.handleNewExtraction.bind(this)
     );
-    console.log(`[ThemeDetailChatManager] Registering extraction-update handler`);
+    console.log("[ThemeDetailChatManager] Registering extraction-update handler");
     this.unsubscribeExtractionUpdate = socketClient.onExtractionUpdate(
       this.handleExtractionUpdate.bind(this)
     );
   }
 
   private handleNewExtraction(event: NewExtractionEvent): void {
-    console.log(`[ThemeDetailChatManager] handleNewExtraction called with event:`, event);
+    console.log(
+      "[ThemeDetailChatManager] handleNewExtraction called with event:",
+      event
+    );
     const { type, data } = event;
     const notificationContent =
       type === "problem"
         ? `「${data.statement}」という課題が登録されました。`
         : `「${data.statement}」という解決策が登録されました。`;
 
-    console.log(`[ThemeDetailChatManager] Creating notification: ${notificationContent}`);
+    console.log(
+      `[ThemeDetailChatManager] Creating notification: ${notificationContent}`
+    );
     const notification = new SystemNotification(notificationContent);
     this.messages.push(notification);
     
-    console.log(`[ThemeDetailChatManager] Calling onNewMessage callback`);
+    console.log("[ThemeDetailChatManager] Calling onNewMessage callback");
     this.onNewMessage?.(notification);
     
-    console.log(`[ThemeDetailChatManager] Calling onNewExtraction callback`);
+    console.log("[ThemeDetailChatManager] Calling onNewExtraction callback");
     this.onNewExtraction?.(event);
   }
 
