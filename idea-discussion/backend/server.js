@@ -1,8 +1,10 @@
+import { createServer } from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
+import { Server } from "socket.io";
 import themeRoutes from "./routes/themeRoutes.js"; // Import theme routes
 import { callLLM } from "./services/llmService.js"; // Import LLM service
 
@@ -29,6 +31,16 @@ mongoose
 
 // --- Express App Setup ---
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: process.env.IDEA_CORS_ORIGIN
+      ? process.env.IDEA_CORS_ORIGIN.split(",")
+      : ["http://localhost:5173", "http://localhost:5175"],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
 const PORT = process.env.PORT || 3000; // Use port from env or default to 3000
 
 // --- Middleware ---
@@ -133,7 +145,38 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something broke!");
 });
 
+// --- Socket.IO Setup ---
+io.on("connection", (socket) => {
+  console.log(`Socket connected: ${socket.id}`);
+
+  socket.on("subscribe-theme", (themeId) => {
+    console.log(`Socket ${socket.id} subscribing to theme: ${themeId}`);
+    socket.join(`theme:${themeId}`);
+  });
+
+  socket.on("subscribe-thread", (threadId) => {
+    console.log(`Socket ${socket.id} subscribing to thread: ${threadId}`);
+    socket.join(`thread:${threadId}`);
+  });
+
+  socket.on("unsubscribe-theme", (themeId) => {
+    console.log(`Socket ${socket.id} unsubscribing from theme: ${themeId}`);
+    socket.leave(`theme:${themeId}`);
+  });
+
+  socket.on("unsubscribe-thread", (threadId) => {
+    console.log(`Socket ${socket.id} unsubscribing from thread: ${threadId}`);
+    socket.leave(`thread:${threadId}`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log(`Socket disconnected: ${socket.id}`);
+  });
+});
+
+export { io };
+
 // --- Start Server ---
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`Backend server listening on port ${PORT}`);
 });

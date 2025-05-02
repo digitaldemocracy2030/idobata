@@ -1,11 +1,24 @@
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
+import {
+  FloatingChat,
+  type FloatingChatRef,
+} from "../components/chat/FloatingChat";
 import ThemeDetailTemplate from "../components/theme/ThemeDetailTemplate";
 import { useThemeDetail } from "../hooks/useThemeDetail";
+import type { NewExtractionEvent } from "../services/socket/socketClient";
+import type { Message } from "../types";
+import { SystemMessage, SystemNotification } from "../types";
+import { ThemeDetailChatManager } from "./ThemeDetailChatManager";
 
 const ThemeDetail = () => {
   const { themeId } = useParams<{ themeId: string }>();
   const location = useLocation();
   const useMockData = location.search.includes("mock=true");
+  const floatingChatRef = useRef<FloatingChatRef>(null);
+  const [chatManager, setChatManager] = useState<ThemeDetailChatManager | null>(
+    null
+  );
 
   const {
     themeDetail: apiThemeDetail,
@@ -13,12 +26,10 @@ const ThemeDetail = () => {
     error: apiError,
   } = useThemeDetail(themeId || "");
 
-  // モックデータを使用する場合は、APIデータの代わりにモックデータを使用
   const themeDetail = useMockData ? null : apiThemeDetail;
   const isLoading = useMockData ? false : apiIsLoading;
   const error = useMockData ? null : apiError;
 
-  // モックデータ
   const mockThemeData = {
     _id: themeId || "",
     title: "若者の雇用とキャリア支援",
@@ -73,7 +84,52 @@ const ThemeDetail = () => {
     { id: 5, text: "若者の起業支援と失敗しても再チャレンジできる制度の整備" },
   ];
 
-  // ローディング状態
+  useEffect(() => {
+    if (!themeId) return;
+
+    const themeName = useMockData
+      ? mockThemeData.title
+      : (themeDetail?.theme?.title ?? "");
+
+    if (themeName) {
+      const manager = new ThemeDetailChatManager({
+        themeId,
+        themeName,
+        onNewMessage: handleNewMessage,
+        onNewExtraction: handleNewExtraction,
+      });
+
+      setChatManager(manager);
+
+      return () => {
+        manager.cleanup();
+      };
+    }
+  }, [themeId, useMockData, themeDetail?.theme?.title]);
+
+  const handleNewMessage = (message: Message) => {
+    if (floatingChatRef.current) {
+      const messageType =
+        message instanceof SystemNotification
+          ? "system-message"
+          : message instanceof SystemMessage
+            ? "system"
+            : "user";
+
+      floatingChatRef.current.addMessage(message.content, messageType);
+    }
+  };
+
+  const handleNewExtraction = (extraction: NewExtractionEvent) => {
+    console.log("New extraction received:", extraction);
+  };
+
+  const handleSendMessage = async (message: string) => {
+    if (chatManager) {
+      await chatManager.addMessage(message, "user");
+    }
+  };
+
   if (!useMockData && isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -84,7 +140,6 @@ const ThemeDetail = () => {
     );
   }
 
-  // エラー状態
   if (!useMockData && error) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -95,9 +150,7 @@ const ThemeDetail = () => {
     );
   }
 
-  // モックデータまたはAPIデータが利用可能な場合、テンプレートをレンダリング
   if (useMockData || themeDetail) {
-    // テンプレートのpropsにデータをマッピング
     const templateProps = useMockData
       ? {
           theme: mockThemeData,
@@ -131,10 +184,14 @@ const ThemeDetail = () => {
             })) ?? [],
         };
 
-    return <ThemeDetailTemplate {...templateProps} />;
+    return (
+      <>
+        <ThemeDetailTemplate {...templateProps} />
+        <FloatingChat ref={floatingChatRef} onSendMessage={handleSendMessage} />
+      </>
+    );
   }
 
-  // 予期しない状態の場合のフォールバック
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center py-8">
