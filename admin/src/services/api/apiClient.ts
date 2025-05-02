@@ -176,14 +176,17 @@ export class ApiClient {
     themeId: string,
     params: VectorSearchParams
   ): Promise<ApiResult<VectorSearchResult[]>> {
-    const queryParams = new URLSearchParams({
-      queryText: params.queryText,
-      itemType: params.itemType,
-      ...(params.k ? { k: params.k.toString() } : {}),
-    });
+    // Manually encode the query parameters to ensure proper handling of non-ASCII characters
+    const queryText = encodeURIComponent(params.queryText);
+    const itemType = encodeURIComponent(params.itemType);
+    const kParam = params.k
+      ? `&k=${encodeURIComponent(params.k.toString())}`
+      : "";
+
+    const queryString = `queryText=${queryText}&itemType=${itemType}${kParam}`;
 
     return this.request<VectorSearchResult[]>(
-      `/themes/${themeId}/search?${queryParams.toString()}`
+      `/themes/${themeId}/search?${queryString}`
     );
   }
 
