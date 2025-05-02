@@ -71,7 +71,6 @@ const Top = () => {
           <SeeMoreButton to="/" />
         </section>
 
-        <div className="py-4"></div>
         <section className="mb-6 bg-purple-200/70 rounded-3xl p-3">
           <SectionTitle title="意見募集中テーマ" />
           <p className="text-xs text-neutral-600 mb-3">
