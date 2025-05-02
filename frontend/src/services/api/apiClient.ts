@@ -319,10 +319,12 @@ export class ApiClient {
     );
   }
 
-  async getTopPageData(): Promise<HttpResult<{
-    latestThemes: Theme[];
-    latestQuestions: Question[];
-  }>> {
+  async getTopPageData(): Promise<
+    HttpResult<{
+      latestThemes: Theme[];
+      latestQuestions: Question[];
+    }>
+  > {
     return this.withRetry(() =>
       this.httpClient.get<{
         latestThemes: Theme[];
