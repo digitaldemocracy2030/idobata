@@ -9,10 +9,10 @@ interface SeeMoreButtonProps {
 
 const SeeMoreButton = ({ to, className }: SeeMoreButtonProps) => {
   return (
-    <div className={cn("text-center mt-4", className)}>
+    <div className={cn("mt-4", className)}>
       <Link to={to}>
         <button
-          className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg flex items-center justify-center mx-auto transition-colors duration-200"
+          className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg flex items-center transition-colors duration-200"
         >
           もっと見る
           <ArrowRight className="h-5 w-5 ml-2" />
