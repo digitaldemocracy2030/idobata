@@ -1,7 +1,6 @@
-import { ChevronRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "../../lib/utils";
-import { Button } from "../ui/button";
 
 interface SeeMoreButtonProps {
   to: string;
@@ -12,14 +11,12 @@ const SeeMoreButton = ({ to, className }: SeeMoreButtonProps) => {
   return (
     <div className={cn("text-center mt-4", className)}>
       <Link to={to}>
-        <Button
-          variant="outline"
-          size="sm"
-          className="text-sm text-purple-500 border-purple-300 hover:bg-purple-50 rounded-full px-4 py-1 flex items-center mx-auto"
+        <button
+          className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg flex items-center justify-center mx-auto transition-colors duration-200"
         >
           もっと見る
-          <ChevronRight className="h-4 w-4 ml-1" />
-        </Button>
+          <ArrowRight className="h-5 w-5 ml-2" />
+        </button>
       </Link>
     </div>
   );
