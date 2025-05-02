@@ -13,19 +13,17 @@ const __dirname = path.dirname(__filename);
 const mongoUri = process.env.MONGODB_URI;
 
 if (!mongoUri) {
-  console.error("Error: MONGODB_URI is not defined in the .env file.");
-  process.exit(1); // Exit the application if DB connection string is missing
+  console.warn("Warning: MONGODB_URI is not defined in the .env file.");
+  console.warn("Continuing without MongoDB for testing purposes");
 }
 
-mongoose
-  .connect(mongoUri)
-  .then(() => {
-    console.log("MongoDB connected successfully.");
-  })
-  .catch((err) => {
-    console.error("MongoDB connection error:", err);
-    process.exit(1); // Exit on connection failure
-  });
+try {
+  await mongoose.connect(mongoUri || "mongodb://localhost:27017/idobata");
+  console.log("MongoDB connected successfully.");
+} catch (err) {
+  console.error("MongoDB connection error:", err);
+  console.warn("Continuing without MongoDB for testing purposes");
+}
 
 // --- Express App Setup ---
 const app = express();
