@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
-import { useAuth } from "../contexts/AuthContext";
 import SectionHeading from "../components/common/SectionHeading";
+import { useAuth } from "../contexts/AuthContext";
 
 const MyPage: React.FC = () => {
   const { user, setDisplayName, uploadProfileImage, loading, error } =
