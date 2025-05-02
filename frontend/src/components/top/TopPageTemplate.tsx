@@ -69,7 +69,7 @@ const TopPageTemplate = ({ discussions, themes }: TopPageTemplateProps) => {
             ))}
           </div>
           <div className="flex justify-start">
-            <SeeMoreButton to="/" />
+            <SeeMoreButton to="/themes" />
           </div>
         </Section>
       </div>
