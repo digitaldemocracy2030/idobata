@@ -116,3 +116,24 @@ export interface ClusteringResult {
   clusters: ClusteredItem[] | HierarchicalClusterNode | null;
   message?: string; // Optional message from backend
 }
+
+export interface Question {
+  _id: string;
+  themeId: string;
+  questionText: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Problem {
+  _id: string;
+  statement: string;
+  themeId: string;
+  sourceType: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface QuestionWithProblems extends Question {
+  relatedProblems?: Problem[];
+}

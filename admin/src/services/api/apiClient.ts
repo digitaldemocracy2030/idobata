@@ -7,6 +7,7 @@ import type {
   CreateUserPayload,
   LoginCredentials,
   LoginResponse,
+  Question,
   SiteConfig,
   Theme,
   UpdateSiteConfigPayload,
@@ -197,6 +198,16 @@ export class ApiClient {
     return this.request<ClusteringResult>(`/themes/${themeId}/cluster`, {
       method: "POST",
       body: JSON.stringify(params),
+    });
+  }
+  
+  async getQuestionsByTheme(themeId: string): Promise<ApiResult<Question[]>> {
+    return this.request<Question[]>(`/themes/${themeId}/questions`);
+  }
+
+  async generateQuestions(themeId: string): Promise<ApiResult<void>> {
+    return this.request<void>(`/themes/${themeId}/generate-questions`, {
+      method: "POST",
     });
   }
 }

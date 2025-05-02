@@ -64,6 +64,7 @@ import themeProblemRoutes from "./routes/themeProblemRoutes.js";
 // Import theme-based routes
 import themeQuestionRoutes from "./routes/themeQuestionRoutes.js";
 import themeSolutionRoutes from "./routes/themeSolutionRoutes.js";
+import userRoutes from "./routes/userRoutes.js"; // Import user routes
 
 // Theme management routes
 app.use("/api/themes", themeRoutes);
@@ -85,6 +86,7 @@ app.use("/api/themes/:themeId", themeEmbeddingRoutes);
 app.use("/api/questions/:questionId", questionEmbeddingRoutes);
 
 app.use("/api/site-config", siteConfigRoutes);
+app.use("/api/users", userRoutes);
 
 // --- Serve static files in production ---
 // This section will be useful when deploying to production
