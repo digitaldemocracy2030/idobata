@@ -122,13 +122,13 @@ const ThemeDetail = () => {
 
   const handleNewExtraction = (extraction: NewExtractionEvent) => {
     console.log("New extraction received:", extraction);
-    
+
     const { type, data } = extraction;
-    const notificationContent = 
+    const notificationContent =
       type === "problem"
         ? `「${data.statement}」という課題が登録されました。`
         : `「${data.statement}」という解決策が登録されました。`;
-    
+
     if (floatingChatRef.current) {
       floatingChatRef.current.addMessage(notificationContent, "system-message");
     }
