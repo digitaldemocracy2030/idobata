@@ -12,6 +12,10 @@ router.get("/:userId", getUserInfo);
 
 router.put("/:userId", updateUserDisplayName);
 
-router.post("/:userId/profile-image", upload.single("profileImage"), uploadProfileImage);
+router.post(
+  "/:userId/profile-image",
+  upload.single("profileImage"),
+  uploadProfileImage
+);
 
 export default router;
