@@ -4,7 +4,7 @@ import {
   updateUserDisplayName,
   uploadProfileImage,
 } from "../controllers/userController.js";
-import { upload } from "../middleware/uploadMiddleware.js";
+import { upload, logRequest } from "../middleware/uploadMiddleware.js";
 
 const router = express.Router();
 
@@ -14,6 +14,7 @@ router.put("/:userId", updateUserDisplayName);
 
 router.post(
   "/:userId/profile-image",
+  logRequest,
   upload.single("profileImage"),
   uploadProfileImage
 );

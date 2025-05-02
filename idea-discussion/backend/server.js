@@ -43,6 +43,8 @@ app.use(
 // JSON Parser: Parse incoming JSON requests
 app.use(express.json());
 
+app.use(express.urlencoded({ extended: true }));
+
 // --- API Routes ---
 // Health Check Endpoint
 app.get("/api/health", (req, res) => {
@@ -105,6 +107,15 @@ if (process.env.NODE_ENV === "production") {
 app.use((req, res, next) => {
   // If this is an API request, continue to the API routes
   if (req.path.startsWith("/api")) {
+    return next();
+  }
+
+  const userIdProfileImageRegex = /^\/([0-9a-f-]+)\/profile-image$/;
+  const match = req.path.match(userIdProfileImageRegex);
+  
+  if (match && req.method === 'POST') {
+    console.log(`Redirecting request from ${req.path} to /api/users${req.path}`);
+    req.url = `/api/users${req.path}`;
     return next();
   }
 

@@ -43,9 +43,7 @@ export class HttpClient {
     formData: FormData,
     headers?: Record<string, string>
   ): Promise<HttpResult<T>> {
-    const formDataHeaders = { ...headers };
-    formDataHeaders["Content-Type"] = undefined; // Let browser set the correct boundary
-    return this.requestFormData<T>(endpoint, "POST", formData, formDataHeaders);
+    return this.requestFormData<T>(endpoint, "POST", formData, headers);
   }
 
   async put<T>(
@@ -127,14 +125,11 @@ export class HttpClient {
     endpoint: string,
     method: string,
     formData: FormData,
-    headers?: Record<string, string>
+    _headers?: Record<string, string>
   ): Promise<HttpResult<T>> {
     const url = `${this.baseUrl}${endpoint}`;
     const options: RequestInit = {
       method,
-      headers: {
-        ...headers,
-      },
       body: formData,
     };
 
