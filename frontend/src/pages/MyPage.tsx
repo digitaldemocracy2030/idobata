@@ -53,11 +53,9 @@ const MyPage: React.FC = () => {
     <div className="max-w-2xl mx-auto p-4">
       <SectionHeading title="マイページ" />
 
-      <div className="p-6 mb-6">
-        <SectionHeading title="ユーザー情報" />
-
+      <div className="flex flex-col gap-8">
         {/* プロフィール画像セクション */}
-        <div className="mb-6">
+        <div className="">
           <p className="text-gray-600 mb-2">プロフィール画像:</p>
           <div className="flex items-center space-x-4">
             <div className="w-24 h-24 bg-gray-100 rounded-full overflow-hidden border">
@@ -89,7 +87,7 @@ const MyPage: React.FC = () => {
                 </div>
               )}
             </div>
-            <div>
+            <div className="flex items-center gap-2">
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/gif"
@@ -109,30 +107,30 @@ const MyPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="mb-4">
-          <p className="text-gray-600">ユーザーID（デバッグ用）:</p>
-          <p className="font-mono bg-gray-100 p-2 rounded">{user.id}</p>
-          <p className="text-sm text-gray-500 mt-1">
-            ※ユーザーIDはリセットできません
-          </p>
-        </div>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="displayName" className="block text-gray-600 mb-2">
-              表示名を{user.displayName ? "変更" : "設定"}:
+              表示名（他のユーザーに表示されます）:
             </label>
-            <input
-              type="text"
-              id="displayName"
-              value={newDisplayName}
-              onChange={(e) => setNewDisplayName(e.target.value)}
-              className="w-full border rounded p-2"
-              placeholder="表示名を入力してください"
-              required
-            />
-            <p className="text-sm text-gray-500 mt-1">
-              ※表示名は他のユーザーに表示されます
-            </p>
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                id="displayName"
+                value={newDisplayName}
+                onChange={(e) => setNewDisplayName(e.target.value)}
+                className="w-full border rounded p-2"
+                placeholder="表示名を入力してください"
+                required
+              />
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded disabled:opacity-50 whitespace-nowrap"
+              >
+                {isSaving ? "保存中..." : "保存"}
+              </button>
+            </div>
           </div>
           {saveSuccess && (
             <div className="bg-green-100 text-green-700 p-2 rounded mb-4">
@@ -151,15 +149,14 @@ const MyPage: React.FC = () => {
               {error}
             </div>
           )}
-
-          <button
-            type="submit"
-            disabled={isSaving}
-            className="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded disabled:opacity-50"
-          >
-            {isSaving ? "保存中..." : "保存"}
-          </button>
         </form>
+        <div className="mb-4">
+          <p className="text-gray-600">ユーザーID（デバッグ用）:</p>
+          <p className="font-mono bg-gray-100 p-2 rounded">{user.id}</p>
+          <p className="text-sm text-gray-500 mt-1">
+            ※ユーザーIDはリセットできません
+          </p>
+        </div>
       </div>
     </div>
   );
