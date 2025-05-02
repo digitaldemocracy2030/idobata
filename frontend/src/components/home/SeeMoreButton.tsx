@@ -13,7 +13,7 @@ const SeeMoreButton = ({ to, className }: SeeMoreButtonProps) => {
       <Link to={to}>
         <button
           type="button"
-          className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg flex items-center transition-colors duration-200"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-lg flex items-center transition-colors duration-200"
         >
           もっと見る
           <ArrowRight className="h-5 w-5 ml-2" />
