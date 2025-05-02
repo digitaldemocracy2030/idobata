@@ -24,7 +24,7 @@ const CitizenReportExample = ({
 
           <div className="mt-4 text-center">
             <button
-              className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md text-sm transition-colors duration-200"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-md text-sm transition-colors duration-200"
               type="button"
             >
               PDFでダウンロード
