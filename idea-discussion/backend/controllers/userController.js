@@ -28,7 +28,7 @@ const getUser = async (userId) => {
       profileImagePath: null,
     });
   }
-  
+
   return inMemoryUsers.get(userId);
 };
 
