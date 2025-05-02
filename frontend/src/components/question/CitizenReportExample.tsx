@@ -1,3 +1,5 @@
+import SectionHeading from "../common/SectionHeading";
+
 export interface CitizenReportExampleProps {
   introduction: string;
   issues: { title: string; description: string }[];
@@ -9,7 +11,7 @@ const CitizenReportExample = ({
 }: CitizenReportExampleProps) => {
   return (
     <div className="mb-8 border border-neutral-200 rounded-lg p-4 bg-white">
-      <h2 className="text-lg font-semibold mb-4">市民意見レポート例</h2>
+      <SectionHeading title="市民意見レポート例" />
       <div className="text-sm">
         <p className="mb-4">{introduction}</p>
 

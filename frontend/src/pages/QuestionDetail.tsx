@@ -6,6 +6,7 @@ import {
   type FloatingChatRef,
 } from "../components/chat/FloatingChat";
 import BreadcrumbView from "../components/common/BreadcrumbView";
+import SectionHeading from "../components/common/SectionHeading";
 import CitizenReportExample from "../components/question/CitizenReportExample";
 import DebateSummary from "../components/question/DebateSummary";
 import KeyQuestionHeader from "../components/question/KeyQuestionHeader";
@@ -258,7 +259,7 @@ const QuestionDetail = () => {
 
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">寄せられた意見</h2>
+            <SectionHeading title="寄せられた意見" />
             <Link
               to={`/themes/${themeId}/questions/${qId}/comments`}
               className="text-sm text-purple-500 hover:underline"
