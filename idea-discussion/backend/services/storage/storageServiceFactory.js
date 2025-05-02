@@ -6,10 +6,10 @@ import LocalStorageService from "./localStorageService.js";
  * @param {Object} config - 設定オブジェクト
  * @returns {StorageServiceInterface} ストレージサービスのインスタンス
  */
-export function createStorageService(type = 'local', config = {}) {
+export function createStorageService(type = "local", config = {}) {
   switch (type) {
-    case 'local':
-      return new LocalStorageService(config.baseUrl || '');
+    case "local":
+      return new LocalStorageService(config.baseUrl || "");
     default:
       throw new Error(`Unsupported storage type: ${type}`);
   }

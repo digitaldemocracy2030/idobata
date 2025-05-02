@@ -1,5 +1,5 @@
-import fs from "fs/promises";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
 import { v4 as uuidv4 } from "uuid";
 import StorageServiceInterface from "./storageServiceInterface.js";
 

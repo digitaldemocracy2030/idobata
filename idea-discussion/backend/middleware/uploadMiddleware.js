@@ -13,11 +13,16 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
   const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
-  
+
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("許可されていないファイル形式です。JPG、PNG、GIF画像のみ対応しています。"), false);
+    cb(
+      new Error(
+        "許可されていないファイル形式です。JPG、PNG、GIF画像のみ対応しています。"
+      ),
+      false
+    );
   }
 };
 
