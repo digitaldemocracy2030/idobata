@@ -3,6 +3,7 @@ import ImportedItem from "../models/ImportedItem.js"; // For import source
 import Problem from "../models/Problem.js";
 import Solution from "../models/Solution.js";
 import { callLLM } from "../services/llmService.js";
+import { emitNewExtraction } from "../services/socketService.js"; // Import socket service
 import { linkItemToQuestions } from "./linkingWorker.js"; // Assume this function exists and works
 
 // Helper function to build the prompt based on source type
@@ -322,8 +323,14 @@ async function processExtraction(job) {
           thread.themeId
         ); // Pass themeId from thread
         if (savedItem) {
-          if (item.type === "problem") addedProblemIds.push(savedItem._id);
-          if (item.type === "solution") addedSolutionIds.push(savedItem._id);
+          if (item.type === "problem") {
+            addedProblemIds.push(savedItem._id);
+            emitNewExtraction(thread.themeId, sourceOriginId, "problem", savedItem);
+          }
+          if (item.type === "solution") {
+            addedSolutionIds.push(savedItem._id);
+            emitNewExtraction(thread.themeId, sourceOriginId, "solution", savedItem);
+          }
         }
       }
 
@@ -465,8 +472,14 @@ async function processExtraction(job) {
           importItem.themeId
         );
         if (savedItem) {
-          if (item.type === "problem") addedProblemIds.push(savedItem._id);
-          if (item.type === "solution") addedSolutionIds.push(savedItem._id);
+          if (item.type === "problem") {
+            addedProblemIds.push(savedItem._id);
+            emitNewExtraction(importItem.themeId, sourceOriginId, "problem", savedItem);
+          }
+          if (item.type === "solution") {
+            addedSolutionIds.push(savedItem._id);
+            emitNewExtraction(importItem.themeId, sourceOriginId, "solution", savedItem);
+          }
         }
       }
 
