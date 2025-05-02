@@ -200,7 +200,7 @@ export class ApiClient {
       body: JSON.stringify(params),
     });
   }
-  
+
   async getQuestionsByTheme(themeId: string): Promise<ApiResult<Question[]>> {
     return this.request<Question[]>(`/themes/${themeId}/questions`);
   }
