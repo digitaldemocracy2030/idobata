@@ -1,22 +1,23 @@
-import { jest } from "@jest/globals";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+
+// Mock the server.js module
+vi.mock("../server.js", () => ({
+  io: {
+    to: vi.fn().mockReturnThis(),
+    emit: vi.fn(),
+  },
+}));
+
+// Import after mocking
+import { io } from "../server.js";
 import {
   emitExtractionUpdate,
   emitNewExtraction,
 } from "../services/socketService.js";
 
-const mockTo = jest.fn().mockReturnThis();
-const mockEmit = jest.fn();
-
-jest.mock("../server.js", () => ({
-  io: {
-    to: mockTo,
-    emit: mockEmit,
-  },
-}));
-
 describe("Socket Service Tests", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test("emitNewExtraction should emit to theme room", () => {
@@ -27,8 +28,8 @@ describe("Socket Service Tests", () => {
 
     emitNewExtraction(themeId, threadId, type, data);
 
-    expect(mockTo).toHaveBeenCalledWith(`theme:${themeId}`);
-    expect(mockEmit).toHaveBeenCalledWith("new-extraction", { type, data });
+    expect(io.to).toHaveBeenCalledWith(`theme:${themeId}`);
+    expect(io.emit).toHaveBeenCalledWith("new-extraction", { type, data });
   });
 
   test("emitNewExtraction should emit to theme and thread rooms", () => {
@@ -42,10 +43,10 @@ describe("Socket Service Tests", () => {
 
     emitNewExtraction(themeId, threadId, type, data);
 
-    expect(mockTo).toHaveBeenCalledWith(`theme:${themeId}`);
-    expect(mockTo).toHaveBeenCalledWith(`thread:${threadId}`);
-    expect(mockEmit).toHaveBeenCalledTimes(2);
-    expect(mockEmit).toHaveBeenCalledWith("new-extraction", { type, data });
+    expect(io.to).toHaveBeenCalledWith(`theme:${themeId}`);
+    expect(io.to).toHaveBeenCalledWith(`thread:${threadId}`);
+    expect(io.emit).toHaveBeenCalledTimes(2);
+    expect(io.emit).toHaveBeenCalledWith("new-extraction", { type, data });
   });
 
   test("emitExtractionUpdate should emit to theme room", () => {
@@ -56,8 +57,8 @@ describe("Socket Service Tests", () => {
 
     emitExtractionUpdate(themeId, threadId, type, data);
 
-    expect(mockTo).toHaveBeenCalledWith(`theme:${themeId}`);
-    expect(mockEmit).toHaveBeenCalledWith("extraction-update", { type, data });
+    expect(io.to).toHaveBeenCalledWith(`theme:${themeId}`);
+    expect(io.emit).toHaveBeenCalledWith("extraction-update", { type, data });
   });
 
   test("emitExtractionUpdate should emit to theme and thread rooms", () => {
@@ -71,9 +72,9 @@ describe("Socket Service Tests", () => {
 
     emitExtractionUpdate(themeId, threadId, type, data);
 
-    expect(mockTo).toHaveBeenCalledWith(`theme:${themeId}`);
-    expect(mockTo).toHaveBeenCalledWith(`thread:${threadId}`);
-    expect(mockEmit).toHaveBeenCalledTimes(2);
-    expect(mockEmit).toHaveBeenCalledWith("extraction-update", { type, data });
+    expect(io.to).toHaveBeenCalledWith(`theme:${themeId}`);
+    expect(io.to).toHaveBeenCalledWith(`thread:${threadId}`);
+    expect(io.emit).toHaveBeenCalledTimes(2);
+    expect(io.emit).toHaveBeenCalledWith("extraction-update", { type, data });
   });
 });
