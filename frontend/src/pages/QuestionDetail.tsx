@@ -259,7 +259,9 @@ const QuestionDetail = () => {
 
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
-            <SectionHeading title="寄せられた意見" />
+            <div className="flex-grow">
+              <SectionHeading title="寄せられた意見" />
+            </div>
             <Link
               to={`/themes/${themeId}/questions/${qId}/comments`}
               className="text-sm text-purple-500 hover:underline"
