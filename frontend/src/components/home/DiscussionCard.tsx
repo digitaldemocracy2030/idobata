@@ -42,7 +42,7 @@ const DiscussionCard = ({
 
   // If id is provided, render a clickable card
   return (
-    <Link to={`/discussions/${id}`} className="block">
+    <Link to={`/themes/${id}`} className="block">
       <div className="border border-neutral-200 rounded-lg p-4 bg-white hover:shadow-md transition-all duration-200 hover:border-purple-300">
         <div className="mb-2">
           <h3 className="font-semibold text-base">{title}</h3>
