@@ -313,7 +313,9 @@ const QuestionDetail = () => {
           {((activeTab === "issues" && opinions.issues.length > 3) ||
             (activeTab === "solutions" && opinions.solutions.length > 3)) && (
             <div className="flex justify-start">
-              <SeeMoreButton to={`/themes/${themeId}/questions/${qId}/comments`} />
+              <SeeMoreButton
+                to={`/themes/${themeId}/questions/${qId}/comments`}
+              />
             </div>
           )}
         </div>
