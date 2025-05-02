@@ -38,6 +38,17 @@ export class HttpClient {
     return this.request<T>(endpoint, "POST", data, headers);
   }
 
+  async postFormData<T>(
+    endpoint: string,
+    formData: FormData,
+    headers?: Record<string, string>
+  ): Promise<HttpResult<T>> {
+    const formDataHeaders = { ...headers };
+    delete formDataHeaders["Content-Type"];
+    
+    return this.requestFormData<T>(endpoint, "POST", formData, formDataHeaders);
+  }
+
   async put<T>(
     endpoint: string,
     data?: unknown,
@@ -71,6 +82,62 @@ export class HttpClient {
     if (data) {
       options.body = JSON.stringify(data);
     }
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+      options.signal = controller.signal;
+
+      const response = await fetch(url, options);
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        let responseData: unknown;
+        try {
+          responseData = await response.json();
+        } catch (e) {}
+
+        return err(ApiError.fromHttpError(response, responseData));
+      }
+
+      if (
+        response.status === 204 ||
+        response.headers.get("content-length") === "0"
+      ) {
+        return ok({} as T);
+      }
+
+      const responseData = await response.json();
+      return ok(responseData as T);
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.name === "AbortError") {
+          return err(ApiError.fromTimeoutError());
+        }
+
+        if (error instanceof TypeError && error.message.includes("fetch")) {
+          return err(ApiError.fromNetworkError(error));
+        }
+      }
+
+      return err(ApiError.fromUnknownError(error));
+    }
+  }
+
+  private async requestFormData<T>(
+    endpoint: string,
+    method: string,
+    formData: FormData,
+    headers?: Record<string, string>
+  ): Promise<HttpResult<T>> {
+    const url = `${this.baseUrl}${endpoint}`;
+    const options: RequestInit = {
+      method,
+      headers: {
+        ...headers,
+      },
+      body: formData,
+    };
 
     try {
       const controller = new AbortController();

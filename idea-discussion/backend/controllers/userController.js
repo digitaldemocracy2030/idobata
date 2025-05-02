@@ -1,4 +1,10 @@
 import User from "../models/User.js";
+import { createStorageService } from "../services/storage/storageServiceFactory.js";
+import path from "path";
+
+const storageService = createStorageService("local", {
+  baseUrl: process.env.API_BASE_URL || "http://localhost:3001",
+});
 
 /**
  * Get user information by userId
@@ -18,6 +24,8 @@ export const getUserInfo = async (req, res) => {
 
     return res.status(200).json({
       displayName: user.displayName,
+      profileImagePath: user.profileImagePath ? 
+        storageService.getFileUrl(user.profileImagePath) : null,
     });
   } catch (error) {
     console.error("Error getting user info:", error);
@@ -61,6 +69,51 @@ export const updateUserDisplayName = async (req, res) => {
     console.error("Error updating display name:", error);
     return res.status(500).json({
       error: "Failed to update display name",
+    });
+  }
+};
+
+/**
+ * Upload profile image
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const uploadProfileImage = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({
+        error: "No file uploaded",
+      });
+    }
+
+    let user = await User.findOne({ userId });
+
+    if (!user) {
+      user = new User({ userId });
+    }
+
+    if (user.profileImagePath) {
+      await storageService.deleteFile(user.profileImagePath);
+    }
+
+    const uploadDir = path.join(process.cwd(), "uploads/profile-images");
+    const filePath = await storageService.saveFile(file, uploadDir);
+    
+    user.profileImagePath = filePath;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile image uploaded successfully",
+      profileImageUrl: storageService.getFileUrl(filePath),
+    });
+  } catch (error) {
+    console.error("Error uploading profile image:", error);
+    return res.status(500).json({
+      error: "Failed to upload profile image",
     });
   }
 };

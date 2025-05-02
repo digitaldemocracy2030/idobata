@@ -87,6 +87,7 @@ app.use("/api/questions/:questionId", questionEmbeddingRoutes);
 
 app.use("/api/site-config", siteConfigRoutes);
 app.use("/api/users", userRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // --- Serve static files in production ---
 // This section will be useful when deploying to production
