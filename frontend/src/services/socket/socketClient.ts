@@ -72,7 +72,9 @@ class SocketClient {
 
     this.socket.on("new-extraction", (event: NewExtractionEvent) => {
       console.log("Received new extraction:", event);
+      console.log("Number of extraction callbacks:", this.newExtractionCallbacks.length);
       for (const callback of this.newExtractionCallbacks) {
+        console.log("Executing extraction callback");
         callback(event);
       }
     });
