@@ -1,41 +1,13 @@
 import dotenv from "dotenv";
+import OpenAI from "openai";
 
 // dotenv is loaded in server.js, no need to load it again here.
 
 dotenv.config({ override: true }); // Load environment variables from .env file
 
-console.log("Using mock OpenAI implementation for development");
-
-class MockOpenAI {
-  constructor(options) {
-    console.log("MockOpenAI initialized with options:", options);
-    this.chat = {
-      completions: {
-        create: this.mockCreateCompletion.bind(this),
-      },
-    };
-  }
-
-  async mockCreateCompletion(options) {
-    console.log(
-      "Mock completion called with options:",
-      JSON.stringify(options, null, 2)
-    );
-    return {
-      choices: [
-        {
-          message: {
-            content: "This is a mock response from the LLM service.",
-          },
-        },
-      ],
-    };
-  }
-}
-
-const openai = new MockOpenAI({
+const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
-  apiKey: "mock-api-key",
+  apiKey: process.env.OPENROUTER_API_KEY || "mock-api-key",
 });
 /**
  * Call an LLM model via OpenRouter API
