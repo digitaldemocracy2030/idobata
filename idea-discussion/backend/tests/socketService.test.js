@@ -1,5 +1,8 @@
 import { jest } from "@jest/globals";
-import { emitNewExtraction, emitExtractionUpdate } from "../services/socketService.js";
+import {
+  emitNewExtraction,
+  emitExtractionUpdate,
+} from "../services/socketService.js";
 
 const mockTo = jest.fn().mockReturnThis();
 const mockEmit = jest.fn();
@@ -32,7 +35,10 @@ describe("Socket Service Tests", () => {
     const themeId = "test-theme-id";
     const threadId = "test-thread-id";
     const type = "solution";
-    const data = { statement: "テスト解決策", description: "テスト解決策の説明" };
+    const data = {
+      statement: "テスト解決策",
+      description: "テスト解決策の説明",
+    };
 
     emitNewExtraction(themeId, threadId, type, data);
 
@@ -58,7 +64,10 @@ describe("Socket Service Tests", () => {
     const themeId = "test-theme-id";
     const threadId = "test-thread-id";
     const type = "solution";
-    const data = { statement: "テスト解決策", description: "テスト解決策の説明" };
+    const data = {
+      statement: "テスト解決策",
+      description: "テスト解決策の説明",
+    };
 
     emitExtractionUpdate(themeId, threadId, type, data);
 

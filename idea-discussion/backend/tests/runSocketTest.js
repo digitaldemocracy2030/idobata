@@ -9,7 +9,7 @@ import { io as ioc } from "socket.io-client";
 async function runSocketTest() {
   const app = express();
   const httpServer = createServer(app);
-  
+
   const io = new Server(httpServer, {
     cors: {
       origin: "*",
@@ -23,7 +23,7 @@ async function runSocketTest() {
     socket.on("subscribe-theme", (themeId) => {
       console.log(`Socket ${socket.id} subscribing to theme: ${themeId}`);
       socket.join(`theme:${themeId}`);
-      
+
       setTimeout(() => {
         console.log(`Emitting test extraction to theme:${themeId}`);
         io.to(`theme:${themeId}`).emit("new-extraction", {
@@ -63,18 +63,18 @@ async function runSocketTest() {
 
   console.log("Creating client socket...");
   const clientSocket = ioc(`http://localhost:${port}`);
-  
+
   clientSocket.on("connect", () => {
     console.log("Client connected to server");
-    
+
     const themeId = "test-theme-id";
     console.log(`Subscribing to theme: ${themeId}`);
     clientSocket.emit("subscribe-theme", themeId);
-    
+
     clientSocket.on("new-extraction", (data) => {
       console.log("Received new-extraction event:", data);
     });
-    
+
     clientSocket.on("extraction-update", (data) => {
       console.log("Received extraction-update event:", data);
     });

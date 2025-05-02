@@ -1,8 +1,8 @@
 import { createServer } from "node:http";
+import { jest } from "@jest/globals";
 import express from "express";
 import { Server } from "socket.io";
 import { io as ioc } from "socket.io-client";
-import { jest } from "@jest/globals";
 
 jest.mock("../services/llmService.js", () => ({
   callLLM: jest.fn().mockImplementation(() => {
