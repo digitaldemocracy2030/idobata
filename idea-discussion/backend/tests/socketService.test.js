@@ -1,7 +1,7 @@
 import { jest } from "@jest/globals";
 import {
-  emitNewExtraction,
   emitExtractionUpdate,
+  emitNewExtraction,
 } from "../services/socketService.js";
 
 const mockTo = jest.fn().mockReturnThis();

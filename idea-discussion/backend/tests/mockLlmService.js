@@ -9,11 +9,15 @@
  * @param {string} model - The model ID to use
  * @returns {string|Object} - Returns predefined response
  */
-export function mockCallLLM(messages, jsonOutput = false, model = "mock-model") {
+export function mockCallLLM(
+  messages,
+  jsonOutput = false,
+  model = "mock-model"
+) {
   console.log("Using mock LLM service");
-  
+
   const lastMessage = messages[messages.length - 1];
-  if (lastMessage && lastMessage.content.includes("extract")) {
+  if (lastMessage?.content.includes("extract")) {
     return jsonOutput
       ? {
           problems: [
@@ -31,7 +35,7 @@ export function mockCallLLM(messages, jsonOutput = false, model = "mock-model") 
         }
       : "Extracted 1 problem and 1 solution.";
   }
-  
+
   return jsonOutput
     ? { response: "This is a mock response" }
     : "This is a mock response";
