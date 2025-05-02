@@ -1,4 +1,5 @@
 import type React from "react";
+import SectionHeading from "./SectionHeading";
 
 interface AboutSectionProps {
   title: string;
@@ -8,7 +9,7 @@ interface AboutSectionProps {
 export function AboutSection({ title, body }: AboutSectionProps) {
   return (
     <section className="py-8">
-      <h2 className="text-2xl font-bold mb-4">{title}</h2>
+      <SectionHeading title={title} />
       <div className="space-y-4">{body}</div>
     </section>
   );
