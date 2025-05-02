@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import "./index.css";
 import "./App.css";
+import "./styles/markdown.css";
 import { router } from "./App";
 import { SiteConfigProvider } from "./contexts/SiteConfigContext";
 
