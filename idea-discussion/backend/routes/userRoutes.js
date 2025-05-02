@@ -4,7 +4,7 @@ import {
   updateUserDisplayName,
   uploadProfileImage,
 } from "../controllers/userController.js";
-import { upload, logRequest } from "../middleware/uploadMiddleware.js";
+import { logRequest, upload } from "../middleware/uploadMiddleware.js";
 
 const router = express.Router();
 

@@ -113,8 +113,10 @@ app.use((req, res, next) => {
   const userIdProfileImageRegex = /^\/([0-9a-f-]+)\/profile-image$/;
   const match = req.path.match(userIdProfileImageRegex);
   
-  if (match && req.method === 'POST') {
-    console.log(`Redirecting request from ${req.path} to /api/users${req.path}`);
+  if (match && req.method === "POST") {
+    console.log(
+      `Redirecting request from ${req.path} to /api/users${req.path}`
+    );
     req.url = `/api/users${req.path}`;
     return next();
   }
