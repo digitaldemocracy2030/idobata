@@ -1,6 +1,8 @@
 import { type Result, err, ok } from "neverthrow";
 import { ApiError, ApiErrorType } from "./apiError";
 import type {
+  ClusteringParams,
+  ClusteringResult,
   CreateThemePayload,
   CreateUserPayload,
   LoginCredentials,
@@ -11,6 +13,8 @@ import type {
   UpdateSiteConfigPayload,
   UpdateThemePayload,
   UserResponse,
+  VectorSearchParams,
+  VectorSearchResult,
 } from "./types";
 
 export type ApiResult<T> = Result<T, ApiError>;
@@ -153,6 +157,47 @@ export class ApiClient {
     return this.request<SiteConfig>("/site-config", {
       method: "PUT",
       body: JSON.stringify(config),
+    });
+  }
+
+  async generateThemeEmbeddings(
+    themeId: string,
+    itemType?: "problem" | "solution"
+  ): Promise<ApiResult<{ status: string; processedCount: number }>> {
+    return this.request<{ status: string; processedCount: number }>(
+      `/themes/${themeId}/embeddings/generate`,
+      {
+        method: "POST",
+        body: JSON.stringify({ itemType }),
+      }
+    );
+  }
+
+  async searchTheme(
+    themeId: string,
+    params: VectorSearchParams
+  ): Promise<ApiResult<VectorSearchResult[]>> {
+    // Manually encode the query parameters to ensure proper handling of non-ASCII characters
+    const queryText = encodeURIComponent(params.queryText);
+    const itemType = encodeURIComponent(params.itemType);
+    const kParam = params.k
+      ? `&k=${encodeURIComponent(params.k.toString())}`
+      : "";
+
+    const queryString = `queryText=${queryText}&itemType=${itemType}${kParam}`;
+
+    return this.request<VectorSearchResult[]>(
+      `/themes/${themeId}/search?${queryString}`
+    );
+  }
+
+  async clusterTheme(
+    themeId: string,
+    params: ClusteringParams
+  ): Promise<ApiResult<ClusteringResult>> {
+    return this.request<ClusteringResult>(`/themes/${themeId}/cluster`, {
+      method: "POST",
+      body: JSON.stringify(params),
     });
   }
 

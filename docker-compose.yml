@@ -124,7 +124,7 @@ services:
     ports:
       - "8000:8000" # Expose port for debugging
     environment:
-      - GEMINI_API_KEY=${GEMINI_API_KEY} # Pass from host environment
+      - OPENAI_API_KEY=${OPENAI_API_KEY} # Pass from host environment
     volumes:
       - ./python-service:/app # Mount source code for development
       - chroma_data:/data/chroma # ChromaDB data persistence
