@@ -304,9 +304,14 @@ export class ApiClient {
 
   async getUserInfo(
     userId: string
-  ): Promise<HttpResult<{ displayName: string | null }>> {
+  ): Promise<
+    HttpResult<{ displayName: string | null; profileImagePath: string | null }>
+  > {
     return this.withRetry(() =>
-      this.httpClient.get<{ displayName: string | null }>(`/users/${userId}`)
+      this.httpClient.get<{
+        displayName: string | null;
+        profileImagePath: string | null;
+      }>(`/users/${userId}`)
     );
   }
 
@@ -316,6 +321,21 @@ export class ApiClient {
   ): Promise<HttpResult<void>> {
     return this.withRetry(() =>
       this.httpClient.put<void>(`/users/${userId}`, { displayName })
+    );
+  }
+
+  async uploadProfileImage(
+    userId: string,
+    file: File
+  ): Promise<HttpResult<{ profileImageUrl: string }>> {
+    const formData = new FormData();
+    formData.append("profileImage", file);
+
+    return this.withRetry(() =>
+      this.httpClient.postFormData<{ profileImageUrl: string }>(
+        `/users/${userId}/profile-image`,
+        formData
+      )
     );
   }
 

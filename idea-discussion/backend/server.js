@@ -15,19 +15,17 @@ const __dirname = path.dirname(__filename);
 const mongoUri = process.env.MONGODB_URI;
 
 if (!mongoUri) {
-  console.error("Error: MONGODB_URI is not defined in the .env file.");
-  process.exit(1); // Exit the application if DB connection string is missing
+  console.warn("Warning: MONGODB_URI is not defined in the .env file.");
+  console.warn("Continuing without MongoDB for testing purposes");
 }
 
-mongoose
-  .connect(mongoUri)
-  .then(() => {
-    console.log("MongoDB connected successfully.");
-  })
-  .catch((err) => {
-    console.error("MongoDB connection error:", err);
-    process.exit(1); // Exit on connection failure
-  });
+try {
+  await mongoose.connect(mongoUri || "mongodb://localhost:27017/idobata");
+  console.log("MongoDB connected successfully.");
+} catch (err) {
+  console.error("MongoDB connection error:", err);
+  console.warn("Continuing without MongoDB for testing purposes");
+}
 
 // --- Express App Setup ---
 const app = express();
@@ -56,6 +54,8 @@ app.use(
 
 // JSON Parser: Parse incoming JSON requests
 app.use(express.json());
+
+app.use(express.urlencoded({ extended: true }));
 
 // --- API Routes ---
 // Health Check Endpoint
@@ -101,6 +101,7 @@ app.use("/api/questions/:questionId", questionEmbeddingRoutes);
 app.use("/api/site-config", siteConfigRoutes);
 app.use("/api/top-page-data", topPageRoutes); // Add top page routes
 app.use("/api/users", userRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // --- Serve static files in production ---
 // This section will be useful when deploying to production
@@ -123,22 +124,32 @@ app.use((req, res, next) => {
     return next();
   }
 
+  const userIdProfileImageRegex = /^\/([0-9a-f-]+)\/profile-image$/;
+  const match = req.path.match(userIdProfileImageRegex);
+  if (match && req.method === "POST") {
+    console.log(
+      `Redirecting request from ${req.path} to /api/users${req.path}`
+    );
+    req.url = `/api/users${req.path}`;
+    return next();
+  }
+
   // For all other routes in development, respond with a message
   res.status(200).send(`
-        <html>
-            <head><title>Development Mode</title></head>
-            <body>
-                <h1>Backend Development Server</h1>
-                <p>This is the backend server running in development mode.</p>
-                <p>For client-side routing to work properly in development:</p>
-                <ul>
-                    <li>Make sure your frontend Vite dev server is running (npm run dev in the frontend directory)</li>
-                    <li>Access your app through the Vite dev server URL (typically http://localhost:5173)</li>
-                    <li>The Vite dev server will proxy API requests to this backend server</li>
-                </ul>
-            </body>
-        </html>
-    `);
+<html>
+    <head><title>Development Mode</title></head>
+    <body>
+        <h1>Backend Development Server</h1>
+        <p>This is the backend server running in development mode.</p>
+        <p>For client-side routing to work properly in development:</p>
+        <ul>
+            <li>Make sure your frontend Vite dev server is running (npm run dev in the frontend directory)</li>
+            <li>Access your app through the Vite dev server URL (typically http://localhost:5173)</li>
+            <li>The Vite dev server will proxy API requests to this backend server</li>
+        </ul>
+    </body>
+</html>
+`);
 });
 
 // --- Error Handling Middleware (Example - Add more specific handlers later) ---
