@@ -1,12 +1,12 @@
-/* Import BIZ UDGothic font from Google Fonts */
-@import url("https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap");
+/* Import Inter and BIZ UDGothic fonts from Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=BIZ+UDGothic:wght@400;700&display=swap");
 
 @tailwind base;
 
-/* Apply BIZ UDGothic to all elements */
+/* Apply Inter for English and BIZ UDGothic for Japanese */
 @layer base {
   html {
-    font-family: "BIZ UDGothic", system-ui, sans-serif;
+    font-family: "Inter", "BIZ UDGothic", system-ui, sans-serif;
   }
 }
 
