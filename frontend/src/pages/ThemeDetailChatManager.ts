@@ -150,7 +150,9 @@ export class ThemeDetailChatManager {
     this.unsubscribeNewExtraction = socketClient.onNewExtraction(
       this.handleNewExtraction.bind(this)
     );
-    console.log("[ThemeDetailChatManager] Registering extraction-update handler");
+    console.log(
+      "[ThemeDetailChatManager] Registering extraction-update handler"
+    );
     this.unsubscribeExtractionUpdate = socketClient.onExtractionUpdate(
       this.handleExtractionUpdate.bind(this)
     );
