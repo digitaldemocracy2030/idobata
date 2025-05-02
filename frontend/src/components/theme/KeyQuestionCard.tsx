@@ -1,10 +1,6 @@
 import { AlertTriangle, CheckCircle, ThumbsUp } from "lucide-react";
 import { Link } from "react-router-dom";
-import {
-  Card,
-  CardContent,
-  CardTitle,
-} from "../../components/ui/card";
+import { Card, CardContent, CardTitle } from "../../components/ui/card";
 
 interface KeyQuestionCardProps {
   question: string;
@@ -27,7 +23,9 @@ const KeyQuestionCard = ({
     <Link to={`/themes/${themeId}/questions/${qid}`} className="block">
       <Card className="hover:shadow-md transition-all duration-200 hover:border-primary">
         <CardContent className="p-4">
-          <CardTitle className="font-semibold text-lg mb-3">{question}</CardTitle>
+          <CardTitle className="font-semibold text-lg mb-3">
+            {question}
+          </CardTitle>
           <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
             <span className="flex items-center">
               <ThumbsUp className="h-4 w-4 mr-1 text-primary" />
