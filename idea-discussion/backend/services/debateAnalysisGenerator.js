@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
+import DebateAnalysis from "../models/DebateAnalysis.js";
 import Problem from "../models/Problem.js";
 import QuestionLink from "../models/QuestionLink.js";
-import DebateAnalysis from "../models/DebateAnalysis.js";
 import SharpQuestion from "../models/SharpQuestion.js";
 import Solution from "../models/Solution.js";
 import { RECOMMENDED_MODELS, callLLM } from "./llmService.js";

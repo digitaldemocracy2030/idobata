@@ -1,14 +1,14 @@
 import express from "express";
 import {
+  getDebateAnalysis,
   getQuestionDetails,
   getQuestionsByTheme,
   getVisualReport,
-  getDebateAnalysis,
+  triggerDebateAnalysisGeneration,
   triggerDigestGeneration,
   triggerPolicyGeneration,
   triggerReportGeneration,
   triggerVisualReportGeneration,
-  triggerDebateAnalysisGeneration,
 } from "../controllers/questionController.js";
 
 const router = express.Router({ mergeParams: true });
@@ -26,7 +26,10 @@ router.post(
   triggerVisualReportGeneration
 );
 router.post("/:questionId/generate-report", triggerReportGeneration);
-router.post("/:questionId/generate-debate-analysis", triggerDebateAnalysisGeneration);
+router.post(
+  "/:questionId/generate-debate-analysis",
+  triggerDebateAnalysisGeneration
+);
 
 router.get("/:questionId/visual-report", getVisualReport);
 router.get("/:questionId/debate-analysis", getDebateAnalysis);

@@ -12,13 +12,17 @@ const debateAnalysisSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    axes: [{
-      title: String,
-      options: [{
-        label: String,
-        description: String,
-      }],
-    }],
+    axes: [
+      {
+        title: String,
+        options: [
+          {
+            label: String,
+            description: String,
+          },
+        ],
+      },
+    ],
     agreementPoints: [String],
     disagreementPoints: [String],
     sourceProblemIds: [
@@ -42,14 +46,8 @@ const debateAnalysisSchema = new mongoose.Schema(
   { timestamps: true }
 ); // createdAt, updatedAt を自動追加
 
-debateAnalysisSchema.index(
-  { questionId: 1, version: 1 },
-  { unique: true }
-);
+debateAnalysisSchema.index({ questionId: 1, version: 1 }, { unique: true });
 
-const DebateAnalysis = mongoose.model(
-  "DebateAnalysis",
-  debateAnalysisSchema
-);
+const DebateAnalysis = mongoose.model("DebateAnalysis", debateAnalysisSchema);
 
 export default DebateAnalysis;
