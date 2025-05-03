@@ -4,9 +4,11 @@ import QuestionLink from "../models/QuestionLink.js";
 import ReportExample from "../models/ReportExample.js";
 import SharpQuestion from "../models/SharpQuestion.js";
 import Solution from "../models/Solution.js";
-import { generateDigestDraft } from "../workers/digestGenerator.js"; // Import the digest worker function
-import { generatePolicyDraft } from "../workers/policyGenerator.js"; // Import the worker function
+import { getVisualReport as getQuestionVisualReport } from "../services/questionVisualReportGenerator.js";
+import { generateDigestDraft } from "../workers/digestGenerator.js";
+import { generatePolicyDraft } from "../workers/policyGenerator.js";
 import { generateReportExample } from "../workers/reportGenerator.js";
+import { generateVisualReport } from "../workers/visualReportGenerator.js";
 
 // GET /api/themes/:themeId/questions/:questionId/details - 特定の質問の詳細を取得
 export const getQuestionDetails = async (req, res) => {
@@ -120,6 +122,8 @@ export const getQuestionDetails = async (req, res) => {
       .sort({ version: -1 })
       .lean();
 
+    const visualReport = await getQuestionVisualReport(questionId);
+
     res.status(200).json({
       question: {
         ...question.toObject(),
@@ -129,6 +133,7 @@ export const getQuestionDetails = async (req, res) => {
       relatedSolutions,
       debateData,
       reportExample,
+      visualReport: visualReport ? visualReport.overallAnalysis : null,
     });
   } catch (error) {
     console.error(`Error fetching details for question ${questionId}:`, error);
@@ -266,6 +271,78 @@ export const triggerReportGeneration = async (req, res) => {
     );
     res.status(500).json({
       message: "Error triggering report generation",
+      error: error.message,
+    });
+  }
+};
+
+// POST /api/themes/:themeId/questions/:questionId/generate-visual-report - ビジュアルレポートドラフト生成
+export const triggerVisualReportGeneration = async (req, res) => {
+  const { questionId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(questionId)) {
+    return res.status(400).json({ message: "Invalid question ID format" });
+  }
+
+  try {
+    // Check if the question exists
+    const question = await SharpQuestion.findById(questionId);
+    if (!question) {
+      return res.status(404).json({ message: "Question not found" });
+    }
+
+    // Trigger the generation asynchronously (using setTimeout for simplicity)
+    // In production, use a proper job queue (BullMQ, Agenda, etc.)
+    setTimeout(() => {
+      generateVisualReport(questionId).catch((err) => {
+        console.error(
+          `[API Trigger] Error during background visual report generation for ${questionId}:`,
+          err
+        );
+      });
+    }, 0);
+
+    console.log(
+      `[API Trigger] Visual report generation triggered for questionId: ${questionId}`
+    );
+    res.status(202).json({
+      message: `Visual report generation started for question ${questionId}`,
+    });
+  } catch (error) {
+    console.error(
+      `Error triggering visual report generation for question ${questionId}:`,
+      error
+    );
+    res.status(500).json({
+      message: "Error triggering visual report generation",
+      error: error.message,
+    });
+  }
+};
+
+// GET /api/themes/:themeId/questions/:questionId/visual-report - ビジュアルレポート取得
+export const getVisualReport = async (req, res) => {
+  const { questionId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(questionId)) {
+    return res.status(400).json({ message: "Invalid question ID format" });
+  }
+
+  try {
+    const visualReport = await getQuestionVisualReport(questionId);
+
+    if (!visualReport) {
+      return res.status(404).json({ message: "Visual report not found" });
+    }
+
+    res.status(200).json(visualReport);
+  } catch (error) {
+    console.error(
+      `Error getting visual report for question ${questionId}:`,
+      error
+    );
+    res.status(500).json({
+      message: "Error getting visual report",
       error: error.message,
     });
   }

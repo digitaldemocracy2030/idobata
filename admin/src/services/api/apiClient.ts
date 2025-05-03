@@ -211,6 +211,18 @@ export class ApiClient {
     });
   }
 
+  async generateVisualReport(
+    themeId: string,
+    questionId: string
+  ): Promise<ApiResult<{ message: string }>> {
+    return this.request<{ message: string }>(
+      `/themes/${themeId}/questions/${questionId}/generate-visual-report`,
+      {
+        method: "POST",
+      }
+    );
+  }
+
   async generateReportExample(
     themeId: string,
     questionId: string
