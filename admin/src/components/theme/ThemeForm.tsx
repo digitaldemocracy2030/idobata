@@ -402,7 +402,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
               </button>
             </div>
           </div>
-          
+
           {/* Visual Report Generation Button */}
           <div className="mb-6 p-4 bg-background rounded-lg border border-border shadow-sm">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -502,15 +502,16 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                     {questions.map((question) => (
                       <tr
                         key={question._id}
-                        className={`hover:bg-muted/50 ${selectedQuestionId === question._id ? "bg-muted/30" : ""}`}
+                        className={`hover:bg-muted/50 cursor-pointer ${selectedQuestionId === question._id ? "bg-muted/30" : ""}`}
                         onClick={() => setSelectedQuestionId(question._id)}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
                             setSelectedQuestionId(question._id);
                           }
                         }}
                         tabIndex={0}
-                        role="button"
+                        aria-selected={selectedQuestionId === question._id}
                       >
                         <td className="px-6 py-4 whitespace-normal text-sm text-foreground">
                           {question.questionText}

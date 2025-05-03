@@ -52,11 +52,15 @@ const DebateSummary = ({
       {activeTab === "illustration" ? (
         <div className="text-center py-8 text-neutral-400">
           {visualReport ? (
-            <div 
-              dangerouslySetInnerHTML={{ __html: visualReport }} 
+            <div
               className="visual-report-container"
               aria-label="ビジュアルレポート"
-            />
+            >
+              <div
+                // biome-ignore lint/security/noDangerouslySetInnerHtml:
+                dangerouslySetInnerHTML={{ __html: visualReport }}
+              />
+            </div>
           ) : (
             "イラストはまだ作成されていません"
           )}
