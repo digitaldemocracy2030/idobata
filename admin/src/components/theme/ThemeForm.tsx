@@ -506,7 +506,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                             type="button"
                           >
                             {isGeneratingVisualReport &&
-                              selectedQuestionId === question._id ? (
+                                selectedQuestionId === question._id ? (
                               <span className="flex items-center">
                                 <svg
                                   className="animate-spin -ml-1 mr-1 h-3 w-3"
