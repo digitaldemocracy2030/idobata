@@ -8,6 +8,7 @@ const ReportExampleManagement = () => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState({});
+  const [generatingDebateAnalysis, setGeneratingDebateAnalysis] = useState({});
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
@@ -55,6 +56,30 @@ const ReportExampleManagement = () => {
 
     setGenerating((prev) => ({ ...prev, [questionId]: false }));
   };
+  
+  const handleGenerateDebateAnalysis = async (questionId) => {
+    setGeneratingDebateAnalysis((prev) => ({ ...prev, [questionId]: true }));
+    setSuccessMessage(null);
+    setError(null);
+
+    try {
+      const result = await apiClient.generateDebateAnalysis(themeId, questionId);
+
+      if (result.isErr()) {
+        console.error("Failed to generate debate analysis:", result.error);
+        setError("議論分析の生成に失敗しました");
+      } else {
+        setSuccessMessage(
+          "議論分析の生成を開始しました。生成には数分かかる場合があります。"
+        );
+      }
+    } catch (error) {
+      console.error("Error generating debate analysis:", error);
+      setError("議論分析の生成中にエラーが発生しました");
+    }
+
+    setGeneratingDebateAnalysis((prev) => ({ ...prev, [questionId]: false }));
+  };
 
   if (loading) {
     return <div className="text-center py-8">読み込み中...</div>;
@@ -98,7 +123,7 @@ const ReportExampleManagement = () => {
                 className="p-4 border border-border rounded-lg"
               >
                 <h3 className="font-medium mb-2">{question.questionText}</h3>
-                <div className="flex justify-end">
+                <div className="flex justify-end space-x-2">
                   <button
                     type="button"
                     onClick={() => handleGenerateReport(question._id)}
@@ -108,6 +133,16 @@ const ReportExampleManagement = () => {
                     {generating[question._id]
                       ? "生成中..."
                       : "市民意見レポート例を生成"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleGenerateDebateAnalysis(question._id)}
+                    disabled={generatingDebateAnalysis[question._id]}
+                    className="px-4 py-2 bg-secondary text-secondary-foreground rounded hover:bg-secondary/90 disabled:opacity-50"
+                  >
+                    {generatingDebateAnalysis[question._id]
+                      ? "生成中..."
+                      : "議論分析を生成"}
                   </button>
                 </div>
               </div>

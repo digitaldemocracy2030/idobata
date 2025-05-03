@@ -5,10 +5,12 @@ import ReportExample from "../models/ReportExample.js";
 import SharpQuestion from "../models/SharpQuestion.js";
 import Solution from "../models/Solution.js";
 import { getVisualReport as getQuestionVisualReport } from "../services/questionVisualReportGenerator.js";
+import { getDebateAnalysis as getDebateAnalysisFromService } from "../services/debateAnalysisGenerator.js";
 import { generateDigestDraft } from "../workers/digestGenerator.js";
 import { generatePolicyDraft } from "../workers/policyGenerator.js";
 import { generateReportExample } from "../workers/reportGenerator.js";
 import { generateVisualReport } from "../workers/visualReportGenerator.js";
+import { generateDebateAnalysisTask } from "../workers/debateAnalysisGenerator.js";
 
 // GET /api/themes/:themeId/questions/:questionId/details - 特定の質問の詳細を取得
 export const getQuestionDetails = async (req, res) => {
@@ -123,6 +125,7 @@ export const getQuestionDetails = async (req, res) => {
       .lean();
 
     const visualReport = await getQuestionVisualReport(questionId);
+    const debateAnalysis = await getDebateAnalysisFromService(questionId);
 
     res.status(200).json({
       question: {
@@ -131,7 +134,11 @@ export const getQuestionDetails = async (req, res) => {
       },
       relatedProblems,
       relatedSolutions,
-      debateData,
+      debateData: debateAnalysis ? {
+        axes: debateAnalysis.axes,
+        agreementPoints: debateAnalysis.agreementPoints,
+        disagreementPoints: debateAnalysis.disagreementPoints,
+      } : debateData,
       reportExample,
       visualReport: visualReport ? visualReport.overallAnalysis : null,
     });
@@ -343,6 +350,78 @@ export const getVisualReport = async (req, res) => {
     );
     res.status(500).json({
       message: "Error getting visual report",
+      error: error.message,
+    });
+  }
+};
+
+// POST /api/themes/:themeId/questions/:questionId/generate-debate-analysis - 議論分析生成
+export const triggerDebateAnalysisGeneration = async (req, res) => {
+  const { questionId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(questionId)) {
+    return res.status(400).json({ message: "Invalid question ID format" });
+  }
+
+  try {
+    // Check if the question exists
+    const question = await SharpQuestion.findById(questionId);
+    if (!question) {
+      return res.status(404).json({ message: "Question not found" });
+    }
+
+    // Trigger the generation asynchronously (using setTimeout for simplicity)
+    // In production, use a proper job queue (BullMQ, Agenda, etc.)
+    setTimeout(() => {
+      generateDebateAnalysisTask(questionId).catch((err) => {
+        console.error(
+          `[API Trigger] Error during background debate analysis generation for ${questionId}:`,
+          err
+        );
+      });
+    }, 0);
+
+    console.log(
+      `[API Trigger] Debate analysis generation triggered for questionId: ${questionId}`
+    );
+    res.status(202).json({
+      message: `Debate analysis generation started for question ${questionId}`,
+    });
+  } catch (error) {
+    console.error(
+      `Error triggering debate analysis generation for question ${questionId}:`,
+      error
+    );
+    res.status(500).json({
+      message: "Error triggering debate analysis generation",
+      error: error.message,
+    });
+  }
+};
+
+// GET /api/themes/:themeId/questions/:questionId/debate-analysis - 議論分析取得
+export const getDebateAnalysis = async (req, res) => {
+  const { questionId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(questionId)) {
+    return res.status(400).json({ message: "Invalid question ID format" });
+  }
+
+  try {
+    const debateAnalysis = await getDebateAnalysisFromService(questionId);
+
+    if (!debateAnalysis) {
+      return res.status(404).json({ message: "Debate analysis not found" });
+    }
+
+    res.status(200).json(debateAnalysis);
+  } catch (error) {
+    console.error(
+      `Error getting debate analysis for question ${questionId}:`,
+      error
+    );
+    res.status(500).json({
+      message: "Error getting debate analysis",
       error: error.message,
     });
   }
