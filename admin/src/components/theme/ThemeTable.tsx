@@ -30,7 +30,10 @@ const ThemeTable: FC<ThemeTableProps> = ({ themes, onDelete }) => {
         <tbody>
           {themes.length === 0 ? (
             <tr>
-              <td colSpan={5} className="py-4 text-center text-muted-foreground">
+              <td
+                colSpan={5}
+                className="py-4 text-center text-muted-foreground"
+              >
                 テーマがありません
               </td>
             </tr>
