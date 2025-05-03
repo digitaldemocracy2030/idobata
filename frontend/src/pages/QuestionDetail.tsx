@@ -227,7 +227,8 @@ const QuestionDetail = () => {
     const reportExample = isMockMode
       ? mockReportExample
       : (questionDetail?.reportExample ?? {
-          introduction: "",
+          introduction:
+            "レポート例はまだ作成されていません。より多くの意見が集まるとレポート例が表示されるようになります。",
           issues: [],
         });
 

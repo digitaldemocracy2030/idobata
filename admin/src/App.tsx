@@ -7,6 +7,7 @@ import Sidebar from "./components/layout/Sidebar";
 import { AuthProvider } from "./contexts/AuthContext";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import ReportExampleManagement from "./pages/ReportExampleManagement";
 import SiteConfigEdit from "./pages/SiteConfigEdit";
 import ThemeClustering from "./pages/ThemeClustering";
 import ThemeCreate from "./pages/ThemeCreate";
@@ -49,6 +50,10 @@ const App: React.FC = () => {
                         <Route
                           path="/themes/:themeId/clustering"
                           element={<ThemeClustering />}
+                        />
+                        <Route
+                          path="/themes/:themeId/questions/report-examples"
+                          element={<ReportExampleManagement />}
                         />
                         <Route
                           path="/siteConfig/edit"
