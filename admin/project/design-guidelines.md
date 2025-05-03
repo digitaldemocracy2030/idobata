@@ -24,6 +24,7 @@
 - **TypeScript**: 型安全な開発環境の提供
 - **React Router**: アプリケーションのルーティング
 - **Tailwind CSS**: ユーティリティファーストのスタイリング
+- **shadcn/ui**: 高品質なUIコンポーネントライブラリ（violetテーマを採用）
 - **Lucide**: モダンでシンプルなアイコンライブラリ
 
 ### 開発ツール
@@ -98,7 +99,7 @@ src/
 
 ### 色管理
 
-管理画面では直接カラーコードを使用している箇所がありますが、Tailwindのカラークラスを活用して一元管理することを推奨します：
+管理画面ではshadcn/uiのvioletテーマを採用し、Tailwindの設定で一元管理します：
 
 ```js
 // tailwind.config.js
@@ -106,33 +107,67 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Tailwindのデフォルトカラーを活用
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
       },
     },
   },
 }
 ```
 
+これにより、ハードコードされた色値（例: `bg-blue-600`）を意味のある名前（例: `bg-primary`）に置き換えることができます。
+
 ### 色の使用ガイドライン
 
 - **テキスト**:
-  - 本文: text-gray-700
-  - 見出し: text-gray-900
-  - リンク: text-blue-600
+  - 本文: foreground (`text-foreground`)
+  - 見出し: foreground (`text-foreground`)
+  - リンク: primary (`text-primary`)
 
 - **背景**:
-  - ページ背景: bg-white
-  - セクション背景: bg-gray-50
-  - カード背景: bg-white
+  - ページ背景: background (`bg-background`)
+  - セクション背景: secondary (`bg-secondary`)
+  - カード背景: card (`bg-card`)
 
 - **アクセント**:
-  - ボタン（プライマリ）: bg-blue-600
-  - ボタン（セカンダリ）: bg-gray-200
-  - ボタン（デンジャー）: bg-red-600
-  - 警告: bg-yellow-100
-  - 成功: bg-green-100
-  - エラー: bg-red-100
-  - 情報: bg-blue-100
+  - ボタン（プライマリ）: primary (`bg-primary`)
+  - ボタン（セカンダリ）: secondary (`bg-secondary`)
+  - ボタン（デンジャー）: destructive (`bg-destructive`)
+  - 警告: yellow-100 (将来的にはshadcn/uiの警告色に統一)
+  - 成功: green-100 (将来的にはshadcn/uiの成功色に統一)
+  - エラー: destructive-foreground (将来的にはshadcn/uiのエラー色に統一)
+  - 情報: blue-100 (将来的にはshadcn/uiの情報色に統一)
 
 ## レイアウトとスペーシング
 
@@ -174,52 +209,69 @@ module.exports = {
 
 #### ボタン
 
-Buttonコンポーネントを使用し、様々なバリエーションを活用します：
+shadcn/uiのButtonコンポーネントを使用し、様々なバリエーションを活用します：
 
-- **バリアント**: primary, secondary, danger
+- **バリアント**: default, destructive, outline, secondary, ghost, link
+- **サイズ**: default, sm, lg, icon
 - **状態**: 通常, disabled
 
 ```jsx
-import Button from "../components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 // 使用例
-<Button variant="primary">ボタン</Button>
+<Button variant="default">ボタン</Button>
 <Button variant="secondary">キャンセル</Button>
-<Button variant="danger" disabled={true}>削除</Button>
+<Button variant="destructive" disabled={true}>削除</Button>
+<Button variant="outline" size="sm">小さいボタン</Button>
+<Button variant="ghost" size="icon"><IconName /></Button>
 ```
 
 #### 入力フィールド
 
-Inputコンポーネントを使用してフォーム入力を処理します：
+shadcn/uiのInputコンポーネントを使用してフォーム入力を処理します：
 
 ```jsx
-import Input from "../components/ui/Input";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 // 使用例
-<Input
-  label="タイトル"
-  name="title"
-  value={title}
-  onChange={handleChange}
-  required={true}
-  error={errors.title}
-/>
+<div className="grid w-full max-w-sm items-center gap-1.5">
+  <Label htmlFor="title">タイトル</Label>
+  <Input
+    id="title"
+    name="title"
+    value={title}
+    onChange={handleChange}
+    required={true}
+  />
+  {errors.title && <p className="text-destructive text-sm">{errors.title}</p>}
+</div>
 ```
 
 #### アラート
 
-Alertコンポーネントを使用して、様々なタイプのメッセージを表示します：
-
-- **タイプ**: success, error, warning, info
+shadcn/uiのAlertコンポーネントを使用して、様々なタイプのメッセージを表示します：
 
 ```jsx
-import Alert from "../components/ui/Alert";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert";
+import { InfoIcon, AlertTriangleIcon, CheckCircleIcon, AlertCircleIcon } from "lucide-react";
 
 // 使用例
-<Alert type="success">保存が完了しました</Alert>
-<Alert type="error">エラーが発生しました</Alert>
-<Alert type="warning">注意してください</Alert>
-<Alert type="info">情報メッセージ</Alert>
+<Alert variant="default">
+  <InfoIcon className="h-4 w-4" />
+  <AlertTitle>情報</AlertTitle>
+  <AlertDescription>情報メッセージ</AlertDescription>
+</Alert>
+
+<Alert variant="destructive">
+  <AlertCircleIcon className="h-4 w-4" />
+  <AlertTitle>エラー</AlertTitle>
+  <AlertDescription>エラーが発生しました</AlertDescription>
+</Alert>
 ```
 
 ### レイアウトコンポーネント
