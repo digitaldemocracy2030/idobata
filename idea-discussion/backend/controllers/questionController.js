@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
 import Problem from "../models/Problem.js";
 import QuestionLink from "../models/QuestionLink.js";
+import ReportExample from "../models/ReportExample.js"; // Add this import
 import SharpQuestion from "../models/SharpQuestion.js";
 import Solution from "../models/Solution.js";
 import { generateDigestDraft } from "../workers/digestGenerator.js"; // Import the digest worker function
+import { generateReportExample } from "../workers/reportGenerator.js"; // Add this import
 import { generatePolicyDraft } from "../workers/policyGenerator.js"; // Import the worker function
 
 // GET /api/themes/:themeId/questions/:questionId/details - 特定の質問の詳細を取得
@@ -112,27 +114,32 @@ export const getQuestionDetails = async (req, res) => {
       ],
     };
 
-    const reportExample = {
-      introduction:
-        "若者の雇用とキャリア形成に関する市民の意見を集約した結果、以下のような課題が浮かび上がりました。これらの課題に対して、政策立案者は具体的な対応を検討すべきです。",
-      issues: [
-        {
-          title: "1. 新卒一括採用システムの見直し",
-          description:
-            "現行の新卒一括採用システムは若者のキャリア選択の幅を狭め、多様な才能や適性を活かしにくくしています。通年採用や複数回採用の導入、中途採用の強化などの改革が求められています。",
-        },
-        {
-          title: "2. 実践的なキャリア教育の充実",
-          description:
-            "学校教育と実社会のギャップを埋めるため、早期からの職業体験やインターンシップ、社会人メンターとの交流など、実践的なキャリア教育の充実が必要です。",
-        },
-        {
-          title: "3. 若者の非正規雇用問題への対応",
-          description:
-            "若者の非正規雇用の増加は将来の不安定さにつながります。正規雇用への転換支援や、非正規でも安定したキャリア形成が可能な制度設計が求められています。",
-        },
-      ],
-    };
+    // Fetch report example from database (if exists)
+    let reportExample = await ReportExample.findOne({ questionId: questionId }).lean();
+    
+    if (!reportExample) {
+      reportExample = {
+        introduction:
+          "若者の雇用とキャリア形成に関する市民の意見を集約した結果、以下のような課題が浮かび上がりました。これらの課題に対して、政策立案者は具体的な対応を検討すべきです。",
+        issues: [
+          {
+            title: "1. 新卒一括採用システムの見直し",
+            description:
+              "現行の新卒一括採用システムは若者のキャリア選択の幅を狭め、多様な才能や適性を活かしにくくしています。通年採用や複数回採用の導入、中途採用の強化などの改革が求められています。",
+          },
+          {
+            title: "2. 実践的なキャリア教育の充実",
+            description:
+              "学校教育と実社会のギャップを埋めるため、早期からの職業体験やインターンシップ、社会人メンターとの交流など、実践的なキャリア教育の充実が必要です。",
+          },
+          {
+            title: "3. 若者の非正規雇用問題への対応",
+            description:
+              "若者の非正規雇用の増加は将来の不安定さにつながります。正規雇用への転換支援や、非正規でも安定したキャリア形成が可能な制度設計が求められています。",
+          },
+        ],
+      };
+    }
 
     res.status(200).json({
       question: {
@@ -236,6 +243,50 @@ export const triggerDigestGeneration = async (req, res) => {
     );
     res.status(500).json({
       message: "Error triggering digest generation",
+      error: error.message,
+    });
+  }
+};
+
+// POST /api/themes/:themeId/questions/:questionId/generate-report - レポート例生成
+export const triggerReportGeneration = async (req, res) => {
+  const { questionId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(questionId)) {
+    return res.status(400).json({ message: "Invalid question ID format" });
+  }
+
+  try {
+    // Check if the question exists (optional but good practice)
+    const question = await SharpQuestion.findById(questionId);
+    if (!question) {
+      return res.status(404).json({ message: "Question not found" });
+    }
+
+    // Trigger the generation asynchronously (using setTimeout for simplicity)
+    // In production, use a proper job queue (BullMQ, Agenda, etc.)
+    setTimeout(() => {
+      generateReportExample(questionId).catch((err) => {
+        console.error(
+          `[API Trigger] Error during background report generation for ${questionId}:`,
+          err
+        );
+      });
+    }, 0);
+
+    console.log(
+      `[API Trigger] Report generation triggered for questionId: ${questionId}`
+    );
+    res.status(202).json({
+      message: `Report example generation started for question ${questionId}`,
+    });
+  } catch (error) {
+    console.error(
+      `Error triggering report generation for question ${questionId}:`,
+      error
+    );
+    res.status(500).json({
+      message: "Error triggering report generation",
       error: error.message,
     });
   }
