@@ -328,7 +328,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
           )}
 
           {successMessage && (
-            <div className="mb-4 p-4 bg-success/20 border border-success/30 rounded-lg text-success-foreground text-sm">
+            <div className="mb-4 p-4 bg-success/80 border border-success/90 rounded-lg text-success-foreground text-sm">
               <p className="flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -500,7 +500,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                               handleGenerateVisualReport();
                             }}
                             disabled={isGeneratingVisualReport}
-                            className="px-3 py-1 bg-primary/20 text-primary-foreground rounded-full text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90"
                             type="button"
                           >
                             {isGeneratingVisualReport &&
