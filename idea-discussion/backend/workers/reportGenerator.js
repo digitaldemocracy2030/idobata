@@ -134,7 +134,6 @@ Please provide the output as a JSON object with "introduction" and "issues" keys
     );
 
     let reportExample = await ReportExample.findOne({ questionId: questionId });
-    
     if (reportExample) {
       reportExample.introduction = llmResponse.introduction;
       reportExample.issues = llmResponse.issues;

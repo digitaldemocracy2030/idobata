@@ -118,7 +118,6 @@ export const getQuestionDetails = async (req, res) => {
     let reportExample = await ReportExample.findOne({
       questionId: questionId,
     }).lean();
-    
     if (!reportExample) {
       reportExample = {
         introduction:
