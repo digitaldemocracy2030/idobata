@@ -4,7 +4,7 @@ import QuestionLink from "../models/QuestionLink.js";
 import QuestionVisualReport from "../models/QuestionVisualReport.js";
 import SharpQuestion from "../models/SharpQuestion.js";
 import Solution from "../models/Solution.js";
-import { callLLM, RECOMMENDED_MODELS } from "./llmService.js";
+import { RECOMMENDED_MODELS, callLLM } from "./llmService.js";
 
 export async function getVisualReport(questionId) {
   return QuestionVisualReport.findOne({
@@ -30,7 +30,7 @@ export async function generateQuestionVisualReport(
         return existingReport;
       }
     }
-    
+
     const question = await SharpQuestion.findById(questionId);
     if (!question) {
       console.error(
@@ -38,7 +38,7 @@ export async function generateQuestionVisualReport(
       );
       throw new Error("Question not found");
     }
-    
+
     const links = await QuestionLink.find({ questionId: questionId });
 
     const problemLinks = links.filter(
@@ -75,17 +75,17 @@ export async function generateQuestionVisualReport(
     console.log(
       `[VisualReportGenerator] Found ${problemStatements.length} related problems and ${solutionStatements.length} related solutions, sorted by relevance.`
     );
-    
+
     const markdownContent = `
 # ${question.questionText}
 
 ## 課題点
-${problemStatements.map((statement, index) => `${index + 1}. ${statement}`).join('\n')}
+${problemStatements.map((statement, index) => `${index + 1}. ${statement}`).join("\n")}
 
 ## 解決策
-${solutionStatements.map((statement, index) => `${index + 1}. ${statement}`).join('\n')}
+${solutionStatements.map((statement, index) => `${index + 1}. ${statement}`).join("\n")}
 `;
-    
+
     const visualPrompt = `
 # グラフィックレコーディング風インフォグラフィック変換プロンプト
 
@@ -150,20 +150,22 @@ ${solutionStatements.map((statement, index) => `${index + 1}. ${statement}`).joi
 ${markdownContent}
 ---
 レスポンスは完全なHTML+CSSコードのみを返してください。`;
-    
-    console.log("[VisualReportGenerator] Calling LLM to generate visual report...");
+
+    console.log(
+      "[VisualReportGenerator] Calling LLM to generate visual report..."
+    );
     const completion = await callLLM(
       [{ role: "user", content: visualPrompt }],
       false,
       RECOMMENDED_MODELS["claude-3-sonnet"]
     );
-    
+
     if (!completion) {
       throw new Error("Failed to generate visual report");
     }
-    
+
     const overallAnalysis = completion.replace(/^```html|```$/g, "").trim();
-    
+
     const visualReport = new QuestionVisualReport({
       questionId: question._id,
       questionText: question.questionText,
@@ -172,17 +174,17 @@ ${markdownContent}
       sourceSolutionIds: solutionIds,
       version: 1,
     });
-    
+
     await QuestionVisualReport.findOneAndUpdate(
       { questionId: question._id },
       visualReport.toObject(),
       { upsert: true, new: true }
     );
-    
+
     console.log(
       `[VisualReportGenerator] Successfully saved visual report for questionId: ${questionId}`
     );
-    
+
     return visualReport;
   } catch (error) {
     console.error(

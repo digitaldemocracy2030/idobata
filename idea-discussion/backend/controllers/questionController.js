@@ -135,7 +135,7 @@ export const getQuestionDetails = async (req, res) => {
         },
       ],
     };
-    
+
     const visualReport = await getQuestionVisualReport(questionId);
 
     res.status(200).json({
@@ -300,11 +300,11 @@ export const getVisualReport = async (req, res) => {
 
   try {
     const visualReport = await getQuestionVisualReport(questionId);
-    
+
     if (!visualReport) {
       return res.status(404).json({ message: "Visual report not found" });
     }
-    
+
     res.status(200).json(visualReport);
   } catch (error) {
     console.error(
