@@ -1,5 +1,5 @@
 import React from "react";
-import type { FC, ReactNode, ButtonHTMLAttributes } from "react";
+import type { ButtonHTMLAttributes, FC, ReactNode } from "react";
 import { Button as ShadcnButton } from "./shadcn-button";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -26,7 +26,6 @@ const Button: FC<ButtonProps> = ({
   ...props
 }) => {
   const mappedVariant = variantMapping[variant] || "default";
-  
   let customStyle = "";
   if (variant === "warning") {
     customStyle = "border-warning text-warning-foreground hover:bg-warning/20";
