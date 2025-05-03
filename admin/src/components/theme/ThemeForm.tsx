@@ -403,56 +403,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
             </div>
           </div>
 
-          {/* Visual Report Generation Button */}
-          <div className="mb-6 p-4 bg-background rounded-lg border border-border shadow-sm">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h3 className="text-lg font-semibold text-primary-dark mb-1">
-                  ビジュアルレポート生成
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  選択した問いのビジュアルレポートを生成します
-                </p>
-              </div>
-              <button
-                onClick={handleGenerateVisualReport}
-                disabled={isGeneratingVisualReport || !selectedQuestionId}
-                className="btn bg-primary text-primary-foreground px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm whitespace-nowrap hover:bg-primary/90"
-                type="button"
-              >
-                {isGeneratingVisualReport ? (
-                  <span className="flex items-center">
-                    <svg
-                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      aria-label="読み込み中"
-                      role="img"
-                    >
-                      <title>読み込み中</title>
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                    生成中...
-                  </span>
-                ) : (
-                  "ビジュアルレポート生成"
-                )}
-              </button>
-            </div>
-          </div>
+
 
           {/* Questions List */}
           <div className="bg-background p-4 rounded-lg border border-border shadow-sm">
@@ -496,6 +447,12 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                       >
                         表示
                       </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                      >
+                        ビジュアルレポート
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="bg-background divide-y divide-border">
@@ -535,6 +492,46 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                             type="button"
                           >
                             表示
+                          </button>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedQuestionId(question._id);
+                              handleGenerateVisualReport();
+                            }}
+                            disabled={isGeneratingVisualReport}
+                            className="px-3 py-1 bg-primary/20 text-primary-foreground rounded-full text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            type="button"
+                          >
+                            {isGeneratingVisualReport && selectedQuestionId === question._id ? (
+                              <span className="flex items-center">
+                                <svg
+                                  className="animate-spin -ml-1 mr-1 h-3 w-3"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                  />
+                                  <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                  />
+                                </svg>
+                                生成中
+                              </span>
+                            ) : (
+                              "レポート生成"
+                            )}
                           </button>
                         </td>
                       </tr>
