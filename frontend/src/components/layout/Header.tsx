@@ -105,6 +105,21 @@ const Header = () => {
                     {theme.title}
                   </NavigationRouterLink>
                 ))}
+
+              {process.env.NODE_ENV === "development" && (
+                <div className="flex mt-4 px-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={toggleMockMode}
+                    className="text-xs"
+                  >
+                    {isMockMode
+                      ? "モックモードを解除しトップへ"
+                      : "モックモードに入る（開発用）"}
+                  </Button>
+                </div>
+              )}
             </nav>
           </NavigationSheetContent>
         </NavigationSheet>
@@ -124,7 +139,7 @@ const Header = () => {
                 variant="outline"
                 size="sm"
                 onClick={toggleMockMode}
-                className="text-xs"
+                className="text-xs hidden sm:inline"
               >
                 {isMockMode
                   ? "モックモードを解除しトップへ"
