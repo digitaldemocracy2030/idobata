@@ -17,9 +17,9 @@ const ThemeTable: FC<ThemeTableProps> = ({ themes, onDelete }) => {
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full bg-white border border-gray-200">
+      <table className="min-w-full bg-background border border-border">
         <thead>
-          <tr className="bg-gray-100">
+          <tr className="bg-muted">
             <th className="py-2 px-4 border-b text-left">タイトル</th>
             <th className="py-2 px-4 border-b text-left">スラッグ</th>
             <th className="py-2 px-4 border-b text-left">ステータス</th>
@@ -30,21 +30,24 @@ const ThemeTable: FC<ThemeTableProps> = ({ themes, onDelete }) => {
         <tbody>
           {themes.length === 0 ? (
             <tr>
-              <td colSpan={5} className="py-4 text-center text-gray-500">
+              <td
+                colSpan={5}
+                className="py-4 text-center text-muted-foreground"
+              >
                 テーマがありません
               </td>
             </tr>
           ) : (
             themes.map((theme) => (
-              <tr key={theme._id} className="hover:bg-gray-100">
+              <tr key={theme._id} className="hover:bg-muted/50">
                 <td className="py-2 px-4 border-b">{theme.title}</td>
                 <td className="py-2 px-4 border-b">{theme.slug}</td>
                 <td className="py-2 px-4 border-b">
                   <span
                     className={`inline-block px-2 py-1 rounded-full text-xs ${
                       theme.isActive
-                        ? "bg-green-100 text-green-800"
-                        : "bg-gray-100 text-gray-800"
+                        ? "bg-success/20 text-success-foreground"
+                        : "bg-muted/50 text-muted-foreground"
                     }`}
                   >
                     {theme.isActive ? "アクティブ" : "非アクティブ"}

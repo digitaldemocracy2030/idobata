@@ -198,7 +198,7 @@ const ThemeClustering: FC = () => {
             name="itemType"
             value={clusteringParams.itemType}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-ring"
           >
             <option value="problem">問題</option>
             <option value="solution">解決策</option>
@@ -217,7 +217,7 @@ const ThemeClustering: FC = () => {
             name="method"
             value={clusteringParams.method}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-ring"
           >
             <option value="kmeans">K-means</option>
             <option value="hierarchical">階層的クラスタリング</option>
@@ -241,7 +241,7 @@ const ThemeClustering: FC = () => {
               onChange={handleChange}
               min="2"
               step="1"
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-ring"
               placeholder="例: 5"
             />
           </div>
@@ -291,11 +291,11 @@ const ThemeClustering: FC = () => {
                           key={clusterIndex}
                           className="bg-white rounded-lg shadow overflow-hidden"
                         >
-                          <div className="bg-blue-50 px-4 py-2 border-b">
+                          <div className="bg-primary/10 px-4 py-2 border-b">
                             <h3 className="font-medium">
                               クラスター {clusterIndex}
                             </h3>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-muted-foreground">
                               {items.length}アイテム
                             </p>
                           </div>

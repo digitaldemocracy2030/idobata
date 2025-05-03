@@ -90,7 +90,7 @@ const SiteConfigForm: FC<SiteConfigFormProps> = ({ siteConfig }) => {
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl">
       {errors.form && (
-        <div className="bg-red-100 text-red-700 p-4 rounded mb-4">
+        <div className="bg-destructive/20 text-destructive-foreground p-4 rounded mb-4">
           {errors.form}
         </div>
       )}
@@ -107,7 +107,7 @@ const SiteConfigForm: FC<SiteConfigFormProps> = ({ siteConfig }) => {
       <div className="mb-4">
         <label
           htmlFor="aboutMessage"
-          className="block text-gray-700 font-medium mb-2"
+          className="block text-foreground font-medium mb-2"
         >
           サイト説明（マークダウン形式）
         </label>
@@ -116,10 +116,10 @@ const SiteConfigForm: FC<SiteConfigFormProps> = ({ siteConfig }) => {
           name="aboutMessage"
           value={formData.aboutMessage}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-ring"
           rows={10}
         />
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           マークダウン形式で入力できます。
         </p>
       </div>

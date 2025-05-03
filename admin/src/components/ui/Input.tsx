@@ -24,9 +24,9 @@ const Input: FC<InputProps> = ({
 }) => {
   return (
     <div className="mb-4">
-      <label htmlFor={name} className="block text-gray-700 font-medium mb-2">
+      <label htmlFor={name} className="block text-foreground font-medium mb-2">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-destructive ml-1">*</span>}
       </label>
       <input
         type={type}
@@ -36,10 +36,10 @@ const Input: FC<InputProps> = ({
         onChange={onChange}
         placeholder={placeholder}
         className={`w-full px-3 py-2 border ${
-          error ? "border-red-500" : "border-gray-300"
-        } rounded focus:outline-none focus:ring-2 focus:ring-blue-500`}
+          error ? "border-destructive" : "border-input"
+        } rounded focus:outline-none focus:ring-2 focus:ring-ring`}
       />
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p className="text-destructive text-sm mt-1">{error}</p>}
     </div>
   );
 };

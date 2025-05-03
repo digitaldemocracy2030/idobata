@@ -99,7 +99,41 @@ src/
 
 ### 色管理
 
-管理画面ではshadcn/uiのvioletテーマを採用し、Tailwindの設定で一元管理します：
+管理画面ではshadcn/uiのvioletテーマを採用し、HSL変数とTailwindの設定で一元管理します：
+
+```css
+/* src/index.css */
+:root {
+  /* shadcn/ui テーマカラー */
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 262.1 83.3% 57.8%; /* violet */
+  --primary-foreground: 210 20% 98%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 84.2% 60.2%; /* 危険な操作を表す赤色 */
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 262.1 83.3% 57.8%;
+  
+  /* 追加の機能的な色 */
+  --warning: 38 92% 50%; /* 警告を表す黄色 */
+  --warning-foreground: 0 0% 0%;
+  --success: 142 71% 45%; /* 成功を表す緑色 */
+  --success-foreground: 0 0% 98%;
+  --info: 221 83% 53%; /* 情報を表す青色 */
+  --info-foreground: 0 0% 98%;
+}
+```
 
 ```js
 // tailwind.config.js
@@ -115,6 +149,8 @@ module.exports = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          dark: "hsl(var(--primary) / 0.9)", // 少し暗い色
+          light: "hsl(var(--primary) / 0.8)", // 少し明るい色
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -140,6 +176,18 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
       },
     },
   },
@@ -154,20 +202,32 @@ module.exports = {
   - 本文: foreground (`text-foreground`)
   - 見出し: foreground (`text-foreground`)
   - リンク: primary (`text-primary`)
+  - 補足テキスト: muted-foreground (`text-muted-foreground`)
 
 - **背景**:
   - ページ背景: background (`bg-background`)
   - セクション背景: secondary (`bg-secondary`)
   - カード背景: card (`bg-card`)
+  - 控えめな背景: muted (`bg-muted`)
 
 - **アクセント**:
-  - ボタン（プライマリ）: primary (`bg-primary`)
-  - ボタン（セカンダリ）: secondary (`bg-secondary`)
-  - ボタン（デンジャー）: destructive (`bg-destructive`)
-  - 警告: yellow-100 (将来的にはshadcn/uiの警告色に統一)
-  - 成功: green-100 (将来的にはshadcn/uiの成功色に統一)
-  - エラー: destructive-foreground (将来的にはshadcn/uiのエラー色に統一)
-  - 情報: blue-100 (将来的にはshadcn/uiの情報色に統一)
+  - ボタン（プライマリ）: primary (`bg-primary text-primary-foreground`)
+  - ボタン（セカンダリ）: secondary (`bg-secondary text-secondary-foreground`)
+  - ボタン（デンジャー）: destructive (`bg-destructive text-destructive-foreground`)
+  - ボタン（警告）: warning (`bg-warning text-warning-foreground`)
+  - ボタン（成功）: success (`bg-success text-success-foreground`)
+  - ボタン（情報）: info (`bg-info text-info-foreground`)
+
+- **状態表示**:
+  - 警告: warning (`bg-warning/20 text-warning-foreground`)
+  - 成功: success (`bg-success/20 text-success-foreground`)
+  - エラー: destructive (`bg-destructive/20 text-destructive-foreground`)
+  - 情報: info (`bg-info/20 text-info-foreground`)
+
+- **ボーダー**:
+  - 通常のボーダー: border (`border-border`)
+  - 入力フィールドのボーダー: input (`border-input`)
+  - フォーカス時のリング: ring (`ring-ring`)
 
 ## レイアウトとスペーシング
 
