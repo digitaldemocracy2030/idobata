@@ -505,14 +505,18 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                             className="px-3 py-1 bg-primary/20 text-primary-foreground rounded-full text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                             type="button"
                           >
-                            {isGeneratingVisualReport && selectedQuestionId === question._id ? (
+                            {isGeneratingVisualReport &&
+                              selectedQuestionId === question._id ? (
                               <span className="flex items-center">
                                 <svg
                                   className="animate-spin -ml-1 mr-1 h-3 w-3"
                                   xmlns="http://www.w3.org/2000/svg"
                                   fill="none"
                                   viewBox="0 0 24 24"
+                                  aria-label="読み込み中"
+                                  role="img"
                                 >
+                                  <title>読み込み中</title>
                                   <circle
                                     className="opacity-25"
                                     cx="12"
