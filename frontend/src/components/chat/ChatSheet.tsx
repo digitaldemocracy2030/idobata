@@ -63,7 +63,13 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
       nativeEvent: { isComposing?: boolean };
     }
   ) => {
-    if (e.key === "Enter" && !e.shiftKey && !isSending && !e.isComposing && !e.nativeEvent.isComposing) {
+    if (
+      e.key === "Enter" &&
+      !e.shiftKey &&
+      !isSending &&
+      !e.isComposing &&
+      !e.nativeEvent.isComposing
+    ) {
       e.preventDefault();
       handleSendMessage();
     }
