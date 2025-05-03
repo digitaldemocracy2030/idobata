@@ -1,8 +1,6 @@
 import React, {
   createContext,
   useContext,
-  useState,
-  useEffect,
   ReactNode,
   useCallback,
 } from "react";
@@ -25,11 +23,8 @@ export const MockProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [searchParams] = useSearchParams();
-  const [isMockMode, setIsMockMode] = useState(false);
 
-  useEffect(() => {
-    setIsMockMode(searchParams.get("mock") === "true");
-  }, [searchParams]);
+  const isMockMode = searchParams.get("mock") === "true";
 
   return (
     <MockContext.Provider value={{ isMockMode }}>
