@@ -1,4 +1,4 @@
-# いどばたフロントエンドデザインガイドライン
+# いどばた管理画面デザインガイドライン
 
 ## 目次
 
@@ -14,7 +14,7 @@
 
 ## はじめに
 
-このガイドラインは、いどばたフロントエンドの一貫性のあるデザイン実装を促進するために作成されました。Topページを基準として、今後の開発においてデザインの一貫性を保ちながら、拡張性と保守性の高いコードベースを構築するための指針を提供します。
+このガイドラインは、いどばた管理画面の一貫性のあるデザイン実装を促進するために作成されました。現在の管理画面を基準として、今後の開発においてデザインの一貫性を保ちながら、拡張性と保守性の高いコードベースを構築するための指針を提供します。
 
 ## 使用ライブラリとフレームワーク
 
@@ -24,7 +24,7 @@
 - **TypeScript**: 型安全な開発環境の提供
 - **React Router**: アプリケーションのルーティング
 - **Tailwind CSS**: ユーティリティファーストのスタイリング
-- **shadcn/ui**: 高品質なUIコンポーネントライブラリ
+- **shadcn/ui**: 高品質なUIコンポーネントライブラリ（violetテーマを採用）
 - **Lucide**: モダンでシンプルなアイコンライブラリ
 
 ### 開発ツール
@@ -40,47 +40,51 @@
 
 1. **レイアウトコンポーネント**
    - アプリケーション全体のレイアウトを定義
-   - 例: `PageLayout`, `AppLayout`
+   - 例: `Header`, `Sidebar`, `MainContent`
 
 2. **ページコンポーネント**
    - 特定のルートに対応するページ全体
-   - 例: `Top`, `ThemeDetail`
+   - 例: `Dashboard`, `ThemeList`, `ThemeEdit`
 
-3. **テンプレートコンポーネント**
-   - 複数のページで再利用可能なセクションのテンプレート
-   - 例: `ThemeDetailTemplate`
-
-4. **機能コンポーネント**
+3. **機能コンポーネント**
    - 特定の機能を持つ複合コンポーネント
-   - 例: `HeroSection`, `FloatingChat`
+   - 例: `ThemeForm`, `ThemeTable`, `SiteConfigForm`
 
-5. **基本コンポーネント**
+4. **基本コンポーネント**
    - 最小単位の再利用可能なUI要素
-   - 例: `Button`, `Card`, `Input`
+   - 例: `Button`, `Input`, `Alert`
 
-### ディレクトリ構造の改善案
+### ディレクトリ構造
 
 ```
 src/
 ├── components/
-│   ├── common/         # 共通の基本コンポーネント
-│   │   ├── Button/
-│   │   ├── Card/
-│   │   └── Input/
+│   ├── ui/             # 基本UIコンポーネント
+│   │   ├── Button.tsx
+│   │   ├── Input.tsx
+│   │   └── Alert.tsx
 │   ├── layout/         # レイアウト関連コンポーネント
 │   │   ├── Header.tsx
-│   │   ├── Footer.tsx
-│   │   └── PageLayout.tsx
+│   │   ├── Sidebar.tsx
+│   │   └── MainContent.tsx
 │   ├── theme/          # テーマ関連コンポーネント
-│   ├── chat/           # チャット関連コンポーネント
-│   └── home/           # ホーム画面関連コンポーネント
-├── hooks/              # カスタムフック
+│   │   ├── ThemeForm.tsx
+│   │   └── ThemeTable.tsx
+│   ├── siteConfig/     # サイト設定関連コンポーネント
+│   │   └── SiteConfigForm.tsx
+│   └── clustering/     # クラスタリング関連コンポーネント
+│       └── HierarchicalClusterView.tsx
 ├── contexts/           # Reactコンテキスト
+│   └── AuthContext.tsx
 ├── services/           # APIサービスなど
+│   └── api/
+│       ├── apiClient.ts
+│       └── types.ts
 ├── pages/              # ページコンポーネント
-├── styles/             # グローバルスタイルとテーマ設定
-│   ├── theme.ts        # テーマ設定（色、フォントなど）
-│   └── global.css      # グローバルスタイル
+│   ├── Dashboard.tsx
+│   ├── ThemeList.tsx
+│   ├── ThemeEdit.tsx
+│   └── Login.tsx
 └── utils/              # ユーティリティ関数
 ```
 
@@ -93,9 +97,9 @@ src/
   - Regular (400): 通常のテキスト
   - Bold (700): 見出しや強調テキスト
 
-### 色管理の改善案
+### 色管理
 
-現状では直接カラーコードを使用している箇所がありますが、shadcnのデフォルトカラーテーマ（紫色）を採用し、Tailwindの設定で一元管理することを推奨します：
+管理画面ではshadcn/uiのvioletテーマを採用し、Tailwindの設定で一元管理します：
 
 ```js
 // tailwind.config.js
@@ -142,7 +146,7 @@ module.exports = {
 }
 ```
 
-これにより、ハードコードされた色値（例: `bg-[#EADFFF]`）を意味のある名前（例: `bg-primary`）に置き換えることができます。
+これにより、ハードコードされた色値（例: `bg-blue-600`）を意味のある名前（例: `bg-primary`）に置き換えることができます。
 
 ### 色の使用ガイドライン
 
@@ -157,8 +161,13 @@ module.exports = {
   - カード背景: card (`bg-card`)
 
 - **アクセント**:
-  - ボタン: primary (`bg-primary`)
-  - ハイライト: accent (`bg-accent`)
+  - ボタン（プライマリ）: primary (`bg-primary`)
+  - ボタン（セカンダリ）: secondary (`bg-secondary`)
+  - ボタン（デンジャー）: destructive (`bg-destructive`)
+  - 警告: yellow-100 (将来的にはshadcn/uiの警告色に統一)
+  - 成功: green-100 (将来的にはshadcn/uiの成功色に統一)
+  - エラー: destructive-foreground (将来的にはshadcn/uiのエラー色に統一)
+  - 情報: blue-100 (将来的にはshadcn/uiの情報色に統一)
 
 ## レイアウトとスペーシング
 
@@ -167,7 +176,7 @@ module.exports = {
 ページコンテンツは中央揃えのコンテナ内に配置します：
 
 ```jsx
-<div className="container mx-auto py-8">
+<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
   {/* コンテンツ */}
 </div>
 ```
@@ -179,7 +188,7 @@ module.exports = {
 - **小さいスペース**: 4px (`p-1`, `m-1`)
 - **標準スペース**: 16px (`p-4`, `m-4`)
 - **大きいスペース**: 32px (`p-8`, `m-8`)
-- **セクション間**: 64px (`gap-16`)
+- **セクション間**: 24px (`mb-6`)
 
 ### レイアウトパターン
 
@@ -189,11 +198,6 @@ module.exports = {
   - `flex-row`: 横方向に配置
   - `gap-{size}`: 要素間のスペース
 
-- **グリッド**を使用して複雑なレイアウトを構築
-  - `grid`: グリッドコンテナを作成
-  - `grid-cols-{n}`: 列数を指定
-  - `md:grid-cols-{n}`: 特定のブレイクポイントでの列数
-
 - **パディング**と**マージン**を一貫して適用
   - `p-{size}`: パディング
   - `m-{size}`: マージン
@@ -201,95 +205,104 @@ module.exports = {
 
 ## UIコンポーネント
 
-### shadcn/uiコンポーネント
-
-shadcn/uiを活用して、一貫性のあるUIコンポーネントを構築します。以下は主要なコンポーネントとその使用方法です：
+### 基本コンポーネント
 
 #### ボタン
 
-shadcnのButtonコンポーネントを使用し、様々なバリエーションを活用します：
+shadcn/uiのButtonコンポーネントを使用し、様々なバリエーションを活用します：
 
 - **バリアント**: default, destructive, outline, secondary, ghost, link
 - **サイズ**: default, sm, lg, icon
+- **状態**: 通常, disabled
 
 ```jsx
 import { Button } from "@/components/ui/button";
 
 // 使用例
 <Button variant="default">ボタン</Button>
+<Button variant="secondary">キャンセル</Button>
+<Button variant="destructive" disabled={true}>削除</Button>
 <Button variant="outline" size="sm">小さいボタン</Button>
 <Button variant="ghost" size="icon"><IconName /></Button>
 ```
 
-#### カード
+#### 入力フィールド
 
-情報を表示するためのカードコンポーネント：
+shadcn/uiのInputコンポーネントを使用してフォーム入力を処理します：
 
-- **Card**: カードのコンテナ
-- **CardHeader**: カードのヘッダー部分
-- **CardTitle**: カードのタイトル
-- **CardDescription**: カードの説明
-- **CardContent**: カードの主要コンテンツ
-- **CardFooter**: カードのフッター部分
+```jsx
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+// 使用例
+<div className="grid w-full max-w-sm items-center gap-1.5">
+  <Label htmlFor="title">タイトル</Label>
+  <Input
+    id="title"
+    name="title"
+    value={title}
+    onChange={handleChange}
+    required={true}
+  />
+  {errors.title && <p className="text-destructive text-sm">{errors.title}</p>}
+</div>
+```
+
+#### アラート
+
+shadcn/uiのAlertコンポーネントを使用して、様々なタイプのメッセージを表示します：
 
 ```jsx
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-```
-
-#### シート（モーダル/ドロワー）
-
-サイドから表示されるパネルコンポーネント：
-
-- **Sheet**: シートのコンテナ
-- **SheetTrigger**: シートを開くトリガー
-- **SheetContent**: シートの内容
-- **SheetHeader**: シートのヘッダー
-- **SheetTitle**: シートのタイトル
-- **SheetDescription**: シートの説明
-- **SheetFooter**: シートのフッター
-- **SheetClose**: シートを閉じるボタン
-
-```jsx
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-```
-
-### Lucideアイコン
-
-Lucideアイコンライブラリを使用して、一貫性のあるアイコンを実装します：
-
-```jsx
-import { MessageSquare, ArrowRight, Send } from "lucide-react";
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert";
+import { InfoIcon, AlertTriangleIcon, CheckCircleIcon, AlertCircleIcon } from "lucide-react";
 
 // 使用例
-<MessageSquare className="w-4 h-4" />
-<ArrowRight className="ml-2" />
+<Alert variant="default">
+  <InfoIcon className="h-4 w-4" />
+  <AlertTitle>情報</AlertTitle>
+  <AlertDescription>情報メッセージ</AlertDescription>
+</Alert>
+
+<Alert variant="destructive">
+  <AlertCircleIcon className="h-4 w-4" />
+  <AlertTitle>エラー</AlertTitle>
+  <AlertDescription>エラーが発生しました</AlertDescription>
+</Alert>
 ```
 
-### カスタムコンポーネント
+### レイアウトコンポーネント
 
-プロジェクト固有のコンポーネントは、shadcn/uiコンポーネントを基盤として構築します：
-
-#### セクションコンポーネント
+#### ヘッダー
 
 ```jsx
+import Header from "../components/layout/Header";
+
 // 使用例
-<Section 
-  title="セクションタイトル" 
-  description="セクションの説明文"
->
-  {/* コンテンツ */}
-</Section>
+<Header />
+```
+
+#### サイドバー
+
+```jsx
+import Sidebar from "../components/layout/Sidebar";
+
+// 使用例
+<Sidebar />
+```
+
+#### メインコンテンツ
+
+```jsx
+import MainContent from "../components/layout/MainContent";
+
+// 使用例
+<MainContent>
+  {/* ページコンテンツ */}
+</MainContent>
 ```
 
 ## レスポンシブデザイン
@@ -306,10 +319,16 @@ Tailwindのデフォルトブレイクポイントを使用します：
 
 ### レスポンシブパターン
 
-- **モバイルファースト**アプローチを採用
-- 基本スタイルはモバイル向けに設定し、ブレイクポイントを使用して大きな画面に対応
+- **PC操作を優先**したアプローチを採用
+- 基本スタイルはデスクトップ向けに設定し、必要に応じて小さな画面サイズに対応
 - レスポンシブクラスの命名規則:
-  - デフォルト: 全画面サイズに適用（例: `grid-cols-1`）
-  - ブレイクポイント接頭辞: 特定の画面サイズ以上に適用（例: `md:grid-cols-2`）
+  - デフォルト: デスクトップ画面向けに適用（例: `grid-cols-3`）
+  - ブレイクポイント接頭辞: 特定の画面サイズ以下に適用（例: `sm:grid-cols-1`）
 
-このガイドラインは、いどばたフロントエンドの一貫性と品質を確保するための基盤となります。プロジェクトの成長に合わせて継続的に更新し、チーム全体で共有することで、効率的な開発と高品質なユーザー体験を実現します。
+## アクセシビリティ
+
+管理画面においても、アクセシビリティに配慮したデザインと実装を心がけます。適切なコントラスト比、キーボード操作のサポート、スクリーンリーダー対応などを考慮してください。
+
+## ベストプラクティス
+
+このガイドラインは、いどばた管理画面の一貫性と品質を確保するための基盤となります。プロジェクトの成長に合わせて継続的に更新し、チーム全体で共有することで、効率的な開発と高品質なユーザー体験を実現します。

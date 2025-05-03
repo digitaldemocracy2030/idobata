@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle, ThumbsUp } from "lucide-react";
+import { CheckCircle, MessageSquareWarning, ThumbsUp } from "lucide-react";
 import { Card, CardContent, CardTitle } from "../../components/ui/card";
 import { Link } from "../../contexts/MockContext";
 
@@ -32,7 +32,7 @@ const KeyQuestionCard = ({
               賛同: {voteCount}
             </span>
             <span className="flex items-center">
-              <AlertTriangle className="h-4 w-4 mr-1 text-primary" />
+              <MessageSquareWarning className="h-4 w-4 mr-1 text-primary" />
               課題点: {issueCount}
             </span>
             <span className="flex items-center">

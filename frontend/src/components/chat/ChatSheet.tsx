@@ -74,30 +74,32 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
         <div className="flex-grow overflow-hidden h-[calc(100%-110px)]">
           <ExtendedChatHistory messages={messages} />
         </div>
-        <div className="p-3 border-t">
-          <div className="flex items-center bg-white border border-neutral-200 rounded-full p-1">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="気になることをAIに質問"
-              className="flex-grow px-4 py-2 bg-transparent border-none focus:outline-none text-sm"
-              disabled={isSending}
-            />
-            <Button
-              onClick={handleSendMessage}
-              variant="ghost"
-              size="icon"
-              className="rounded-full h-10 w-10 flex items-center justify-center"
-              disabled={!inputValue.trim() || isSending}
-            >
-              {isSending ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
-              ) : (
-                <Send className="h-5 w-5" />
-              )}
-            </Button>
+        <div className="p-4 border-t">
+          <div className="bg-accentGradient rounded-full p-1">
+            <div className="flex items-center bg-white rounded-full p-1">
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="気になることをAIに質問"
+                className="flex-grow px-5 py-3 bg-transparent border-none focus:outline-none text-sm"
+                disabled={isSending}
+              />
+              <Button
+                onClick={handleSendMessage}
+                variant="ghost"
+                size="icon"
+                className="rounded-full h-10 w-10 mr-1 flex items-center justify-center"
+                disabled={!inputValue.trim() || isSending}
+              >
+                {isSending ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Send className="h-5 w-5" />
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </ChatSheetContent>

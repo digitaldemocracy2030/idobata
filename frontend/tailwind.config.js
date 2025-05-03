@@ -56,6 +56,9 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      backgroundImage: {
+        accentGradient: "linear-gradient(to right, #B491FF, #50FBE0)",
+      },
     },
   },
   plugins: [require("@tailwindcss/typography")],
