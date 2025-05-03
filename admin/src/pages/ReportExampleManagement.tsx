@@ -56,14 +56,17 @@ const ReportExampleManagement = () => {
 
     setGenerating((prev) => ({ ...prev, [questionId]: false }));
   };
-  
+
   const handleGenerateDebateAnalysis = async (questionId) => {
     setGeneratingDebateAnalysis((prev) => ({ ...prev, [questionId]: true }));
     setSuccessMessage(null);
     setError(null);
 
     try {
-      const result = await apiClient.generateDebateAnalysis(themeId, questionId);
+      const result = await apiClient.generateDebateAnalysis(
+        themeId,
+        questionId
+      );
 
       if (result.isErr()) {
         console.error("Failed to generate debate analysis:", result.error);

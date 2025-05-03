@@ -4,13 +4,13 @@ import QuestionLink from "../models/QuestionLink.js";
 import ReportExample from "../models/ReportExample.js";
 import SharpQuestion from "../models/SharpQuestion.js";
 import Solution from "../models/Solution.js";
-import { getVisualReport as getQuestionVisualReport } from "../services/questionVisualReportGenerator.js";
 import { getDebateAnalysis as getDebateAnalysisFromService } from "../services/debateAnalysisGenerator.js";
+import { getVisualReport as getQuestionVisualReport } from "../services/questionVisualReportGenerator.js";
+import { generateDebateAnalysisTask } from "../workers/debateAnalysisGenerator.js";
 import { generateDigestDraft } from "../workers/digestGenerator.js";
 import { generatePolicyDraft } from "../workers/policyGenerator.js";
 import { generateReportExample } from "../workers/reportGenerator.js";
 import { generateVisualReport } from "../workers/visualReportGenerator.js";
-import { generateDebateAnalysisTask } from "../workers/debateAnalysisGenerator.js";
 
 // GET /api/themes/:themeId/questions/:questionId/details - 特定の質問の詳細を取得
 export const getQuestionDetails = async (req, res) => {
@@ -134,11 +134,13 @@ export const getQuestionDetails = async (req, res) => {
       },
       relatedProblems,
       relatedSolutions,
-      debateData: debateAnalysis ? {
-        axes: debateAnalysis.axes,
-        agreementPoints: debateAnalysis.agreementPoints,
-        disagreementPoints: debateAnalysis.disagreementPoints,
-      } : debateData,
+      debateData: debateAnalysis
+        ? {
+            axes: debateAnalysis.axes,
+            agreementPoints: debateAnalysis.agreementPoints,
+            disagreementPoints: debateAnalysis.disagreementPoints,
+          }
+        : debateData,
       reportExample,
       visualReport: visualReport ? visualReport.overallAnalysis : null,
     });
