@@ -1,4 +1,4 @@
-import { MessageSquareWarning, CheckCircle, ThumbsUp } from "lucide-react";
+import { CheckCircle, MessageSquareWarning, ThumbsUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardTitle } from "../../components/ui/card";
 
