@@ -13,7 +13,7 @@ import {
 
 const Header = () => {
   const { themes, isLoading, error } = useThemes();
-  const { siteConfig } = useSiteConfig();
+  const { siteConfig, loading } = useSiteConfig();
   const { user } = useAuth();
   return (
     <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b-2 border-[#9256F9] py-3 px-4">
@@ -91,7 +91,9 @@ const Header = () => {
         {/* サイトタイトル（中央） */}
         <Link to="/top">
           <h1 className="text-base font-semibold text-center">
-            {siteConfig?.title || "XX党 みんなの政策フォーラム"}
+            {loading
+              ? "..."
+              : siteConfig?.title || "XX党 みんなの政策フォーラム"}
           </h1>
         </Link>
 
