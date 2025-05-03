@@ -3,10 +3,10 @@ import Problem from "../models/Problem.js";
 import QuestionLink from "../models/QuestionLink.js";
 import SharpQuestion from "../models/SharpQuestion.js";
 import Solution from "../models/Solution.js";
-import { generateDigestDraft } from "../workers/digestGenerator.js"; // Import the digest worker function
-import { generatePolicyDraft } from "../workers/policyGenerator.js"; // Import the worker function
-import { generateVisualReport } from "../workers/visualReportGenerator.js"; // Import the visual report worker function
-import { getVisualReport as getQuestionVisualReport } from "../services/questionVisualReportGenerator.js"; // Import the visual report service function
+import { getVisualReport as getQuestionVisualReport } from "../services/questionVisualReportGenerator.js";
+import { generateDigestDraft } from "../workers/digestGenerator.js";
+import { generatePolicyDraft } from "../workers/policyGenerator.js";
+import { generateVisualReport } from "../workers/visualReportGenerator.js";
 
 // GET /api/themes/:themeId/questions/:questionId/details - 特定の質問の詳細を取得
 export const getQuestionDetails = async (req, res) => {

@@ -52,7 +52,11 @@ const DebateSummary = ({
       {activeTab === "illustration" ? (
         <div className="text-center py-8 text-neutral-400">
           {visualReport ? (
-            <div dangerouslySetInnerHTML={{ __html: visualReport }} />
+            <div 
+              dangerouslySetInnerHTML={{ __html: visualReport }} 
+              className="visual-report-container"
+              aria-label="ビジュアルレポート"
+            />
           ) : (
             "イラストはまだ作成されていません"
           )}

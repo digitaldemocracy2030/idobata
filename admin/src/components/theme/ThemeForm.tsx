@@ -32,10 +32,13 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null);
+  const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(
+    null
+  );
   const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
   const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false);
-  const [isGeneratingVisualReport, setIsGeneratingVisualReport] = useState(false);
+  const [isGeneratingVisualReport, setIsGeneratingVisualReport] =
+    useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [questionsError, setQuestionsError] = useState<string | null>(null);
 
@@ -107,7 +110,10 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
     setQuestionsError(null);
     setSuccessMessage(null);
 
-    const result = await apiClient.generateVisualReport(theme._id, selectedQuestionId);
+    const result = await apiClient.generateVisualReport(
+      theme._id,
+      selectedQuestionId
+    );
 
     if (result.isErr()) {
       console.error("Failed to generate visual report:", result.error);
@@ -494,10 +500,17 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                   </thead>
                   <tbody className="bg-background divide-y divide-border">
                     {questions.map((question) => (
-                      <tr 
-                        key={question._id} 
-                        className={`hover:bg-muted/50 ${selectedQuestionId === question._id ? 'bg-muted/30' : ''}`}
+                      <tr
+                        key={question._id}
+                        className={`hover:bg-muted/50 ${selectedQuestionId === question._id ? "bg-muted/30" : ""}`}
                         onClick={() => setSelectedQuestionId(question._id)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            setSelectedQuestionId(question._id);
+                          }
+                        }}
+                        tabIndex={0}
+                        role="button"
                       >
                         <td className="px-6 py-4 whitespace-normal text-sm text-foreground">
                           {question.questionText}

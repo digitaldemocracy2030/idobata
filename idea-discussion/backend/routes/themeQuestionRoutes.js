@@ -2,10 +2,10 @@ import express from "express";
 import {
   getQuestionDetails,
   getQuestionsByTheme,
+  getVisualReport,
   triggerDigestGeneration,
   triggerPolicyGeneration,
   triggerVisualReportGeneration,
-  getVisualReport,
 } from "../controllers/questionController.js";
 
 const router = express.Router({ mergeParams: true });
