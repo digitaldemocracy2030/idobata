@@ -254,6 +254,7 @@ const QuestionDetail = () => {
           axes={debateData.axes}
           agreementPoints={debateData.agreementPoints}
           disagreementPoints={debateData.disagreementPoints}
+          visualReport={questionDetail?.visualReport}
         />
 
         <div className="mb-8">

@@ -7,12 +7,14 @@ export interface DebateSummaryProps {
   }[];
   agreementPoints: string[];
   disagreementPoints: string[];
+  visualReport?: string | null;
 }
 
 const DebateSummary = ({
   axes,
   agreementPoints,
   disagreementPoints,
+  visualReport,
 }: DebateSummaryProps) => {
   const [activeTab, setActiveTab] = useState<"illustration" | "analysis">(
     "illustration"
@@ -49,7 +51,11 @@ const DebateSummary = ({
 
       {activeTab === "illustration" ? (
         <div className="text-center py-8 text-neutral-400">
-          イラストはまだ作成されていません
+          {visualReport ? (
+            <div dangerouslySetInnerHTML={{ __html: visualReport }} />
+          ) : (
+            "イラストはまだ作成されていません"
+          )}
         </div>
       ) : (
         <div>
