@@ -2,6 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    /* shadcn/ui テーマカラー */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 262.1 83.3% 57.8%; /* violet */
+    --primary-foreground: 210 20% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%; /* 危険な操作を表す赤色 */
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 262.1 83.3% 57.8%;
+    
+    /* 追加の機能的な色 */
+    --warning: 38 92% 50%; /* 警告を表す黄色 */
+    --warning-foreground: 0 0% 0%;
+    --success: 142 71% 45%; /* 成功を表す緑色 */
+    --success-foreground: 0 0% 98%;
+    --info: 221 83% 53%; /* 情報を表す青色 */
+    --info-foreground: 0 0% 98%;
+  }
+}
+
 body {
-  @apply bg-gray-100 text-gray-900;
+  @apply bg-background text-foreground;
 }

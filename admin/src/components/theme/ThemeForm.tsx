@@ -198,7 +198,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl">
       {errors.form && (
-        <div className="bg-red-100 text-red-700 p-4 rounded mb-4">
+        <div className="bg-destructive/20 text-destructive-foreground p-4 rounded mb-4">
           {errors.form}
         </div>
       )}
@@ -215,7 +215,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
       <div className="mb-4">
         <label
           htmlFor="description"
-          className="block text-gray-700 font-medium mb-2"
+          className="block text-foreground font-medium mb-2"
         >
           説明
         </label>
@@ -224,7 +224,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
           name="description"
           value={formData.description}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-ring"
           rows={4}
         />
       </div>
@@ -248,7 +248,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
           onChange={handleChange}
           className="mr-2"
         />
-        <label htmlFor="isActive" className="text-gray-700">
+        <label htmlFor="isActive" className="text-foreground">
           アクティブ
         </label>
       </div>
@@ -274,7 +274,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
           </h2>
 
           {questionsError && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <div className="mb-4 p-4 bg-destructive/20 border border-destructive/30 rounded-lg text-destructive-foreground text-sm">
               <p className="flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -297,7 +297,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
           )}
 
           {successMessage && (
-            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+            <div className="mb-4 p-4 bg-success/20 border border-success/30 rounded-lg text-success-foreground text-sm">
               <p className="flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -320,20 +320,20 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
           )}
 
           {/* Generation Button */}
-          <div className="mb-6 p-4 bg-white rounded-lg border border-neutral-200 shadow-sm">
+          <div className="mb-6 p-4 bg-background rounded-lg border border-border shadow-sm">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h3 className="text-lg font-semibold text-primary-dark mb-1">
                   シャープな問い生成
                 </h3>
-                <p className="text-sm text-neutral-600">
+                <p className="text-sm text-muted-foreground">
                   課題データから新しいシャープな問いを生成します
                 </p>
               </div>
               <button
                 onClick={handleGenerateQuestions}
                 disabled={isGeneratingQuestions}
-                className="btn bg-primary text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm whitespace-nowrap hover:bg-primary-dark"
+                className="btn bg-primary text-primary-foreground px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm whitespace-nowrap hover:bg-primary/90"
                 type="button"
               >
                 {isGeneratingQuestions ? (
@@ -373,7 +373,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
           </div>
 
           {/* Questions List */}
-          <div className="bg-white p-4 rounded-lg border border-neutral-200 shadow-sm">
+          <div className="bg-background p-4 rounded-lg border border-border shadow-sm">
             <h3 className="text-lg font-semibold mb-4 text-primary-dark">
               シャープな問い一覧 ({questions.length})
             </h3>
@@ -387,54 +387,54 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
               </div>
             ) : questions.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-neutral-200">
-                  <thead className="bg-neutral-50">
+                <table className="min-w-full divide-y divide-border">
+                  <thead className="bg-muted">
                     <tr>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
                       >
                         問い
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
                       >
                         関連するproblem
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
                       >
                         作成日時
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider"
+                        className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
                       >
                         表示
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-neutral-200">
+                  <tbody className="bg-background divide-y divide-border">
                     {questions.map((question) => (
-                      <tr key={question._id} className="hover:bg-neutral-50">
-                        <td className="px-6 py-4 whitespace-normal text-sm text-neutral-700">
+                      <tr key={question._id} className="hover:bg-muted/50">
+                        <td className="px-6 py-4 whitespace-normal text-sm text-foreground">
                           {question.questionText}
                         </td>
-                        <td className="px-6 py-4 whitespace-normal text-sm text-neutral-500">
+                        <td className="px-6 py-4 whitespace-normal text-sm text-muted-foreground">
                           {/* We would fetch related problems here in a real implementation */}
-                          <span className="text-neutral-400 italic">
+                          <span className="text-muted-foreground italic">
                             関連データは取得中...
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                           {formatDate(question.createdAt)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           <button
                             onClick={handleToggleVisibility}
-                            className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium"
+                            className="px-3 py-1 bg-success/20 text-success-foreground rounded-full text-xs font-medium"
                             type="button"
                           >
                             表示
@@ -446,7 +446,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                 </table>
               </div>
             ) : (
-              <div className="p-6 text-center text-neutral-500 text-sm border border-dashed border-neutral-300 rounded-lg">
+              <div className="p-6 text-center text-muted-foreground text-sm border border-dashed border-border rounded-lg">
                 <p>まだ問いが生成されていません</p>
                 <p className="mt-2 text-xs">
                   上部の「生成する」ボタンから生成できます
