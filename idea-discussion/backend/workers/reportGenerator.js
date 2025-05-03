@@ -130,6 +130,7 @@ Please provide the output as a JSON object with "introduction" and "issues" keys
       `[ReportGenerator] LLM generated report example with ${llmResponse.issues.length} issues`
     );
 
+    // レポートは上書きせずに版を重ねて残しておく
     const latestReportExample = await ReportExample.findOne({
       questionId: questionId,
     }).sort({ version: -1 });
