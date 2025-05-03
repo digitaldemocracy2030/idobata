@@ -57,7 +57,7 @@ module.exports = {
         },
       },
       backgroundImage: {
-        accentGradient: "linear-gradient(to right, #B491FF, #50FBE0)",//TODO: カラートークン定義ができたら変数にする。
+        accentGradient: "linear-gradient(to right, #B491FF, #50FBE0)",
       },
     },
   },
