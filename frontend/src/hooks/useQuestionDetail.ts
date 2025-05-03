@@ -26,6 +26,7 @@ export interface QuestionDetailResponse {
       description: string;
     }[];
   };
+  visualReport: string;
 }
 
 export function useQuestionDetail(themeId: string, questionId: string) {

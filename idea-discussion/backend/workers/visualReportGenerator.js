@@ -5,7 +5,7 @@ async function generateVisualReport(questionId) {
     `[VisualReportWorker] Starting visual report generation for questionId: ${questionId}`
   );
   try {
-    await generateQuestionVisualReport(questionId, true);
+    await generateQuestionVisualReport(questionId);
     console.log(
       `[VisualReportWorker] Successfully generated visual report for questionId: ${questionId}`
     );

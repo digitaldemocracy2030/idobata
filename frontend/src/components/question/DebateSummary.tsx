@@ -7,7 +7,7 @@ export interface DebateSummaryProps {
   }[];
   agreementPoints: string[];
   disagreementPoints: string[];
-  visualReport?: string | null;
+  visualReport: string | null;
 }
 
 const DebateSummary = ({
@@ -21,10 +21,10 @@ const DebateSummary = ({
   );
 
   return (
-    <div className="mb-8 border border-neutral-200 rounded-lg p-4 bg-white">
-      <h2 className="text-lg font-semibold mb-4">論点サマリー</h2>
+    <div className="mb-8 border border-neutral-200 rounded-lg p-0 bg-white">
+      <h2 className="p-4 text-lg font-semibold mb-4">論点サマリー</h2>
 
-      <div className="flex border-b border-neutral-200 mb-4">
+      <div className="flex justify-evenly border-b border-neutral-200 mb-4">
         <button
           className={`py-2 px-4 text-sm font-medium ${
             activeTab === "illustration"
@@ -50,23 +50,45 @@ const DebateSummary = ({
       </div>
 
       {activeTab === "illustration" ? (
-        <div className="text-center py-8 text-neutral-400">
-          {visualReport ? (
-            <div
-              className="visual-report-container"
-              aria-label="ビジュアルレポート"
-            >
-              <div
-                // biome-ignore lint/security/noDangerouslySetInnerHtml:
-                dangerouslySetInnerHTML={{ __html: visualReport }}
-              />
-            </div>
-          ) : (
-            "イラストはまだ作成されていません。より多くの議論が重なると作成されます。"
-          )}
-        </div>
+        visualReport ? (
+          <iframe
+            srcDoc={`
+              <!DOCTYPE html>
+              <html>
+              <head>
+                <style>
+                  /* iframe の body から余白を削除 */
+                  body { 
+                    margin: 0; 
+                    padding: 0; 
+                    width: 100%; 
+                    height: 100%; 
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: auto; /* スクロール機能を有効にする */
+                  }
+                </style>
+              </head>
+              <body>
+                ${visualReport} 
+              </body>
+              </html>
+            `}
+            title="ビジュアルレポート"
+            style={{ width: "100%", border: "none", minHeight: "1200px" }}
+            className="visual-report-iframe"
+            aria-label="ビジュアルレポート"
+          />
+        ) : (
+          <div className="text-center py-8 text-neutral-400">
+            {
+              "イラストはまだ作成されていません。より多くの議論が重なると作成されます。"
+            }
+          </div>
+        )
       ) : (
-        <div>
+        <div className="p-4">
           <h3 className="text-md font-medium mb-3">主要な論点と対立軸</h3>
           {axes.map((axis) => (
             <div key={`axis-${axis.title}`} className="mb-4">

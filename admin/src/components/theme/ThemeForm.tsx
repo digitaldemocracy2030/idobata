@@ -227,7 +227,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl">
+    <form onSubmit={handleSubmit} className="max-w-8xl">
       {errors.form && (
         <div className="bg-destructive/20 text-destructive-foreground p-4 rounded mb-4">
           {errors.form}
@@ -403,8 +403,6 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
             </div>
           </div>
 
-
-
           {/* Questions List */}
           <div className="bg-background p-4 rounded-lg border border-border shadow-sm">
             <h3 className="text-lg font-semibold mb-4 text-primary-dark">
@@ -506,7 +504,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                             type="button"
                           >
                             {isGeneratingVisualReport &&
-                              selectedQuestionId === question._id ? (
+                            selectedQuestionId === question._id ? (
                               <span className="flex items-center">
                                 <svg
                                   className="animate-spin -ml-1 mr-1 h-3 w-3"

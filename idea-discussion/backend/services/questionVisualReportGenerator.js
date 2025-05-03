@@ -9,27 +9,14 @@ import { RECOMMENDED_MODELS, callLLM } from "./llmService.js";
 export async function getVisualReport(questionId) {
   return QuestionVisualReport.findOne({
     questionId: new mongoose.Types.ObjectId(questionId),
-  });
+  }).sort({ version: -1 });
 }
 
-export async function generateQuestionVisualReport(
-  questionId,
-  forceRegenerate = false
-) {
+export async function generateQuestionVisualReport(questionId) {
   try {
     console.log(
       `[VisualReportGenerator] Starting visual report generation for questionId: ${questionId}`
     );
-
-    if (!forceRegenerate) {
-      const existingReport = await getVisualReport(questionId);
-      if (existingReport) {
-        console.log(
-          `[VisualReportGenerator] Using existing visual report for question ${questionId}`
-        );
-        return existingReport;
-      }
-    }
 
     const question = await SharpQuestion.findById(questionId);
     if (!question) {
@@ -110,12 +97,12 @@ ${solutionStatements.map((statement, index) => `${index + 1}. ${statement}`).joi
 - テキストと視覚要素（アイコン、シンプルな図形）の組み合わせ
 - キーワードの強調（色付き下線、マーカー効果）
 - 関連する概念を線や矢印で接続
-- 絵文字やアイコンを効果的に配置（✏️📌📝🔍📊など）
+- 絵文字を効果的に配置（✏️📌📝🔍📊など。imgタグではなく絵文字を仕様）
 ### 3. タイポグラフィ
-  - タイトル：48px、グラデーション効果、太字
-  - サブタイトル：28px、#475569
-  - セクション見出し：32px、#1e40af、アイコン付き
-  - 本文：24px、#334155、行間1.6
+  - タイトル：18px、グラデーション効果、太字
+  - サブタイトル：13px、#475569
+  - セクション見出し：14px、#1e40af、アイコン付き
+  - 本文：12px、#334155、行間1.2
   - フォント指定：
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic&display=swap');
@@ -127,7 +114,8 @@ ${solutionStatements.map((statement, index) => `${index + 1}. ${statement}`).joi
   - カード型コンポーネント：白背景、角丸16px、微細シャドウ
   - セクション間の余白を広めに取り、階層構造を明確に
   - 適切にグラスモーフィズムを活用
-  - コンテンツの最大幅は600pxで中央揃え
+  - コンテンツの幅は375pxで中央揃え（スマートフォンでも見やすいように）
+  - 高さは1440px以上（途中でコンテンツが切れないようにすること）
   - 余白を十分に取り、読みやすさを重視
 
 ## グラフィックレコーディング表現技法
@@ -140,11 +128,14 @@ ${solutionStatements.map((statement, index) => `${index + 1}. ${statement}`).joi
 ## 全体的な指針
 - 読み手が自然に視線を移動できる配置
 - 情報の階層と関連性を視覚的に明確化
+- スマートフォンでも見やすいように、階層は浅く保つ
+- 埋め込み表示するのでmarginは0、paddingは2px
 - 視覚的な記憶に残るデザイン
 - 遠くからでも見やすいデザイン
 - フッターに出典情報を明記
 - 複雑すぎる構造はCSSが壊れる可能性があるため避ける
 - 単に原文のキーワードだけ書いても意味が分からないため、誰にでも伝わるような分かりやすい表現に書き換えて説明する
+- 作成日や出典など不正確な情報は含めない
 
 ## 変換する文章/記事
 ${markdownContent}
@@ -157,7 +148,7 @@ ${markdownContent}
     const completion = await callLLM(
       [{ role: "user", content: visualPrompt }],
       false,
-      RECOMMENDED_MODELS["claude-3-sonnet"]
+      "anthropic/claude-3.7-sonnet"
     );
 
     if (!completion) {
@@ -166,26 +157,31 @@ ${markdownContent}
 
     const overallAnalysis = completion.replace(/^```html|```$/g, "").trim();
 
-    const visualReport = new QuestionVisualReport({
+    // Find the latest existing report for this questionId to determine the next version
+    const latestReport = await QuestionVisualReport.findOne({
+      questionId: question._id,
+    }).sort({ version: -1 }); // Sort by version descending to get the highest
+
+    const nextVersion = latestReport ? latestReport.version + 1 : 1; // Calculate next version
+
+    // Create a new report instance with the incremented version
+    const newVisualReport = new QuestionVisualReport({
       questionId: question._id,
       questionText: question.questionText,
       overallAnalysis,
       sourceProblemIds: problemIds,
       sourceSolutionIds: solutionIds,
-      version: 1,
+      version: nextVersion, // Use the calculated next version
     });
 
-    await QuestionVisualReport.findOneAndUpdate(
-      { questionId: question._id },
-      visualReport.toObject(),
-      { upsert: true, new: true }
-    );
+    // Save the new report document
+    await newVisualReport.save();
 
     console.log(
-      `[VisualReportGenerator] Successfully saved visual report for questionId: ${questionId}`
+      `[VisualReportGenerator] Successfully saved new visual report (version ${nextVersion}) for questionId: ${questionId}`
     );
 
-    return visualReport;
+    return newVisualReport; // Return the newly created report
   } catch (error) {
     console.error(
       `[VisualReportGenerator] Error generating visual report for questionId ${questionId}:`,

@@ -6,6 +6,7 @@ const questionVisualReportSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "SharpQuestion",
       required: true,
+      index: true,
     },
     questionText: {
       type: String,
@@ -36,7 +37,10 @@ const questionVisualReportSchema = new mongoose.Schema(
   { timestamps: true }
 ); // createdAt, updatedAt を自動追加
 
-questionVisualReportSchema.index({ questionId: 1 }, { unique: true });
+questionVisualReportSchema.index(
+  { questionId: 1, version: 1 },
+  { unique: true }
+);
 
 const QuestionVisualReport = mongoose.model(
   "QuestionVisualReport",
