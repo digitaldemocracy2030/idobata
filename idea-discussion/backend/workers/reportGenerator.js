@@ -60,32 +60,29 @@ async function generateReportExample(questionId) {
     const messages = [
       {
         role: "system",
-        content: `あなたはAIアシスタントです。中心的な問い（「私たちはどのようにして...できるか？」）、関連する問題点のリスト、そして市民からの意見を通じて特定された潜在的な解決策のリストに基づいて、市民意見レポート例を作成する任務を負っています。
+        content: `問い「${question.questionText}」について、市民からの意見を通じて特定された問題点とその潜在的な解決策を含むレポートを作成してください。
 
-市民意見レポート例は、以下の形式で出力してください：
+レポートは、以下の形式で出力してください：
 
-1. 導入部（introduction）: 市民からの意見を集約したことを示し、以下のような内容を簡潔に述べるテキスト。200文字程度。
+1. 導入部（introduction）: 意見を集約したことを示し200文字程度で集まった意見の要点を記してください
 
-2. 課題リスト（issues）: 3つの主要な課題を含み、それぞれに次の要素を持つ：
-   - title: 課題の短いタイトル（例: "1. 新卒一括採用システムの見直し"）
-   - description: その課題の詳細な説明。150文字程度。
+2. 課題リスト（issues）: 主要な問題点を網羅的に含むリストであり、以下の情報からなる
+- title: 問題の内容を説明する短いタイトル
+- description: その課題の詳細な説明。100〜400文字程度。
 
 レスポンスは次のJSON形式で提供してください：
 {
-  "introduction": "（導入部のテキスト）",
+  "introduction":,
   "issues": [
     {
-      "title": "1. （最初の課題のタイトル）",
-      "description": "（最初の課題の説明）"
+      "title":,
+      "description":
     },
     {
-      "title": "2. （2番目の課題のタイトル）",
-      "description": "（2番目の課題の説明）"
+      "title":,
+      "description":
     },
-    {
-      "title": "3. （3番目の課題のタイトル）",
-      "description": "（3番目の課題の説明）"
-    }
+    ...
   ]
 }
 
@@ -111,7 +108,7 @@ Please provide the output as a JSON object with "introduction" and "issues" keys
       messages,
       true,
       "google/gemini-2.5-pro-preview-03-25"
-    ); // Request JSON output with specific model
+    );
 
     if (
       !llmResponse ||
@@ -133,20 +130,19 @@ Please provide the output as a JSON object with "introduction" and "issues" keys
       `[ReportGenerator] LLM generated report example with ${llmResponse.issues.length} issues`
     );
 
-    let reportExample = await ReportExample.findOne({ questionId: questionId });
-    
-    if (reportExample) {
-      reportExample.introduction = llmResponse.introduction;
-      reportExample.issues = llmResponse.issues;
-      reportExample.version += 1;
-    } else {
-      reportExample = new ReportExample({
-        questionId: questionId,
-        introduction: llmResponse.introduction,
-        issues: llmResponse.issues,
-        version: 1,
-      });
-    }
+    const latestReportExample = await ReportExample.findOne({
+      questionId: questionId,
+    }).sort({ version: -1 });
+    const nextVersion = latestReportExample
+      ? latestReportExample.version + 1
+      : 1;
+
+    const reportExample = new ReportExample({
+      questionId: questionId,
+      introduction: llmResponse.introduction,
+      issues: llmResponse.issues,
+      version: nextVersion,
+    });
 
     await reportExample.save();
     console.log(

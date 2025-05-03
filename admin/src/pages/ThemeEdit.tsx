@@ -60,7 +60,7 @@ const ThemeEdit: FC = () => {
       <ThemeForm theme={theme} isEdit />
 
       <div className="mt-8 border-t pt-6">
-        <h2 className="text-xl font-bold mb-4">質問管理機能</h2>
+        <h2 className="text-xl font-bold mb-4">埋め込み機能</h2>
         <div className="flex space-x-4">
           <Link
             to={`/themes/${theme._id}/embeddings`}
@@ -79,12 +79,6 @@ const ThemeEdit: FC = () => {
             className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
           >
             クラスタリング
-          </Link>
-          <Link
-            to={`/themes/${theme._id}/questions/report-examples`}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
-          >
-            市民意見レポート例を更新する
           </Link>
         </div>
       </div>
