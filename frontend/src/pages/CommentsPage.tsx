@@ -1,17 +1,18 @@
 import { useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import BreadcrumbView from "../components/common/BreadcrumbView";
 import OpinionCard from "../components/question/OpinionCard";
 import { Button } from "../components/ui/button";
+import { useMock, useNavigate } from "../contexts/MockContext";
 import { useQuestionDetail } from "../hooks/useQuestionDetail";
 
 const CommentsPage = () => {
   const { themeId, qId } = useParams<{ themeId: string; qId: string }>();
-  const location = useLocation();
-  const useMockData = location.search.includes("mock=true");
+  const { isMockMode } = useMock();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"issues" | "solutions">("issues");
 
-  const { questionDetail, isLoading, error } = useMockData
+  const { questionDetail, isLoading, error } = isMockMode
     ? { questionDetail: null, isLoading: false, error: null }
     : useQuestionDetail(themeId || "", qId || "");
   const mockQuestionData = {
@@ -79,7 +80,7 @@ const CommentsPage = () => {
     ],
   };
 
-  if (!useMockData && isLoading) {
+  if (!isMockMode && isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center py-8">
@@ -89,7 +90,7 @@ const CommentsPage = () => {
     );
   }
 
-  if (!useMockData && error) {
+  if (!isMockMode && error) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -99,8 +100,8 @@ const CommentsPage = () => {
     );
   }
 
-  if (useMockData || questionDetail) {
-    const currentQuestionDetail = useMockData
+  if (isMockMode || questionDetail) {
+    const currentQuestionDetail = isMockMode
       ? mockQuestionData
       : questionDetail;
     const breadcrumbItems = [
@@ -108,15 +109,15 @@ const CommentsPage = () => {
       { label: "テーマ一覧", href: "/themes" },
       {
         label: "テーマ詳細",
-        href: `/themes/${themeId}${useMockData ? "?mock=true" : ""}`,
+        href: `/themes/${themeId}`,
       },
       {
         label: currentQuestionDetail.question.questionText,
-        href: `/themes/${themeId}/questions/${qId}${useMockData ? "?mock=true" : ""}`,
+        href: `/themes/${themeId}/questions/${qId}`,
       },
       {
         label: "コメント一覧",
-        href: `/themes/${themeId}/questions/${qId}/comments${useMockData ? "?mock=true" : ""}`,
+        href: `/themes/${themeId}/questions/${qId}/comments`,
       },
     ];
 
@@ -144,7 +145,7 @@ const CommentsPage = () => {
               variant="outline"
               size="sm"
               className="text-sm"
-              onClick={() => window.history.back()}
+              onClick={() => navigate(-1)}
             >
               質問ページに戻る
             </Button>

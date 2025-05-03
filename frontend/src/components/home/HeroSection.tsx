@@ -1,5 +1,5 @@
 import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "../../contexts/MockContext";
 import { Button } from "../ui/button";
 
 const HeroSection = () => {

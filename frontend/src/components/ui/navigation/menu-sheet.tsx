@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Link, type LinkProps } from "react-router-dom";
+import { type LinkProps } from "react-router-dom";
+import { Link } from "../../../contexts/MockContext";
 import {
   Sheet,
   SheetClose,
@@ -50,9 +51,9 @@ const NavigationLink: React.FC<NavigationLinkProps> = ({
 }) => {
   return (
     <SheetClose asChild>
-      <a href={href} {...props}>
+      <Link to={href} {...props}>
         {children}
-      </a>
+      </Link>
     </SheetClose>
   );
 };
