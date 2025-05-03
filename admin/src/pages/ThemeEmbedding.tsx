@@ -52,8 +52,8 @@ const ThemeEmbedding: FC = () => {
     <div>
       <h1 className="text-2xl font-bold mb-6">埋め込み生成</h1>
 
-      <div className="bg-blue-50 p-4 rounded mb-6">
-        <p className="text-sm">
+      <div className="bg-info/10 p-4 rounded mb-6">
+        <p className="text-sm text-muted-foreground">
           注:
           ベクトル検索やクラスタリングを使用する前に、アイテムの埋め込みを生成する必要があります。
         </p>
@@ -72,7 +72,7 @@ const ThemeEmbedding: FC = () => {
             name="itemType"
             value={itemType}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-ring"
           >
             <option value="">すべて</option>
             <option value="problem">問題のみ</option>

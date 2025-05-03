@@ -92,7 +92,7 @@ const ThemeVectorSearch: FC = () => {
             name="itemType"
             value={searchParams.itemType}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-ring"
           >
             <option value="problem">問題</option>
             <option value="solution">解決策</option>
@@ -111,7 +111,7 @@ const ThemeVectorSearch: FC = () => {
             onChange={handleChange}
             min="1"
             max="100"
-            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 

@@ -64,19 +64,19 @@ const ThemeEdit: FC = () => {
         <div className="flex space-x-4">
           <Link
             to={`/themes/${theme._id}/embeddings`}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
           >
             埋め込み生成
           </Link>
           <Link
             to={`/themes/${theme._id}/vector-search`}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
           >
             ベクトル検索
           </Link>
           <Link
             to={`/themes/${theme._id}/clustering`}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
           >
             クラスタリング
           </Link>
