@@ -1,34 +1,43 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   FloatingChat,
   type FloatingChatRef,
 } from "../components/chat/FloatingChat";
-import BreadcrumbView from "../components/common/BreadcrumbView";
-import CommentCard from "../components/theme/CommentCard";
-import KeyQuestionCard from "../components/theme/KeyQuestionCard";
+import ThemeDetailTemplate from "../components/theme/ThemeDetailTemplate";
+import { useMock } from "../contexts/MockContext";
+import { useThemeDetail } from "../hooks/useThemeDetail";
+import type { NewExtractionEvent } from "../services/socket/socketClient";
+import type { Message } from "../types";
+import { SystemMessage, SystemNotification } from "../types";
+import { ThemeDetailChatManager } from "./ThemeDetailChatManager";
 
 const ThemeDetail = () => {
   const { themeId } = useParams<{ themeId: string }>();
-  const [activeTab, setActiveTab] = useState<"issues" | "solutions">("issues");
-  const chatRef = useRef<FloatingChatRef>(null);
+  const { isMockMode } = useMock();
+  const floatingChatRef = useRef<FloatingChatRef>(null);
+  const [chatManager, setChatManager] = useState<ThemeDetailChatManager | null>(
+    null
+  );
 
-  const handleSendMessage = (message: string) => {
-    console.log("Message sent:", message);
+  const {
+    themeDetail: apiThemeDetail,
+    isLoading: apiIsLoading,
+    error: apiError,
+  } = useThemeDetail(themeId || "");
 
-    setTimeout(() => {
-      chatRef.current?.addMessage("メッセージを受け取りました。", "system");
-    }, 500);
-  };
+  const themeDetail = isMockMode ? null : apiThemeDetail;
+  const isLoading = isMockMode ? false : apiIsLoading;
+  const error = isMockMode ? null : apiError;
 
-  const themeData = {
-    id: themeId,
+  const mockThemeData = {
+    _id: themeId || "",
     title: "若者の雇用とキャリア支援",
     description:
       "若者の雇用不安や将来への不安を解消し、安心してキャリアを築ける社会の実現について議論します。新卒一括採用や終身雇用の変化、フリーランスの増加など、働き方の多様化に対応した支援策を考えます。",
   };
 
-  const keyQuestions = [
+  const mockKeyQuestions = [
     {
       id: 1,
       question:
@@ -53,7 +62,7 @@ const ThemeDetail = () => {
     },
   ];
 
-  const issues = [
+  const mockIssues = [
     {
       id: 1,
       text: "新卒一括採用の仕組みが、若者のキャリア選択の幅を狭めている",
@@ -67,7 +76,7 @@ const ThemeDetail = () => {
     { id: 5, text: "地方の若者は都市部に比べて就職機会が限られている" },
   ];
 
-  const solutions = [
+  const mockSolutions = [
     { id: 1, text: "インターンシップ制度の拡充と単位認定の推進" },
     { id: 2, text: "職業体験プログラムを中高生から段階的に導入する" },
     { id: 3, text: "若者向けのキャリアカウンセリングサービスの無料提供" },
@@ -75,81 +84,119 @@ const ThemeDetail = () => {
     { id: 5, text: "若者の起業支援と失敗しても再チャレンジできる制度の整備" },
   ];
 
-  const breadcrumbItems = [
-    { label: "TOP", href: "/" },
-    { label: "テーマ一覧", href: "/themes" },
-    { label: themeData.title, href: `/themes/${themeId}` },
-  ];
+  useEffect(() => {
+    if (!themeId) return;
+
+    const themeName = isMockMode
+      ? mockThemeData.title
+      : (themeDetail?.theme?.title ?? "");
+
+    if (themeName) {
+      const manager = new ThemeDetailChatManager({
+        themeId,
+        themeName,
+        onNewMessage: handleNewMessage,
+        onNewExtraction: handleNewExtraction,
+      });
+
+      setChatManager(manager);
+
+      return () => {
+        manager.cleanup();
+      };
+    }
+  }, [themeId, isMockMode, themeDetail?.theme?.title]);
+
+  const handleNewMessage = (message: Message) => {
+    if (floatingChatRef.current) {
+      const messageType =
+        message instanceof SystemNotification
+          ? "system-message"
+          : message instanceof SystemMessage
+            ? "system"
+            : "user";
+
+      floatingChatRef.current.addMessage(message.content, messageType);
+    }
+  };
+
+  const handleNewExtraction = (extraction: NewExtractionEvent) => {
+    console.log("New extraction received:", extraction);
+  };
+
+  const handleSendMessage = async (message: string) => {
+    if (chatManager) {
+      await chatManager.addMessage(message, "user");
+    }
+  };
+
+  if (!isMockMode && isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center py-8">
+          <p>テーマの詳細を読み込み中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isMockMode && error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isMockMode || themeDetail) {
+    const templateProps = isMockMode
+      ? {
+          theme: mockThemeData,
+          keyQuestions: mockKeyQuestions,
+          issues: mockIssues,
+          solutions: mockSolutions,
+        }
+      : {
+          theme: {
+            _id: themeDetail?.theme?._id ?? "",
+            title: themeDetail?.theme?.title ?? "",
+            description: themeDetail?.theme?.description ?? "",
+          },
+          keyQuestions:
+            themeDetail?.keyQuestions?.map((q) => ({
+              id: q._id ?? "",
+              question: q.questionText ?? "",
+              voteCount: q.voteCount ?? 0,
+              issueCount: q.issueCount ?? 0,
+              solutionCount: q.solutionCount ?? 0,
+            })) ?? [],
+          issues:
+            themeDetail?.issues?.map((issue) => ({
+              id: issue._id ?? "",
+              text: issue.statement ?? "",
+            })) ?? [],
+          solutions:
+            themeDetail?.solutions?.map((solution) => ({
+              id: solution._id ?? "",
+              text: solution.statement ?? "",
+            })) ?? [],
+        };
+
+    return (
+      <>
+        <ThemeDetailTemplate {...templateProps} />
+        <FloatingChat ref={floatingChatRef} onSendMessage={handleSendMessage} />
+      </>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <BreadcrumbView items={breadcrumbItems} />
-
-      <h1 className="text-2xl md:text-3xl font-bold mb-4">{themeData.title}</h1>
-
-      <p className="text-sm text-neutral-600 mb-8">{themeData.description}</p>
-
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">
-          キークエスチョン ({keyQuestions.length})
-        </h2>
-        <div className="space-y-4">
-          {keyQuestions.map((question) => (
-            <KeyQuestionCard
-              key={question.id}
-              question={question.question}
-              voteCount={question.voteCount}
-              issueCount={question.issueCount}
-              solutionCount={question.solutionCount}
-            />
-          ))}
-        </div>
+      <div className="text-center py-8">
+        <p>テーマの詳細を表示できません。</p>
       </div>
-
-      <div className="mb-12">
-        <h2 className="text-xl font-semibold mb-4">寄せられた意見</h2>
-
-        <div className="flex border-b border-neutral-200 mb-4">
-          <button
-            className={`py-2 px-4 text-sm font-medium ${
-              activeTab === "issues"
-                ? "border-b-2 border-purple-500 text-purple-700"
-                : "text-neutral-500"
-            }`}
-            onClick={() => setActiveTab("issues")}
-            type="button"
-          >
-            課題点 ({issues.length})
-          </button>
-          <button
-            className={`py-2 px-4 text-sm font-medium ${
-              activeTab === "solutions"
-                ? "border-b-2 border-purple-500 text-purple-700"
-                : "text-neutral-500"
-            }`}
-            onClick={() => setActiveTab("solutions")}
-            type="button"
-          >
-            解決策 ({solutions.length})
-          </button>
-        </div>
-
-        <div className="space-y-3">
-          {activeTab === "issues"
-            ? issues.map((issue) => (
-                <CommentCard key={issue.id} text={issue.text} type="issue" />
-              ))
-            : solutions.map((solution) => (
-                <CommentCard
-                  key={solution.id}
-                  text={solution.text}
-                  type="solution"
-                />
-              ))}
-        </div>
-      </div>
-
-      <FloatingChat ref={chatRef} onSendMessage={handleSendMessage} />
     </div>
   );
 };

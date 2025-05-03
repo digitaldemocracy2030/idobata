@@ -4,6 +4,7 @@ import QuestionLink from "../models/QuestionLink.js";
 import SharpQuestion from "../models/SharpQuestion.js";
 import Solution from "../models/Solution.js";
 import { callLLM } from "../services/llmService.js";
+import { emitExtractionUpdate } from "../services/socketService.js";
 
 const DEFAULT_CONCURRENCY_LIMIT = 10; // Set the concurrency limit here
 
@@ -111,6 +112,11 @@ Analyze the relationship and provide the JSON output.`,
     console.log(
       `[LinkingWorker] Finished linking for ${itemType} ID: ${itemId}`
     );
+
+    const themeId = item.themeId;
+    if (themeId) {
+      emitExtractionUpdate(themeId, null, itemType, item);
+    }
   } catch (error) {
     console.error(
       `[LinkingWorker] Error processing linking for ${itemType} ID ${itemId}:`,

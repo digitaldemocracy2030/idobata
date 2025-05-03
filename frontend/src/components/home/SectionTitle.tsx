@@ -1,11 +1,15 @@
+import { cn } from "../../lib/utils";
+
 interface SectionTitleProps {
   title: string;
+  className?: string;
 }
 
-const SectionTitle = ({ title }: SectionTitleProps) => {
+const SectionTitle = ({ title, className }: SectionTitleProps) => {
   return (
-    <div className="flex items-center py-3 border-l-4 border-purple-500 pl-2 mb-2">
-      <h2 className="text-lg font-bold text-neutral-900">{title}</h2>
+    <div className={cn("flex items-center py-2 mb-3", className)}>
+      <div className="w-1 h-6 bg-primary rounded-full mr-2" />
+      <h2 className="text-xl font-bold text-foreground font-biz">{title}</h2>
     </div>
   );
 };

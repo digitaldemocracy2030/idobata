@@ -8,10 +8,10 @@ interface AlertProps {
 
 const Alert: FC<AlertProps> = ({ children, type = "info" }) => {
   const typeStyles = {
-    success: "bg-green-100 text-green-700",
-    error: "bg-red-100 text-red-700",
-    warning: "bg-yellow-100 text-yellow-700",
-    info: "bg-blue-100 text-blue-700",
+    success: "bg-success/20 text-success-foreground",
+    error: "bg-destructive/20 text-destructive-foreground",
+    warning: "bg-warning/20 text-warning-foreground",
+    info: "bg-info/20 text-info-foreground",
   };
 
   return (

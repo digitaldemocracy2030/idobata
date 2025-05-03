@@ -14,6 +14,9 @@ containers-stop:
 idea-discussion-containers-start:
 	docker compose up frontend idea-backend mongo admin
 
+idea-discussion-containers-build:
+	docker compose up frontend idea-backend mongo admin --build
+
 policy-edit-containers-start:
 	docker compose up policy-frontend policy-backend
 

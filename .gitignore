@@ -3,3 +3,5 @@
 node_modules/
 commandResult.txt
 */**/package-lock.json
+uploads/
+uploads/profile-images/

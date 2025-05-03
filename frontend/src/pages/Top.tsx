@@ -1,11 +1,19 @@
-import DiscussionCard from "../components/home/DiscussionCard";
-import HeroSection from "../components/home/HeroSection";
-import SectionTitle from "../components/home/SectionTitle";
-import SeeMoreButton from "../components/home/SeeMoreButton";
-import ThemeCard from "../components/home/ThemeCard";
+import { useEffect, useState } from "react";
+import TopPageTemplate from "../components/top/TopPageTemplate";
+import { useMock } from "../contexts/MockContext";
+import { apiClient } from "../services/api/apiClient";
+import type { Question, Theme } from "../types";
 
 const Top = () => {
-  const discussionData = [
+  const { isMockMode } = useMock();
+  const [topPageData, setTopPageData] = useState<{
+    latestThemes: Theme[];
+    latestQuestions: Question[];
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(!isMockMode);
+  const [error, setError] = useState<string | null>(null);
+
+  const mockDiscussionData = [
     {
       id: 1,
       title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
@@ -26,70 +34,102 @@ const Top = () => {
     },
   ];
 
-  const themeData = [
+  const mockThemeData = [
     {
-      id: 1,
+      id: "1",
       title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },
     {
-      id: 2,
+      id: "2",
       title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },
     {
-      id: 3,
+      id: "3",
       title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
     },
   ];
+
+  useEffect(() => {
+    if (isMockMode) return;
+
+    const fetchTopPageData = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      const result = await apiClient.getTopPageData();
+
+      if (!result.isOk()) {
+        setError(`データの取得に失敗しました: ${result.error.message}`);
+        console.error("Error fetching top page data:", result.error);
+        setIsLoading(false);
+        return;
+      }
+
+      setTopPageData(result.value);
+      setIsLoading(false);
+    };
+
+    fetchTopPageData();
+  }, [isMockMode]);
+
+  if (!isMockMode && isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center py-8">
+          <p>データを読み込み中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isMockMode && error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isMockMode || topPageData) {
+    const templateProps = isMockMode
+      ? {
+          discussions: mockDiscussionData,
+          themes: mockThemeData,
+        }
+      : {
+          discussions:
+            topPageData?.latestQuestions.map((q) => ({
+              id: q._id,
+              title: q.questionText,
+              problemCount: 0, // Default values since these don't exist in the Question type
+              solutionCount: 0,
+            })) || [],
+          themes:
+            topPageData?.latestThemes.map((t) => ({
+              id: t._id,
+              title: t.title,
+              problemCount: t.keyQuestionCount || 0, // Using keyQuestionCount as problemCount
+              solutionCount: t.commentCount || 0, // Using commentCount as solutionCount
+            })) || [],
+        };
+
+    return <TopPageTemplate {...templateProps} />;
+  }
 
   return (
-    <>
-      <HeroSection />
-
-      <div className="px-4 py-4">
-        <section className="mb-6 bg-purple-50 rounded-xl p-4">
-          <SectionTitle title="人気の重要論点" />
-          <p className="text-xs text-neutral-600 mb-4">
-            いま最も注目が集まっている論点はこちらです。中身を見てみましょう。
-          </p>
-          <div className="space-y-3">
-            {discussionData.map((item) => (
-              <DiscussionCard
-                key={item.id}
-                title={item.title}
-                problemCount={item.problemCount}
-                solutionCount={item.solutionCount}
-              />
-            ))}
-          </div>
-          <SeeMoreButton to="/" />
-        </section>
-
-        <section className="mb-6 bg-purple-50 rounded-xl p-4">
-          <SectionTitle title="意見募集中テーマ" />
-          <p className="text-xs text-neutral-600 mb-4">
-            今募集されているテーマはこちらです。気軽にご意見を教えてください！
-          </p>
-          <div className="space-y-3">
-            {themeData.map((item) => (
-              <ThemeCard
-                key={item.id}
-                id={item.id}
-                title={item.title}
-                problemCount={item.problemCount}
-                solutionCount={item.solutionCount}
-              />
-            ))}
-          </div>
-          <SeeMoreButton to="/themes" />
-        </section>
+    <div className="container mx-auto px-4 py-8">
+      <div className="text-center py-8">
+        <p>データを表示できません。</p>
       </div>
-    </>
+    </div>
   );
 };
 

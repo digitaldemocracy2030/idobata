@@ -26,5 +26,6 @@
     "editor.defaultFormatter": "biomejs.biome"
   },
   "biome.lspBin": "./node_modules/.bin/biome",
-  "biome.enabled": true
+  "biome.enabled": true,
+  "deno.enable": false
 }

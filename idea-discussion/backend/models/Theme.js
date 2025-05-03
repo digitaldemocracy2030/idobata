@@ -21,6 +21,11 @@ const themeSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    clusteringResults: {
+      type: Map,
+      of: Object,
+      default: {},
+    },
   },
   { timestamps: true }
 );

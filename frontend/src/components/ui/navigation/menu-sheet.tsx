@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Link, type LinkProps } from "react-router-dom";
+import { type LinkProps } from "react-router-dom";
+import { Link } from "../../../contexts/MockContext";
 import {
   Sheet,
   SheetClose,
@@ -23,15 +24,15 @@ const NavigationSheetContent = React.forwardRef<
     <SheetDescription className="mb-4">
       サイト内のナビゲーションメニューです
     </SheetDescription>
-    <div className="mb-4">
+    {children}
+    <div className="px-4 py-8 font-bold">
       <NavigationLink
         href="/legacy"
-        className="text-sm text-blue-600 hover:underline"
+        className="text-md text-blue-600 underline"
       >
         旧UI
       </NavigationLink>
     </div>
-    {children}
   </SheetContent>
 ));
 NavigationSheetContent.displayName = "NavigationSheetContent";
@@ -50,9 +51,9 @@ const NavigationLink: React.FC<NavigationLinkProps> = ({
 }) => {
   return (
     <SheetClose asChild>
-      <a href={href} {...props}>
+      <Link to={href} {...props}>
         {children}
-      </a>
+      </Link>
     </SheetClose>
   );
 };

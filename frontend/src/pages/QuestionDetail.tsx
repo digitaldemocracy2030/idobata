@@ -5,15 +5,24 @@ import {
   type FloatingChatRef,
 } from "../components/chat/FloatingChat";
 import BreadcrumbView from "../components/common/BreadcrumbView";
+import SectionHeading from "../components/common/SectionHeading";
+import SeeMoreButton from "../components/home/SeeMoreButton";
 import CitizenReportExample from "../components/question/CitizenReportExample";
 import DebateSummary from "../components/question/DebateSummary";
 import KeyQuestionHeader from "../components/question/KeyQuestionHeader";
 import OpinionCard from "../components/question/OpinionCard";
+import { Link, useMock } from "../contexts/MockContext";
+import { useQuestionDetail } from "../hooks/useQuestionDetail";
 
 const QuestionDetail = () => {
   const { themeId, qId } = useParams<{ themeId: string; qId: string }>();
+  const { isMockMode } = useMock();
   const [activeTab, setActiveTab] = useState<"issues" | "solutions">("issues");
   const chatRef = useRef<FloatingChatRef>(null);
+
+  const { questionDetail, isLoading, error } = isMockMode
+    ? { questionDetail: null, isLoading: false, error: null }
+    : useQuestionDetail(themeId || "", qId || "");
 
   const handleSendMessage = (message: string) => {
     console.log("Message sent:", message);
@@ -23,18 +32,18 @@ const QuestionDetail = () => {
     }, 500);
   };
 
-  const questionData = {
+  const mockQuestionData = {
     id: qId,
     question: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
     voteCount: 42,
   };
 
-  const themeData = {
+  const mockThemeData = {
     id: themeId,
     title: "若者の雇用とキャリア支援",
   };
 
-  const debateData = {
+  const mockDebateData = {
     axes: [
       {
         title: "支援の方向性",
@@ -75,7 +84,7 @@ const QuestionDetail = () => {
     ],
   };
 
-  const opinions = {
+  const mockOpinions = {
     issues: [
       {
         id: 1,
@@ -132,7 +141,7 @@ const QuestionDetail = () => {
     ],
   };
 
-  const reportExample = {
+  const mockReportExample = {
     introduction:
       "若者の雇用とキャリア形成に関する市民の意見を集約した結果、以下のような課題が浮かび上がりました。これらの課題に対して、政策立案者は具体的な対応を検討すべきです。",
     issues: [
@@ -154,86 +163,178 @@ const QuestionDetail = () => {
     ],
   };
 
-  const breadcrumbItems = [
-    { label: "TOP", href: "/" },
-    { label: "テーマ一覧", href: "/themes" },
-    { label: themeData.title, href: `/themes/${themeId}` },
-    {
-      label: questionData.question,
-      href: `/themes/${themeId}/questions/${qId}`,
-    },
-  ];
+  if (!isMockMode && isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center py-8">
+          <p>質問の詳細を読み込み中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isMockMode && error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isMockMode || questionDetail) {
+    const questionData = isMockMode
+      ? mockQuestionData
+      : {
+          id: questionDetail?.question?._id ?? "",
+          question: questionDetail?.question?.questionText ?? "",
+          voteCount: questionDetail?.question?.voteCount ?? 0,
+        };
+
+    const themeData = isMockMode
+      ? mockThemeData
+      : {
+          id: themeId || "",
+          title: "テーマ", // APIからテーマ情報を取得する必要があるかも
+        };
+
+    const debateData = isMockMode
+      ? mockDebateData
+      : (questionDetail?.debateData ?? {
+          axes: [],
+          agreementPoints: [],
+          disagreementPoints: [],
+        });
+
+    const opinions = isMockMode
+      ? mockOpinions
+      : {
+          issues:
+            questionDetail?.relatedProblems?.map((p) => ({
+              id: p._id,
+              text: p.statement,
+              relevance: Math.round(p.relevanceScore * 100) || 0,
+            })) ?? [],
+          solutions:
+            questionDetail?.relatedSolutions?.map((s) => ({
+              id: s._id,
+              text: s.statement,
+              relevance: Math.round(s.relevanceScore * 100) || 0,
+            })) ?? [],
+        };
+
+    const reportExample = isMockMode
+      ? mockReportExample
+      : (questionDetail?.reportExample ?? {
+          introduction: "",
+          issues: [],
+        });
+
+    const breadcrumbItems = [
+      { label: "TOP", href: "/" },
+      { label: "テーマ一覧", href: "/themes" },
+      { label: themeData.title, href: `/themes/${themeId}` },
+      {
+        label: questionData.question,
+        href: `/themes/${themeId}/questions/${qId}`,
+      },
+    ];
+
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <BreadcrumbView items={breadcrumbItems} />
+
+        <KeyQuestionHeader
+          question={questionData.question}
+          voteCount={questionData.voteCount}
+        />
+
+        <DebateSummary
+          axes={debateData.axes}
+          agreementPoints={debateData.agreementPoints}
+          disagreementPoints={debateData.disagreementPoints}
+        />
+
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex-grow">
+              <SectionHeading title="寄せられた意見" />
+            </div>
+            <Link
+              to={`/themes/${themeId}/questions/${qId}/comments`}
+              className="text-sm text-purple-500 hover:underline"
+            >
+              すべて見る
+            </Link>
+          </div>
+
+          <div className="flex border-b border-neutral-200 mb-4">
+            <button
+              className={`py-2 px-4 text-sm font-medium ${activeTab === "issues" ? "border-b-2 border-purple-500 text-purple-700" : "text-neutral-500"}`}
+              onClick={() => setActiveTab("issues")}
+              type="button"
+            >
+              課題点 ({opinions.issues.length})
+            </button>
+            <button
+              className={`py-2 px-4 text-sm font-medium ${activeTab === "solutions" ? "border-b-2 border-purple-500 text-purple-700" : "text-neutral-500"}`}
+              onClick={() => setActiveTab("solutions")}
+              type="button"
+            >
+              解決策 ({opinions.solutions.length})
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            {activeTab === "issues"
+              ? opinions.issues
+                  .slice(0, 3)
+                  .map((issue) => (
+                    <OpinionCard
+                      key={issue.id}
+                      text={issue.text}
+                      type="課題点"
+                      relevance={issue.relevance || 0}
+                    />
+                  ))
+              : opinions.solutions
+                  .slice(0, 3)
+                  .map((solution) => (
+                    <OpinionCard
+                      key={solution.id}
+                      text={solution.text}
+                      type="解決策"
+                      relevance={solution.relevance || 0}
+                    />
+                  ))}
+          </div>
+
+          {((activeTab === "issues" && opinions.issues.length > 3) ||
+            (activeTab === "solutions" && opinions.solutions.length > 3)) && (
+            <div className="flex justify-start">
+              <SeeMoreButton
+                to={`/themes/${themeId}/questions/${qId}/comments`}
+              />
+            </div>
+          )}
+        </div>
+
+        <CitizenReportExample
+          introduction={reportExample.introduction}
+          issues={reportExample.issues}
+        />
+
+        <FloatingChat ref={chatRef} onSendMessage={handleSendMessage} />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <BreadcrumbView items={breadcrumbItems} />
-
-      <KeyQuestionHeader
-        question={questionData.question}
-        voteCount={questionData.voteCount}
-      />
-
-      <DebateSummary
-        axes={debateData.axes}
-        agreementPoints={debateData.agreementPoints}
-        disagreementPoints={debateData.disagreementPoints}
-      />
-
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">寄せられた意見</h2>
-
-        <div className="flex border-b border-neutral-200 mb-4">
-          <button
-            className={`py-2 px-4 text-sm font-medium ${
-              activeTab === "issues"
-                ? "border-b-2 border-purple-500 text-purple-700"
-                : "text-neutral-500"
-            }`}
-            onClick={() => setActiveTab("issues")}
-            type="button"
-          >
-            課題点 ({opinions.issues.length})
-          </button>
-          <button
-            className={`py-2 px-4 text-sm font-medium ${
-              activeTab === "solutions"
-                ? "border-b-2 border-purple-500 text-purple-700"
-                : "text-neutral-500"
-            }`}
-            onClick={() => setActiveTab("solutions")}
-            type="button"
-          >
-            解決策 ({opinions.solutions.length})
-          </button>
-        </div>
-
-        <div className="space-y-3">
-          {activeTab === "issues"
-            ? opinions.issues.map((issue) => (
-                <OpinionCard
-                  key={issue.id}
-                  text={issue.text}
-                  type="課題点"
-                  relevance={issue.relevance}
-                />
-              ))
-            : opinions.solutions.map((solution) => (
-                <OpinionCard
-                  key={solution.id}
-                  text={solution.text}
-                  type="解決策"
-                  relevance={solution.relevance}
-                />
-              ))}
-        </div>
+      <div className="text-center py-8">
+        <p>質問の詳細を表示できません。</p>
       </div>
-
-      <CitizenReportExample
-        introduction={reportExample.introduction}
-        issues={reportExample.issues}
-      />
-
-      <FloatingChat ref={chatRef} onSendMessage={handleSendMessage} />
     </div>
   );
 };

@@ -1,23 +1,23 @@
-import { ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Button } from "../ui/button";
+import { ArrowRight } from "lucide-react";
+import { Link } from "../../contexts/MockContext";
+import { cn } from "../../lib/utils";
 
 interface SeeMoreButtonProps {
   to: string;
+  className?: string;
 }
 
-const SeeMoreButton = ({ to }: SeeMoreButtonProps) => {
+const SeeMoreButton = ({ to, className }: SeeMoreButtonProps) => {
   return (
-    <div className="text-center mt-4">
+    <div className={cn("mt-4", className)}>
       <Link to={to}>
-        <Button
-          variant="outline"
-          size="sm"
-          className="text-sm text-purple-500 border-purple-300 hover:bg-purple-50 rounded-full px-4 py-1 flex items-center mx-auto"
+        <button
+          type="button"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-lg flex items-center transition-colors duration-200"
         >
           もっと見る
-          <ChevronRight className="h-4 w-4 ml-1" />
-        </Button>
+          <ArrowRight className="h-5 w-5 ml-2" />
+        </button>
       </Link>
     </div>
   );

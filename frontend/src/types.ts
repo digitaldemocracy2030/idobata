@@ -8,9 +8,64 @@ export interface OutletContext {
 
 // メッセージ関連の型定義
 export interface Message {
-  role: string;
   content: string;
-  timestamp: string | Date;
+  createdAt: Date;
+  isStreaming?: boolean;
+  id?: string;
+}
+
+export class UserMessage implements Message {
+  content: string;
+  createdAt: Date;
+  isStreaming?: boolean;
+  id?: string;
+  constructor(
+    content: string,
+    createdAt: Date = new Date(),
+    isStreaming = false,
+    id?: string
+  ) {
+    this.content = content;
+    this.createdAt = createdAt;
+    this.isStreaming = isStreaming;
+    this.id = id;
+  }
+}
+
+export class SystemMessage implements Message {
+  content: string;
+  createdAt: Date;
+  isStreaming?: boolean;
+  id?: string;
+  constructor(
+    content: string,
+    createdAt: Date = new Date(),
+    isStreaming = false,
+    id?: string
+  ) {
+    this.content = content;
+    this.createdAt = createdAt;
+    this.isStreaming = isStreaming;
+    this.id = id;
+  }
+}
+
+export class SystemNotification implements Message {
+  content: string;
+  createdAt: Date;
+  isStreaming?: boolean;
+  id?: string;
+  constructor(
+    content: string,
+    createdAt: Date = new Date(),
+    isStreaming = false,
+    id?: string
+  ) {
+    this.content = content;
+    this.createdAt = createdAt;
+    this.isStreaming = isStreaming;
+    this.id = id;
+  }
 }
 
 // 通知関連の型定義
@@ -83,7 +138,6 @@ export type TabType = "questions" | "problems" | "solutions" | "policies";
 
 export interface Theme {
   _id: string;
-  id?: string; // バックエンドとの互換性のため
   title: string;
   description?: string;
   slug: string;
@@ -92,9 +146,3 @@ export interface Theme {
 }
 
 export type MessageType = "user" | "system" | "system-message";
-
-export interface ExtendedMessage extends Message {
-  type: MessageType;
-  isStreaming?: boolean;
-  id?: string;
-}
