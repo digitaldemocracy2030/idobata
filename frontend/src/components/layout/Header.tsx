@@ -91,7 +91,9 @@ const Header = () => {
         {/* サイトタイトル（中央） */}
         <Link to="/top">
           <h1 className="text-base font-semibold text-center">
-            {loading ? "..." : siteConfig?.title || "XX党 みんなの政策フォーラム"}
+            {loading
+              ? "..."
+              : siteConfig?.title || "XX党 みんなの政策フォーラム"}
           </h1>
         </Link>
 
