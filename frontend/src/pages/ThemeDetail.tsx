@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   FloatingChat,
   type FloatingChatRef,
 } from "../components/chat/FloatingChat";
 import ThemeDetailTemplate from "../components/theme/ThemeDetailTemplate";
+import { useMock } from "../contexts/MockContext";
 import { useThemeDetail } from "../hooks/useThemeDetail";
 import type { NewExtractionEvent } from "../services/socket/socketClient";
 import type { Message } from "../types";
@@ -13,8 +14,7 @@ import { ThemeDetailChatManager } from "./ThemeDetailChatManager";
 
 const ThemeDetail = () => {
   const { themeId } = useParams<{ themeId: string }>();
-  const location = useLocation();
-  const useMockData = location.search.includes("mock=true");
+  const { isMockMode } = useMock();
   const floatingChatRef = useRef<FloatingChatRef>(null);
   const [chatManager, setChatManager] = useState<ThemeDetailChatManager | null>(
     null
@@ -26,9 +26,9 @@ const ThemeDetail = () => {
     error: apiError,
   } = useThemeDetail(themeId || "");
 
-  const themeDetail = useMockData ? null : apiThemeDetail;
-  const isLoading = useMockData ? false : apiIsLoading;
-  const error = useMockData ? null : apiError;
+  const themeDetail = isMockMode ? null : apiThemeDetail;
+  const isLoading = isMockMode ? false : apiIsLoading;
+  const error = isMockMode ? null : apiError;
 
   const mockThemeData = {
     _id: themeId || "",
@@ -87,7 +87,7 @@ const ThemeDetail = () => {
   useEffect(() => {
     if (!themeId) return;
 
-    const themeName = useMockData
+    const themeName = isMockMode
       ? mockThemeData.title
       : (themeDetail?.theme?.title ?? "");
 
@@ -105,7 +105,7 @@ const ThemeDetail = () => {
         manager.cleanup();
       };
     }
-  }, [themeId, useMockData, themeDetail?.theme?.title]);
+  }, [themeId, isMockMode, themeDetail?.theme?.title]);
 
   const handleNewMessage = (message: Message) => {
     if (floatingChatRef.current) {
@@ -130,7 +130,7 @@ const ThemeDetail = () => {
     }
   };
 
-  if (!useMockData && isLoading) {
+  if (!isMockMode && isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center py-8">
@@ -140,7 +140,7 @@ const ThemeDetail = () => {
     );
   }
 
-  if (!useMockData && error) {
+  if (!isMockMode && error) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -150,8 +150,8 @@ const ThemeDetail = () => {
     );
   }
 
-  if (useMockData || themeDetail) {
-    const templateProps = useMockData
+  if (isMockMode || themeDetail) {
+    const templateProps = isMockMode
       ? {
           theme: mockThemeData,
           keyQuestions: mockKeyQuestions,

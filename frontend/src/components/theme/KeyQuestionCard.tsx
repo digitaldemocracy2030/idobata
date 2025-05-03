@@ -1,6 +1,6 @@
 import { AlertTriangle, CheckCircle, ThumbsUp } from "lucide-react";
-import { Link } from "react-router-dom";
 import { Card, CardContent, CardTitle } from "../../components/ui/card";
+import { Link } from "../../contexts/MockContext";
 
 interface KeyQuestionCardProps {
   question: string;

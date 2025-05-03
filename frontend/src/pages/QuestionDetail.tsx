@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   FloatingChat,
   type FloatingChatRef,
@@ -11,16 +11,16 @@ import CitizenReportExample from "../components/question/CitizenReportExample";
 import DebateSummary from "../components/question/DebateSummary";
 import KeyQuestionHeader from "../components/question/KeyQuestionHeader";
 import OpinionCard from "../components/question/OpinionCard";
+import { Link, useMock } from "../contexts/MockContext";
 import { useQuestionDetail } from "../hooks/useQuestionDetail";
 
 const QuestionDetail = () => {
   const { themeId, qId } = useParams<{ themeId: string; qId: string }>();
-  const location = useLocation();
-  const useMockData = location.search.includes("mock=true");
+  const { isMockMode } = useMock();
   const [activeTab, setActiveTab] = useState<"issues" | "solutions">("issues");
   const chatRef = useRef<FloatingChatRef>(null);
 
-  const { questionDetail, isLoading, error } = useMockData
+  const { questionDetail, isLoading, error } = isMockMode
     ? { questionDetail: null, isLoading: false, error: null }
     : useQuestionDetail(themeId || "", qId || "");
 
@@ -163,7 +163,7 @@ const QuestionDetail = () => {
     ],
   };
 
-  if (!useMockData && isLoading) {
+  if (!isMockMode && isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center py-8">
@@ -173,7 +173,7 @@ const QuestionDetail = () => {
     );
   }
 
-  if (!useMockData && error) {
+  if (!isMockMode && error) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -183,8 +183,8 @@ const QuestionDetail = () => {
     );
   }
 
-  if (useMockData || questionDetail) {
-    const questionData = useMockData
+  if (isMockMode || questionDetail) {
+    const questionData = isMockMode
       ? mockQuestionData
       : {
           id: questionDetail?.question?._id ?? "",
@@ -192,14 +192,14 @@ const QuestionDetail = () => {
           voteCount: questionDetail?.question?.voteCount ?? 0,
         };
 
-    const themeData = useMockData
+    const themeData = isMockMode
       ? mockThemeData
       : {
           id: themeId || "",
           title: "テーマ", // APIからテーマ情報を取得する必要があるかも
         };
 
-    const debateData = useMockData
+    const debateData = isMockMode
       ? mockDebateData
       : (questionDetail?.debateData ?? {
           axes: [],
@@ -207,7 +207,7 @@ const QuestionDetail = () => {
           disagreementPoints: [],
         });
 
-    const opinions = useMockData
+    const opinions = isMockMode
       ? mockOpinions
       : {
           issues:
@@ -224,7 +224,7 @@ const QuestionDetail = () => {
             })) ?? [],
         };
 
-    const reportExample = useMockData
+    const reportExample = isMockMode
       ? mockReportExample
       : (questionDetail?.reportExample ?? {
           introduction: "",

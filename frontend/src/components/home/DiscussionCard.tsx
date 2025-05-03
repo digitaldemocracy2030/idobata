@@ -1,5 +1,5 @@
 import { ArrowRight, CheckCircle, ListFilter } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "../../contexts/MockContext";
 import { Card, CardContent, CardFooter, CardTitle } from "../ui/card";
 
 interface DiscussionCardProps {

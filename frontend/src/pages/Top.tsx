@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import TopPageTemplate from "../components/top/TopPageTemplate";
+import { useMock } from "../contexts/MockContext";
 import { apiClient } from "../services/api/apiClient";
 import type { Question, Theme } from "../types";
 
 const Top = () => {
-  const location = useLocation();
-  const useMockData = location.search.includes("mock=true");
+  const { isMockMode } = useMock();
   const [topPageData, setTopPageData] = useState<{
     latestThemes: Theme[];
     latestQuestions: Question[];
   } | null>(null);
-  const [isLoading, setIsLoading] = useState(!useMockData);
+  const [isLoading, setIsLoading] = useState(!isMockMode);
   const [error, setError] = useState<string | null>(null);
 
   const mockDiscussionData = [
@@ -57,7 +56,7 @@ const Top = () => {
   ];
 
   useEffect(() => {
-    if (useMockData) return;
+    if (isMockMode) return;
 
     const fetchTopPageData = async () => {
       setIsLoading(true);
@@ -77,9 +76,9 @@ const Top = () => {
     };
 
     fetchTopPageData();
-  }, [useMockData]);
+  }, [isMockMode]);
 
-  if (!useMockData && isLoading) {
+  if (!isMockMode && isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center py-8">
@@ -89,7 +88,7 @@ const Top = () => {
     );
   }
 
-  if (!useMockData && error) {
+  if (!isMockMode && error) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -99,8 +98,8 @@ const Top = () => {
     );
   }
 
-  if (useMockData || topPageData) {
-    const templateProps = useMockData
+  if (isMockMode || topPageData) {
+    const templateProps = isMockMode
       ? {
           discussions: mockDiscussionData,
           themes: mockThemeData,
