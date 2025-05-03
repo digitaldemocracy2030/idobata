@@ -45,7 +45,7 @@ const ReportExampleManagement = () => {
         setError("レポート例の生成に失敗しました");
       } else {
         setSuccessMessage(
-          `レポート例の生成を開始しました。生成には数分かかる場合があります。`
+          "レポート例の生成を開始しました。生成には数分かかる場合があります。"
         );
       }
     } catch (error) {
@@ -76,6 +76,7 @@ const ReportExampleManagement = () => {
 
       <div className="mb-4">
         <button
+          type="button"
           onClick={() => navigate(`/themes/${themeId}`)}
           className="px-4 py-2 bg-secondary text-secondary-foreground rounded hover:bg-secondary/90"
         >
@@ -99,6 +100,7 @@ const ReportExampleManagement = () => {
                 <h3 className="font-medium mb-2">{question.questionText}</h3>
                 <div className="flex justify-end">
                   <button
+                    type="button"
                     onClick={() => handleGenerateReport(question._id)}
                     disabled={generating[question._id]}
                     className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 disabled:opacity-50"

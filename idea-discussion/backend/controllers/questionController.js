@@ -5,8 +5,8 @@ import ReportExample from "../models/ReportExample.js"; // Add this import
 import SharpQuestion from "../models/SharpQuestion.js";
 import Solution from "../models/Solution.js";
 import { generateDigestDraft } from "../workers/digestGenerator.js"; // Import the digest worker function
-import { generateReportExample } from "../workers/reportGenerator.js"; // Add this import
 import { generatePolicyDraft } from "../workers/policyGenerator.js"; // Import the worker function
+import { generateReportExample } from "../workers/reportGenerator.js"; // Add this import
 
 // GET /api/themes/:themeId/questions/:questionId/details - 特定の質問の詳細を取得
 export const getQuestionDetails = async (req, res) => {
@@ -115,7 +115,9 @@ export const getQuestionDetails = async (req, res) => {
     };
 
     // Fetch report example from database (if exists)
-    let reportExample = await ReportExample.findOne({ questionId: questionId }).lean();
+    let reportExample = await ReportExample.findOne({
+      questionId: questionId,
+    }).lean();
     
     if (!reportExample) {
       reportExample = {
