@@ -5,6 +5,7 @@ import {
   getVisualReport,
   triggerDigestGeneration,
   triggerPolicyGeneration,
+  triggerReportGeneration,
   triggerVisualReportGeneration,
 } from "../controllers/questionController.js";
 
@@ -22,6 +23,7 @@ router.post(
   "/:questionId/generate-visual-report",
   triggerVisualReportGeneration
 );
+router.post("/:questionId/generate-report", triggerReportGeneration);
 
 router.get("/:questionId/visual-report", getVisualReport);
 

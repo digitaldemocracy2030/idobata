@@ -222,6 +222,18 @@ export class ApiClient {
       }
     );
   }
+
+  async generateReportExample(
+    themeId: string,
+    questionId: string
+  ): Promise<ApiResult<{ message: string }>> {
+    return this.request<{ message: string }>(
+      `/themes/${themeId}/questions/${questionId}/generate-report`,
+      {
+        method: "POST",
+      }
+    );
+  }
 }
 
 export const apiClient = new ApiClient();

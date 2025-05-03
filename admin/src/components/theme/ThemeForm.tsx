@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import type { ChangeEvent, FC, FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { apiClient } from "../../services/api/apiClient";
 import { ApiErrorType } from "../../services/api/apiError";
 import type {
@@ -549,6 +549,14 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                 </p>
               </div>
             )}
+          </div>
+          <div className="mt-4">
+            <Link
+              to={`/themes/${theme._id}/questions/report-examples`}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 ml-auto"
+            >
+              市民意見レポート例を更新する
+            </Link>
           </div>
         </div>
       )}
