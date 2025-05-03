@@ -14,7 +14,7 @@ const HeroSection = () => {
           </h1>
 
           {/* メインイメージ */}
-          <div className="relative w-full mb-4 rounded-lg overflow-hidden">
+          <div className="relative w-full max-w-sm mx-auto mb-4 rounded-lg overflow-hidden">
             <img
               src="/images/MainImage.png"
               alt="いどばたのメインイメージ"
