@@ -38,6 +38,9 @@ const questionVisualReportSchema = new mongoose.Schema(
 
 questionVisualReportSchema.index({ questionId: 1 }, { unique: true });
 
-const QuestionVisualReport = mongoose.model("QuestionVisualReport", questionVisualReportSchema);
+const QuestionVisualReport = mongoose.model(
+  "QuestionVisualReport",
+  questionVisualReportSchema
+);
 
 export default QuestionVisualReport;

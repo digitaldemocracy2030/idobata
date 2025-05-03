@@ -4,7 +4,7 @@ import QuestionLink from "../models/QuestionLink.js";
 import QuestionVisualReport from "../models/QuestionVisualReport.js";
 import SharpQuestion from "../models/SharpQuestion.js";
 import Solution from "../models/Solution.js";
-import { callLLM } from "./llmService.js";
+import { callLLM, RECOMMENDED_MODELS } from "./llmService.js";
 
 export async function getVisualReport(questionId) {
   return QuestionVisualReport.findOne({
@@ -12,21 +12,30 @@ export async function getVisualReport(questionId) {
   });
 }
 
-export async function generateQuestionVisualReport(questionId, forceRegenerate = false) {
+export async function generateQuestionVisualReport(
+  questionId,
+  forceRegenerate = false
+) {
   try {
-    console.log(`[VisualReportGenerator] Starting visual report generation for questionId: ${questionId}`);
-    
+    console.log(
+      `[VisualReportGenerator] Starting visual report generation for questionId: ${questionId}`
+    );
+
     if (!forceRegenerate) {
       const existingReport = await getVisualReport(questionId);
       if (existingReport) {
-        console.log(`[VisualReportGenerator] Using existing visual report for question ${questionId}`);
+        console.log(
+          `[VisualReportGenerator] Using existing visual report for question ${questionId}`
+        );
         return existingReport;
       }
     }
     
     const question = await SharpQuestion.findById(questionId);
     if (!question) {
-      console.error(`[VisualReportGenerator] SharpQuestion not found for id: ${questionId}`);
+      console.error(
+        `[VisualReportGenerator] SharpQuestion not found for id: ${questionId}`
+      );
       throw new Error("Question not found");
     }
     
@@ -142,11 +151,11 @@ ${markdownContent}
 ---
 レスポンスは完全なHTML+CSSコードのみを返してください。`;
     
-    console.log(`[VisualReportGenerator] Calling LLM to generate visual report...`);
+    console.log("[VisualReportGenerator] Calling LLM to generate visual report...");
     const completion = await callLLM(
       [{ role: "user", content: visualPrompt }],
       false,
-      "anthropic/claude-3-sonnet"
+      RECOMMENDED_MODELS["claude-3-sonnet"]
     );
     
     if (!completion) {
@@ -170,11 +179,16 @@ ${markdownContent}
       { upsert: true, new: true }
     );
     
-    console.log(`[VisualReportGenerator] Successfully saved visual report for questionId: ${questionId}`);
+    console.log(
+      `[VisualReportGenerator] Successfully saved visual report for questionId: ${questionId}`
+    );
     
     return visualReport;
   } catch (error) {
-    console.error(`[VisualReportGenerator] Error generating visual report for questionId ${questionId}:`, error);
+    console.error(
+      `[VisualReportGenerator] Error generating visual report for questionId ${questionId}:`,
+      error
+    );
     throw error;
   }
 }
