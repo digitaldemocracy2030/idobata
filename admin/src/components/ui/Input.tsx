@@ -1,15 +1,15 @@
 import React from "react";
-import type { ChangeEvent, FC } from "react";
+import type { ChangeEvent, FC, InputHTMLAttributes } from "react";
+import { Input as ShadcnInput } from "./shadcn-input";
+import { Label } from "./shadcn-label";
 
-interface InputProps {
+interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"> {
   label: string;
   name: string;
   value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   error?: string;
-  type?: string;
   required?: boolean;
-  placeholder?: string;
 }
 
 const Input: FC<InputProps> = ({
@@ -21,23 +21,27 @@ const Input: FC<InputProps> = ({
   type = "text",
   required = false,
   placeholder,
+  className,
+  ...props
 }) => {
   return (
     <div className="mb-4">
-      <label htmlFor={name} className="block text-foreground font-medium mb-2">
+      <Label
+        htmlFor={name}
+        className="block text-foreground font-medium mb-2"
+      >
         {label}
         {required && <span className="text-destructive ml-1">*</span>}
-      </label>
-      <input
+      </Label>
+      <ShadcnInput
         type={type}
         id={name}
         name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`w-full px-3 py-2 border ${
-          error ? "border-destructive" : "border-input"
-        } rounded focus:outline-none focus:ring-2 focus:ring-ring`}
+        className={`${error ? "border-destructive" : ""} ${className || ""}`}
+        {...props}
       />
       {error && <p className="text-destructive text-sm mt-1">{error}</p>}
     </div>
