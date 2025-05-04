@@ -255,7 +255,7 @@ export class ApiClient {
         message,
         threadId,
         questionId, // Pass questionId as part of the request body
-        context: "question" // Add context to indicate this is a question-specific message
+        context: "question", // Add context to indicate this is a question-specific message
       })
     );
   }
