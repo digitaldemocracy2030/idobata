@@ -60,7 +60,10 @@ const ThemeTable: FC<ThemeTableProps> = ({ themes, onDelete }) => {
                   <Link to={`/themes/${theme._id}`}>
                     <Button variant="secondary">編集</Button>
                   </Link>
-                  <Button variant="destructive" onClick={() => onDelete(theme._id)}>
+                  <Button
+                    variant="destructive"
+                    onClick={() => onDelete(theme._id)}
+                  >
                     削除
                   </Button>
                 </td>

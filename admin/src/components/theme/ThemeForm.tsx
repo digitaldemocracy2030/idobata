@@ -218,7 +218,9 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
           onChange={handleChange}
           className={errors.title ? "border-destructive" : ""}
         />
-        {errors.title && <p className="text-destructive text-sm mt-1">{errors.title}</p>}
+        {errors.title && (
+          <p className="text-destructive text-sm mt-1">{errors.title}</p>
+        )}
       </div>
 
       <div className="mb-4">
@@ -254,7 +256,9 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
           className={errors.slug ? "border-destructive" : ""}
           placeholder="例: my-theme-slug"
         />
-        {errors.slug && <p className="text-destructive text-sm mt-1">{errors.slug}</p>}
+        {errors.slug && (
+          <p className="text-destructive text-sm mt-1">{errors.slug}</p>
+        )}
       </div>
 
       <div className="mb-4 flex items-center">

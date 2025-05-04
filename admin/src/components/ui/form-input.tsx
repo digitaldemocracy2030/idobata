@@ -3,7 +3,8 @@ import type { ChangeEvent, InputHTMLAttributes } from "react";
 import { Input } from "./input";
 import { Label } from "./label";
 
-interface FormInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"> {
+interface FormInputProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"> {
   label: string;
   name: string;
   value: string;
@@ -26,10 +27,7 @@ const FormInput: React.FC<FormInputProps> = ({
 }) => {
   return (
     <div className="mb-4">
-      <Label
-        htmlFor={name}
-        className="block text-foreground font-medium mb-2"
-      >
+      <Label htmlFor={name} className="block text-foreground font-medium mb-2">
         {label}
         {required && <span className="text-destructive ml-1">*</span>}
       </Label>

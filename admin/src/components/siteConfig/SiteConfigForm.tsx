@@ -110,7 +110,9 @@ const SiteConfigForm: FC<SiteConfigFormProps> = ({ siteConfig }) => {
           onChange={handleChange}
           className={errors.title ? "border-destructive" : ""}
         />
-        {errors.title && <p className="text-destructive text-sm mt-1">{errors.title}</p>}
+        {errors.title && (
+          <p className="text-destructive text-sm mt-1">{errors.title}</p>
+        )}
       </div>
 
       <div className="mb-4">
