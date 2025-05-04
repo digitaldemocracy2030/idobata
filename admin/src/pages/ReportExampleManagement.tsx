@@ -40,12 +40,18 @@ const ReportExampleManagement = () => {
   };
 
   const handleGenerateReport = async (questionId: string) => {
-    setGenerating((prev: GeneratingState) => ({ ...prev, [questionId]: true }));
+    setGenerating((prev: GeneratingState) => ({
+      ...prev,
+      [questionId]: true,
+    }));
     setSuccessMessage(null);
     setError(null);
 
     try {
-      const result = await apiClient.generateReportExample(themeId || "", questionId);
+      const result = await apiClient.generateReportExample(
+        themeId || "",
+        questionId
+      );
 
       if (result.isErr()) {
         console.error("Failed to generate report:", result.error);
@@ -60,7 +66,10 @@ const ReportExampleManagement = () => {
       setError("レポート例の生成中にエラーが発生しました");
     }
 
-    setGenerating((prev: GeneratingState) => ({ ...prev, [questionId]: false }));
+    setGenerating((prev: GeneratingState) => ({
+      ...prev,
+      [questionId]: false,
+    }));
   };
 
   if (loading) {
