@@ -18,7 +18,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const initialSystemNotification = new SystemNotification(
-    "「どうすれば若者が安心してキャリアを築ける社会を実現できるか？」がチャット対象になったよ。",
+    "チャットを開始しました",
     new Date(Date.now() - 1000 * 60 * 60) // 1時間前の日付で作成
   );
 

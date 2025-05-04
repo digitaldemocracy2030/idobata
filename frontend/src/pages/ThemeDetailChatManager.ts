@@ -78,12 +78,6 @@ export class ThemeDetailChatManager {
 
   private async sendMessageToBackend(userMessage: string): Promise<void> {
     try {
-      const processingMessage = new SystemMessage(
-        `「${this.themeName}」に関する「${userMessage}」を受け付けました。抽出処理を開始します。`
-      );
-      this.messages.push(processingMessage);
-      this.onNewMessage?.(processingMessage);
-
       const result = await apiClient.sendMessage(
         this.userId,
         userMessage,

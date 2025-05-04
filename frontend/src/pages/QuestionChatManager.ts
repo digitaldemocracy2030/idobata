@@ -86,12 +86,6 @@ export class QuestionChatManager {
 
   private async sendMessageToBackend(userMessage: string): Promise<void> {
     try {
-      const processingMessage = new SystemMessage(
-        `「${this.questionText}」に関する「${userMessage}」を受け付けました。抽出処理を開始します。`
-      );
-      this.messages.push(processingMessage);
-      this.onNewMessage?.(processingMessage);
-
       const result = await apiClient.sendQuestionMessage(
         this.userId,
         userMessage,

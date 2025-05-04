@@ -290,17 +290,14 @@ const QuestionDetail = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <BreadcrumbView items={breadcrumbItems} />
-
         <KeyQuestionHeader
           question={questionData.question}
           voteCount={questionData.voteCount}
         />
-
         <DebateSummary
           debateData={debateData}
           visualReport={questionDetail?.visualReport}
         />
-
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <div className="flex-grow">
@@ -364,7 +361,6 @@ const QuestionDetail = () => {
             </div>
           )}
         </div>
-
         <CitizenReportExample
           introduction={reportExample.introduction}
           issues={reportExample.issues}
