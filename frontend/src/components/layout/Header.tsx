@@ -44,7 +44,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b-2 border-[#9256F9] py-3 px-4">
+    <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b-2 border-primary-700 py-3 px-4">
       <div className="flex justify-between items-center">
         {/* ハンバーガーメニュー（左） */}
         <NavigationSheet>

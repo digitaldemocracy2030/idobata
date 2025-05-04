@@ -121,7 +121,7 @@ const ThemeDetailTemplate = ({
           <button
             className={`py-2 px-4 text-sm font-medium ${
               activeTab === "issues"
-                ? "border-b-2 border-primary text-primary"
+                ? "border-b-2 border-primary-700 text-primary"
                 : "text-muted-foreground"
             }`}
             onClick={() => setActiveTab("issues")}
@@ -132,7 +132,7 @@ const ThemeDetailTemplate = ({
           <button
             className={`py-2 px-4 text-sm font-medium ${
               activeTab === "solutions"
-                ? "border-b-2 border-primary text-primary"
+                ? "border-b-2 border-primary-700 text-primary"
                 : "text-muted-foreground"
             }`}
             onClick={() => setActiveTab("solutions")}

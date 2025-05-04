@@ -21,7 +21,7 @@ const KeyQuestionCard = ({
 }: KeyQuestionCardProps) => {
   return (
     <Link to={`/themes/${themeId}/questions/${qid}`} className="block">
-      <Card className="hover:shadow-md transition-all duration-200 hover:border-primary">
+      <Card className="hover:shadow-md transition-all duration-200 hover:border-primary-700">
         <CardContent className="p-4">
           <CardTitle className="font-semibold text-lg mb-3">
             {question}
