@@ -181,14 +181,14 @@ const CommentsPage = () => {
 
           <div className="flex border-b border-neutral-200 mb-4 sticky top-[66px] bg-white z-10 w-full">
             <button
-              className={`py-2 px-4 text-sm font-medium ${activeTab === "issues" ? "border-b-2 border-purple-500 text-purple-700" : "text-neutral-500"}`}
+              className={`py-2 px-4 text-sm font-medium ${activeTab === "issues" ? "border-b-2 border-primary-500 text-primary-700" : "text-neutral-500"}`}
               onClick={() => setActiveTab("issues")}
               type="button"
             >
               課題点 ({opinions.issues.length})
             </button>
             <button
-              className={`py-2 px-4 text-sm font-medium ${activeTab === "solutions" ? "border-b-2 border-purple-500 text-purple-700" : "text-neutral-500"}`}
+              className={`py-2 px-4 text-sm font-medium ${activeTab === "solutions" ? "border-b-2 border-primary-500 text-primary-700" : "text-neutral-500"}`}
               onClick={() => setActiveTab("solutions")}
               type="button"
             >

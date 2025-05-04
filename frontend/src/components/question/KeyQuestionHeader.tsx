@@ -13,7 +13,7 @@ const KeyQuestionHeader = ({ question, voteCount }: KeyQuestionHeaderProps) => {
       </h1>
       <div className="flex items-center">
         <button
-          className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md flex items-center transition-colors duration-200"
+          className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-md flex items-center transition-colors duration-200"
           type="button"
         >
           <ThumbsUp className="h-5 w-5 mr-2" />
