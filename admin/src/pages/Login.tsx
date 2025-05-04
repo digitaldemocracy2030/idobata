@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import Alert from "../components/ui/Alert";
-import Button from "../components/ui/Button";
-import Input from "../components/ui/Input";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import { useAuth } from "../contexts/AuthContext";
 
 const Login: React.FC = () => {
@@ -58,28 +59,48 @@ const Login: React.FC = () => {
           </p>
         </div>
 
-        {error && <Alert type="error">{error}</Alert>}
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <Input
-            label="メールアドレス"
-            name="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="admin@example.com"
-          />
+          <div className="mb-4">
+            <Label
+              htmlFor="email"
+              className="block text-foreground font-medium mb-2"
+            >
+              メールアドレス
+              <span className="text-destructive ml-1">*</span>
+            </Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              placeholder="admin@example.com"
+            />
+          </div>
 
-          <Input
-            label="パスワード"
-            name="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            placeholder="••••••••"
-          />
+          <div className="mb-4">
+            <Label
+              htmlFor="password"
+              className="block text-foreground font-medium mb-2"
+            >
+              パスワード
+              <span className="text-destructive ml-1">*</span>
+            </Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              value={password}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+              placeholder="••••••••"
+            />
+          </div>
 
           <Button type="submit" disabled={isLoading}>
             {isLoading ? "ログイン中..." : "ログイン"}

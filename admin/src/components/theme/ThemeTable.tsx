@@ -2,7 +2,7 @@ import React from "react";
 import type { FC } from "react";
 import { Link } from "react-router-dom";
 import type { Theme } from "../../services/api/types";
-import Button from "../ui/Button";
+import { Button } from "../ui/button";
 
 interface ThemeTableProps {
   themes: Theme[];
@@ -60,7 +60,7 @@ const ThemeTable: FC<ThemeTableProps> = ({ themes, onDelete }) => {
                   <Link to={`/themes/${theme._id}`}>
                     <Button variant="secondary">編集</Button>
                   </Link>
-                  <Button variant="danger" onClick={() => onDelete(theme._id)}>
+                  <Button variant="destructive" onClick={() => onDelete(theme._id)}>
                     削除
                   </Button>
                 </td>

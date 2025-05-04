@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import type { ChangeEvent, FC, FormEvent } from "react";
 import { useParams } from "react-router-dom";
-import Button from "../components/ui/Button";
-import Input from "../components/ui/Input";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import { apiClient } from "../services/api/apiClient";
 import type {
   VectorSearchParams,
@@ -71,14 +72,23 @@ const ThemeVectorSearch: FC = () => {
       <h1 className="text-2xl font-bold mb-6">ベクトル検索</h1>
 
       <form onSubmit={handleSubmit} className="max-w-2xl mb-8">
-        <Input
-          label="検索テキスト"
-          name="queryText"
-          value={searchParams.queryText}
-          onChange={handleChange}
-          placeholder="検索したいテキストを入力してください"
-          required
-        />
+        <div className="mb-4">
+          <Label
+            htmlFor="queryText"
+            className="block text-foreground font-medium mb-2"
+          >
+            検索テキスト
+            <span className="text-destructive ml-1">*</span>
+          </Label>
+          <Input
+            id="queryText"
+            name="queryText"
+            value={searchParams.queryText}
+            onChange={handleChange}
+            placeholder="検索したいテキストを入力してください"
+            required
+          />
+        </div>
 
         <div className="mb-4">
           <label

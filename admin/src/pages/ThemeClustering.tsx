@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import type { ChangeEvent, FC, FormEvent } from "react";
 import { useParams } from "react-router-dom";
 import HierarchicalClusterView from "../components/clustering/HierarchicalClusterView"; // Import the new component
-import Button from "../components/ui/Button";
+import { Button } from "../components/ui/button";
 import { apiClient } from "../services/api/apiClient";
 import type {
   ClusteredItem,
