@@ -252,9 +252,7 @@ const QuestionDetail = () => {
         />
 
         <DebateSummary
-          axes={debateData.axes}
-          agreementPoints={debateData.agreementPoints}
-          disagreementPoints={debateData.disagreementPoints}
+          debateData={debateData}
           visualReport={questionDetail?.visualReport}
         />
 

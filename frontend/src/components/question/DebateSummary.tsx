@@ -1,21 +1,18 @@
 import { useState } from "react";
 
 export interface DebateSummaryProps {
-  axes: {
-    title: string;
-    options: { label: string; description: string }[];
-  }[];
-  agreementPoints: string[];
-  disagreementPoints: string[];
+  debateData: {
+    axes: {
+      title: string;
+      options: { label: string; description: string }[];
+    }[];
+    agreementPoints: string[];
+    disagreementPoints: string[];
+  } | null;
   visualReport: string | null;
 }
 
-const DebateSummary = ({
-  axes,
-  agreementPoints,
-  disagreementPoints,
-  visualReport,
-}: DebateSummaryProps) => {
+const DebateSummary = ({ debateData, visualReport }: DebateSummaryProps) => {
   const [activeTab, setActiveTab] = useState<"illustration" | "analysis">(
     "illustration"
   );
@@ -87,10 +84,10 @@ const DebateSummary = ({
             }
           </div>
         )
-      ) : (
+      ) : debateData ? (
         <div className="p-4">
           <h3 className="text-md font-medium mb-3">主要な論点と対立軸</h3>
-          {axes.map((axis) => (
+          {debateData.axes.map((axis) => (
             <div key={`axis-${axis.title}`} className="mb-4">
               <h4 className="text-sm font-medium mb-2">{axis.title}</h4>
               <div className="pl-4 space-y-2">
@@ -110,7 +107,7 @@ const DebateSummary = ({
           <div className="mb-4">
             <h4 className="text-sm font-medium mb-2">合意点</h4>
             <ul className="pl-5 list-disc text-sm">
-              {agreementPoints.map((point) => (
+              {debateData.agreementPoints.map((point) => (
                 <li key={`point-${point}`} className="mb-1">
                   {point}
                 </li>
@@ -121,13 +118,17 @@ const DebateSummary = ({
           <div>
             <h4 className="text-sm font-medium mb-2">対立点</h4>
             <ul className="pl-5 list-disc text-sm">
-              {disagreementPoints.map((point) => (
+              {debateData.disagreementPoints.map((point) => (
                 <li key={`point-${point}`} className="mb-1">
                   {point}
                 </li>
               ))}
             </ul>
           </div>
+        </div>
+      ) : (
+        <div className="text-center py-8 text-neutral-400">
+          論点まとめはまだ作成されていません。より多くの議論が重なると作成されます。
         </div>
       )}
     </div>
