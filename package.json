@@ -11,7 +11,8 @@
     "policy-edit/frontend",
     "policy-edit/mcp",
     "idea-discussion/backend",
-    "frontend"
+    "frontend",
+    "admin"
   ],
   "scripts": {
     "check": "npm run lint && npm run typecheck && npm run test",
