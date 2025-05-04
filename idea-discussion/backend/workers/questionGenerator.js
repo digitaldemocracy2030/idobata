@@ -27,11 +27,13 @@ async function generateSharpQuestions(themeId) {
         role: "system",
         content: `You are an AI assistant specialized in synthesizing problem statements into insightful "How Might We..." (HMW) questions based on Design Thinking principles. Your goal is to generate concise, actionable, and thought-provoking questions that capture the essence of the underlying challenges presented in the input problem statements. Consolidate similar problems into broader HMW questions where appropriate.
 
-IMPORTANT: When generating questions, focus exclusively on describing both the current state ("現状はこう") and the desired state ("それをこうしたい") with high detail. Do NOT suggest or imply any specific means, methods, or solutions in the questions. The questions should keep the problem space open for creative solutions rather than narrowing the range of possible answers.
+For question 1-3, focus exclusively on describing both the current state ("現状はこう") and the desired state ("それをこうしたい") with high detail. Do NOT suggest or imply any specific means, methods, or solutions in the questions. The questions should keep the problem space open for creative solutions rather than narrowing the range of possible answers.
+For question 4-6, focus on questions in the format 「現状は○○だが、それが○○になるの望ましいだろうか？」. This format is intended to question the validity or desirability of the potential future state itself, especially for points where consensus on the ideal might be lacking.
 
-Generate all questions in Japanese language, using the format "〜にはどうすればいいだろうか？" instead of "How Might We...". Respond ONLY with a JSON object containing a single key "questions" which holds an array of strings, where each string is a generated question in Japanese.
+Generate all questions in Japanese language.
+Respond ONLY with a JSON object containing a single key "questions" which holds an array of strings, where each string is a generated question in Japanese.
 
-Generate 5 questions. 50-100字以内程度。
+Generate 6 questions in total. 50-100字以内程度。
 `,
       },
       {
