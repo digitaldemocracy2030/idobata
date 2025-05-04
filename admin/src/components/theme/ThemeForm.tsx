@@ -719,9 +719,6 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
               </div>
             )}
           </div>
-          <div className="mt-4">
-            {/* 市民意見レポート例と議論分析の生成ボタンをテーブルに追加したため、このリンクは不要になりました */}
-          </div>
         </div>
       )}
     </form>
