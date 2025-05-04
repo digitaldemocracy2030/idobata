@@ -154,9 +154,7 @@ export class QuestionChatManager {
     this.unsubscribeNewExtraction = socketClient.onNewExtraction(
       this.handleNewExtraction.bind(this)
     );
-    console.log(
-      "[QuestionChatManager] Registering extraction-update handler"
-    );
+    console.log("[QuestionChatManager] Registering extraction-update handler");
     this.unsubscribeExtractionUpdate = socketClient.onExtractionUpdate(
       this.handleExtractionUpdate.bind(this)
     );

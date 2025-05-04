@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { QuestionChatManager } from "./QuestionChatManager";
 import {
   FloatingChat,
   type FloatingChatRef,
 } from "../components/chat/FloatingChat";
+import { QuestionChatManager } from "./QuestionChatManager";
 import BreadcrumbView from "../components/common/BreadcrumbView";
 import SectionHeading from "../components/common/SectionHeading";
 import SeeMoreButton from "../components/home/SeeMoreButton";
@@ -20,32 +20,41 @@ const QuestionDetail = () => {
   const { isMockMode } = useMock();
   const [activeTab, setActiveTab] = useState<"issues" | "solutions">("issues");
   const chatRef = useRef<FloatingChatRef>(null);
-  const [chatManager, setChatManager] = useState<QuestionChatManager | null>(null);
+  const [chatManager, setChatManager] = useState<QuestionChatManager | null>(
+    null
+  );
 
   const { questionDetail, isLoading, error } = isMockMode
     ? { questionDetail: null, isLoading: false, error: null }
     : useQuestionDetail(themeId || "", qId || "");
 
   useEffect(() => {
-    if (themeId && qId && (isMockMode || questionDetail?.question?.questionText)) {
-      const questionText = isMockMode 
-        ? mockQuestionData.question 
+    if (
+      themeId &&
+      qId &&
+      (isMockMode || questionDetail?.question?.questionText)
+    ) {
+      const questionText = isMockMode
+        ? mockQuestionData.question
         : questionDetail?.question?.questionText || "";
-        
+
       const manager = new QuestionChatManager({
         themeId,
         questionId: qId,
         questionText,
         onNewMessage: (message) => {
-          chatRef.current?.addMessage(message.content, message.constructor.name === "UserMessage" ? "user" : "system");
+          chatRef.current?.addMessage(
+            message.content,
+            message.constructor.name === "UserMessage" ? "user" : "system"
+          );
         },
         onNewExtraction: (extraction) => {
           console.log("New extraction:", extraction);
-        }
+        },
       });
-      
+
       setChatManager(manager);
-      
+
       return () => {
         manager.cleanup();
       };
@@ -57,7 +66,7 @@ const QuestionDetail = () => {
       chatManager.addMessage(message, "user");
     } else if (isMockMode) {
       console.log("Message sent:", message);
-      
+
       setTimeout(() => {
         chatRef.current?.addMessage("メッセージを受け取りました。", "system");
       }, 500);
