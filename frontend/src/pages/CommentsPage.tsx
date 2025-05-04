@@ -121,17 +121,45 @@ const CommentsPage = () => {
       },
     ];
 
+    const mapProblemToOpinion = (p) => ({
+      id: p._id,
+      text: p.statement,
+      relevance: Math.round(p.relevanceScore * 100) || 0,
+    });
+
+    const mapSolutionToOpinion = (s) => ({
+      id: s._id,
+      text: s.statement,
+      relevance: Math.round(s.relevanceScore * 100) || 0,
+    });
+
+    const createRepeatedData = (items, mapFn) =>
+      Array(3)
+        .fill(null)
+        .flatMap((_, repeatIndex) =>
+          items.map((item) => ({
+            ...mapFn(item),
+            id: `${mapFn(item).id}_${repeatIndex}`, // Ensure unique IDs
+          }))
+        );
+
+    const issuesData = isMockMode
+      ? createRepeatedData(
+          currentQuestionDetail.relatedProblems,
+          mapProblemToOpinion
+        )
+      : currentQuestionDetail.relatedProblems.map(mapProblemToOpinion);
+
+    const solutionsData = isMockMode
+      ? createRepeatedData(
+          currentQuestionDetail.relatedSolutions,
+          mapSolutionToOpinion
+        )
+      : currentQuestionDetail.relatedSolutions.map(mapSolutionToOpinion);
+
     const opinions = {
-      issues: currentQuestionDetail.relatedProblems.map((p) => ({
-        id: p._id,
-        text: p.statement,
-        relevance: Math.round(p.relevanceScore * 100) || 0,
-      })),
-      solutions: currentQuestionDetail.relatedSolutions.map((s) => ({
-        id: s._id,
-        text: s.statement,
-        relevance: Math.round(s.relevanceScore * 100) || 0,
-      })),
+      issues: issuesData,
+      solutions: solutionsData,
     };
 
     return (
