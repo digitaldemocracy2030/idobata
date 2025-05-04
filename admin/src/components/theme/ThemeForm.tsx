@@ -27,6 +27,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
     description: "",
     slug: "",
     isActive: true,
+    customPrompt: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,6 +56,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
         description: theme.description || "",
         slug: theme.slug,
         isActive: theme.isActive,
+        customPrompt: theme.customPrompt || "",
       });
     }
   }, [isEdit, theme]);
@@ -377,6 +379,24 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
         <label htmlFor="isActive" className="text-foreground">
           アクティブ
         </label>
+      </div>
+
+      <div className="mb-4">
+        <label
+          htmlFor="customPrompt"
+          className="block text-foreground font-medium mb-2"
+        >
+          AI プロンプト
+          <span className="text-muted-foreground ml-1 text-sm">(省略可)</span>
+        </label>
+        <textarea
+          id="customPrompt"
+          name="customPrompt"
+          value={(formData.customPrompt as string) || ""}
+          onChange={handleChange}
+          className="w-full px-3 py-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-ring"
+          rows={8}
+        />
       </div>
 
       <div className="flex space-x-4">
