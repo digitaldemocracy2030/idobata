@@ -234,6 +234,18 @@ export class ApiClient {
       }
     );
   }
+
+  async generateDebateAnalysis(
+    themeId: string,
+    questionId: string
+  ): Promise<ApiResult<{ message: string }>> {
+    return this.request<{ message: string }>(
+      `/themes/${themeId}/questions/${questionId}/generate-debate-analysis`,
+      {
+        method: "POST",
+      }
+    );
+  }
 }
 
 export const apiClient = new ApiClient();

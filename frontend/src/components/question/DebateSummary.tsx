@@ -45,7 +45,7 @@ const DebateSummary = ({
           onClick={() => setActiveTab("analysis")}
           type="button"
         >
-          論点分析
+          論点まとめ
         </button>
       </div>
 

@@ -37,6 +37,12 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
   );
   const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
   const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false);
+  const [isGeneratingReports, setIsGeneratingReports] = useState<
+    Record<string, boolean>
+  >({});
+  const [isGeneratingDebateAnalysis, setIsGeneratingDebateAnalysis] = useState<
+    Record<string, boolean>
+  >({});
   const [isGeneratingVisualReport, setIsGeneratingVisualReport] =
     useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -127,6 +133,73 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
     );
 
     setIsGeneratingVisualReport(false);
+  };
+
+  const handleGenerateReport = async (
+    questionId: string,
+    e?: React.MouseEvent
+  ) => {
+    if (e) {
+      e.stopPropagation();
+    }
+
+    if (!theme?._id) return;
+
+    setIsGeneratingReports((prev) => ({ ...prev, [questionId]: true }));
+    setQuestionsError(null);
+    setSuccessMessage(null);
+
+    const result = await apiClient.generateReportExample(theme._id, questionId);
+
+    if (result.isErr()) {
+      console.error("Failed to generate report:", result.error);
+      setQuestionsError("市民意見レポート例の生成に失敗しました。");
+      setIsGeneratingReports((prev) => ({ ...prev, [questionId]: false }));
+      return;
+    }
+
+    setSuccessMessage(
+      "市民意見レポート例の生成を開始しました。生成には数分かかる場合があります。"
+    );
+    setIsGeneratingReports((prev) => ({ ...prev, [questionId]: false }));
+  };
+
+  const handleGenerateDebateAnalysis = async (
+    questionId: string,
+    e?: React.MouseEvent
+  ) => {
+    if (e) {
+      e.stopPropagation();
+    }
+
+    if (!theme?._id) return;
+
+    setIsGeneratingDebateAnalysis((prev) => ({ ...prev, [questionId]: true }));
+    setQuestionsError(null);
+    setSuccessMessage(null);
+
+    const result = await apiClient.generateDebateAnalysis(
+      theme._id,
+      questionId
+    );
+
+    if (result.isErr()) {
+      console.error("Failed to generate debate analysis:", result.error);
+      setQuestionsError("議論分析の生成に失敗しました。");
+      setIsGeneratingDebateAnalysis((prev) => ({
+        ...prev,
+        [questionId]: false,
+      }));
+      return;
+    }
+
+    setSuccessMessage(
+      "議論分析の生成を開始しました。生成には数分かかる場合があります。"
+    );
+    setIsGeneratingDebateAnalysis((prev) => ({
+      ...prev,
+      [questionId]: false,
+    }));
   };
 
   const formatDate = (dateString: string) => {
@@ -471,7 +544,19 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
                       >
-                        ビジュアルレポート
+                        イラストまとめ
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                      >
+                        論点まとめ
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                      >
+                        市民意見レポート
                       </th>
                     </tr>
                   </thead>
@@ -554,7 +639,91 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                                 生成中
                               </span>
                             ) : (
-                              "レポート生成"
+                              "更新する"
+                            )}
+                          </button>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleGenerateDebateAnalysis(question._id, e);
+                            }}
+                            disabled={isGeneratingDebateAnalysis[question._id]}
+                            className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90"
+                            type="button"
+                          >
+                            {isGeneratingDebateAnalysis[question._id] ? (
+                              <span className="flex items-center">
+                                <svg
+                                  className="animate-spin -ml-1 mr-1 h-3 w-3"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  aria-label="読み込み中"
+                                  role="img"
+                                >
+                                  <title>読み込み中</title>
+                                  <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                  />
+                                  <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                  />
+                                </svg>
+                                生成中
+                              </span>
+                            ) : (
+                              "更新する"
+                            )}
+                          </button>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleGenerateReport(question._id, e);
+                            }}
+                            disabled={isGeneratingReports[question._id]}
+                            className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90"
+                            type="button"
+                          >
+                            {isGeneratingReports[question._id] ? (
+                              <span className="flex items-center">
+                                <svg
+                                  className="animate-spin -ml-1 mr-1 h-3 w-3"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  aria-label="読み込み中"
+                                  role="img"
+                                >
+                                  <title>読み込み中</title>
+                                  <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                  />
+                                  <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                  />
+                                </svg>
+                                生成中
+                              </span>
+                            ) : (
+                              "更新する"
                             )}
                           </button>
                         </td>
@@ -571,14 +740,6 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                 </p>
               </div>
             )}
-          </div>
-          <div className="mt-4">
-            <Link
-              to={`/themes/${theme._id}/questions/report-examples`}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 ml-auto"
-            >
-              市民意見レポート例を更新する
-            </Link>
           </div>
         </div>
       )}

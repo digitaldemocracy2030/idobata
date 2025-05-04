@@ -4,7 +4,9 @@ import QuestionLink from "../models/QuestionLink.js";
 import ReportExample from "../models/ReportExample.js";
 import SharpQuestion from "../models/SharpQuestion.js";
 import Solution from "../models/Solution.js";
+import { getDebateAnalysis } from "../services/debateAnalysisGenerator.js";
 import { getVisualReport as getQuestionVisualReport } from "../services/questionVisualReportGenerator.js";
+import { generateDebateAnalysisTask } from "../workers/debateAnalysisGenerator.js";
 import { generateDigestDraft } from "../workers/digestGenerator.js";
 import { generatePolicyDraft } from "../workers/policyGenerator.js";
 import { generateReportExample } from "../workers/reportGenerator.js";
@@ -75,47 +77,6 @@ export const getQuestionDetails = async (req, res) => {
 
     const voteCount = question.voteCount || 0;
 
-    const debateData = {
-      axes: [
-        {
-          title: "支援の方向性",
-          options: [
-            {
-              label: "個人の能力開発支援",
-              description: "個人のスキルアップや能力開発を支援する政策を重視",
-            },
-            {
-              label: "雇用環境の整備",
-              description: "企業側の採用・雇用制度を改革する政策を重視",
-            },
-          ],
-        },
-        {
-          title: "支援の対象",
-          options: [
-            {
-              label: "新卒・若年層全般",
-              description: "新卒者を含む若年層全体を対象とした支援策",
-            },
-            {
-              label: "特定のニーズを持つ若者",
-              description: "困難を抱える若者や特定のニーズを持つ若者に焦点",
-            },
-          ],
-        },
-      ],
-      agreementPoints: [
-        "現状の新卒一括採用に問題がある点",
-        "キャリア教育の強化が必要な点",
-        "若者のキャリア形成に関する不安が大きい点",
-      ],
-      disagreementPoints: [
-        "国の介入度合い（市場主導 vs 政府主導）",
-        "支援の優先順位（教育改革 vs 雇用制度改革）",
-        "地方と都市部の格差への対応策",
-      ],
-    };
-
     const reportExample = await ReportExample.findOne({
       questionId: questionId,
     })
@@ -123,6 +84,8 @@ export const getQuestionDetails = async (req, res) => {
       .lean();
 
     const visualReport = await getQuestionVisualReport(questionId);
+
+    const debateData = await getDebateAnalysis(questionId);
 
     res.status(200).json({
       question: {
@@ -183,6 +146,50 @@ export const triggerPolicyGeneration = async (req, res) => {
     );
     res.status(500).json({
       message: "Error triggering policy generation",
+      error: error.message,
+    });
+  }
+};
+
+// POST /api/themes/:themeId/questions/:questionId/generate-debate-analysis - 論点まとめ生成
+export const triggerDebateAnalysisGeneration = async (req, res) => {
+  const { questionId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(questionId)) {
+    return res.status(400).json({ message: "Invalid question ID format" });
+  }
+
+  try {
+    // Check if the question exists (optional but good practice)
+    const question = await SharpQuestion.findById(questionId);
+    if (!question) {
+      return res.status(404).json({ message: "Question not found" });
+    }
+
+    // Trigger the generation asynchronously (using setTimeout for simplicity)
+    // In production, use a proper job queue (BullMQ, Agenda, etc.)
+    setTimeout(() => {
+      generateDebateAnalysisTask(questionId).catch((err) => {
+        console.error(
+          `[API Trigger] Error during background debate analysis generation for ${questionId}:`,
+          err
+        );
+      });
+    }, 0);
+
+    console.log(
+      `[API Trigger] Debate analysis generation triggered for questionId: ${questionId}`
+    );
+    res.status(202).json({
+      message: `Debate analysis generation started for question ${questionId}`,
+    });
+  } catch (error) {
+    console.error(
+      `Error triggering debate analysis generation for question ${questionId}:`,
+      error
+    );
+    res.status(500).json({
+      message: "Error triggering debate analysis generation",
       error: error.message,
     });
   }

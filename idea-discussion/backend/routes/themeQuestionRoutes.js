@@ -3,6 +3,7 @@ import {
   getQuestionDetails,
   getQuestionsByTheme,
   getVisualReport,
+  triggerDebateAnalysisGeneration,
   triggerDigestGeneration,
   triggerPolicyGeneration,
   triggerReportGeneration,
@@ -24,6 +25,10 @@ router.post(
   triggerVisualReportGeneration
 );
 router.post("/:questionId/generate-report", triggerReportGeneration);
+router.post(
+  "/:questionId/generate-debate-analysis",
+  triggerDebateAnalysisGeneration
+);
 
 router.get("/:questionId/visual-report", getVisualReport);
 
