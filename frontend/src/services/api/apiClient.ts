@@ -236,6 +236,28 @@ export class ApiClient {
     );
   }
 
+  async sendQuestionMessage(
+    userId: string,
+    message: string,
+    themeId: string,
+    questionId: string,
+    threadId?: string
+  ): Promise<
+    HttpResult<{ response: string; threadId: string; userId: string }>
+  > {
+    return this.withRetry(() =>
+      this.httpClient.post<{
+        response: string;
+        threadId: string;
+        userId: string;
+      }>(`/themes/${themeId}/questions/${questionId}/chat/messages`, {
+        userId,
+        message,
+        threadId,
+      })
+    );
+  }
+
   async getPolicyDraftsByQuestion(
     themeId: string,
     questionId: string
