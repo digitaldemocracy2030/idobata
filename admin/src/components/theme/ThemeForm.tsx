@@ -151,11 +151,16 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
       return;
     }
     
-    setSuccessMessage("市民意見レポート例の生成を開始しました。生成には数分かかる場合があります。");
+    setSuccessMessage(
+      "市民意見レポート例の生成を開始しました。生成には数分かかる場合があります。"
+    );
     setIsGeneratingReports((prev) => ({ ...prev, [questionId]: false }));
   };
   
-  const handleGenerateDebateAnalysis = async (questionId: string, e?: React.MouseEvent) => {
+  const handleGenerateDebateAnalysis = async (
+    questionId: string,
+    e?: React.MouseEvent
+  ) => {
     if (e) {
       e.stopPropagation();
     }
@@ -166,17 +171,28 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
     setQuestionsError(null);
     setSuccessMessage(null);
     
-    const result = await apiClient.generateDebateAnalysis(theme._id, questionId);
+    const result = await apiClient.generateDebateAnalysis(
+      theme._id,
+      questionId
+    );
     
     if (result.isErr()) {
       console.error("Failed to generate debate analysis:", result.error);
       setQuestionsError("議論分析の生成に失敗しました。");
-      setIsGeneratingDebateAnalysis((prev) => ({ ...prev, [questionId]: false }));
+      setIsGeneratingDebateAnalysis((prev) => ({
+        ...prev,
+        [questionId]: false,
+      }));
       return;
     }
     
-    setSuccessMessage("議論分析の生成を開始しました。生成には数分かかる場合があります。");
-    setIsGeneratingDebateAnalysis((prev) => ({ ...prev, [questionId]: false }));
+    setSuccessMessage(
+      "議論分析の生成を開始しました。生成には数分かかる場合があります。"
+    );
+    setIsGeneratingDebateAnalysis((prev) => ({
+      ...prev,
+      [questionId]: false,
+    }));
   };
 
   const formatDate = (dateString: string) => {

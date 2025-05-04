@@ -5,13 +5,13 @@ export async function generateDebateAnalysisTask(questionId) {
     console.log(
       `[Worker] Starting debate analysis generation for questionId: ${questionId}`
     );
-    
+
     const result = await generateDebateAnalysis(questionId);
-    
+
     console.log(
       `[Worker] Successfully completed debate analysis generation for questionId: ${questionId}`
     );
-    
+
     return result;
   } catch (error) {
     console.error(
