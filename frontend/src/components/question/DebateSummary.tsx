@@ -23,20 +23,22 @@ const DebateSummary = ({ debateData, visualReport }: DebateSummaryProps) => {
 
       <div className="flex justify-evenly border-b border-neutral-200 mb-4">
         <button
-          className={`py-2 px-4 text-sm font-medium ${activeTab === "illustration"
+          className={`py-2 px-4 text-sm font-medium ${
+            activeTab === "illustration"
               ? "border-b-2 border-primary-500 text-primary-700"
               : "text-neutral-500"
-            }`}
+          }`}
           onClick={() => setActiveTab("illustration")}
           type="button"
         >
           イラストまとめ
         </button>
         <button
-          className={`py-2 px-4 text-sm font-medium ${activeTab === "analysis"
+          className={`py-2 px-4 text-sm font-medium ${
+            activeTab === "analysis"
               ? "border-b-2 border-primary-500 text-primary-700"
               : "text-neutral-500"
-            }`}
+          }`}
           onClick={() => setActiveTab("analysis")}
           type="button"
         >
