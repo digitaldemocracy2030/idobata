@@ -28,6 +28,7 @@ export class QuestionChatManager {
   private unsubscribeNewExtraction?: () => void;
   private unsubscribeExtractionUpdate?: () => void;
   private userId = `user-${Date.now()}`; // 仮のユーザーID
+  private hasShownNotification = false; // Flag to track if notification has been shown
 
   constructor(options: QuestionChatManagerOptions) {
     this.themeId = options.themeId;
@@ -40,11 +41,15 @@ export class QuestionChatManager {
   }
 
   private showQuestionNotification(): void {
+    if (this.hasShownNotification) return; // Skip if notification already shown
+    
     const notification = new SystemNotification(
       `「${this.questionText}」がチャット対象になりました。`
     );
     this.messages.push(notification);
     this.onNewMessage?.(notification);
+    
+    this.hasShownNotification = true; // Mark notification as shown
   }
 
   async addMessage(content: string, type: MessageType): Promise<void> {

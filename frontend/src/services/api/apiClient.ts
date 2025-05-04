@@ -250,10 +250,12 @@ export class ApiClient {
         response: string;
         threadId: string;
         userId: string;
-      }>(`/themes/${themeId}/questions/${questionId}/chat/messages`, {
+      }>(`/themes/${themeId}/chat/messages`, {
         userId,
         message,
         threadId,
+        questionId, // Pass questionId as part of the request body
+        context: "question" // Add context to indicate this is a question-specific message
       })
     );
   }

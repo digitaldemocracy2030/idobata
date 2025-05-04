@@ -13,6 +13,7 @@ import KeyQuestionHeader from "../components/question/KeyQuestionHeader";
 import OpinionCard from "../components/question/OpinionCard";
 import { Link, useMock } from "../contexts/MockContext";
 import { useQuestionDetail } from "../hooks/useQuestionDetail";
+import { MessageType } from "../types";
 import { QuestionChatManager } from "./QuestionChatManager";
 
 const QuestionDetail = () => {
@@ -43,10 +44,13 @@ const QuestionDetail = () => {
         questionId: qId,
         questionText,
         onNewMessage: (message) => {
-          chatRef.current?.addMessage(
-            message.content,
-            message.constructor.name === "UserMessage" ? "user" : "system"
-          );
+          let messageType: MessageType = "system";
+          if (message.constructor.name === "UserMessage") {
+            messageType = "user";
+          } else if (message.constructor.name === "SystemNotification") {
+            messageType = "system-message";
+          }
+          chatRef.current?.addMessage(message.content, messageType);
         },
         onNewExtraction: (extraction) => {
           console.log("New extraction:", extraction);
