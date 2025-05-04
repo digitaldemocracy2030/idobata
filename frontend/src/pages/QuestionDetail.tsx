@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   FloatingChat,
@@ -13,23 +13,68 @@ import KeyQuestionHeader from "../components/question/KeyQuestionHeader";
 import OpinionCard from "../components/question/OpinionCard";
 import { Link, useMock } from "../contexts/MockContext";
 import { useQuestionDetail } from "../hooks/useQuestionDetail";
+import { MessageType } from "../types";
+import { QuestionChatManager } from "./QuestionChatManager";
 
 const QuestionDetail = () => {
   const { themeId, qId } = useParams<{ themeId: string; qId: string }>();
   const { isMockMode } = useMock();
   const [activeTab, setActiveTab] = useState<"issues" | "solutions">("issues");
   const chatRef = useRef<FloatingChatRef>(null);
+  const [chatManager, setChatManager] = useState<QuestionChatManager | null>(
+    null
+  );
 
   const { questionDetail, isLoading, error } = isMockMode
     ? { questionDetail: null, isLoading: false, error: null }
     : useQuestionDetail(themeId || "", qId || "");
 
-  const handleSendMessage = (message: string) => {
-    console.log("Message sent:", message);
+  useEffect(() => {
+    if (
+      themeId &&
+      qId &&
+      (isMockMode || questionDetail?.question?.questionText)
+    ) {
+      const questionText = isMockMode
+        ? mockQuestionData.question
+        : questionDetail?.question?.questionText || "";
 
-    setTimeout(() => {
-      chatRef.current?.addMessage("メッセージを受け取りました。", "system");
-    }, 500);
+      const manager = new QuestionChatManager({
+        themeId,
+        questionId: qId,
+        questionText,
+        onNewMessage: (message) => {
+          let messageType: MessageType = "system";
+          if (message.constructor.name === "UserMessage") {
+            messageType = "user";
+          } else if (message.constructor.name === "SystemNotification") {
+            messageType = "system-message";
+          }
+          chatRef.current?.addMessage(message.content, messageType);
+        },
+        onNewExtraction: (extraction) => {
+          console.log("New extraction:", extraction);
+        },
+      });
+
+      setChatManager(manager);
+
+      return () => {
+        manager.cleanup();
+      };
+    }
+  }, [themeId, qId, isMockMode, questionDetail]);
+
+  const handleSendMessage = (message: string) => {
+    if (chatManager) {
+      chatManager.addMessage(message, "user");
+    } else if (isMockMode) {
+      console.log("Message sent:", message);
+
+      setTimeout(() => {
+        chatRef.current?.addMessage("メッセージを受け取りました。", "system");
+      }, 500);
+    }
   };
 
   const mockQuestionData = {
@@ -245,17 +290,14 @@ const QuestionDetail = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <BreadcrumbView items={breadcrumbItems} />
-
         <KeyQuestionHeader
           question={questionData.question}
           voteCount={questionData.voteCount}
         />
-
         <DebateSummary
           debateData={debateData}
           visualReport={questionDetail?.visualReport}
         />
-
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <div className="flex-grow">
@@ -319,7 +361,6 @@ const QuestionDetail = () => {
             </div>
           )}
         </div>
-
         <CitizenReportExample
           introduction={reportExample.introduction}
           issues={reportExample.issues}

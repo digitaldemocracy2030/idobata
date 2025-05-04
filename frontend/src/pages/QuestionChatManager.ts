@@ -9,16 +9,18 @@ import {
   UserMessage,
 } from "../types";
 
-export interface ThemeDetailChatManagerOptions {
+export interface QuestionChatManagerOptions {
   themeId: string;
-  themeName: string;
+  questionId: string;
+  questionText: string;
   onNewMessage?: (message: Message) => void;
   onNewExtraction?: (extraction: NewExtractionEvent) => void;
 }
 
-export class ThemeDetailChatManager {
+export class QuestionChatManager {
   private themeId: string;
-  private themeName: string;
+  private questionId: string;
+  private questionText: string;
   private messages: Message[] = [];
   private onNewMessage?: (message: Message) => void;
   private onNewExtraction?: (extraction: NewExtractionEvent) => void;
@@ -26,22 +28,28 @@ export class ThemeDetailChatManager {
   private unsubscribeNewExtraction?: () => void;
   private unsubscribeExtractionUpdate?: () => void;
   private userId = `user-${Date.now()}`; // 仮のユーザーID
+  private hasShownNotification = false; // Flag to track if notification has been shown
 
-  constructor(options: ThemeDetailChatManagerOptions) {
+  constructor(options: QuestionChatManagerOptions) {
     this.themeId = options.themeId;
-    this.themeName = options.themeName;
+    this.questionId = options.questionId;
+    this.questionText = options.questionText;
     this.onNewMessage = options.onNewMessage;
     this.onNewExtraction = options.onNewExtraction;
 
-    this.showThemeNotification();
+    this.showQuestionNotification();
   }
 
-  private showThemeNotification(): void {
+  private showQuestionNotification(): void {
+    if (this.hasShownNotification) return; // Skip if notification already shown
+
     const notification = new SystemNotification(
-      `「${this.themeName}」がチャット対象になりました。`
+      `「${this.questionText}」がチャット対象になりました。`
     );
     this.messages.push(notification);
     this.onNewMessage?.(notification);
+
+    this.hasShownNotification = true; // Mark notification as shown
   }
 
   async addMessage(content: string, type: MessageType): Promise<void> {
@@ -78,10 +86,11 @@ export class ThemeDetailChatManager {
 
   private async sendMessageToBackend(userMessage: string): Promise<void> {
     try {
-      const result = await apiClient.sendMessage(
+      const result = await apiClient.sendQuestionMessage(
         this.userId,
         userMessage,
         this.themeId,
+        this.questionId,
         this.threadId
       );
 
@@ -117,36 +126,34 @@ export class ThemeDetailChatManager {
 
   private subscribeToExtraction(): void {
     console.log(
-      `[ThemeDetailChatManager] Subscribing to theme: ${this.themeId}`
+      `[QuestionChatManager] Subscribing to theme: ${this.themeId} and question: ${this.questionId}`
     );
     socketClient.subscribeToTheme(this.themeId);
     if (this.threadId) {
       console.log(
-        `[ThemeDetailChatManager] Subscribing to thread: ${this.threadId}`
+        `[QuestionChatManager] Subscribing to thread: ${this.threadId}`
       );
       socketClient.subscribeToThread(this.threadId);
     }
 
     if (this.unsubscribeNewExtraction) {
       console.log(
-        "[ThemeDetailChatManager] Unsubscribing from previous new-extraction"
+        "[QuestionChatManager] Unsubscribing from previous new-extraction"
       );
       this.unsubscribeNewExtraction();
     }
     if (this.unsubscribeExtractionUpdate) {
       console.log(
-        "[ThemeDetailChatManager] Unsubscribing from previous extraction-update"
+        "[QuestionChatManager] Unsubscribing from previous extraction-update"
       );
       this.unsubscribeExtractionUpdate();
     }
 
-    console.log("[ThemeDetailChatManager] Registering new-extraction handler");
+    console.log("[QuestionChatManager] Registering new-extraction handler");
     this.unsubscribeNewExtraction = socketClient.onNewExtraction(
       this.handleNewExtraction.bind(this)
     );
-    console.log(
-      "[ThemeDetailChatManager] Registering extraction-update handler"
-    );
+    console.log("[QuestionChatManager] Registering extraction-update handler");
     this.unsubscribeExtractionUpdate = socketClient.onExtractionUpdate(
       this.handleExtractionUpdate.bind(this)
     );
@@ -154,7 +161,7 @@ export class ThemeDetailChatManager {
 
   private handleNewExtraction(event: NewExtractionEvent): void {
     console.log(
-      "[ThemeDetailChatManager] handleNewExtraction called with event:",
+      "[QuestionChatManager] handleNewExtraction called with event:",
       event
     );
     const { type, data } = event;
@@ -164,15 +171,15 @@ export class ThemeDetailChatManager {
         : `「${data.statement}」という解決策が登録されました。`;
 
     console.log(
-      `[ThemeDetailChatManager] Creating notification: ${notificationContent}`
+      `[QuestionChatManager] Creating notification: ${notificationContent}`
     );
     const notification = new SystemNotification(notificationContent);
     this.messages.push(notification);
 
-    console.log("[ThemeDetailChatManager] Calling onNewMessage callback");
+    console.log("[QuestionChatManager] Calling onNewMessage callback");
     this.onNewMessage?.(notification);
 
-    console.log("[ThemeDetailChatManager] Calling onNewExtraction callback");
+    console.log("[QuestionChatManager] Calling onNewExtraction callback");
     this.onNewExtraction?.(event);
   }
 
