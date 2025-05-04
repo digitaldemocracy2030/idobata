@@ -134,7 +134,7 @@ ${markdownContent}
     const completion = await callLLM(
       [{ role: "user", content: debatePrompt }],
       true,
-      RECOMMENDED_MODELS["gemini-pro"]
+      "google/gemini-2.5-pro-preview-03-25"
     );
 
     if (!completion) {
