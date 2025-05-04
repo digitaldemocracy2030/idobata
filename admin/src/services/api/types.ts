@@ -4,6 +4,7 @@ export interface Theme {
   description?: string;
   slug: string;
   isActive: boolean;
+  customPrompt?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -13,6 +14,7 @@ export interface CreateThemePayload {
   description?: string;
   slug: string;
   isActive?: boolean;
+  customPrompt?: string;
 }
 
 export interface UpdateThemePayload {
@@ -20,6 +22,7 @@ export interface UpdateThemePayload {
   description?: string;
   slug?: string;
   isActive?: boolean;
+  customPrompt?: string;
 }
 
 export interface User {
