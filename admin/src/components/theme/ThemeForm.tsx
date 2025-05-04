@@ -392,7 +392,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
         <textarea
           id="customPrompt"
           name="customPrompt"
-          value={formData.customPrompt as string || ""}
+          value={(formData.customPrompt as string) || ""}
           onChange={handleChange}
           className="w-full px-3 py-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-ring"
           rows={8}

@@ -206,7 +206,7 @@ const handleNewMessageByTheme = async (req, res) => {
     let systemPrompt = "";
     try {
       const theme = await Theme.findById(themeId);
-      if (theme && theme.customPrompt) {
+      if (theme?.customPrompt) {
         systemPrompt = theme.customPrompt;
       } else {
         // --- Use default system prompt ---
@@ -234,7 +234,7 @@ const handleNewMessageByTheme = async (req, res) => {
 5.  **話題の誘導:** ユーザーの発言が曖昧で、特に話したいトピックが明確でない場合、参考情報として提示された既存の問いのどれかをピックアップしてそれについて議論することを優しく提案してください。（問いを一字一句読み上げるのではなく、文脈や相手に合わせて言い換えて分かりやすく伝える）
 `;
     }
-    
+
     llmMessages.push({ role: "system", content: systemPrompt });
     // --- End core system prompt ---
 
