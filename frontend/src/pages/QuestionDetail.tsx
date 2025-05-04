@@ -4,7 +4,6 @@ import {
   FloatingChat,
   type FloatingChatRef,
 } from "../components/chat/FloatingChat";
-import { QuestionChatManager } from "./QuestionChatManager";
 import BreadcrumbView from "../components/common/BreadcrumbView";
 import SectionHeading from "../components/common/SectionHeading";
 import SeeMoreButton from "../components/home/SeeMoreButton";
@@ -14,6 +13,7 @@ import KeyQuestionHeader from "../components/question/KeyQuestionHeader";
 import OpinionCard from "../components/question/OpinionCard";
 import { Link, useMock } from "../contexts/MockContext";
 import { useQuestionDetail } from "../hooks/useQuestionDetail";
+import { QuestionChatManager } from "./QuestionChatManager";
 
 const QuestionDetail = () => {
   const { themeId, qId } = useParams<{ themeId: string; qId: string }>();
