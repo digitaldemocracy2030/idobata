@@ -1,6 +1,5 @@
 import express from "express";
 import {
-  getDebateAnalysis,
   getQuestionDetails,
   getQuestionsByTheme,
   getVisualReport,
@@ -32,6 +31,5 @@ router.post(
 );
 
 router.get("/:questionId/visual-report", getVisualReport);
-router.get("/:questionId/debate-analysis", getDebateAnalysis);
 
 export default router;
