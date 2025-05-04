@@ -7,8 +7,8 @@ import type {
   SiteConfig,
   UpdateSiteConfigPayload,
 } from "../../services/api/types";
-import Button from "../ui/Button";
-import Input from "../ui/Input";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 interface SiteConfigFormProps {
   siteConfig?: SiteConfig;
@@ -95,14 +95,25 @@ const SiteConfigForm: FC<SiteConfigFormProps> = ({ siteConfig }) => {
         </div>
       )}
 
-      <Input
-        label="サイト名"
-        name="title"
-        value={formData.title}
-        onChange={handleChange}
-        error={errors.title}
-        required
-      />
+      <div className="mb-4">
+        <label
+          htmlFor="title"
+          className="block text-foreground font-medium mb-2"
+        >
+          サイト名
+          <span className="text-destructive ml-1">*</span>
+        </label>
+        <Input
+          id="title"
+          name="title"
+          value={formData.title}
+          onChange={handleChange}
+          className={errors.title ? "border-destructive" : ""}
+        />
+        {errors.title && (
+          <p className="text-destructive text-sm mt-1">{errors.title}</p>
+        )}
+      </div>
 
       <div className="mb-4">
         <label
