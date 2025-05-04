@@ -133,7 +133,7 @@ const CommentsPage = () => {
       relevance: Math.round(s.relevanceScore * 100) || 0,
     });
 
-    const createRepeatedData = (items, mapFn) => 
+    const createRepeatedData = (items, mapFn) =>
       Array(3)
         .fill(null)
         .flatMap((_, repeatIndex) =>
@@ -144,11 +144,17 @@ const CommentsPage = () => {
         );
 
     const issuesData = isMockMode
-      ? createRepeatedData(currentQuestionDetail.relatedProblems, mapProblemToOpinion)
+      ? createRepeatedData(
+          currentQuestionDetail.relatedProblems,
+          mapProblemToOpinion
+        )
       : currentQuestionDetail.relatedProblems.map(mapProblemToOpinion);
 
     const solutionsData = isMockMode
-      ? createRepeatedData(currentQuestionDetail.relatedSolutions, mapSolutionToOpinion)
+      ? createRepeatedData(
+          currentQuestionDetail.relatedSolutions,
+          mapSolutionToOpinion
+        )
       : currentQuestionDetail.relatedSolutions.map(mapSolutionToOpinion);
 
     const opinions = {
