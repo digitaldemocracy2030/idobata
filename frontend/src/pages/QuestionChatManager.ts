@@ -42,13 +42,13 @@ export class QuestionChatManager {
 
   private showQuestionNotification(): void {
     if (this.hasShownNotification) return; // Skip if notification already shown
-    
+
     const notification = new SystemNotification(
       `「${this.questionText}」がチャット対象になりました。`
     );
     this.messages.push(notification);
     this.onNewMessage?.(notification);
-    
+
     this.hasShownNotification = true; // Mark notification as shown
   }
 
