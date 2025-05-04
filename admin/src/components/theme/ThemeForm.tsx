@@ -34,7 +34,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(
-    null,
+    null
   );
   const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
   const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false);
@@ -101,7 +101,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
     }
 
     setSuccessMessage(
-      "シャープな問いの生成を開始しました。しばらくすると問いリストに表示されます。",
+      "シャープな問いの生成を開始しました。しばらくすると問いリストに表示されます。"
     );
 
     setTimeout(() => {
@@ -120,7 +120,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
 
     const result = await apiClient.generateVisualReport(
       theme._id,
-      selectedQuestionId,
+      selectedQuestionId
     );
 
     if (result.isErr()) {
@@ -131,7 +131,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
     }
 
     setSuccessMessage(
-      "ビジュアルレポートの生成を開始しました。しばらくすると問いの詳細画面で確認できます。",
+      "ビジュアルレポートの生成を開始しました。しばらくすると問いの詳細画面で確認できます。"
     );
 
     setIsGeneratingVisualReport(false);
@@ -139,7 +139,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
 
   const handleGenerateReport = async (
     questionId: string,
-    e?: React.MouseEvent,
+    e?: React.MouseEvent
   ) => {
     if (e) {
       e.stopPropagation();
@@ -161,14 +161,14 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
     }
 
     setSuccessMessage(
-      "市民意見レポート例の生成を開始しました。生成には数分かかる場合があります。",
+      "市民意見レポート例の生成を開始しました。生成には数分かかる場合があります。"
     );
     setIsGeneratingReports((prev) => ({ ...prev, [questionId]: false }));
   };
 
   const handleGenerateDebateAnalysis = async (
     questionId: string,
-    e?: React.MouseEvent,
+    e?: React.MouseEvent
   ) => {
     if (e) {
       e.stopPropagation();
@@ -182,7 +182,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
 
     const result = await apiClient.generateDebateAnalysis(
       theme._id,
-      questionId,
+      questionId
     );
 
     if (result.isErr()) {
@@ -196,7 +196,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
     }
 
     setSuccessMessage(
-      "議論分析の生成を開始しました。生成には数分かかる場合があります。",
+      "議論分析の生成を開始しました。生成には数分かかる場合があります。"
     );
     setIsGeneratingDebateAnalysis((prev) => ({
       ...prev,
@@ -219,7 +219,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
   };
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = e.target;
 
@@ -275,11 +275,11 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
           } else {
             alert(`エラーが発生しました: ${error.message}`);
           }
-        },
+        }
       );
     } else {
       const result = await apiClient.createTheme(
-        formData as CreateThemePayload,
+        formData as CreateThemePayload
       );
 
       result.match(
@@ -294,7 +294,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
           } else {
             alert(`エラーが発生しました: ${error.message}`);
           }
-        },
+        }
       );
     }
 
