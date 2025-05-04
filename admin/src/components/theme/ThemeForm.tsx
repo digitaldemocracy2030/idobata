@@ -10,8 +10,8 @@ import type {
   Theme,
   UpdateThemePayload,
 } from "../../services/api/types";
-import Button from "../ui/Button";
-import Input from "../ui/Input";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 interface ThemeFormProps {
   theme?: Theme;
@@ -307,14 +307,25 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
         </div>
       )}
 
-      <Input
-        label="タイトル"
-        name="title"
-        value={formData.title as string}
-        onChange={handleChange}
-        error={errors.title}
-        required
-      />
+      <div className="mb-4">
+        <label
+          htmlFor="title"
+          className="block text-foreground font-medium mb-2"
+        >
+          タイトル
+          <span className="text-destructive ml-1">*</span>
+        </label>
+        <Input
+          id="title"
+          name="title"
+          value={formData.title as string}
+          onChange={handleChange}
+          className={errors.title ? "border-destructive" : ""}
+        />
+        {errors.title && (
+          <p className="text-destructive text-sm mt-1">{errors.title}</p>
+        )}
+      </div>
 
       <div className="mb-4">
         <label
@@ -333,15 +344,26 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
         />
       </div>
 
-      <Input
-        label="スラッグ"
-        name="slug"
-        value={formData.slug as string}
-        onChange={handleChange}
-        error={errors.slug}
-        required
-        placeholder="例: my-theme-slug"
-      />
+      <div className="mb-4">
+        <label
+          htmlFor="slug"
+          className="block text-foreground font-medium mb-2"
+        >
+          スラッグ
+          <span className="text-destructive ml-1">*</span>
+        </label>
+        <Input
+          id="slug"
+          name="slug"
+          value={formData.slug as string}
+          onChange={handleChange}
+          className={errors.slug ? "border-destructive" : ""}
+          placeholder="例: my-theme-slug"
+        />
+        {errors.slug && (
+          <p className="text-destructive text-sm mt-1">{errors.slug}</p>
+        )}
+      </div>
 
       <div className="mb-4 flex items-center">
         <input

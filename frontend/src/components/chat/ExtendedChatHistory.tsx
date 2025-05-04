@@ -51,7 +51,7 @@ function ExtendedChatHistory({ messages }: ExtendedChatHistoryProps) {
                   msg instanceof UserMessage,
                 "bg-white border border-neutral-200 text-neutral-800 rounded-2xl rounded-tl-sm":
                   msg instanceof SystemMessage,
-                "bg-neutral-100 border border-neutral-200 text-neutral-800 rounded-2xl":
+                "bg-primary-light border border-neutral-200 text-neutral-800 rounded-2xl":
                   msg instanceof SystemNotification,
               })}
             >

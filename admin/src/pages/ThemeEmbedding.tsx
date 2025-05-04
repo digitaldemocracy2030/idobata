@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import type { ChangeEvent, FC, FormEvent } from "react";
 import { useParams } from "react-router-dom";
-import Button from "../components/ui/Button";
+import { Button } from "../components/ui/button";
 import { apiClient } from "../services/api/apiClient";
 
 const ThemeEmbedding: FC = () => {

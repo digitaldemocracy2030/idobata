@@ -121,17 +121,45 @@ const CommentsPage = () => {
       },
     ];
 
+    const mapProblemToOpinion = (p) => ({
+      id: p._id,
+      text: p.statement,
+      relevance: Math.round(p.relevanceScore * 100) || 0,
+    });
+
+    const mapSolutionToOpinion = (s) => ({
+      id: s._id,
+      text: s.statement,
+      relevance: Math.round(s.relevanceScore * 100) || 0,
+    });
+
+    const createRepeatedData = (items, mapFn) =>
+      Array(3)
+        .fill(null)
+        .flatMap((_, repeatIndex) =>
+          items.map((item) => ({
+            ...mapFn(item),
+            id: `${mapFn(item).id}_${repeatIndex}`, // Ensure unique IDs
+          }))
+        );
+
+    const issuesData = isMockMode
+      ? createRepeatedData(
+          currentQuestionDetail.relatedProblems,
+          mapProblemToOpinion
+        )
+      : currentQuestionDetail.relatedProblems.map(mapProblemToOpinion);
+
+    const solutionsData = isMockMode
+      ? createRepeatedData(
+          currentQuestionDetail.relatedSolutions,
+          mapSolutionToOpinion
+        )
+      : currentQuestionDetail.relatedSolutions.map(mapSolutionToOpinion);
+
     const opinions = {
-      issues: currentQuestionDetail.relatedProblems.map((p) => ({
-        id: p._id,
-        text: p.statement,
-        relevance: Math.round(p.relevanceScore * 100) || 0,
-      })),
-      solutions: currentQuestionDetail.relatedSolutions.map((s) => ({
-        id: s._id,
-        text: s.statement,
-        relevance: Math.round(s.relevanceScore * 100) || 0,
-      })),
+      issues: issuesData,
+      solutions: solutionsData,
     };
 
     return (
@@ -151,7 +179,7 @@ const CommentsPage = () => {
             </Button>
           </div>
 
-          <div className="flex border-b border-neutral-200 mb-4">
+          <div className="flex border-b border-neutral-200 mb-4 sticky top-[66px] bg-white z-10 w-full">
             <button
               className={`py-2 px-4 text-sm font-medium ${activeTab === "issues" ? "border-b-2 border-purple-500 text-purple-700" : "text-neutral-500"}`}
               onClick={() => setActiveTab("issues")}
