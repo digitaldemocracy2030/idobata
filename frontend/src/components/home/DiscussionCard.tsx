@@ -28,7 +28,7 @@ const DiscussionCard = ({
           <hr className="h-[2px] bg-gray-300 w-full my-2" />
         </CardContent>
         <CardFooter className="flex justify-between items-center pt-0">
-          <div className="flex text-base text-muted-foreground">
+          <div className="flex text-sm sm:text-base text-muted-foreground">
             <span className="flex items-center mr-4">
               <ThumbsUp className="h-4 w-4 mr-1 text-primary" />
               気になる: {likeCount}
@@ -59,7 +59,7 @@ const DiscussionCard = ({
           <hr className="h-[2px] bg-gray-300 w-full my-2" />
         </CardContent>
         <CardFooter className="flex justify-between items-center pt-0">
-          <div className="flex text-base text-muted-foreground">
+          <div className="flex text-sm sm:text-base text-muted-foreground">
             <span className="flex items-center mr-4">
               <ThumbsUp className="h-4 w-4 mr-1 text-primary" />
               気になる: {likeCount}

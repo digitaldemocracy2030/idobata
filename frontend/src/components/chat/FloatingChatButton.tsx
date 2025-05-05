@@ -24,7 +24,7 @@ export const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
           <input
             type="text"
             placeholder="気になること・思ったことをAIに質問"
-            className="placeholder-gradient flex-grow px-5 py-4 bg-transparent border-none focus:outline-none text-sm"
+            className="placeholder-gradient flex-grow px-5 py-4 bg-transparent border-none focus:outline-none text-base"
             readOnly
             onClick={onClick}
           />
