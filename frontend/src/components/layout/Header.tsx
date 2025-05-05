@@ -135,36 +135,21 @@ const Header = () => {
         </Link>
 
         {/* マイページアイコン（右） */}
-        <div className="flex items-center gap-2">
-          {process.env.NODE_ENV === "development" && (
-            <div className="flex items-center gap-1">
-              <Button
-                variant="outline"
-                onClick={toggleMockMode}
-                className="text-xs"
-              >
-                {isMockMode
-                  ? "モックモードを解除しトップへ"
-                  : "モックモードに入る（開発用）"}
-              </Button>
-            </div>
-          )}
-          <Link to="/mypage">
-            <Button variant="ghost" size="icon" className="relative">
-              {user.profileImageUrl ? (
-                <img
-                  src={user.profileImageUrl}
-                  alt="プロフィール画像"
-                  className="rounded-full w-6 h-6 object-cover"
-                />
-              ) : (
-                <div className="rounded-full border-2 border-black flex items-center justify-center w-6 h-6">
-                  <User className="h-6 w-6" />
-                </div>
-              )}
-            </Button>
-          </Link>
-        </div>
+        <Link to="/mypage">
+          <Button variant="ghost" size="icon" className="relative">
+            {user.profileImageUrl ? (
+              <img
+                src={user.profileImageUrl}
+                alt="プロフィール画像"
+                className="rounded-full w-6 h-6 object-cover"
+              />
+            ) : (
+              <div className="rounded-full border-2 border-black flex items-center justify-center w-6 h-6">
+                <User className="h-6 w-6" />
+              </div>
+            )}
+          </Button>
+        </Link>
       </div>
     </header>
   );
