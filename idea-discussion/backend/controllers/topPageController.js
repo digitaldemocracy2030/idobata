@@ -1,7 +1,7 @@
 import ChatThread from "../models/ChatThread.js";
+import QuestionLink from "../models/QuestionLink.js";
 import SharpQuestion from "../models/SharpQuestion.js";
 import Theme from "../models/Theme.js";
-import QuestionLink from "../models/QuestionLink.js";
 
 /**
  * Get latest themes and questions for the top page
