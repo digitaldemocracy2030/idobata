@@ -57,7 +57,7 @@ const Header = () => {
             <nav className="flex flex-col gap-4 mt-8">
               <NavigationRouterLink
                 to="/"
-                className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md border-l-4 border-primary-500"
+                className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
               >
                 TOP
               </NavigationRouterLink>
