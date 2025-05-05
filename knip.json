@@ -35,10 +35,5 @@
     "**/tailwind.config.js",
     "**/postcss.config.js"
   ],
-  "ignoreDependencies": [
-    "@biomejs/biome",
-    "@types/*",
-    "typescript",
-    "vitest"
-  ]
+  "ignoreDependencies": ["@biomejs/biome", "@types/*", "typescript", "vitest"]
 }
