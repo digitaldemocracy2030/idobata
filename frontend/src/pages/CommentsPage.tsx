@@ -201,6 +201,7 @@ const CommentsPage = () => {
               ? opinions.issues.map((issue) => (
                   <OpinionCard
                     key={issue.id}
+                    id={issue.id}
                     text={issue.text}
                     type="課題点"
                     relevance={issue.relevance || 0}
@@ -209,6 +210,7 @@ const CommentsPage = () => {
               : opinions.solutions.map((solution) => (
                   <OpinionCard
                     key={solution.id}
+                    id={solution.id}
                     text={solution.text}
                     type="解決策"
                     relevance={solution.relevance || 0}
