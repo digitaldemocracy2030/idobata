@@ -602,7 +602,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                         aria-selected={selectedQuestionId === question._id}
                       >
                         <td className="px-6 py-4 whitespace-normal text-sm text-foreground font-medium">
-                          {question.tagLine || "タグラインなし"}
+                          {question.tagLine}
                         </td>
                         <td className="px-6 py-4 whitespace-normal text-sm text-foreground">
                           {question.questionText}
