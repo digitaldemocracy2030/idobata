@@ -25,7 +25,7 @@ const ThemeCard = ({
         <CardContent className="pt-4">
           <CardTitle className="text-lg mb-2">{title}</CardTitle>
           <div className="h-[2px] bg-gray-300 w-full my-2" />
-          <p className="text-sm text-muted-foreground mb-4">{description}</p>
+          <p className="text-base text-muted-foreground mb-4">{description}</p>
         </CardContent>
         <CardFooter className="flex justify-between items-center pt-0">
           <div className="flex text-xs text-muted-foreground">

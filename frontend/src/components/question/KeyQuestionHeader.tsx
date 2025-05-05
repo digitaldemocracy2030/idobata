@@ -51,7 +51,7 @@ const KeyQuestionHeader = ({
       </div>
       <p className="text-neutral-500 mb-3">{question}</p>
 
-      <div className="flex flex-wrap gap-3 text-xs text-neutral-500 mb-4">
+      <div className="flex flex-wrap gap-3 text-sm text-neutral-500 mb-4">
         {tags && tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-4">
             {tags.map((tag) => (

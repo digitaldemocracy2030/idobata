@@ -16,7 +16,7 @@ const CommentCard = ({ text, type = "issue" }: CommentCardProps) => {
               className={`h-4 w-4 ${type === "issue" ? "text-destructive" : "text-accent"}`}
             />
           </div>
-          <p className="text-sm text-foreground">{text}</p>
+          <p className="text-base text-foreground">{text}</p>
         </div>
       </CardContent>
     </Card>

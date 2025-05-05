@@ -32,7 +32,7 @@ const KeyQuestionCard = ({
               <CardTitle className="font-semibold text-lg mb-2">
                 {tagLine}
               </CardTitle>
-              <p className="text-sm text-muted-foreground mb-3">{question}</p>
+              <p className="text-base text-muted-foreground mb-3">{question}</p>
             </>
           ) : (
             <CardTitle className="font-semibold text-lg mb-3">
@@ -40,13 +40,13 @@ const KeyQuestionCard = ({
             </CardTitle>
           )}
 
-          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+          <div className="flex flex-wrap gap-3 text-base text-muted-foreground">
             {tags && tags.length > 0 && (
               <div className="flex flex-wrap gap-1 mb-2 w-full">
                 {tags.map((tag) => (
                   <span
                     key={tag}
-                    className="border border-gray-300 rounded-full px-2 py-0.5 text-xs text-gray-600"
+                    className="border border-gray-300 rounded-full px-2 py-0.5 text-sm text-gray-600"
                   >
                     {tag}
                   </span>

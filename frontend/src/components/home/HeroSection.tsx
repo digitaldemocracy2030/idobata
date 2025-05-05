@@ -7,7 +7,7 @@ const HeroSection = () => {
     <div className="relative bg-background py-6">
       <div className="px-4">
         <div className="text-left">
-          <h1 className="text-2xl font-bold text-foreground mb-2">
+          <h1 className="text-3xl text-foreground mb-2">
             あなたの声から、
             <br />
             政策が動き出す
@@ -22,10 +22,10 @@ const HeroSection = () => {
             />
           </div>
 
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             社会をもっと良くするヒントは、あなたの実感にあります。
           </p>
-          <p className="text-sm text-muted-foreground mb-4">
+          <p className="text-base text-muted-foreground mb-4">
             今、全国で寄せられている声と、動き出した政策案をご覧ください。
           </p>
 

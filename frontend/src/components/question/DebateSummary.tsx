@@ -19,14 +19,14 @@ const DebateSummary = ({ debateData, visualReport }: DebateSummaryProps) => {
 
   return (
     <div className="mb-8 border border-neutral-200 rounded-lg p-0 bg-white">
-      <h2 className="p-4 text-lg font-semibold mb-4">論点サマリー</h2>
+      <h2 className="p-4 text-lg mb-4">論点サマリー</h2>
 
       <div className="flex justify-evenly border-b border-neutral-200 mb-4">
         <button
-          className={`py-2 px-4 text-sm font-medium ${
+          className={`py-2 px-4 text-base font-bold ${
             activeTab === "illustration"
-              ? "border-b-2 border-primary-500 text-primary-700"
-              : "text-neutral-500"
+              ? "border-b-4 border-primary-500 text-primary-700"
+              : "text-neutral-700"
           }`}
           onClick={() => setActiveTab("illustration")}
           type="button"
@@ -34,10 +34,10 @@ const DebateSummary = ({ debateData, visualReport }: DebateSummaryProps) => {
           イラストまとめ
         </button>
         <button
-          className={`py-2 px-4 text-sm font-medium ${
+          className={`py-2 px-4 text-base font-bold ${
             activeTab === "analysis"
-              ? "border-b-2 border-primary-500 text-primary-700"
-              : "text-neutral-500"
+              ? "border-b-4 border-primary-500 text-primary-700"
+              : "text-neutral-700"
           }`}
           onClick={() => setActiveTab("analysis")}
           type="button"

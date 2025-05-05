@@ -306,7 +306,7 @@ const QuestionDetail = () => {
             </div>
             <Link
               to={`/themes/${themeId}/questions/${qId}/comments`}
-              className="text-sm text-primary-500 hover:underline"
+              className="text-base text-primary-500 hover:underline"
             >
               すべて見る
             </Link>
@@ -314,14 +314,14 @@ const QuestionDetail = () => {
 
           <div className="flex border-b border-neutral-200 mb-4">
             <button
-              className={`py-2 px-4 text-sm font-medium ${activeTab === "issues" ? "border-b-2 border-primary-500 text-primary-700" : "text-neutral-500"}`}
+              className={`flex-1 py-2 px-4 text-base font-bold ${activeTab === "issues" ? "border-b-4 border-primary-500 text-primary-700" : "text-neutral-700"}`}
               onClick={() => setActiveTab("issues")}
               type="button"
             >
               課題点 ({opinions.issues.length})
             </button>
             <button
-              className={`py-2 px-4 text-sm font-medium ${activeTab === "solutions" ? "border-b-2 border-primary-500 text-primary-700" : "text-neutral-500"}`}
+              className={`flex-1 py-2 px-4 text-base font-bold ${activeTab === "solutions" ? "border-b-4 border-primary-500 text-primary-700" : "text-neutral-700 "}`}
               onClick={() => setActiveTab("solutions")}
               type="button"
             >
