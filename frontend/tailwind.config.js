@@ -1,64 +1,64 @@
 /** @type {import('tailwindcss').Config} */
 const colors = require("tailwindcss/colors");
 
+/** カスタマイズ部分 ここから */
+
 const primaryColors = {
-  50: '#e6f0ff',
-  100: '#cce0ff',
-  200: '#99c2ff',
-  300: '#66a3ff',
-  400: '#3385ff',
-  500: '#0066ff', // DEFAULT
-  600: '#0052cc',
-  700: '#003d99',
-  800: '#002966',
-  900: '#001433',
-  950: '#000a1a',
-  light: 'hsl(var(--primary) / 0.8)',
-  dark: 'hsl(var(--primary) / 0.9)',
-  weak: 'hsl(var(--primary) / 0.2)',
+  50: "hsl(212 100.0% 91.2%)",
+  100: "hsl(214 100.0% 86.5%)",
+  200: "hsl(215 100.0% 81.8%)",
+  300: "hsl(215 100.0% 77.1%)",
+  400: "hsl(216 100.0% 72.4%)",
+  500: "hsl(216 100.0% 67.6%)",
+  600: "hsl(216 100.0% 62.9%)",
+  700: "hsl(216 100.0% 58.4%)",
+  800: "hsl(216 73.1% 46.7%)",
+  900: "hsl(216 76.5% 35.1%)",
+  950: "hsl(216 83.2% 23.3%)",
 };
-
-const secondaryColors = {
-  50: '#f2f2f2',
-  100: '#e6e6e6',
-  200: '#cccccc',
-  300: '#b3b3b3',
-  400: '#999999',
-  500: '#808080', // DEFAULT
-  600: '#666666',
-  700: '#4d4d4d',
-  800: '#333333',
-  900: '#1a1a1a',
-  950: '#0d0d0d',
-  light: 'hsl(var(--secondary) / 0.8)',
-  dark: 'hsl(var(--secondary) / 0.9)',
-  weak: 'hsl(var(--secondary) / 0.2)',
-};
-
-const accentColors = {
-  50: '#f0f0ff',
-  100: '#e0e0ff',
-  200: '#c2c2ff',
-  300: '#a3a3ff',
-  400: '#8585ff',
-  500: '#6666ff', // DEFAULT
-  600: '#5252cc',
-  700: '#3d3d99',
-  800: '#292966',
-  900: '#141433',
-  950: '#0a0a1a',
-  light: 'hsl(var(--accent) / 0.8)',
-  dark: 'hsl(var(--accent) / 0.9)',
-  weak: 'hsl(var(--accent) / 0.2)',
-};
-
-primaryColors.DEFAULT = primaryColors[500];
+primaryColors.DEFAULT = primaryColors[700];
+primaryColors.dark = primaryColors[800];
+primaryColors.light = primaryColors[300];
+primaryColors.weak = primaryColors[50];
 primaryColors.foreground = "#fff";
 
-secondaryColors.DEFAULT = secondaryColors[500];
+const secondaryColors = {
+  50: colors.gray[50],
+  100: colors.gray[100],
+  200: colors.gray[200],
+  300: colors.gray[300],
+  400: colors.gray[400],
+  500: colors.gray[500],
+  600: colors.gray[600],
+  700: colors.gray[700],
+  800: colors.gray[800],
+  900: colors.gray[900],
+  950: colors.gray[950],
+};
+secondaryColors.DEFAULT = secondaryColors[300];
+secondaryColors.dark = secondaryColors[200];
+secondaryColors.light = secondaryColors[100];
+secondaryColors.weak = secondaryColors[50];
 secondaryColors.foreground = "#fff";
 
-accentColors.DEFAULT = accentColors[500];
+const accentColors = {
+  50: "hsl(170 64.3% 83.5%)",
+  100: "hsl(170 64.1% 77.1%)",
+  200: "hsl(170 62.7% 70.6%)",
+  300: "hsl(170 62.8% 64.1%)",
+  400: "hsl(170 62.2% 57.5%)",
+  500: "hsl(170 62.2% 51.2%)",
+  600: "hsl(170 77.1% 44.5%)",
+  700: "hsl(170 100.0% 38.2%)",
+  800: "hsl(170 100.0% 31.8%)",
+  900: "hsl(170 100.0% 25.5%)",
+  950: "hsl(170 100.0% 19.2%)",
+};
+
+accentColors.DEFAULT = accentColors[700];
+accentColors.dark = accentColors[800];
+accentColors.light = accentColors[100];
+accentColors.weak = accentColors[50];
 accentColors.foreground = "#000";
 
 /** カスタマイズ部分 ここまで */
