@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 import SectionHeading from "../components/common/SectionHeading";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -53,7 +53,7 @@ const MyPage: React.FC = () => {
     <div className="max-w-2xl mx-auto p-4">
       <SectionHeading title="マイページ" />
 
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 text-base">
         {/* プロフィール画像セクション */}
         <div className="">
           <p className="text-gray-600 mb-2">プロフィール画像:</p>
