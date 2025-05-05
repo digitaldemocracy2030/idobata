@@ -13,7 +13,7 @@ const likeSchema = new mongoose.Schema(
     targetType: {
       type: String,
       required: true,
-      enum: ["question"], // Currently only supporting 'question', but can be extended in the future
+      enum: ["question", "problem", "solution"], // Support for problems and solutions
     },
   },
   { timestamps: true }

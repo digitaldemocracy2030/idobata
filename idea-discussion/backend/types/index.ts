@@ -92,7 +92,7 @@ export interface ThemeDetailResponse {
 export interface ILike extends BaseDocument {
   userId: string;
   targetId: Types.ObjectId;
-  targetType: "question"; // Currently only supporting 'question'
+  targetType: "question" | "problem" | "solution"; // Support for problems and solutions
 }
 
 export interface LikeResponse {
