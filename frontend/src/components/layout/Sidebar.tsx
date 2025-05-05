@@ -5,23 +5,23 @@ const Sidebar = () => {
   const { themes, isLoading, error } = useThemes();
 
   return (
-    <aside className="hidden xl:block w-[260px] fixed top-14 bottom-0 left-0 border-r-2 border-primary-100 bg-white overflow-y-auto">
+    <aside className="hidden xl:block w-[260px] fixed top-14 bottom-0 left-0 shadow-md shadow-gray-400 bg-white overflow-y-auto">
       <nav className="flex flex-col gap-4 p-4">
         <Link
           to="/"
-          className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
+          className="text-base py-1 px-2 hover:bg-primary-50 rounded-md"
         >
           TOP
         </Link>
         <Link
           to="/about"
-          className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
+          className="text-base py-1 px-2 hover:bg-primary-50 rounded-md"
         >
           このサイトについて
         </Link>
         <Link
           to="/mypage"
-          className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
+          className="text-base py-1 px-2 hover:bg-primary-50 rounded-md"
         >
           マイページ
         </Link>
@@ -40,7 +40,7 @@ const Sidebar = () => {
 
         {themes.length > 0 && !isLoading && !error && (
           <div className="py-2">
-            <h3 className="text-lg text-gray-500 px-4">テーマ一覧</h3>
+            <h3 className="text-base text-gray-500 px-4">テーマ一覧</h3>
 
             <div className="flex flex-col mt-2">
               {themes.map((theme) => (
