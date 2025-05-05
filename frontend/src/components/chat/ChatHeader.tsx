@@ -24,16 +24,12 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ onDragStart }) => {
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
     >
-      <div className="w-full flex flex-col items-center py-3">
-        <div className="w-10 h-1 bg-neutral-300 rounded-full mb-1" />
+      <div className="w-full flex justify-center items-center ">
+        <span className="w-16 h-2 bg-neutral-300 rounded-full my-1" />
       </div>
-      <div className="absolute right-2 top-2">
+      <div className="absolute right-4 top-6">
         <SheetClose asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 flex items-center justify-center"
-          >
+          <Button variant="ghost" size="icon">
             <X className="h-5 w-5" />
           </Button>
         </SheetClose>

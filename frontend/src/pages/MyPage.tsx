@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import SectionHeading from "../components/common/SectionHeading";
+import { Button } from "../components/ui/button";
 import { useAuth } from "../contexts/AuthContext";
 
 const MyPage: React.FC = () => {
@@ -95,14 +96,12 @@ const MyPage: React.FC = () => {
                 onChange={handleImageUpload}
                 ref={fileInputRef}
               />
-              <button
-                type="button"
+              <Button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
-                className="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded disabled:opacity-50"
               >
                 {isUploading ? "アップロード中..." : "画像を変更"}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -123,13 +122,9 @@ const MyPage: React.FC = () => {
                 placeholder="表示名を入力してください"
                 required
               />
-              <button
-                type="submit"
-                disabled={isSaving}
-                className="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded disabled:opacity-50 whitespace-nowrap"
-              >
+              <Button type="submit" disabled={isSaving}>
                 {isSaving ? "保存中..." : "保存"}
-              </button>
+              </Button>
             </div>
           </div>
           {saveSuccess && (

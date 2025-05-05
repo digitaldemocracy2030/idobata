@@ -1,5 +1,6 @@
 import { ThumbsUp } from "lucide-react";
 import { useLike } from "../../hooks/useLike";
+import { Button } from "../ui/button";
 
 export interface KeyQuestionHeaderProps {
   question: string;
@@ -24,30 +25,20 @@ const KeyQuestionHeader = ({
     <div className="mb-6">
       <div className="flex justify-start gap-4 mb-4">
         <h1 className="text-xl md:text-2xl lg:text-3xl font-bold">{tagLine}</h1>
-
-        <button
-          className={`${isLiked ? "text-primary hover:text-primary-400" : "text-neutral-400 hover:text-primary-400"} flex items-center`}
-          type="button"
+        <Button
+          className={`${isLiked ? "text-primary hover:text-primary-400" : "text-neutral-400 hover:text-primary-400"} flex items-center gap-1 h-7 px-1`}
+          size="sm"
+          variant="outline"
           onClick={toggleLike}
         >
-          <div className="flex items-center">
-            <div className="flex items-center gap-1 border border-neutral-200 rounded-md p-1">
-              {isLiked ? (
-                <>
-                  <ThumbsUp className="h-4 w-4" fill="currentColor" />
-                  <span className="text-xs">気になる</span>
-                  <span className="text-xs min-w-2">{displayCount}</span>
-                </>
-              ) : (
-                <>
-                  <ThumbsUp className="h-4 w-4" fill="none" />
-                  <span className="text-xs">気になる</span>
-                  <span className="text-xs min-w-2">{displayCount}</span>
-                </>
-              )}
-            </div>
-          </div>
-        </button>
+          {isLiked ? (
+            <ThumbsUp className="h-4 w-4" fill="currentColor" />
+          ) : (
+            <ThumbsUp className="h-4 w-4" fill="none" />
+          )}
+          気になる
+          <span className="text-xs min-w-2">{displayCount}</span>
+        </Button>
       </div>
       <p className="text-neutral-500 mb-3">{question}</p>
 

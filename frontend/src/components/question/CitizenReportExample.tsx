@@ -1,3 +1,4 @@
+import { Button } from "../ui/button";
 import { Section } from "../ui/section";
 
 export interface CitizenReportExampleProps {
@@ -21,14 +22,10 @@ const CitizenReportExample = ({
               <p className="text-base text-neutral-600">{issue.description}</p>
             </div>
           ))}
-
-          <div className="mt-4 text-center">
-            <button
-              className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-md text-base transition-colors duration-200"
-              type="button"
-            >
+          <div className="text-center">
+            <Button size="lg" className="mt−4">
               PDFでダウンロード
-            </button>
+            </Button>
           </div>
         </div>
       </Section>
