@@ -35,8 +35,8 @@ All generated text ("question", "tagLine", "tags") should use language easily un
 Respond ONLY with a JSON object containing a single key: "questions".
 The value of "questions" should be an array of objects. Each object in the array must contain the following keys:
 1. "question": A string containing the generated question in Japanese (50-100 characters).
-2. "tagLine": A string (14-28 characters) providing a catchy & easy-to-understand summary of the question.
-3. "tags": An array of 2 strings, each being a short, simple word (1-10 characters) representing categories for the question.
+2. "tagLine": A string about 20 characters providing a catchy & easy-to-understand summary of the question.
+3. "tags": An array of 2 strings, each being a short, simple word (2-7 characters) representing categories for the question.
 
 Generate 6 question objects in total within the "questions" array.
 `,
