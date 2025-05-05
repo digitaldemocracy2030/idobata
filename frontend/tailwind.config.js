@@ -85,6 +85,38 @@ module.exports = {
         biz: ['"BIZ UDGothic"', "sans-serif"],
         inter: ['"Inter"', "sans-serif"],
       },
+      /**
+       * ===== カラーシステムの使用ルール =====
+       *
+       * 1. 基本方針:
+       *    - 特定の政党と色が被らないよう、UIとして一般的なブルーをPrimaryカラーとして採用
+       *    - カラースケールを活用し、index.cssでの個別定義を避ける
+       *    - 直接的なカラーコード（#RRGGBB）の使用は禁止
+       *
+       * 2. カラースケールの定義:
+       *    - このファイル冒頭で primaryColors, secondaryColors, accentColors として定義
+       *    - 利用者ごとにカラーを変えたい場合は、これらの定義を変更する
+       *    - 各カラーは50〜950までの階調と、light/dark/weakのバリエーションを持つ
+       *
+       * 3. カラーの使用方法:
+       *    - プレフィックス + カラー名 + 階調の形式で使用: bg-primary-500, text-secondary-200 など
+       *    - プレフィックスの例: bg-, text-, border-, ring- など
+       *    - 階調を省略した場合はDEFAULT値（通常は500）が使用される: bg-primary
+       *    - バリエーションは -light, -dark, -weak で指定: bg-primary-light
+       *
+       * 4. 禁止事項:
+       *    - bg-[#cccccc] のような直接カラーコードの指定は禁止
+       *    - bg-purple-xxx のような特定色名の使用は禁止
+       *    - index.cssでの独自カラークラスの追加は極力避ける
+       *
+       * 5. 推奨される使用例:
+       *    - ボタン（プライマリ）: bg-primary-500 text-white
+       *    - ボタン（セカンダリ）: bg-secondary-500 text-white
+       *    - 強調表示: bg-accent-500 text-white
+       *    - 薄い背景: bg-primary-weak
+       *    - ホバー状態: hover:bg-primary-600
+       *    - アクティブ状態: active:bg-primary-700
+       */
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
