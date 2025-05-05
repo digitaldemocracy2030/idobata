@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { apiClient } from "../services/api/apiClient";
 
@@ -12,7 +12,7 @@ export function useLike(targetType: string, targetId: string) {
   useEffect(() => {
     const fetchLikeStatus = async () => {
       if (!targetId) return;
-      
+
       setIsLoading(true);
       const result = await apiClient.getLikeStatus(
         targetType,
@@ -26,7 +26,7 @@ export function useLike(targetType: string, targetId: string) {
         setIsLoading(false);
         return;
       }
-      
+
       setIsLiked(result.value.liked);
       setLikeCount(result.value.count);
       setIsLoading(false);
@@ -38,11 +38,7 @@ export function useLike(targetType: string, targetId: string) {
 
   const toggleLike = async () => {
     setIsLoading(true);
-    const result = await apiClient.toggleLike(
-      targetType,
-      targetId,
-      user.id
-    );
+    const result = await apiClient.toggleLike(targetType, targetId, user.id);
 
     if (result.isErr()) {
       console.error("Failed to toggle like:", result.error);
@@ -50,7 +46,7 @@ export function useLike(targetType: string, targetId: string) {
       setIsLoading(false);
       return;
     }
-    
+
     setIsLiked(result.value.liked);
     setLikeCount(result.value.count);
     setIsLoading(false);
