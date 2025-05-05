@@ -1,5 +1,6 @@
 import { ArrowRight, HelpCircle, MessageSquare } from "lucide-react";
 import { Link } from "../../contexts/MockContext";
+import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "../ui/card";
 
 interface ThemeCardProps {
@@ -42,9 +43,9 @@ const ThemeCard = ({
               </span>
             )}
           </div>
-          <div className="bg-primary text-primary-foreground p-1 rounded-md inline-block">
+          <Button className="px-3">
             <ArrowRight className="h-5 w-5" />
-          </div>
+          </Button>
         </CardFooter>
       </Card>
     </Link>
