@@ -210,9 +210,9 @@ export const getThemeDetail = async (req, res) => {
           linkedItemType: "solution",
         });
 
-        const voteCount = await Like.countDocuments({ 
-          targetId: question._id, 
-          targetType: "question" 
+        const voteCount = await Like.countDocuments({
+          targetId: question._id,
+          targetType: "question",
         });
 
         return {

@@ -76,7 +76,10 @@ export const getQuestionDetails = async (req, res) => {
       })
       .sort((a, b) => b.relevanceScore - a.relevanceScore);
 
-    const voteCount = await Like.countDocuments({ targetId: questionId, targetType: "question" });
+    const voteCount = await Like.countDocuments({
+      targetId: questionId,
+      targetType: "question",
+    });
 
     const reportExample = await ReportExample.findOne({
       questionId: questionId,
