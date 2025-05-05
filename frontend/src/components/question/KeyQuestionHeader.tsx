@@ -7,7 +7,12 @@ export interface KeyQuestionHeaderProps {
   voteCount: number;
 }
 
-const KeyQuestionHeader = ({ question, tagLine, tags, voteCount }: KeyQuestionHeaderProps) => {
+const KeyQuestionHeader = ({
+  question,
+  tagLine,
+  tags,
+  voteCount,
+}: KeyQuestionHeaderProps) => {
   return (
     <div className="mb-6">
       {tagLine ? (
