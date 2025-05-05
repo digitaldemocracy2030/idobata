@@ -17,13 +17,7 @@ const Sidebar: React.FC = () => {
               <NavLink
                 to={link.to}
                 end={link.exact}
-                className={({ isActive }) =>
-                  `block px-4 py-2 rounded-md ${
-                    isActive
-                      ? "bg-primary/20 text-primary"
-                      : "text-foreground hover:bg-muted"
-                  }`
-                }
+                className="block px-4 py-2 rounded-md text-foreground hover:bg-muted"
               >
                 {link.label}
               </NavLink>
