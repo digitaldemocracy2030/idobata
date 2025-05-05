@@ -248,13 +248,7 @@ const QuestionDetail = () => {
           title: "テーマ", // APIからテーマ情報を取得する必要があるかも
         };
 
-    const debateData = isMockMode
-      ? mockDebateData
-      : (questionDetail?.debateData ?? {
-          axes: [],
-          agreementPoints: [],
-          disagreementPoints: [],
-        });
+    const debateData = isMockMode ? mockDebateData : questionDetail?.debateData;
 
     const opinions = isMockMode
       ? mockOpinions
