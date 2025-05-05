@@ -108,7 +108,9 @@ const Top = () => {
           discussions:
             topPageData?.latestQuestions.map((q) => ({
               id: q._id,
-              title: q.questionText,
+              title: q.tagLine
+                ? `${q.tagLine}：${q.questionText}`
+                : q.questionText,
               problemCount: q.issueCount || 0, // バックエンドから取得したissueCountを使用
               solutionCount: q.solutionCount || 0, // バックエンドから取得したsolutionCountを使用
             })) || [],

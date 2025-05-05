@@ -46,7 +46,7 @@ const KeyQuestionCard = ({
                 {tags.map((tag) => (
                   <span
                     key={tag}
-                    className="bg-primary-100 text-primary-800 rounded-full px-2 py-0.5 text-xs"
+                    className="border border-gray-300 rounded-full px-2 py-0.5 text-xs text-gray-600"
                   >
                     {tag}
                   </span>

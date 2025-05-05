@@ -33,8 +33,8 @@ For question 4-6, focus on questions in the format 「現状は○○だが、�
 Generate all questions in Japanese language.
 Respond ONLY with a JSON object containing the following:
 1. "questions": an array of strings, where each string is a generated question in Japanese (50-100字以内程度).
-2. "tagLines": an array of strings, each 14-35 characters, providing a catchy summary of each question.
-3. "tags": an array of arrays, where each inner array contains 1-3 short words (1-10 characters each) representing categories for each question.
+2. "tagLines": an array of strings, each 14-28 characters, providing a catchy & easy to understand summary of each question.
+3. "tags": an array of arrays, where each inner array contains 2 short simple & easy words (1-10 characters each) representing categories for each question.
 
 Generate 6 questions in total.
 `,

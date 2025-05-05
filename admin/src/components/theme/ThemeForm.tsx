@@ -540,7 +540,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
                       >
-                        タグライン
+                        見出し
                       </th>
                       <th
                         scope="col"
@@ -611,7 +611,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                               {question.tags.map((tag) => (
                                 <span
                                   key={tag}
-                                  className="bg-primary-100 text-primary-800 rounded-full px-2 py-0.5 text-xs"
+                                  className="border bg-primary-100 text-primary-800 rounded-full px-2 py-0.5 text-xs"
                                 >
                                   {tag}
                                 </span>

@@ -20,7 +20,7 @@ const KeyQuestionHeader = ({
           <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-2">
             {tagLine}
           </h1>
-          <p className="text-neutral-700 mb-3">{question}</p>
+          <p className="text-neutral-500 mb-3">{question}</p>
         </>
       ) : (
         <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4">
@@ -33,7 +33,7 @@ const KeyQuestionHeader = ({
           {tags.map((tag) => (
             <span
               key={tag}
-              className="bg-primary-100 text-primary-800 rounded-full px-2 py-0.5 text-xs"
+              className="border border-gray-300 rounded-full px-2 py-0.5 text-xs text-gray-600"
             >
               {tag}
             </span>
