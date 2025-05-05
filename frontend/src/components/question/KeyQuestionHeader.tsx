@@ -24,13 +24,13 @@ const KeyQuestionHeader = ({
     <div className="mb-6">
       {tagLine ? (
         <>
-          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-2">
+          <h1 className="text-2xl md:text-3xl lg:text-3xl font-bold mb-2">
             {tagLine}
           </h1>
           <p className="text-neutral-500 mb-3">{question}</p>
         </>
       ) : (
-        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4">
+        <h1 className="text-2xl md:text-3xl lg:text-3xl font-bold mb-4">
           {question}
         </h1>
       )}
@@ -40,7 +40,7 @@ const KeyQuestionHeader = ({
           {tags.map((tag) => (
             <span
               key={tag}
-              className="border border-gray-300 rounded-full px-2 py-0.5 text-xs text-gray-600"
+              className="border border-gray-300 rounded-full px-2 py-0.5 text-sm text-gray-600"
             >
               {tag}
             </span>
@@ -61,7 +61,7 @@ const KeyQuestionHeader = ({
           )}
           <span>{isLiked ? "興味を持っています" : "気になる"}</span>
         </button>
-        <span className="ml-3 text-sm text-neutral-600">
+        <span className="ml-3 text-base text-neutral-600">
           {displayCount}人がこの話題に興味を持っています
         </span>
       </div>
