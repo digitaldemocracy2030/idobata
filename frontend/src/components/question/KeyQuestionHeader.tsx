@@ -27,7 +27,7 @@ const KeyQuestionHeader = ({
           {question}
         </h1>
       )}
-      
+
       {tags && tags.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-4">
           {tags.map((tag) => (
@@ -40,7 +40,7 @@ const KeyQuestionHeader = ({
           ))}
         </div>
       )}
-      
+
       <div className="flex items-center">
         <button
           className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-md flex items-center transition-colors duration-200"
