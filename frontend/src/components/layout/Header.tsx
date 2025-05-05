@@ -46,84 +46,86 @@ const Header = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b-2 border-primary-700 py-3 px-4">
       <div className="flex justify-between items-center">
-        {/* ハンバーガーメニュー（左） */}
-        <NavigationSheet>
-          <NavigationSheetTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <Menu className="h-6 w-6" />
-            </Button>
-          </NavigationSheetTrigger>
-          <NavigationSheetContent className="w-72">
-            <nav className="flex flex-col gap-4 mt-8">
-              <NavigationRouterLink
-                to="/"
-                className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
-              >
-                TOP
-              </NavigationRouterLink>
-              <NavigationRouterLink
-                to="/about"
-                className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
-              >
-                このサイトについて
-              </NavigationRouterLink>
-              <NavigationRouterLink
-                to="/mypage"
-                className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
-              >
-                マイページ
-              </NavigationRouterLink>
+        {/* ハンバーガーメニュー（左） - xl:以上で非表示 */}
+        <div className="xl:hidden">
+          <NavigationSheet>
+            <NavigationSheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </NavigationSheetTrigger>
+            <NavigationSheetContent className="w-72">
+              <nav className="flex flex-col gap-4 mt-8">
+                <NavigationRouterLink
+                  to="/"
+                  className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
+                >
+                  TOP
+                </NavigationRouterLink>
+                <NavigationRouterLink
+                  to="/about"
+                  className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
+                >
+                  このサイトについて
+                </NavigationRouterLink>
+                <NavigationRouterLink
+                  to="/mypage"
+                  className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
+                >
+                  マイページ
+                </NavigationRouterLink>
 
-              {isLoading && (
-                <div className="px-4 py-2 text-sm text-gray-500">
-                  読み込み中...
-                </div>
-              )}
-
-              {error && (
-                <div className="px-4 py-2 text-sm text-red-500">{error}</div>
-              )}
-
-              {!isLoading && !error && themes.length === 0 && (
-                <div className="px-4 py-2 text-sm text-gray-500">
-                  テーマがありません
-                </div>
-              )}
-
-              {themes.length > 0 && !isLoading && !error && (
-                <div className="py-2">
-                  <h3 className="text-lg text-gray-500 px-4">テーマ一覧</h3>
-
-                  <div className="flex flex-col mt-2">
-                    {themes.map((theme) => (
-                      <NavigationRouterLink
-                        key={theme._id}
-                        to={`/themes/${theme._id}`}
-                        className="text-base py-2 hover:bg-primary-50 rounded-md ml-8"
-                      >
-                        {theme.title}
-                      </NavigationRouterLink>
-                    ))}
+                {isLoading && (
+                  <div className="px-4 py-2 text-sm text-gray-500">
+                    読み込み中...
                   </div>
-                </div>
-              )}
+                )}
 
-              {process.env.NODE_ENV === "development" && (
-                <div className="flex mt-4 px-4">
-                  <Button
-                    variant="outline"
-                    onClick={toggleMockMode}
-                    className="text-xs"
-                  >
-                    {isMockMode
-                      ? "モックモードを解除しトップへ"
-                      : "モックモードに入る（開発用）"}
-                  </Button>
-                </div>
-              )}
-            </nav>
-          </NavigationSheetContent>
-        </NavigationSheet>
+                {error && (
+                  <div className="px-4 py-2 text-sm text-red-500">{error}</div>
+                )}
+
+                {!isLoading && !error && themes.length === 0 && (
+                  <div className="px-4 py-2 text-sm text-gray-500">
+                    テーマがありません
+                  </div>
+                )}
+
+                {themes.length > 0 && !isLoading && !error && (
+                  <div className="py-2">
+                    <h3 className="text-lg text-gray-500 px-4">テーマ一覧</h3>
+
+                    <div className="flex flex-col mt-2">
+                      {themes.map((theme) => (
+                        <NavigationRouterLink
+                          key={theme._id}
+                          to={`/themes/${theme._id}`}
+                          className="text-base py-2 hover:bg-primary-50 rounded-md ml-8"
+                        >
+                          {theme.title}
+                        </NavigationRouterLink>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {process.env.NODE_ENV === "development" && (
+                  <div className="flex mt-4 px-4">
+                    <Button
+                      variant="outline"
+                      onClick={toggleMockMode}
+                      className="text-xs"
+                    >
+                      {isMockMode
+                        ? "モックモードを解除しトップへ"
+                        : "モックモードに入る（開発用）"}
+                    </Button>
+                  </div>
+                )}
+              </nav>
+            </NavigationSheetContent>
+          </NavigationSheet>
+        </div>
 
         {/* サイトタイトル（中央） */}
         <Link to="/top">
