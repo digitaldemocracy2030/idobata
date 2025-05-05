@@ -386,7 +386,7 @@ export class ApiClient {
     if (userId) {
       url += `?userId=${userId}`;
     }
-    
+
     return this.withRetry(() =>
       this.httpClient.get<{ liked: boolean; count: number }>(url)
     );

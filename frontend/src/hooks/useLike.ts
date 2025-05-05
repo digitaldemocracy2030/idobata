@@ -14,8 +14,12 @@ export function useLike(targetType: string, targetId: string) {
       if (!targetId) return;
       
       setIsLoading(true);
-      const result = await apiClient.getLikeStatus(targetType, targetId, user.id);
-      
+      const result = await apiClient.getLikeStatus(
+        targetType,
+        targetId,
+        user.id
+      );
+
       if (result.isErr()) {
         console.error("Failed to fetch like status:", result.error);
         setError("Failed to fetch like status");
@@ -34,8 +38,12 @@ export function useLike(targetType: string, targetId: string) {
 
   const toggleLike = async () => {
     setIsLoading(true);
-    const result = await apiClient.toggleLike(targetType, targetId, user.id);
-    
+    const result = await apiClient.toggleLike(
+      targetType,
+      targetId,
+      user.id
+    );
+
     if (result.isErr()) {
       console.error("Failed to toggle like:", result.error);
       setError("Failed to toggle like");
