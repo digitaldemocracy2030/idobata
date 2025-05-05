@@ -4,6 +4,7 @@ import {
   type FloatingChatRef,
 } from "../components/chat/FloatingChat";
 import BreadcrumbView from "../components/common/BreadcrumbView";
+import SectionHeading from "../components/common/SectionHeading";
 import ThemeCard from "../components/home/ThemeCard";
 import { useThemes } from "../hooks/useThemes";
 
@@ -28,9 +29,8 @@ const Themes = () => {
     <div className="container mx-auto px-4 py-8">
       <BreadcrumbView items={breadcrumbItems} />
 
-      <h1 className="text-2xl md:text-3xl font-bold mb-4">議論テーマ一覧</h1>
-
-      <p className="text-sm text-neutral-600 mb-8">
+      <SectionHeading title="議論テーマ一覧" />
+      <p className="text-base text-neutral-600 mb-8">
         全国から寄せられた多様な意見をもとに、重要な社会課題について議論するテーマを設定しています。
         関心のあるテーマに参加して、あなたの声を政策づくりに活かしましょう。
       </p>
