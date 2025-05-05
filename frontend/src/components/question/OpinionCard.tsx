@@ -1,5 +1,6 @@
 import { ThumbsUp } from "lucide-react";
 import { useLike } from "../../hooks/useLike";
+import { Button } from "../ui/button";
 
 export interface OpinionCardProps {
   type: "課題点" | "解決策";
@@ -23,27 +24,20 @@ const OpinionCard = ({ type, text, relevance, id }: OpinionCardProps) => {
           </div>
           <div className="text-base text-neutral-500">関連度: {relevance}%</div>
         </div>
-        <button
-          className={`${isLiked ? "text-primary hover:text-primary-400" : "text-neutral-400 hover:text-primary-400"} flex items-center`}
-          type="button"
+        <Button
+          className={`${isLiked ? "text-primary hover:text-primary-400" : "text-neutral-400 hover:text-primary-400"} flex items-center gap-1 h-7 px-1`}
+          size="sm"
+          variant="outline"
           onClick={toggleLike}
         >
-          <div className="flex items-center gap-1 border border-neutral-200 rounded-md p-1">
-            {isLiked ? (
-              <>
-                <ThumbsUp className="h-4 w-4" fill="currentColor" />
-                <span className="text-sm">気になる</span>
-                <span className="text-sm min-w-4">{likeCount}</span>
-              </>
-            ) : (
-              <>
-                <ThumbsUp className="h-4 w-4" fill="none" />
-                <span className="text-sm">気になる</span>
-                <span className="text-sm min-w-4">{likeCount}</span>
-              </>
-            )}
-          </div>
-        </button>
+          {isLiked ? (
+            <ThumbsUp className="h-4 w-4" fill="currentColor" />
+          ) : (
+            <ThumbsUp className="h-4 w-4" fill="none" />
+          )}
+          気になる
+          <span className="text-xs min-w-2">{likeCount}</span>
+        </Button>
       </div>
       <p className="text-base text-neutral-700 mt-2">{text}</p>
     </div>
