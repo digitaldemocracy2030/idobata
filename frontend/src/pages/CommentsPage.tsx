@@ -145,16 +145,16 @@ const CommentsPage = () => {
 
     const issuesData = isMockMode
       ? createRepeatedData(
-        currentQuestionDetail.relatedProblems,
-        mapProblemToOpinion
-      )
+          currentQuestionDetail.relatedProblems,
+          mapProblemToOpinion
+        )
       : currentQuestionDetail.relatedProblems.map(mapProblemToOpinion);
 
     const solutionsData = isMockMode
       ? createRepeatedData(
-        currentQuestionDetail.relatedSolutions,
-        mapSolutionToOpinion
-      )
+          currentQuestionDetail.relatedSolutions,
+          mapSolutionToOpinion
+        )
       : currentQuestionDetail.relatedSolutions.map(mapSolutionToOpinion);
 
     const opinions = {
@@ -199,21 +199,21 @@ const CommentsPage = () => {
           <div className="space-y-3">
             {activeTab === "issues"
               ? opinions.issues.map((issue) => (
-                <OpinionCard
-                  key={issue.id}
-                  text={issue.text}
-                  type="課題点"
-                  relevance={issue.relevance || 0}
-                />
-              ))
+                  <OpinionCard
+                    key={issue.id}
+                    text={issue.text}
+                    type="課題点"
+                    relevance={issue.relevance || 0}
+                  />
+                ))
               : opinions.solutions.map((solution) => (
-                <OpinionCard
-                  key={solution.id}
-                  text={solution.text}
-                  type="解決策"
-                  relevance={solution.relevance || 0}
-                />
-              ))}
+                  <OpinionCard
+                    key={solution.id}
+                    text={solution.text}
+                    type="解決策"
+                    relevance={solution.relevance || 0}
+                  />
+                ))}
           </div>
         </div>
       </div>

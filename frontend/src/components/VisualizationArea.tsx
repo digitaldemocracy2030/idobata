@@ -357,10 +357,11 @@ function VisualizationArea() {
                   <li key={q._id}>
                     <button
                       onClick={() => handleQuestionSelect(q._id)}
-                      className={`w-full text-left p-3 rounded-lg transition-all duration-200 text-base ${selectedQuestionId === q._id
-                        ? "bg-neutral-700 text-white shadow-md"
-                        : "bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-200 hover:border-neutral-300"
-                        }`}
+                      className={`w-full text-left p-3 rounded-lg transition-all duration-200 text-base ${
+                        selectedQuestionId === q._id
+                          ? "bg-neutral-700 text-white shadow-md"
+                          : "bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-200 hover:border-neutral-300"
+                      }`}
                       type="button"
                     >
                       {q.questionText}
