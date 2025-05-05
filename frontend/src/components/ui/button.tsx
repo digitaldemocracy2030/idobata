@@ -1,3 +1,4 @@
+import { Slot } from "@radix-ui/react-slot"; // 👈 追加
 import * as React from "react";
 import { cn } from "../../lib/utils";
 
@@ -25,18 +26,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    // If asChild is true, we shouldn't render our own element
-    if (asChild) {
-      // Return children directly with their props
-      return props.children;
-    }
+    const Comp = asChild ? Slot : "button";
 
     return (
-      <button
+      <Comp
         className={cn(
           "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
           {
-            "bg-primary text-primary-foreground hover:bg-primary/90":
+            "bg-primary text-primary-foreground hover:bg-primary/90 w-auto  text-base":
               variant === "default",
             "bg-destructive text-destructive-foreground hover:bg-destructive/90":
               variant === "destructive",
@@ -50,8 +47,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               variant === "link",
             "h-10 px-4 py-2": size === "default",
             "h-9 rounded-md px-3": size === "sm",
-            "h-11 rounded-md px-8": size === "lg",
-            "h-10 w-10 p-0": size === "icon",
+            "h-11 rounded-md px-4": size === "lg",
+            "h-10 w-6 p-0": size === "icon",
           },
           className
         )}
@@ -61,6 +58,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
   }
 );
+
 Button.displayName = "Button";
 
 export { Button };
