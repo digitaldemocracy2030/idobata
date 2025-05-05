@@ -12,27 +12,12 @@ import {
   SheetTrigger,
 } from "../base/sheet";
 
-// Navigation-specific sheet component with legacy UI link
 const NavigationSheetContent = React.forwardRef<
   React.ElementRef<typeof SheetContent>,
   React.ComponentPropsWithoutRef<typeof SheetContent>
 >(({ className, children, ...props }, ref) => (
   <SheetContent ref={ref} className={className} side="left" {...props}>
-    {/* Add a visible title for the navigation menu */}
-    <SheetTitle className="mb-4">メニュー</SheetTitle>
-    {/* Add a description for accessibility */}
-    <SheetDescription className="mb-4">
-      サイト内のナビゲーションメニューです
-    </SheetDescription>
     {children}
-    <div className="px-4 py-8 font-bold">
-      <NavigationLink
-        href="/legacy"
-        className="text-md text-blue-600 underline"
-      >
-        旧UI
-      </NavigationLink>
-    </div>
   </SheetContent>
 ));
 NavigationSheetContent.displayName = "NavigationSheetContent";
