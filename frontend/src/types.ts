@@ -100,6 +100,8 @@ export interface Solution {
 export interface Question {
   _id: string;
   questionText: string;
+  tagLine?: string;
+  tags?: string[];
   createdAt?: string;
   issueCount?: number; // 追加: 関連する課題の数
   solutionCount?: number; // 追加: 関連する解決策の数

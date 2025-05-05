@@ -31,9 +31,12 @@ For question 1-3, focus exclusively on describing both the current state ("現�
 For question 4-6, focus on questions in the format 「現状は○○だが、それが○○になるの望ましいだろうか？」. This format is intended to question the validity or desirability of the potential future state itself, especially for points where consensus on the ideal might be lacking.
 
 Generate all questions in Japanese language.
-Respond ONLY with a JSON object containing a single key "questions" which holds an array of strings, where each string is a generated question in Japanese.
+Respond ONLY with a JSON object containing the following:
+1. "questions": an array of strings, where each string is a generated question in Japanese (50-100字以内程度).
+2. "tagLines": an array of strings, each 14-35 characters, providing a catchy summary of each question.
+3. "tags": an array of arrays, where each inner array contains 1-3 short words (1-10 characters each) representing categories for each question.
 
-Generate 6 questions in total. 50-100字以内程度。
+Generate 6 questions in total.
 `,
       },
       {
@@ -63,6 +66,8 @@ Generate 6 questions in total. 50-100字以内程度。
     }
 
     const generatedQuestions = llmResponse.questions;
+    const tagLines = llmResponse.tagLines || Array(generatedQuestions.length).fill("");
+    const tags = llmResponse.tags || Array(generatedQuestions.length).fill([]);
     console.log(
       `[QuestionGenerator] LLM generated ${generatedQuestions.length} questions.`
     );
@@ -84,6 +89,8 @@ Generate 6 questions in total. 50-100字以内程度。
           {
             $setOnInsert: {
               questionText: questionText.trim(),
+              tagLine: tagLines[index] || "",
+              tags: tags[index] || [],
               themeId,
               createdAt: new Date(),
             },

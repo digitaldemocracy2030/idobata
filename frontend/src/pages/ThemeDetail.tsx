@@ -42,6 +42,8 @@ const ThemeDetail = () => {
       id: 1,
       question:
         "どうすれば若者が安心して多様な働き方を選択できる社会になるか？",
+      tagLine: "多様な働き方の選択肢",
+      tags: ["雇用", "キャリア", "選択"],
       voteCount: 42,
       issueCount: 15,
       solutionCount: 23,
@@ -49,6 +51,8 @@ const ThemeDetail = () => {
     {
       id: 2,
       question: "新卒一括採用に代わる、若者の能力を活かせる採用の仕組みとは？",
+      tagLine: "能力重視の採用へ",
+      tags: ["採用", "新卒", "能力"],
       voteCount: 38,
       issueCount: 12,
       solutionCount: 18,
@@ -56,6 +60,8 @@ const ThemeDetail = () => {
     {
       id: 3,
       question: "若者のキャリア教育はどのように改善すべきか？",
+      tagLine: "キャリア教育の改革",
+      tags: ["教育", "キャリア"],
       voteCount: 35,
       issueCount: 10,
       solutionCount: 16,
@@ -168,6 +174,8 @@ const ThemeDetail = () => {
             themeDetail?.keyQuestions?.map((q) => ({
               id: q._id ?? "",
               question: q.questionText ?? "",
+              tagLine: q.tagLine ?? "",
+              tags: q.tags ?? [],
               voteCount: q.voteCount ?? 0,
               issueCount: q.issueCount ?? 0,
               solutionCount: q.solutionCount ?? 0,
