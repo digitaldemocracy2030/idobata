@@ -361,7 +361,6 @@ const QuestionDetail = () => {
             <div className="flex justify-start">
               <Button asChild size="lg" className="w-auto mt-4">
                 <Link to={`/themes/${themeId}/questions/${qId}/comments`}>
-                  {" "}
                   もっと見る
                   <ArrowRight className="h-5 w-5 ml-2" />
                 </Link>
