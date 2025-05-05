@@ -17,8 +17,9 @@ export interface TopPageTemplateProps {
   themes: {
     id: string;
     title: string;
-    problemCount: number;
-    solutionCount: number;
+    description: string;
+    keyQuestionCount: number;
+    commentCount: number;
   }[];
 }
 
@@ -69,8 +70,9 @@ const TopPageTemplate = ({ discussions, themes }: TopPageTemplateProps) => {
                 key={item.id}
                 id={item.id}
                 title={item.title}
-                problemCount={item.problemCount}
-                solutionCount={item.solutionCount}
+                description={item.description}
+                keyQuestionCount={item.keyQuestionCount}
+                commentCount={item.commentCount}
               />
             ))}
           </div>
