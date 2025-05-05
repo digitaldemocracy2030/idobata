@@ -57,7 +57,7 @@ const Header = () => {
             <nav className="flex flex-col gap-4 mt-8">
               <NavigationRouterLink
                 to="/"
-                className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md border-l-4 border-primary-500"
+                className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
               >
                 TOP
               </NavigationRouterLink>
@@ -73,10 +73,6 @@ const Header = () => {
               >
                 マイページ
               </NavigationRouterLink>
-
-              <div className="mt-4 mb-2">
-                <h3 className="text-lg font-semibold px-4">テーマ一覧</h3>
-              </div>
 
               {isLoading && (
                 <div className="px-4 py-2 text-sm text-gray-500">
@@ -94,17 +90,23 @@ const Header = () => {
                 </div>
               )}
 
-              {!isLoading &&
-                !error &&
-                themes.map((theme) => (
-                  <NavigationRouterLink
-                    key={theme._id}
-                    to={`/themes/${theme._id}`}
-                    className="text-sm py-2 px-4 hover:bg-primary-50 rounded-md"
-                  >
-                    {theme.title}
-                  </NavigationRouterLink>
-                ))}
+              {themes.length > 0 && !isLoading && !error && (
+                <div className="py-2">
+                  <h3 className="text-lg text-gray-500 px-4">テーマ一覧</h3>
+
+                  <div className="flex flex-col mt-2">
+                    {themes.map((theme) => (
+                      <NavigationRouterLink
+                        key={theme._id}
+                        to={`/themes/${theme._id}`}
+                        className="text-base py-2 hover:bg-primary-50 rounded-md ml-8"
+                      >
+                        {theme.title}
+                      </NavigationRouterLink>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {process.env.NODE_ENV === "development" && (
                 <div className="flex mt-4 px-4">

@@ -97,7 +97,9 @@ const ThemeDetailTemplate = ({
 
       <h1 className="text-2xl md:text-3xl font-bold mb-4">{theme.title}</h1>
 
-      <p className="text-sm text-muted-foreground mb-8">{theme.description}</p>
+      <p className="text-base text-muted-foreground mb-8">
+        {theme.description}
+      </p>
 
       <div className="mb-8">
         <SectionHeading title={`キークエスチョン (${keyQuestions.length})`} />
@@ -123,10 +125,10 @@ const ThemeDetailTemplate = ({
 
         <div className="flex border-b border-border mb-4">
           <button
-            className={`py-2 px-4 text-sm font-medium ${
+            className={`flex-1 py-2 px-4 text-base font-bold ${
               activeTab === "issues"
-                ? "border-b-2 border-primary-700 text-primary"
-                : "text-muted-foreground"
+                ? "border-b-4 border-primary-700 text-primary"
+                : "text-neutral-700"
             }`}
             onClick={() => setActiveTab("issues")}
             type="button"
@@ -134,10 +136,10 @@ const ThemeDetailTemplate = ({
             課題点 ({issues.length})
           </button>
           <button
-            className={`py-2 px-4 text-sm font-medium ${
+            className={`flex-1 py-2 px-4 text-base font-bold ${
               activeTab === "solutions"
-                ? "border-b-2 border-primary-700 text-primary"
-                : "text-muted-foreground"
+                ? "border-b-4 border-primary-700 text-primary"
+                : "text-neutral-700"
             }`}
             onClick={() => setActiveTab("solutions")}
             type="button"
