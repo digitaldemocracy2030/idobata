@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Like from "../models/Like.js";
 import Problem from "../models/Problem.js";
 import QuestionLink from "../models/QuestionLink.js";
 import ReportExample from "../models/ReportExample.js";
@@ -75,7 +76,7 @@ export const getQuestionDetails = async (req, res) => {
       })
       .sort((a, b) => b.relevanceScore - a.relevanceScore);
 
-    const voteCount = question.voteCount || 0;
+    const voteCount = await Like.countDocuments({ targetId: questionId, targetType: "question" });
 
     const reportExample = await ReportExample.findOne({
       questionId: questionId,

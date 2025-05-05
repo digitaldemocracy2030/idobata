@@ -293,6 +293,7 @@ const QuestionDetail = () => {
         <KeyQuestionHeader
           question={questionData.question}
           voteCount={questionData.voteCount}
+          questionId={questionData.id}
         />
         <DebateSummary
           debateData={debateData}
