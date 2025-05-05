@@ -297,7 +297,7 @@ function DataList() {
               onClick={() => setActiveTab("questions" as TabType)}
               className={`inline-block p-4 rounded-t-lg ${
                 activeTab === "questions"
-                  ? "text-primary border-b-2 border-primary"
+                  ? "text-primary border-b-2 border-primary-700"
                   : "text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
               }`}
               type="button"
@@ -310,7 +310,7 @@ function DataList() {
               onClick={() => setActiveTab("problems" as TabType)}
               className={`inline-block p-4 rounded-t-lg ${
                 activeTab === "problems"
-                  ? "text-primary border-b-2 border-primary"
+                  ? "text-primary border-b-2 border-primary-700"
                   : "text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
               }`}
               type="button"
@@ -323,7 +323,7 @@ function DataList() {
               onClick={() => setActiveTab("solutions" as TabType)}
               className={`inline-block p-4 rounded-t-lg ${
                 activeTab === "solutions"
-                  ? "text-primary border-b-2 border-primary"
+                  ? "text-primary border-b-2 border-primary-700"
                   : "text-neutral-500 hover:text-neutral-700 hover:border-neutral-300"
               }`}
               type="button"

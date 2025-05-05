@@ -25,7 +25,7 @@ const DebateSummary = ({ debateData, visualReport }: DebateSummaryProps) => {
         <button
           className={`py-2 px-4 text-sm font-medium ${
             activeTab === "illustration"
-              ? "border-b-2 border-purple-500 text-purple-700"
+              ? "border-b-2 border-primary-500 text-primary-700"
               : "text-neutral-500"
           }`}
           onClick={() => setActiveTab("illustration")}
@@ -36,7 +36,7 @@ const DebateSummary = ({ debateData, visualReport }: DebateSummaryProps) => {
         <button
           className={`py-2 px-4 text-sm font-medium ${
             activeTab === "analysis"
-              ? "border-b-2 border-purple-500 text-purple-700"
+              ? "border-b-2 border-primary-500 text-primary-700"
               : "text-neutral-500"
           }`}
           onClick={() => setActiveTab("analysis")}

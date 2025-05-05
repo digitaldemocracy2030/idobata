@@ -44,7 +44,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b-2 border-[#9256F9] py-3 px-4">
+    <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b-2 border-primary-700 py-3 px-4">
       <div className="flex justify-between items-center">
         {/* ハンバーガーメニュー（左） */}
         <NavigationSheet>
@@ -57,19 +57,19 @@ const Header = () => {
             <nav className="flex flex-col gap-4 mt-8">
               <NavigationRouterLink
                 to="/"
-                className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md border-l-4 border-purple-500"
+                className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md border-l-4 border-primary-500"
               >
                 TOP
               </NavigationRouterLink>
               <NavigationRouterLink
                 to="/about"
-                className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md"
+                className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
               >
                 このサイトについて
               </NavigationRouterLink>
               <NavigationRouterLink
                 to="/mypage"
-                className="text-lg py-2 px-4 hover:bg-purple-50 rounded-md"
+                className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
               >
                 マイページ
               </NavigationRouterLink>
@@ -100,7 +100,7 @@ const Header = () => {
                   <NavigationRouterLink
                     key={theme._id}
                     to={`/themes/${theme._id}`}
-                    className="text-sm py-2 px-4 hover:bg-purple-50 rounded-md"
+                    className="text-sm py-2 px-4 hover:bg-primary-50 rounded-md"
                   >
                     {theme.title}
                   </NavigationRouterLink>
