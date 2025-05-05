@@ -28,7 +28,7 @@ const ThemeCard = ({
           <p className="text-base text-muted-foreground mb-4">{description}</p>
         </CardContent>
         <CardFooter className="flex justify-between items-center pt-0">
-          <div className="flex text-xs text-muted-foreground">
+          <div className="flex text-sm sm:text-base text-muted-foreground">
             {keyQuestionCount !== undefined && keyQuestionCount > 0 && (
               <span className="flex items-center mr-4">
                 <HelpCircle className="h-4 w-4 mr-1 text-primary" />
