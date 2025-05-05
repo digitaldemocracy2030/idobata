@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -6,11 +7,11 @@ import {
 } from "../components/chat/FloatingChat";
 import BreadcrumbView from "../components/common/BreadcrumbView";
 import SectionHeading from "../components/common/SectionHeading";
-import SeeMoreButton from "../components/home/SeeMoreButton";
 import CitizenReportExample from "../components/question/CitizenReportExample";
 import DebateSummary from "../components/question/DebateSummary";
 import KeyQuestionHeader from "../components/question/KeyQuestionHeader";
 import OpinionCard from "../components/question/OpinionCard";
+import { Button } from "../components/ui/button";
 import { Link, useMock } from "../contexts/MockContext";
 import { useQuestionDetail } from "../hooks/useQuestionDetail";
 import { MessageType } from "../types";
@@ -358,9 +359,13 @@ const QuestionDetail = () => {
           {((activeTab === "issues" && opinions.issues.length > 3) ||
             (activeTab === "solutions" && opinions.solutions.length > 3)) && (
             <div className="flex justify-start">
-              <SeeMoreButton
-                to={`/themes/${themeId}/questions/${qId}/comments`}
-              />
+              <Button asChild size="lg" className="w-auto mt-4">
+                <Link to={`/themes/${themeId}/questions/${qId}/comments`}>
+                  {" "}
+                  もっと見る
+                  <ArrowRight className="h-5 w-5 ml-2" />
+                </Link>
+              </Button>
             </div>
           )}
         </div>

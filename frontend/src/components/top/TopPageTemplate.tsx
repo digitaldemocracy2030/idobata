@@ -1,10 +1,12 @@
+import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useTheme } from "../../ThemeContext";
 import BreadcrumbView from "../../components/common/BreadcrumbView";
 import DiscussionCard from "../../components/home/DiscussionCard";
 import HeroSection from "../../components/home/HeroSection";
-import SeeMoreButton from "../../components/home/SeeMoreButton";
 import ThemeCard from "../../components/home/ThemeCard";
 import { Section } from "../../components/ui/section";
+import { Button } from "../ui/button";
 
 export interface TopPageTemplateProps {
   discussions: {
@@ -77,7 +79,12 @@ const TopPageTemplate = ({ discussions, themes }: TopPageTemplateProps) => {
             ))}
           </div>
           <div className="flex justify-start">
-            <SeeMoreButton to="/themes" />
+            <Button asChild size="lg" className="w-auto mt-4">
+              <Link to="/theme">
+                もっと見る
+                <ArrowRight className="h-5 w-5 ml-2" />
+              </Link>
+            </Button>
           </div>
         </Section>
       </div>
