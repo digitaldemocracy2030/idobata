@@ -66,7 +66,8 @@ Generate 6 questions in total.
     }
 
     const generatedQuestions = llmResponse.questions;
-    const tagLines = llmResponse.tagLines || Array(generatedQuestions.length).fill("");
+    const tagLines =
+      llmResponse.tagLines || Array(generatedQuestions.length).fill("");
     const tags = llmResponse.tags || Array(generatedQuestions.length).fill([]);
     console.log(
       `[QuestionGenerator] LLM generated ${generatedQuestions.length} questions.`
@@ -74,7 +75,8 @@ Generate 6 questions in total.
 
     // 4. Save questions to DB (avoid duplicates)
     let savedCount = 0;
-    for (const questionText of generatedQuestions) {
+    for (let index = 0; index < generatedQuestions.length; index++) {
+      const questionText = generatedQuestions[index];
       if (!questionText || typeof questionText !== "string") {
         console.warn(
           "[QuestionGenerator] Skipping invalid question text:",

@@ -32,21 +32,22 @@ const KeyQuestionCard = ({
               <CardTitle className="font-semibold text-lg mb-2">
                 {tagLine}
               </CardTitle>
-              <p className="text-sm text-muted-foreground mb-3">
-                {question}
-              </p>
+              <p className="text-sm text-muted-foreground mb-3">{question}</p>
             </>
           ) : (
             <CardTitle className="font-semibold text-lg mb-3">
               {question}
             </CardTitle>
           )}
-          
+
           <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
             {tags && tags.length > 0 && (
               <div className="flex flex-wrap gap-1 mb-2 w-full">
-                {tags.map((tag, idx) => (
-                  <span key={idx} className="bg-primary-100 text-primary-800 rounded-full px-2 py-0.5 text-xs">
+                {tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="bg-primary-100 text-primary-800 rounded-full px-2 py-0.5 text-xs"
+                  >
                     {tag}
                   </span>
                 ))}
