@@ -78,9 +78,9 @@ const DebateSummary = ({ debateData, visualReport }: DebateSummaryProps) => {
             aria-label="ビジュアルレポート"
           />
         ) : (
-          <div className="text-center py-8 text-neutral-400">
+          <div className="text-center px-4 py-4 text-neutral-400">
             {
-              "イラストはまだ作成されていません。より多くの議論が重なると作成されます。"
+              "イラストまとめはまだ作成されていません。より多くの議論が重なると作成されます。"
             }
           </div>
         )
@@ -127,7 +127,7 @@ const DebateSummary = ({ debateData, visualReport }: DebateSummaryProps) => {
           </div>
         </div>
       ) : (
-        <div className="text-center py-8 text-neutral-400">
+        <div className="text-center px-4 py-4 text-neutral-400">
           論点まとめはまだ作成されていません。より多くの議論が重なると作成されます。
         </div>
       )}
