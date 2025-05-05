@@ -19,7 +19,7 @@ const likeSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-likeSchema.index({ userId: 1, targetId: 1, targetType: 1 }, { unique: true });
+likeSchema.index({ targetType: 1, targetId: 1, userId: 1 }, { unique: true });
 
 const Like = mongoose.model("Like", likeSchema);
 

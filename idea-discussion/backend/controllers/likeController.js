@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Like from "../models/Like.js";
 
+// TODO: 認証基盤が入ったら認証対応
 export const toggleLike = async (req, res) => {
   const { userId } = req.body;
   const { targetId, targetType } = req.params;
@@ -30,7 +31,7 @@ export const toggleLike = async (req, res) => {
         count,
       });
     }
-    
+
     await Like.create({
       userId,
       targetId,
@@ -44,10 +45,7 @@ export const toggleLike = async (req, res) => {
       count,
     });
   } catch (error) {
-    console.error(
-      `Error toggling like for ${targetType} ${targetId}:`,
-      error
-    );
+    console.error(`Error toggling like for ${targetType} ${targetId}:`, error);
     res.status(500).json({
       message: "Error toggling like status",
       error: error.message,
@@ -55,6 +53,7 @@ export const toggleLike = async (req, res) => {
   }
 };
 
+// TODO: 認証基盤が入ったら認証対応
 export const getLikeStatus = async (req, res) => {
   const { userId } = req.query;
   const { targetId, targetType } = req.params;

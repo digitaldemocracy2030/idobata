@@ -1,17 +1,21 @@
-import { Star } from "lucide-react";
+import { ThumbsUp } from "lucide-react";
 import { useLike } from "../../hooks/useLike";
 
 export interface KeyQuestionHeaderProps {
   question: string;
   voteCount: number;
-  questionId: string; // Add questionId prop
+  questionId: string;
 }
 
-const KeyQuestionHeader = ({ question, voteCount, questionId }: KeyQuestionHeaderProps) => {
+const KeyQuestionHeader = ({
+  question,
+  voteCount,
+  questionId,
+}: KeyQuestionHeaderProps) => {
   const { isLiked, likeCount, toggleLike } = useLike("question", questionId);
-  
+
   const displayCount = likeCount ?? voteCount;
-  
+
   return (
     <div className="mb-6">
       <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4">
@@ -19,15 +23,19 @@ const KeyQuestionHeader = ({ question, voteCount, questionId }: KeyQuestionHeade
       </h1>
       <div className="flex items-center">
         <button
-          className={`${isLiked ? 'bg-amber-500' : 'bg-primary-500 hover:bg-primary-600'} text-white px-4 py-2 rounded-md flex items-center transition-colors duration-200`}
+          className={`${isLiked ? "bg-accent hover:bg-accent-400" : "bg-primary hover:bg-primary-400"} text-white px-4 py-2 rounded-md flex items-center transition-colors duration-200`}
           type="button"
           onClick={toggleLike}
         >
-          <Star className="h-5 w-5 mr-2" />
-          <span>{isLiked ? '興味マーク済み' : '興味マークする'}</span>
+          {isLiked ? (
+            <ThumbsUp className="h-5 w-5 mr-2" fill="currentColor" />
+          ) : (
+            <ThumbsUp className="h-5 w-5 mr-2" />
+          )}
+          <span>{isLiked ? "興味を持っています" : "気になる"}</span>
         </button>
         <span className="ml-3 text-sm text-neutral-600">
-          {displayCount}人が興味マークしています
+          {displayCount}人がこの話題に興味を持っています
         </span>
       </div>
     </div>

@@ -103,6 +103,7 @@ export interface Question {
   createdAt?: string;
   issueCount?: number; // 追加: 関連する課題の数
   solutionCount?: number; // 追加: 関連する解決策の数
+  likeCount?: number;
 }
 
 export interface PolicyDraft {
