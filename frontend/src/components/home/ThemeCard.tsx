@@ -38,7 +38,7 @@ const ThemeCard = ({
             {commentCount !== undefined && commentCount > 0 && (
               <span className="flex items-center">
                 <MessageSquare className="h-4 w-4 mr-1 text-primary" />
-                寄せられた意見: {commentCount}件
+                コメント数: {commentCount}件
               </span>
             )}
           </div>
