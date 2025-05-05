@@ -1,12 +1,8 @@
 import { Link } from "../../contexts/MockContext";
-import { useAuth } from "../../contexts/AuthContext";
-import { useSiteConfig } from "../../contexts/SiteConfigContext";
 import { useThemes } from "../../hooks/useThemes";
 
 const Sidebar = () => {
   const { themes, isLoading, error } = useThemes();
-  const { siteConfig } = useSiteConfig();
-  const { user } = useAuth();
 
   return (
     <aside className="hidden xl:block w-[260px] fixed top-14 bottom-0 left-0 border-r-2 border-primary-100 bg-white overflow-y-auto">
@@ -87,7 +83,7 @@ const Sidebar = () => {
               }}
               className="text-xs px-2 py-1 rounded-md border border-neutral-300 bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
             >
-              {currentParams.has("mock")
+              {window.location.search.includes("mock=true")
                 ? "モックモードを解除しトップへ"
                 : "モックモードに入る（開発用）"}
             </button>
