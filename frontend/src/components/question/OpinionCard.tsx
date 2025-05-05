@@ -24,23 +24,28 @@ const OpinionCard = ({ type, text, relevance, id }: OpinionCardProps) => {
           <div className="text-xs text-neutral-500">関連度: {relevance}%</div>
         </div>
         <button
-          className={`${isLiked ? "text-accent hover:text-accent-400" : "text-neutral-400 hover:text-primary-400"} flex items-center`}
+          className={`${isLiked ? "text-primary hover:text-primary-400" : "text-neutral-400 hover:text-primary-400"} flex items-center`}
           type="button"
           onClick={toggleLike}
         >
-          <ThumbsUp
-            className="h-4 w-4"
-            fill={isLiked ? "currentColor" : "none"}
-          />
+          <div className="flex items-center gap-1 border border-neutral-200 rounded-md p-1">
+            {isLiked ? (
+              <>
+                <ThumbsUp className="h-4 w-4" fill="currentColor" />
+                <span className="text-xs">気になる</span>
+                <span className="text-xs min-w-4">{likeCount}</span>
+              </>
+            ) : (
+              <>
+                <ThumbsUp className="h-4 w-4" fill="none" />
+                <span className="text-xs">気になる</span>
+                <span className="text-xs min-w-4">{likeCount}</span>
+              </>
+            )}
+          </div>
         </button>
       </div>
       <p className="text-sm text-neutral-700 mt-2">{text}</p>
-      {likeCount > 0 && (
-        <div className="mt-2 text-xs text-neutral-500">
-          {likeCount}人が{type === "課題点" ? "この課題" : "この解決策"}
-          に興味を持っています
-        </div>
-      )}
     </div>
   );
 };
