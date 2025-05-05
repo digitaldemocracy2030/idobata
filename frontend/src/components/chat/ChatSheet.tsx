@@ -93,7 +93,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="気になることをAIに質問"
+                placeholder="気になること・思ったことを伝える"
                 className="flex-grow px-5 py-3 bg-transparent border-none focus:outline-none text-base"
                 disabled={isSending}
               />
