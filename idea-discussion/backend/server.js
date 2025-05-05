@@ -64,6 +64,7 @@ app.get("/api/health", (req, res) => {
 });
 
 import authRoutes from "./routes/authRoutes.js"; // 追加: 認証ルート
+import likeRoutes from "./routes/likeRoutes.js"; // Import like routes
 import questionEmbeddingRoutes from "./routes/questionEmbeddingRoutes.js";
 import siteConfigRoutes from "./routes/siteConfigRoutes.js";
 import themeChatRoutes from "./routes/themeChatRoutes.js";
@@ -101,6 +102,7 @@ app.use("/api/questions/:questionId", questionEmbeddingRoutes);
 app.use("/api/site-config", siteConfigRoutes);
 app.use("/api/top-page-data", topPageRoutes); // Add top page routes
 app.use("/api/users", userRoutes);
+app.use("/api/likes", likeRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // --- Serve static files in production ---

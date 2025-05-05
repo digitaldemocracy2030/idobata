@@ -60,7 +60,7 @@ const ThemeDetail = () => {
       issueCount: 10,
       solutionCount: 16,
     },
-  ];
+  ].sort((a, b) => b.voteCount - a.voteCount);
 
   const mockIssues = [
     {
