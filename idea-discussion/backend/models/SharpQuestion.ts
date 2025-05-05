@@ -12,6 +12,14 @@ const sharpQuestionSchema = new Schema<ISharpQuestion>(
       type: String,
       required: true,
     },
+    tagLine: {
+      type: String,
+      required: false,
+    },
+    tags: {
+      type: [String],
+      default: [],
+    },
     order: {
       type: Number,
       required: false,

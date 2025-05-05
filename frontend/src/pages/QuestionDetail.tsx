@@ -80,6 +80,8 @@ const QuestionDetail = () => {
   const mockQuestionData = {
     id: qId,
     question: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
+    tagLine: "若者のキャリア構築支援",
+    tags: ["キャリア", "若者", "支援"],
     voteCount: 42,
   };
 
@@ -234,6 +236,8 @@ const QuestionDetail = () => {
       : {
           id: questionDetail?.question?._id ?? "",
           question: questionDetail?.question?.questionText ?? "",
+          tagLine: questionDetail?.question?.tagLine ?? "",
+          tags: questionDetail?.question?.tags ?? [],
           voteCount: questionDetail?.question?.voteCount ?? 0,
         };
 
@@ -282,7 +286,7 @@ const QuestionDetail = () => {
       { label: "テーマ一覧", href: "/themes" },
       { label: themeData.title, href: `/themes/${themeId}` },
       {
-        label: questionData.question,
+        label: questionData.tagLine || questionData.question,
         href: `/themes/${themeId}/questions/${qId}`,
       },
     ];
@@ -292,6 +296,8 @@ const QuestionDetail = () => {
         <BreadcrumbView items={breadcrumbItems} />
         <KeyQuestionHeader
           question={questionData.question}
+          tagLine={questionData.tagLine}
+          tags={questionData.tags}
           voteCount={questionData.voteCount}
           questionId={questionData.id}
         />

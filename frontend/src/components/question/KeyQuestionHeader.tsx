@@ -3,12 +3,16 @@ import { useLike } from "../../hooks/useLike";
 
 export interface KeyQuestionHeaderProps {
   question: string;
+  tagLine?: string;
+  tags?: string[];
   voteCount: number;
   questionId: string;
 }
 
 const KeyQuestionHeader = ({
   question,
+  tagLine,
+  tags,
   voteCount,
   questionId,
 }: KeyQuestionHeaderProps) => {
@@ -18,9 +22,32 @@ const KeyQuestionHeader = ({
 
   return (
     <div className="mb-6">
-      <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4">
-        {question}
-      </h1>
+      {tagLine ? (
+        <>
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-2">
+            {tagLine}
+          </h1>
+          <p className="text-neutral-500 mb-3">{question}</p>
+        </>
+      ) : (
+        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4">
+          {question}
+        </h1>
+      )}
+
+      {tags && tags.length > 0 && (
+        <div className="flex flex-wrap gap-1 mb-4">
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="border border-gray-300 rounded-full px-2 py-0.5 text-xs text-gray-600"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
       <div className="flex items-center">
         <button
           className={`${isLiked ? "bg-accent hover:bg-accent-400" : "bg-primary hover:bg-primary-400"} text-white px-4 py-2 rounded-md flex items-center transition-colors duration-200`}

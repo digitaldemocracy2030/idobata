@@ -15,6 +15,8 @@ export interface ITheme extends BaseDocument {
 export interface ISharpQuestion extends BaseDocument {
   themeId: Types.ObjectId;
   content: string;
+  tagLine?: string;
+  tags?: string[];
   order?: number;
 }
 

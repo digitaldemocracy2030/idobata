@@ -124,6 +124,8 @@ export interface Question {
   _id: string;
   themeId: string;
   questionText: string;
+  tagLine?: string;
+  tags?: string[];
   createdAt: string;
   updatedAt: string;
 }

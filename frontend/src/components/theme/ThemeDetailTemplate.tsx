@@ -15,6 +15,8 @@ interface ThemeDetailTemplateProps {
   keyQuestions: {
     id: number | string;
     question: string;
+    tagLine?: string;
+    tags?: string[];
     voteCount: number;
     issueCount: number;
     solutionCount: number;
@@ -104,6 +106,8 @@ const ThemeDetailTemplate = ({
             <KeyQuestionCard
               key={question.id}
               question={question.question}
+              tagLine={question.tagLine}
+              tags={question.tags}
               voteCount={question.voteCount}
               issueCount={question.issueCount}
               solutionCount={question.solutionCount}

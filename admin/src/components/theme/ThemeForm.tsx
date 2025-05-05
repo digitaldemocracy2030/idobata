@@ -540,6 +540,12 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
                       >
+                        見出し
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                      >
                         問い
                       </th>
                       <th
@@ -595,8 +601,23 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                         tabIndex={0}
                         aria-selected={selectedQuestionId === question._id}
                       >
+                        <td className="px-6 py-4 whitespace-normal text-sm text-foreground font-medium">
+                          {question.tagLine}
+                        </td>
                         <td className="px-6 py-4 whitespace-normal text-sm text-foreground">
                           {question.questionText}
+                          {question.tags && question.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {question.tags.map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="border bg-primary-100 text-primary-800 rounded-full px-2 py-0.5 text-xs"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-normal text-sm text-muted-foreground">
                           {/* We would fetch related problems here in a real implementation */}
