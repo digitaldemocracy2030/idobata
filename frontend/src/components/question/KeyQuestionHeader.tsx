@@ -14,7 +14,7 @@ const KeyQuestionHeader = ({
   tagLine,
   tags,
   voteCount,
-  questionId
+  questionId,
 }: KeyQuestionHeaderProps) => {
   const { isLiked, likeCount, toggleLike } = useLike("question", questionId);
 
