@@ -110,7 +110,6 @@ const Header = () => {
                 <div className="flex mt-4 px-4">
                   <Button
                     variant="outline"
-                    size="sm"
                     onClick={toggleMockMode}
                     className="text-xs"
                   >
@@ -139,9 +138,8 @@ const Header = () => {
             <div className="flex items-center gap-1">
               <Button
                 variant="outline"
-                size="sm"
                 onClick={toggleMockMode}
-                className="text-xs hidden sm:inline"
+                className="text-xs"
               >
                 {isMockMode
                   ? "モックモードを解除しトップへ"
