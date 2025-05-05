@@ -88,3 +88,14 @@ export interface ThemeDetailResponse {
   issues: IProblem[];
   solutions: ISolution[];
 }
+
+export interface ILike extends BaseDocument {
+  userId: string;
+  targetId: Types.ObjectId;
+  targetType: "question"; // Currently only supporting 'question'
+}
+
+export interface LikeResponse {
+  liked: boolean;
+  count: number;
+}

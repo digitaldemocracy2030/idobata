@@ -55,7 +55,7 @@ const KeyQuestionCard = ({
             )}
             <span className="flex items-center">
               <ThumbsUp className="h-4 w-4 mr-1 text-primary" />
-              賛同: {voteCount}
+              気になる: {voteCount}
             </span>
             <span className="flex items-center">
               <MessageSquareWarning className="h-4 w-4 mr-1 text-primary" />

@@ -19,18 +19,21 @@ const Top = () => {
       title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
+      likeCount: 99,
     },
     {
       id: 2,
       title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
+      likeCount: 99,
     },
     {
       id: 3,
       title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
       problemCount: 99,
       solutionCount: 99,
+      likeCount: 99,
     },
   ];
 
@@ -111,8 +114,9 @@ const Top = () => {
               title: q.tagLine
                 ? `${q.tagLine}：${q.questionText}`
                 : q.questionText,
-              problemCount: q.issueCount || 0, // バックエンドから取得したissueCountを使用
-              solutionCount: q.solutionCount || 0, // バックエンドから取得したsolutionCountを使用
+              problemCount: q.issueCount || 0,
+              solutionCount: q.solutionCount || 0,
+              likeCount: q.likeCount || 0,
             })) || [],
           themes:
             topPageData?.latestThemes.map((t) => ({

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import ChatThread from "../models/ChatThread.js";
+import Like from "../models/Like.js";
 import Problem from "../models/Problem.js";
 import QuestionLink from "../models/QuestionLink.js";
 import SharpQuestion from "../models/SharpQuestion.js";
@@ -209,8 +210,10 @@ export const getThemeDetail = async (req, res) => {
           linkedItemType: "solution",
         });
 
-        // 投票数（仮実装 - 実際のデータモデルに合わせて調整が必要）
-        const voteCount = 0; // 現在のモデルには投票数がないため0を設定
+        const voteCount = await Like.countDocuments({
+          targetId: question._id,
+          targetType: "question",
+        });
 
         return {
           ...question.toObject(),

@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle, ListFilter } from "lucide-react";
+import { ArrowRight, CheckCircle, ListFilter, ThumbsUp } from "lucide-react";
 import { Link } from "../../contexts/MockContext";
 import { Card, CardContent, CardFooter, CardTitle } from "../ui/card";
 
@@ -6,6 +6,7 @@ interface DiscussionCardProps {
   title: string;
   problemCount: number;
   solutionCount: number;
+  likeCount: number;
   id?: number | string;
   themeId?: string;
 }
@@ -14,6 +15,7 @@ const DiscussionCard = ({
   title,
   problemCount,
   solutionCount,
+  likeCount,
   id,
   themeId,
 }: DiscussionCardProps) => {
@@ -27,6 +29,10 @@ const DiscussionCard = ({
         </CardContent>
         <CardFooter className="flex justify-between items-center pt-0">
           <div className="flex text-xs text-muted-foreground">
+            <span className="flex items-center mr-4">
+              <ThumbsUp className="h-4 w-4 mr-1 text-primary" />
+              気になる: {likeCount}
+            </span>
             <span className="flex items-center mr-4">
               <ListFilter className="h-4 w-4 mr-1 text-primary" />
               課題点: {problemCount}
@@ -54,6 +60,10 @@ const DiscussionCard = ({
         </CardContent>
         <CardFooter className="flex justify-between items-center pt-0">
           <div className="flex text-xs text-muted-foreground">
+            <span className="flex items-center mr-4">
+              <ThumbsUp className="h-4 w-4 mr-1 text-primary" />
+              気になる: {likeCount}
+            </span>
             <span className="flex items-center mr-4">
               <ListFilter className="h-4 w-4 mr-1 text-primary" />
               課題点: {problemCount}

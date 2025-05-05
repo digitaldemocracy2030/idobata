@@ -376,6 +376,34 @@ export class ApiClient {
       }>("/top-page-data")
     );
   }
+
+  async getLikeStatus(
+    targetType: string,
+    targetId: string,
+    userId?: string
+  ): Promise<HttpResult<{ liked: boolean; count: number }>> {
+    let url = `/likes/${targetType}/${targetId}`;
+    if (userId) {
+      url += `?userId=${userId}`;
+    }
+
+    return this.withRetry(() =>
+      this.httpClient.get<{ liked: boolean; count: number }>(url)
+    );
+  }
+
+  async toggleLike(
+    targetType: string,
+    targetId: string,
+    userId: string
+  ): Promise<HttpResult<{ liked: boolean; count: number }>> {
+    return this.withRetry(() =>
+      this.httpClient.post<{ liked: boolean; count: number }>(
+        `/likes/${targetType}/${targetId}`,
+        { userId }
+      )
+    );
+  }
 }
 
 export const apiClient = new ApiClient();

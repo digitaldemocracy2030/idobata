@@ -12,6 +12,7 @@ export interface TopPageTemplateProps {
     title: string;
     problemCount: number;
     solutionCount: number;
+    likeCount: number;
   }[];
   themes: {
     id: string;
@@ -46,6 +47,7 @@ const TopPageTemplate = ({ discussions, themes }: TopPageTemplateProps) => {
                 title={item.title}
                 problemCount={item.problemCount}
                 solutionCount={item.solutionCount}
+                likeCount={item.likeCount}
                 themeId={defaultThemeId || undefined}
               />
             ))}

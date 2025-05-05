@@ -299,6 +299,7 @@ const QuestionDetail = () => {
           tagLine={questionData.tagLine}
           tags={questionData.tags}
           voteCount={questionData.voteCount}
+          questionId={questionData.id}
         />
         <DebateSummary
           debateData={debateData}

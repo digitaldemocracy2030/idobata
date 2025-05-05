@@ -1,4 +1,5 @@
 import ChatThread from "../models/ChatThread.js";
+import Like from "../models/Like.js";
 import QuestionLink from "../models/QuestionLink.js";
 import SharpQuestion from "../models/SharpQuestion.js";
 import Theme from "../models/Theme.js";
@@ -53,10 +54,16 @@ export const getTopPageData = async (req, res) => {
           linkedItemType: "solution",
         });
 
+        const likeCount = await Like.countDocuments({
+          targetId: questionId,
+          targetType: "question",
+        });
+
         return {
           ...question.toObject(),
           issueCount,
           solutionCount,
+          likeCount,
         };
       })
     );
