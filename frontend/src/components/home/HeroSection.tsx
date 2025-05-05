@@ -31,15 +31,12 @@ const HeroSection = () => {
 
           <div className="flex justify-start">
             <div className="text-center mt-4">
-              <Link to="/about">
-                <Button
-                  variant="default"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90"
-                >
+              <Button asChild size="lg">
+                <Link to="/about">
                   このサイトについて
                   <ArrowRight className="h-5 w-5 ml-2" />
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
