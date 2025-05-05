@@ -1,6 +1,7 @@
 import ChatThread from "../models/ChatThread.js";
 import SharpQuestion from "../models/SharpQuestion.js";
 import Theme from "../models/Theme.js";
+import QuestionLink from "../models/QuestionLink.js";
 
 /**
  * Get latest themes and questions for the top page
@@ -38,9 +39,31 @@ export const getTopPageData = async (req, res) => {
       })
     );
 
+    const enhancedQuestions = await Promise.all(
+      questions.map(async (question) => {
+        const questionId = question._id;
+
+        const issueCount = await QuestionLink.countDocuments({
+          questionId,
+          linkedItemType: "problem",
+        });
+
+        const solutionCount = await QuestionLink.countDocuments({
+          questionId,
+          linkedItemType: "solution",
+        });
+
+        return {
+          ...question.toObject(),
+          issueCount,
+          solutionCount,
+        };
+      })
+    );
+
     return res.status(200).json({
       latestThemes: enhancedThemes,
-      latestQuestions: questions,
+      latestQuestions: enhancedQuestions,
     });
   } catch (error) {
     console.error("Error fetching top page data:", error);
