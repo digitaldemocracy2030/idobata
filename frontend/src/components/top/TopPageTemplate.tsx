@@ -30,7 +30,7 @@ const TopPageTemplate = ({ discussions, themes }: TopPageTemplateProps) => {
   const breadcrumbItems = [{ label: "TOP", href: "/" }];
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto py-8 xl:max-w-none">
       <div className="px-4">
         <BreadcrumbView items={breadcrumbItems} />
       </div>
