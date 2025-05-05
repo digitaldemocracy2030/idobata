@@ -27,14 +27,10 @@ const Sidebar = () => {
         </Link>
 
         {isLoading && (
-          <div className="px-4 py-2 text-sm text-gray-500">
-            読み込み中...
-          </div>
+          <div className="px-4 py-2 text-sm text-gray-500">読み込み中...</div>
         )}
 
-        {error && (
-          <div className="px-4 py-2 text-sm text-red-500">{error}</div>
-        )}
+        {error && <div className="px-4 py-2 text-sm text-red-500">{error}</div>}
 
         {!isLoading && !error && themes.length === 0 && (
           <div className="px-4 py-2 text-sm text-gray-500">
@@ -63,8 +59,11 @@ const Sidebar = () => {
         {process.env.NODE_ENV === "development" && (
           <div className="flex mt-4 px-4">
             <button
+              type="button"
               onClick={() => {
-                const currentParams = new URLSearchParams(window.location.search);
+                const currentParams = new URLSearchParams(
+                  window.location.search
+                );
                 let targetPathname = window.location.pathname;
                 let targetSearch = "";
 
