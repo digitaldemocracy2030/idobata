@@ -28,13 +28,17 @@ const OpinionCard = ({ type, text, relevance, id }: OpinionCardProps) => {
           type="button"
           onClick={toggleLike}
         >
-          <ThumbsUp className="h-4 w-4" fill={isLiked ? "currentColor" : "none"} />
+          <ThumbsUp
+            className="h-4 w-4"
+            fill={isLiked ? "currentColor" : "none"}
+          />
         </button>
       </div>
       <p className="text-sm text-neutral-700 mt-2">{text}</p>
       {likeCount > 0 && (
         <div className="mt-2 text-xs text-neutral-500">
-          {likeCount}人が{type === "課題点" ? "この課題" : "この解決策"}に興味を持っています
+          {likeCount}人が{type === "課題点" ? "この課題" : "この解決策"}
+          に興味を持っています
         </div>
       )}
     </div>
