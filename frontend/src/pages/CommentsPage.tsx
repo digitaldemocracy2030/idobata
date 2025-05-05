@@ -145,16 +145,16 @@ const CommentsPage = () => {
 
     const issuesData = isMockMode
       ? createRepeatedData(
-          currentQuestionDetail.relatedProblems,
-          mapProblemToOpinion
-        )
+        currentQuestionDetail.relatedProblems,
+        mapProblemToOpinion
+      )
       : currentQuestionDetail.relatedProblems.map(mapProblemToOpinion);
 
     const solutionsData = isMockMode
       ? createRepeatedData(
-          currentQuestionDetail.relatedSolutions,
-          mapSolutionToOpinion
-        )
+        currentQuestionDetail.relatedSolutions,
+        mapSolutionToOpinion
+      )
       : currentQuestionDetail.relatedSolutions.map(mapSolutionToOpinion);
 
     const opinions = {
@@ -181,14 +181,14 @@ const CommentsPage = () => {
 
           <div className="flex border-b border-neutral-200 mb-4 sticky top-[66px] bg-white z-10 w-full">
             <button
-              className={`py-2 px-4 text-sm font-medium ${activeTab === "issues" ? "border-b-2 border-primary-500 text-primary-700" : "text-neutral-500"}`}
+              className={`flex-1 py-2 px-4 text-base font-bold ${activeTab === "issues" ? "border-b-4 border-primary-500 text-primary-700" : "text-neutral-700"}`}
               onClick={() => setActiveTab("issues")}
               type="button"
             >
               課題点 ({opinions.issues.length})
             </button>
             <button
-              className={`py-2 px-4 text-sm font-medium ${activeTab === "solutions" ? "border-b-2 border-primary-500 text-primary-700" : "text-neutral-500"}`}
+              className={`flex-1 py-2 px-4 text-base font-bold ${activeTab === "solutions" ? "border-b-4 border-primary-500 text-primary-700" : "text-neutral-700"}`}
               onClick={() => setActiveTab("solutions")}
               type="button"
             >
@@ -199,21 +199,21 @@ const CommentsPage = () => {
           <div className="space-y-3">
             {activeTab === "issues"
               ? opinions.issues.map((issue) => (
-                  <OpinionCard
-                    key={issue.id}
-                    text={issue.text}
-                    type="課題点"
-                    relevance={issue.relevance || 0}
-                  />
-                ))
+                <OpinionCard
+                  key={issue.id}
+                  text={issue.text}
+                  type="課題点"
+                  relevance={issue.relevance || 0}
+                />
+              ))
               : opinions.solutions.map((solution) => (
-                  <OpinionCard
-                    key={solution.id}
-                    text={solution.text}
-                    type="解決策"
-                    relevance={solution.relevance || 0}
-                  />
-                ))}
+                <OpinionCard
+                  key={solution.id}
+                  text={solution.text}
+                  type="解決策"
+                  relevance={solution.relevance || 0}
+                />
+              ))}
           </div>
         </div>
       </div>

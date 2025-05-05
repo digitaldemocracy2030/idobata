@@ -316,7 +316,7 @@ function VisualizationArea() {
       </h2>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-base">
           <p className="flex items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -357,11 +357,10 @@ function VisualizationArea() {
                   <li key={q._id}>
                     <button
                       onClick={() => handleQuestionSelect(q._id)}
-                      className={`w-full text-left p-3 rounded-lg transition-all duration-200 text-sm ${
-                        selectedQuestionId === q._id
-                          ? "bg-neutral-700 text-white shadow-md"
-                          : "bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-200 hover:border-neutral-300"
-                      }`}
+                      className={`w-full text-left p-3 rounded-lg transition-all duration-200 text-base ${selectedQuestionId === q._id
+                        ? "bg-neutral-700 text-white shadow-md"
+                        : "bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-200 hover:border-neutral-300"
+                        }`}
                       type="button"
                     >
                       {q.questionText}
@@ -370,7 +369,7 @@ function VisualizationArea() {
                 ))}
               </ul>
             ) : (
-              <div className="p-6 text-center text-neutral-500 text-sm border border-dashed border-neutral-300 rounded-lg">
+              <div className="p-6 text-center text-neutral-500 text-base border border-dashed border-neutral-300 rounded-lg">
                 <p>まだ問いが生成されていません</p>
                 <p className="mt-2 text-xs">
                   管理パネルから生成してみてください
@@ -410,11 +409,11 @@ function VisualizationArea() {
                           {questionDetails.relatedProblems.map((p) => (
                             <li
                               key={p._id}
-                              className="p-3 bg-white rounded-lg border border-neutral-200 text-sm text-neutral-700 shadow-sm"
+                              className="p-3 bg-white rounded-lg border border-neutral-200 text-base text-neutral-700 shadow-sm"
                             >
                               <div className="flex flex-col">
                                 <div className="mb-1">{p.statement}</div>
-                                <div className="text-xs text-right text-primary-dark">
+                                <div className="text-base text-right text-primary-dark">
                                   関連度 {(p.relevanceScore * 100).toFixed(0)}%
                                 </div>
                               </div>
@@ -422,7 +421,7 @@ function VisualizationArea() {
                           ))}
                         </ul>
                       ) : (
-                        <p className="text-sm text-neutral-500 p-3 bg-white rounded-lg border border-neutral-200">
+                        <p className="text-base text-neutral-500 p-3 bg-white rounded-lg border border-neutral-200">
                           この問いにはまだ課題がリンクされていません
                         </p>
                       )}
@@ -441,11 +440,11 @@ function VisualizationArea() {
                           {questionDetails.relatedSolutions.map((s) => (
                             <li
                               key={s._id}
-                              className="p-3 bg-white rounded-lg border border-neutral-200 text-sm text-neutral-700 shadow-sm"
+                              className="p-3 bg-white rounded-lg border border-neutral-200 text-base text-neutral-700 shadow-sm"
                             >
                               <div className="flex flex-col">
                                 <div className="mb-1">{s.statement}</div>
-                                <div className="text-xs text-right text-success">
+                                <div className="text-base text-right text-success">
                                   関連度 {(s.relevanceScore * 100).toFixed(0)}%
                                 </div>
                               </div>
@@ -453,7 +452,7 @@ function VisualizationArea() {
                           ))}
                         </ul>
                       ) : (
-                        <p className="text-sm text-neutral-500 p-3 bg-white rounded-lg border border-neutral-200">
+                        <p className="text-base text-neutral-500 p-3 bg-white rounded-lg border border-neutral-200">
                           この問いにはまだ解決策がリンクされていません
                         </p>
                       )}
@@ -468,14 +467,14 @@ function VisualizationArea() {
                       <h4 className="text-md font-semibold text-primary-dark mb-1">
                         政策ドラフト生成
                       </h4>
-                      <p className="text-sm text-neutral-600">
+                      <p className="text-base text-neutral-600">
                         この問いに関連する課題と解決策から政策ドラフトを生成します
                       </p>
                     </div>
                     <button
                       onClick={handleGeneratePolicy}
                       disabled={isGeneratingPolicy || isLoadingDetails}
-                      className="btn bg-primary text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm whitespace-nowrap hover:bg-primary/90"
+                      className="btn bg-primary text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-base whitespace-nowrap hover:bg-primary/90"
                       type="button"
                     >
                       {isGeneratingPolicy ? (
@@ -509,7 +508,7 @@ function VisualizationArea() {
                     </button>
                   </div>
                   {generationStatus && (
-                    <div className="mt-3 p-3 bg-primary-light/20 border border-primary-light rounded-lg text-sm text-primary-dark">
+                    <div className="mt-3 p-3 bg-primary-light/20 border border-primary-light rounded-lg text-base text-primary-dark">
                       {generationStatus}
                     </div>
                   )}
@@ -522,7 +521,7 @@ function VisualizationArea() {
                       <h4 className="text-md font-semibold text-success mb-1">
                         一般向けダイジェスト生成
                       </h4>
-                      <p className="text-sm text-neutral-600">
+                      <p className="text-base text-neutral-600">
                         この問いと政策ドラフトから一般向けの読みやすいダイジェストを生成します
                       </p>
                     </div>
@@ -533,7 +532,7 @@ function VisualizationArea() {
                         isLoadingDetails ||
                         policyDrafts.length === 0
                       }
-                      className="btn bg-success text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm whitespace-nowrap hover:bg-success/90"
+                      className="btn bg-success text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-base whitespace-nowrap hover:bg-success/90"
                       type="button"
                     >
                       {isGeneratingDigest ? (
@@ -567,7 +566,7 @@ function VisualizationArea() {
                     </button>
                   </div>
                   {digestGenerationStatus && (
-                    <div className="mt-3 p-3 bg-success/10 border border-success/30 rounded-lg text-sm text-success/90">
+                    <div className="mt-3 p-3 bg-success/10 border border-success/30 rounded-lg text-base text-success/90">
                       {digestGenerationStatus}
                     </div>
                   )}
@@ -614,7 +613,7 @@ function VisualizationArea() {
                       ))}
                     </div>
                   ) : (
-                    <div className="p-6 text-center text-neutral-500 text-sm border border-dashed border-neutral-300 rounded-lg">
+                    <div className="p-6 text-center text-neutral-500 text-base border border-dashed border-neutral-300 rounded-lg">
                       <p>
                         この問いに対する政策ドラフトはまだ生成されていません
                       </p>
@@ -666,7 +665,7 @@ function VisualizationArea() {
                       ))}
                     </div>
                   ) : (
-                    <div className="p-6 text-center text-neutral-500 text-sm border border-dashed border-success/30 rounded-lg">
+                    <div className="p-6 text-center text-neutral-500 text-base border border-dashed border-success/30 rounded-lg">
                       <p>
                         この問いに対するダイジェストはまだ生成されていません
                       </p>
@@ -683,7 +682,7 @@ function VisualizationArea() {
                 </div>
               </div>
             ) : selectedQuestionId && !isLoadingDetails ? (
-              <div className="p-6 text-center text-red-600 text-sm border border-dashed border-red-300 rounded-lg">
+              <div className="p-6 text-center text-red-600 text-base border border-dashed border-red-300 rounded-lg">
                 <p>選択された問いの詳細を読み込めませんでした</p>
                 <p className="mt-2 text-xs">
                   別の問いを選択するか、ページを更新してみてください
@@ -709,7 +708,7 @@ function VisualizationArea() {
                 <p className="text-lg font-medium mb-2">
                   問いを選択してください
                 </p>
-                <p className="text-sm">
+                <p className="text-base">
                   リストから問いを選択すると、詳細と政策オプションが表示されます
                 </p>
               </div>
