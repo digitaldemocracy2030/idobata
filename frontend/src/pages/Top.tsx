@@ -41,20 +41,26 @@ const Top = () => {
     {
       id: "1",
       title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
-      problemCount: 99,
-      solutionCount: 99,
+      description:
+        "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
+      keyQuestionCount: 99,
+      commentCount: 99,
     },
     {
       id: "2",
       title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
-      problemCount: 99,
-      solutionCount: 99,
+      description:
+        "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
+      keyQuestionCount: 99,
+      commentCount: 99,
     },
     {
       id: "3",
       title: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
-      problemCount: 99,
-      solutionCount: 99,
+      description:
+        "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
+      keyQuestionCount: 99,
+      commentCount: 99,
     },
   ];
 
@@ -122,8 +128,9 @@ const Top = () => {
             topPageData?.latestThemes.map((t) => ({
               id: t._id,
               title: t.title,
-              problemCount: t.keyQuestionCount || 0, // Using keyQuestionCount as problemCount
-              solutionCount: t.commentCount || 0, // Using commentCount as solutionCount
+              description: t.description,
+              keyQuestionCount: t.keyQuestionCount || 0,
+              commentCount: t.commentCount || 0,
             })) || [],
         };
 

@@ -102,7 +102,7 @@ const ThemeDetailTemplate = ({
       </p>
 
       <div className="mb-8">
-        <SectionHeading title={`キークエスチョン (${keyQuestions.length})`} />
+        <SectionHeading title={`重要論点（${keyQuestions.length}件）`} />
         <div className="space-y-4">
           {keyQuestions.map((question) => (
             <KeyQuestionCard
