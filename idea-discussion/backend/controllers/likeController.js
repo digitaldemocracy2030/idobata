@@ -22,29 +22,32 @@ export const toggleLike = async (req, res) => {
 
     if (existingLike) {
       await Like.findByIdAndDelete(existingLike._id);
-      
+
       const count = await Like.countDocuments({ targetId, targetType });
-      
+
       return res.status(200).json({
         liked: false,
         count,
       });
-    } else {
-      await Like.create({
-        userId,
-        targetId,
-        targetType,
-      });
-      
-      const count = await Like.countDocuments({ targetId, targetType });
-      
-      return res.status(201).json({
-        liked: true,
-        count,
-      });
     }
+    
+    await Like.create({
+      userId,
+      targetId,
+      targetType,
+    });
+
+    const count = await Like.countDocuments({ targetId, targetType });
+
+    return res.status(201).json({
+      liked: true,
+      count,
+    });
   } catch (error) {
-    console.error(`Error toggling like for ${targetType} ${targetId}:`, error);
+    console.error(
+      "Error toggling like for " + targetType + " " + targetId + ":",
+      error
+    );
     res.status(500).json({
       message: "Error toggling like status",
       error: error.message,
@@ -62,7 +65,7 @@ export const getLikeStatus = async (req, res) => {
 
   try {
     const count = await Like.countDocuments({ targetId, targetType });
-    
+
     let liked = false;
     if (userId) {
       const userLike = await Like.findOne({
@@ -72,13 +75,16 @@ export const getLikeStatus = async (req, res) => {
       });
       liked = !!userLike;
     }
-    
+
     res.status(200).json({
       liked,
       count,
     });
   } catch (error) {
-    console.error(`Error getting like status for ${targetType} ${targetId}:`, error);
+    console.error(
+      "Error getting like status for " + targetType + " " + targetId + ":",
+      error
+    );
     res.status(500).json({
       message: "Error getting like status",
       error: error.message,
