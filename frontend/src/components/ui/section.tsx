@@ -13,7 +13,7 @@ const Section = React.forwardRef<HTMLElement, SectionProps>(
       <section ref={ref} className={cn("rounded-lg p-6", className)} {...props}>
         {title && <SectionHeading title={title} />}
         {description && (
-          <p className="text-xs text-muted-foreground mb-3">{description}</p>
+          <p className="text-base text-muted-foreground mb-3">{description}</p>
         )}
         {children}
       </section>

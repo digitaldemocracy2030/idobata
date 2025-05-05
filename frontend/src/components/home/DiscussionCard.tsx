@@ -25,10 +25,10 @@ const DiscussionCard = ({
       <Card className="hover:shadow-md transition-all duration-200">
         <CardContent className="pt-4">
           <CardTitle className="text-base mb-2">{title}</CardTitle>
-          <div className="h-[2px] bg-gray-300 w-full my-2" />
+          <hr className="h-[2px] bg-gray-300 w-full my-2" />
         </CardContent>
         <CardFooter className="flex justify-between items-center pt-0">
-          <div className="flex text-xs text-muted-foreground">
+          <div className="flex text-base text-muted-foreground">
             <span className="flex items-center mr-4">
               <ThumbsUp className="h-4 w-4 mr-1 text-primary" />
               気になる: {likeCount}
@@ -56,10 +56,10 @@ const DiscussionCard = ({
       <Card className="hover:shadow-md transition-all duration-200 hover:border-primary/50">
         <CardContent className="pt-4">
           <CardTitle className="text-base mb-2">{title}</CardTitle>
-          <div className="h-[2px] bg-gray-300 w-full my-2" />
+          <hr className="h-[2px] bg-gray-300 w-full my-2" />
         </CardContent>
         <CardFooter className="flex justify-between items-center pt-0">
-          <div className="flex text-xs text-muted-foreground">
+          <div className="flex text-base text-muted-foreground">
             <span className="flex items-center mr-4">
               <ThumbsUp className="h-4 w-4 mr-1 text-primary" />
               気になる: {likeCount}
