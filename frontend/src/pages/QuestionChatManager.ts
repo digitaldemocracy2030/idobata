@@ -234,7 +234,9 @@ export class QuestionChatManager {
 
   async loadChatHistory(): Promise<void> {
     if (this.isLoadingChatHistory) {
-      console.log("[QuestionChatManager] loadChatHistory already in progress, skipping duplicate call");
+      console.log(
+        "[QuestionChatManager] loadChatHistory already in progress, skipping duplicate call"
+      );
       return;
     }
 
