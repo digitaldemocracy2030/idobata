@@ -32,7 +32,13 @@ export class ThemeDetailChatManager {
     this.themeName = options.themeName;
     this.onNewMessage = options.onNewMessage;
     this.onNewExtraction = options.onNewExtraction;
-
+    
+    this.loadChatHistory().then(() => {
+      if (this.threadId) {
+        this.subscribeToExtraction();
+      }
+    });
+    
     this.showThemeNotification();
   }
 
@@ -205,5 +211,55 @@ export class ThemeDetailChatManager {
 
   clearMessages(): void {
     this.messages = [];
+  }
+
+  private saveThreadIdToStorage(): void {
+    if (this.threadId) {
+      localStorage.setItem(`chat_thread_${this.themeId}`, this.threadId);
+    }
+  }
+
+  async loadChatHistory(): Promise<void> {
+    if (!this.userId) {
+      console.log("No user ID available, cannot load chat history");
+      return;
+    }
+
+    const result = await apiClient.getThreadByUserAndTheme(this.userId, this.themeId);
+    
+    if (!result.isOk()) {
+      console.error("Error loading chat history:", result.error);
+      return;
+    }
+    
+    const { threadId, messages } = result.value;
+    
+    this.threadId = threadId;
+    this.saveThreadIdToStorage();
+    
+    if (!messages || messages.length === 0) {
+      console.log("No chat history found");
+      return;
+    }
+    
+    this.clearMessages();
+    
+    this.showThemeNotification();
+    
+    for (const msg of messages) {
+      const { role, content } = msg;
+      
+      if (role === "user") {
+        const userMessage = new UserMessage(content);
+        this.messages.push(userMessage);
+        this.onNewMessage?.(userMessage);
+      } else if (role === "assistant") {
+        const systemMessage = new SystemMessage(content);
+        this.messages.push(systemMessage);
+        this.onNewMessage?.(systemMessage);
+      }
+    }
+    
+    console.log(`Loaded ${messages.length} messages from chat history`);
   }
 }

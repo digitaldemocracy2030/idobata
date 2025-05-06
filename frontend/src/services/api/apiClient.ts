@@ -404,6 +404,17 @@ export class ApiClient {
       )
     );
   }
+
+  async getThreadByUserAndTheme(
+    userId: string,
+    themeId: string
+  ): Promise<HttpResult<{ threadId: string; messages: unknown[] }>> {
+    return this.withRetry(() =>
+      this.httpClient.get<{ threadId: string; messages: unknown[] }>(
+        `/themes/${themeId}/chat/thread?userId=${encodeURIComponent(userId)}`
+      )
+    );
+  }
 }
 
 export const apiClient = new ApiClient();

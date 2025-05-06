@@ -405,8 +405,60 @@ const getThreadMessagesByTheme = async (req, res) => {
   }
 };
 
+// Controller function for getting a thread by user and theme
+const getThreadByUserAndTheme = async (req, res) => {
+  const { themeId } = req.params;
+  const { userId } = req.query;
+
+  if (!mongoose.Types.ObjectId.isValid(themeId)) {
+    return res.status(400).json({ error: "Invalid theme ID format" });
+  }
+
+  if (!userId) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+    const chatThread = await ChatThread.findOne({
+      themeId: themeId,
+      userId: userId
+    });
+
+    if (!chatThread) {
+      const newChatThread = new ChatThread({
+        themeId: themeId,
+        userId: userId,
+        messages: [],
+        sessionId: `session_${Date.now()}` // 一時的なセッションID
+      });
+      
+      await newChatThread.save();
+      
+      return res.status(200).json({
+        threadId: newChatThread._id,
+        userId: userId,
+        themeId: themeId,
+        messages: []
+      });
+    }
+
+    return res.status(200).json({
+      threadId: chatThread._id,
+      userId: chatThread.userId,
+      themeId: chatThread.themeId,
+      messages: chatThread.messages || []
+    });
+  } catch (error) {
+    console.error(`Error getting thread for user ${userId} and theme ${themeId}:`, error);
+    return res.status(500).json({ 
+      error: "Internal server error while getting thread messages." 
+    });
+  }
+};
+
 export {
   getThreadExtractionsByTheme,
   getThreadMessagesByTheme,
   handleNewMessageByTheme,
+  getThreadByUserAndTheme,
 };
