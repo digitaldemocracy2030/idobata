@@ -28,13 +28,13 @@ export class ThemeDetailChatManager {
   private userId: string;
 
   private getUserId(): string {
-    const storedUserId = localStorage.getItem("chat_user_id");
+    const storedUserId = localStorage.getItem("idobataUserId");
     if (storedUserId) {
       return storedUserId;
     }
 
     const newUserId = `user-${Date.now()}`;
-    localStorage.setItem("chat_user_id", newUserId);
+    localStorage.setItem("idobataUserId", newUserId);
     return newUserId;
   }
 
