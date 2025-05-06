@@ -44,7 +44,6 @@ export class QuestionChatManager {
         this.subscribeToExtraction();
       }
     });
-
   }
 
   private showQuestionNotification(): void {
