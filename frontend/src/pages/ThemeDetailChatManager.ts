@@ -246,7 +246,7 @@ export class ThemeDetailChatManager {
       console.error("Error loading chat history:", result.error);
       return;
     }
-    
+
     const { threadId, messages } = result.value;
 
     this.threadId = threadId;
