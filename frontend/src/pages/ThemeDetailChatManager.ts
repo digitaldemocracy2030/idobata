@@ -261,7 +261,7 @@ export class ThemeDetailChatManager {
 
     this.showThemeNotification();
 
-    for (const msg of messages) {
+    for (const msg of messages as Array<{ role: string; content: string }>) {
       const { role, content } = msg;
 
       if (role === "user") {
