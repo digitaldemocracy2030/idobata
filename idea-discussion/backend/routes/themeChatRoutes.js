@@ -1,9 +1,9 @@
 import express from "express";
 import {
+  getThreadByUserAndTheme,
   getThreadExtractionsByTheme,
   getThreadMessagesByTheme,
   handleNewMessageByTheme,
-  getThreadByUserAndTheme,
 } from "../controllers/chatController.js";
 
 const router = express.Router({ mergeParams: true });

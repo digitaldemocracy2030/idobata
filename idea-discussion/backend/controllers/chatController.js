@@ -421,7 +421,7 @@ const getThreadByUserAndTheme = async (req, res) => {
   try {
     const chatThread = await ChatThread.findOne({
       themeId: themeId,
-      userId: userId
+      userId: userId,
     });
 
     if (!chatThread) {
@@ -429,7 +429,7 @@ const getThreadByUserAndTheme = async (req, res) => {
         themeId: themeId,
         userId: userId,
         messages: [],
-        sessionId: `session_${Date.now()}` // 一時的なセッションID
+        sessionId: `session_${Date.now()}`, // 一時的なセッションID
       });
       
       await newChatThread.save();
@@ -438,7 +438,7 @@ const getThreadByUserAndTheme = async (req, res) => {
         threadId: newChatThread._id,
         userId: userId,
         themeId: themeId,
-        messages: []
+        messages: [],
       });
     }
 
@@ -446,12 +446,15 @@ const getThreadByUserAndTheme = async (req, res) => {
       threadId: chatThread._id,
       userId: chatThread.userId,
       themeId: chatThread.themeId,
-      messages: chatThread.messages || []
+      messages: chatThread.messages || [],
     });
   } catch (error) {
-    console.error(`Error getting thread for user ${userId} and theme ${themeId}:`, error);
+    console.error(
+      `Error getting thread for user ${userId} and theme ${themeId}:`,
+      error
+    );
     return res.status(500).json({ 
-      error: "Internal server error while getting thread messages." 
+      error: "Internal server error while getting thread messages.",
     });
   }
 };
