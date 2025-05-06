@@ -5,6 +5,7 @@ import {
   type FloatingChatRef,
 } from "../components/chat/FloatingChat";
 import ThemeDetailTemplate from "../components/theme/ThemeDetailTemplate";
+import { useAuth } from "../contexts/AuthContext";
 import { useMock } from "../contexts/MockContext";
 import { useThemeDetail } from "../hooks/useThemeDetail";
 import type { NewExtractionEvent } from "../services/socket/socketClient";
@@ -15,6 +16,7 @@ import { ThemeDetailChatManager } from "./ThemeDetailChatManager";
 const ThemeDetail = () => {
   const { themeId } = useParams<{ themeId: string }>();
   const { isMockMode } = useMock();
+  const { user } = useAuth();
   const floatingChatRef = useRef<FloatingChatRef>(null);
   const [chatManager, setChatManager] = useState<ThemeDetailChatManager | null>(
     null
@@ -97,10 +99,11 @@ const ThemeDetail = () => {
       ? mockThemeData.title
       : (themeDetail?.theme?.title ?? "");
 
-    if (themeName) {
+    if (themeName && user.id) {
       const manager = new ThemeDetailChatManager({
         themeId,
         themeName,
+        userId: user.id,
         onNewMessage: handleNewMessage,
         onNewExtraction: handleNewExtraction,
       });
@@ -111,7 +114,7 @@ const ThemeDetail = () => {
         manager.cleanup();
       };
     }
-  }, [themeId, isMockMode, themeDetail?.theme?.title]);
+  }, [themeId, isMockMode, themeDetail?.theme?.title, user?.id]);
 
   const handleNewMessage = (message: Message) => {
     if (floatingChatRef.current) {

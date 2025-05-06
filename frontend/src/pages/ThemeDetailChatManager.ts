@@ -12,6 +12,7 @@ import {
 export interface ThemeDetailChatManagerOptions {
   themeId: string;
   themeName: string;
+  userId: string;
   onNewMessage?: (message: Message) => void;
   onNewExtraction?: (extraction: NewExtractionEvent) => void;
 }
@@ -27,23 +28,12 @@ export class ThemeDetailChatManager {
   private unsubscribeExtractionUpdate?: () => void;
   private userId: string;
 
-  private getUserId(): string {
-    const storedUserId = localStorage.getItem("idobataUserId");
-    if (storedUserId) {
-      return storedUserId;
-    }
-
-    const newUserId = `user-${Date.now()}`;
-    localStorage.setItem("idobataUserId", newUserId);
-    return newUserId;
-  }
-
   constructor(options: ThemeDetailChatManagerOptions) {
     this.themeId = options.themeId;
     this.themeName = options.themeName;
     this.onNewMessage = options.onNewMessage;
     this.onNewExtraction = options.onNewExtraction;
-    this.userId = this.getUserId();
+    this.userId = options.userId;
 
     this.loadChatHistory().then(() => {
       if (this.threadId) {
