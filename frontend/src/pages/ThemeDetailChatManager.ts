@@ -25,13 +25,25 @@ export class ThemeDetailChatManager {
   private threadId?: string;
   private unsubscribeNewExtraction?: () => void;
   private unsubscribeExtractionUpdate?: () => void;
-  private userId = `user-${Date.now()}`; // 仮のユーザーID
+  private userId: string;
+
+  private getUserId(): string {
+    const storedUserId = localStorage.getItem('chat_user_id');
+    if (storedUserId) {
+      return storedUserId;
+    }
+    
+    const newUserId = `user-${Date.now()}`;
+    localStorage.setItem('chat_user_id', newUserId);
+    return newUserId;
+  }
 
   constructor(options: ThemeDetailChatManagerOptions) {
     this.themeId = options.themeId;
     this.themeName = options.themeName;
     this.onNewMessage = options.onNewMessage;
     this.onNewExtraction = options.onNewExtraction;
+    this.userId = this.getUserId();
 
     this.loadChatHistory().then(() => {
       if (this.threadId) {
