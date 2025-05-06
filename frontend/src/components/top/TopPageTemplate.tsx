@@ -80,7 +80,7 @@ const TopPageTemplate = ({ discussions, themes }: TopPageTemplateProps) => {
           </div>
           <div className="flex justify-start">
             <Button asChild size="lg" className="w-auto mt-4">
-              <Link to="/theme">
+              <Link to="/themes">
                 もっと見る
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Link>
