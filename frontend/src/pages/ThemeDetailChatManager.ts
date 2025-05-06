@@ -229,7 +229,7 @@ export class ThemeDetailChatManager {
       this.userId,
       this.themeId
     );
-    
+
     if (!result.isOk()) {
       console.error("Error loading chat history:", result.error);
       return;

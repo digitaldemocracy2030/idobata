@@ -431,9 +431,9 @@ const getThreadByUserAndTheme = async (req, res) => {
         messages: [],
         sessionId: `session_${Date.now()}`, // 一時的なセッションID
       });
-      
+
       await newChatThread.save();
-      
+
       return res.status(200).json({
         threadId: newChatThread._id,
         userId: userId,
