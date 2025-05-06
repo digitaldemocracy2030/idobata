@@ -38,13 +38,13 @@ export class QuestionChatManager {
     this.onNewMessage = options.onNewMessage;
     this.onNewExtraction = options.onNewExtraction;
     this.userId = options.userId;
-    
+
     this.loadChatHistory().then(() => {
       if (this.threadId) {
         this.subscribeToExtraction();
       }
     });
-    
+
     this.showQuestionNotification();
   }
 
@@ -225,7 +225,10 @@ export class QuestionChatManager {
 
   private saveThreadIdToStorage(): void {
     if (this.threadId) {
-      localStorage.setItem(`chat_thread_${this.themeId}_${this.questionId}`, this.threadId);
+      localStorage.setItem(
+        `chat_thread_${this.themeId}_${this.questionId}`,
+        this.threadId
+      );
     }
   }
 
@@ -234,36 +237,36 @@ export class QuestionChatManager {
       console.log("No user ID available, cannot load chat history");
       return;
     }
-    
+
     const questionThreadUserId = `${this.userId}_question_${this.questionId}`;
-    
+
     const result = await apiClient.getThreadByUserAndTheme(
       questionThreadUserId,
       this.themeId
     );
-    
+
     if (!result.isOk()) {
       console.error("Error loading chat history:", result.error);
       return;
     }
-    
+
     const { threadId, messages } = result.value;
-    
+
     this.threadId = threadId;
     this.saveThreadIdToStorage();
-    
+
     if (!messages || messages.length === 0) {
       console.log("No chat history found");
       return;
     }
-    
+
     this.clearMessages();
-    
+
     this.showQuestionNotification();
-    
+
     for (const msg of messages as Array<{ role: string; content: string }>) {
       const { role, content } = msg;
-      
+
       if (role === "user") {
         const userMessage = new UserMessage(content);
         this.messages.push(userMessage);
@@ -274,7 +277,7 @@ export class QuestionChatManager {
         this.onNewMessage?.(systemMessage);
       }
     }
-    
+
     console.log(`Loaded ${messages.length} messages from chat history`);
   }
 }
