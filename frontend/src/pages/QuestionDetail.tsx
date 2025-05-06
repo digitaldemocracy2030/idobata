@@ -12,6 +12,7 @@ import DebateSummary from "../components/question/DebateSummary";
 import KeyQuestionHeader from "../components/question/KeyQuestionHeader";
 import OpinionCard from "../components/question/OpinionCard";
 import { Button } from "../components/ui/button";
+import { useAuth } from "../contexts/AuthContext";
 import { Link, useMock } from "../contexts/MockContext";
 import { useQuestionDetail } from "../hooks/useQuestionDetail";
 import { MessageType } from "../types";
@@ -20,6 +21,7 @@ import { QuestionChatManager } from "./QuestionChatManager";
 const QuestionDetail = () => {
   const { themeId, qId } = useParams<{ themeId: string; qId: string }>();
   const { isMockMode } = useMock();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<"issues" | "solutions">("issues");
   const chatRef = useRef<FloatingChatRef>(null);
   const [chatManager, setChatManager] = useState<QuestionChatManager | null>(
@@ -34,6 +36,7 @@ const QuestionDetail = () => {
     if (
       themeId &&
       qId &&
+      user?.id &&
       (isMockMode || questionDetail?.question?.questionText)
     ) {
       const questionText = isMockMode
@@ -44,6 +47,7 @@ const QuestionDetail = () => {
         themeId,
         questionId: qId,
         questionText,
+        userId: user.id,
         onNewMessage: (message) => {
           let messageType: MessageType = "system";
           if (message.constructor.name === "UserMessage") {
@@ -64,7 +68,7 @@ const QuestionDetail = () => {
         manager.cleanup();
       };
     }
-  }, [themeId, qId, isMockMode, questionDetail]);
+  }, [themeId, qId, isMockMode, questionDetail, user?.id]);
 
   const handleSendMessage = (message: string) => {
     if (chatManager) {
