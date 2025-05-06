@@ -44,8 +44,6 @@ export class QuestionChatManager {
         this.subscribeToExtraction();
       }
     });
-
-    this.showQuestionNotification();
   }
 
   private showQuestionNotification(): void {
@@ -232,52 +230,68 @@ export class QuestionChatManager {
     }
   }
 
+  private isLoadingChatHistory = false;
+
   async loadChatHistory(): Promise<void> {
-    if (!this.userId) {
-      console.log("No user ID available, cannot load chat history");
+    if (this.isLoadingChatHistory) {
+      console.log(
+        "[QuestionChatManager] loadChatHistory already in progress, skipping duplicate call"
+      );
       return;
     }
 
-    const questionThreadUserId = `${this.userId}_question_${this.questionId}`;
+    this.isLoadingChatHistory = true;
 
-    const result = await apiClient.getThreadByUserAndTheme(
-      questionThreadUserId,
-      this.themeId
-    );
-
-    if (!result.isOk()) {
-      console.error("Error loading chat history:", result.error);
-      return;
-    }
-
-    const { threadId, messages } = result.value;
-
-    this.threadId = threadId;
-    this.saveThreadIdToStorage();
-
-    if (!messages || messages.length === 0) {
-      console.log("No chat history found");
-      return;
-    }
-
-    this.clearMessages();
-
-    this.showQuestionNotification();
-
-    for (const msg of messages as Array<{ role: string; content: string }>) {
-      const { role, content } = msg;
-
-      if (role === "user") {
-        const userMessage = new UserMessage(content);
-        this.messages.push(userMessage);
-        this.onNewMessage?.(userMessage);
-      } else if (role === "assistant") {
-        const systemMessage = new SystemMessage(content);
-        this.messages.push(systemMessage);
-        this.onNewMessage?.(systemMessage);
+    try {
+      if (!this.userId) {
+        console.log("No user ID available, cannot load chat history");
+        return;
       }
-    }
 
-    console.log(`Loaded ${messages.length} messages from chat history`);
+      const questionThreadUserId = `${this.userId}_question_${this.questionId}`;
+
+      const result = await apiClient.getThreadByUserAndTheme(
+        questionThreadUserId,
+        this.themeId
+      );
+
+      if (!result.isOk()) {
+        console.error("Error loading chat history:", result.error);
+        return;
+      }
+
+      const { threadId, messages } = result.value;
+
+      this.threadId = threadId;
+      this.saveThreadIdToStorage();
+
+      if (!messages || messages.length === 0) {
+        console.log("No chat history found");
+        this.showQuestionNotification();
+        return;
+      }
+
+      this.clearMessages();
+
+      this.showQuestionNotification();
+
+      for (const msg of messages as Array<{ role: string; content: string }>) {
+        const { role, content } = msg;
+
+        if (role === "user") {
+          const userMessage = new UserMessage(content);
+          this.messages.push(userMessage);
+          this.onNewMessage?.(userMessage);
+        } else if (role === "assistant") {
+          const systemMessage = new SystemMessage(content);
+          this.messages.push(systemMessage);
+          this.onNewMessage?.(systemMessage);
+        }
+      }
+
+      console.log(`Loaded ${messages.length} messages from chat history`);
+    } finally {
+      this.isLoadingChatHistory = false;
+    }
   }
 }
