@@ -453,7 +453,7 @@ const getThreadByUserAndTheme = async (req, res) => {
       `Error getting thread for user ${userId} and theme ${themeId}:`,
       error
     );
-    return res.status(500).json({ 
+    return res.status(500).json({
       error: "Internal server error while getting thread messages.",
     });
   }

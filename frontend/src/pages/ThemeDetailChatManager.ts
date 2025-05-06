@@ -32,13 +32,13 @@ export class ThemeDetailChatManager {
     this.themeName = options.themeName;
     this.onNewMessage = options.onNewMessage;
     this.onNewExtraction = options.onNewExtraction;
-    
+
     this.loadChatHistory().then(() => {
       if (this.threadId) {
         this.subscribeToExtraction();
       }
     });
-    
+
     this.showThemeNotification();
   }
 
@@ -225,7 +225,10 @@ export class ThemeDetailChatManager {
       return;
     }
 
-    const result = await apiClient.getThreadByUserAndTheme(this.userId, this.themeId);
+    const result = await apiClient.getThreadByUserAndTheme(
+      this.userId,
+      this.themeId
+    );
     
     if (!result.isOk()) {
       console.error("Error loading chat history:", result.error);
@@ -233,22 +236,22 @@ export class ThemeDetailChatManager {
     }
     
     const { threadId, messages } = result.value;
-    
+
     this.threadId = threadId;
     this.saveThreadIdToStorage();
-    
+
     if (!messages || messages.length === 0) {
       console.log("No chat history found");
       return;
     }
-    
+
     this.clearMessages();
-    
+
     this.showThemeNotification();
-    
+
     for (const msg of messages) {
       const { role, content } = msg;
-      
+
       if (role === "user") {
         const userMessage = new UserMessage(content);
         this.messages.push(userMessage);
@@ -259,7 +262,7 @@ export class ThemeDetailChatManager {
         this.onNewMessage?.(systemMessage);
       }
     }
-    
+
     console.log(`Loaded ${messages.length} messages from chat history`);
   }
 }
