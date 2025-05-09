@@ -8,7 +8,10 @@ interface ChatHeaderProps {
   onSendMessage?: (message: string) => void;
 }
 
-export const ChatHeader: React.FC<ChatHeaderProps> = ({ onDragStart, onSendMessage }) => {
+export const ChatHeader: React.FC<ChatHeaderProps> = ({
+  onDragStart,
+  onSendMessage,
+}) => {
   const handleMouseDown = (e: React.MouseEvent) => {
     onDragStart(e.clientY);
   };
@@ -35,8 +38,8 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ onDragStart, onSendMessa
         <span className="w-16 h-2 bg-neutral-300 rounded-full my-1" />
       </div>
       <div className="absolute left-4 top-6">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           size="sm"
           onClick={handleChangeTopicClick}
           className="text-sm"
