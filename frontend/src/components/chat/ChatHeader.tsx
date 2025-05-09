@@ -39,10 +39,10 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       </div>
       <div className="absolute left-4 top-6">
         <Button
-          variant="secondary"
+          variant="outline"
           size="sm"
           onClick={handleChangeTopicClick}
-          className="text-sm bg-gray-100 hover:bg-gray-200"
+          className="text-sm bg-blue-100 text-blue-800 border border-blue-300 hover:bg-blue-200"
         >
           話題を変える
         </Button>
