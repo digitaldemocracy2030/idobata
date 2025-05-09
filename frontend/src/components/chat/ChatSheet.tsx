@@ -81,7 +81,10 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
         className="p-0 h-auto rounded-t-xl overflow-hidden"
         style={{ height: `${height}px` }}
       >
-        <ChatHeader onDragStart={handleDragStart} />
+        <ChatHeader 
+          onDragStart={handleDragStart} 
+          onSendMessage={onSendMessage}
+        />
         <div className="flex-grow overflow-auto h-[calc(100%-120px)]">
           <ExtendedChatHistory messages={messages} />
         </div>
