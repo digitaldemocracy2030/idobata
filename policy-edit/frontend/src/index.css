@@ -120,7 +120,7 @@
 /* Fallback for older browsers or different marker implementations */
 /* These assume github-markdown-css might use ::before for list markers */
 /* Adjust if a different mechanism is used */
-.markdown-body ul>li::before,
-.markdown-body ol>li::before {
+.markdown-body ul > li::before,
+.markdown-body ol > li::before {
   color: #24292f !important;
 }
