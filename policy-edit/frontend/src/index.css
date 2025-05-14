@@ -2,6 +2,26 @@
 /* @import "highlight.js/styles/github.css"; */ /* Commented out for now */
 @import "github-markdown-css/github-markdown-light.css"; /* Import GitHub Markdown CSS (light theme) */
 
+/* Mobile chat transitions */
+.chat-enter {
+  transform: translateY(100%);
+  opacity: 0;
+}
+.chat-enter-active {
+  transform: translateY(0);
+  opacity: 1;
+  transition: transform 300ms, opacity 300ms;
+}
+.chat-exit {
+  transform: translateY(0);
+  opacity: 1;
+}
+.chat-exit-active {
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 300ms, opacity 300ms;
+}
+
 /* Remove previously added custom .markdown styles */
 
 /* Style MarkdownViewer within chat bubbles */
