@@ -99,6 +99,20 @@ services:
     volumes:
       - mongo_data:/data/db # Persist data using a named volume
 
+
+
+  postgres:
+    container_name: postgres-dev
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   # --- Admin Panel ---
   admin:
     container_name: admin-dev
@@ -115,7 +129,7 @@ services:
     environment:
       - NODE_ENV=development
       - VITE_API_BASE_URL=http://localhost:3000 # idea-discussionバックエンドを指す
-      
+
   # --- Python Embedding Service ---
   python-service:
     container_name: idobata-python-service
@@ -132,4 +146,5 @@ services:
 volumes:
   mongo_data: # Define the named volume for MongoDB
   chroma_data: # Define the named volume for ChromaDB
+  postgres_data: # Define the named volume for PostgreSQL
   # Named volume for idea_backend_node_modules removed as we're using the multi-stage build approach

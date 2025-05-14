@@ -8,5 +8,17 @@ export default defineConfig({
   server: {
     allowedHosts:
       process.env.VITE_POLICY_FRONTEND_ALLOWED_HOSTS?.split(",") || [],
+    proxy: {
+      '/auth': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
   },
 });

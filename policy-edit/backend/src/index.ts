@@ -10,7 +10,11 @@ import cors from "cors";
 import express from "express";
 import { CORS_ORIGIN, PORT } from "./config.js";
 import chatRoutes from "./routes/chat.js";
+import authRoutes from "./routes/auth.js";
 import { logger } from "./utils/logger.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // Create Express app
 const app = express();
@@ -22,11 +26,13 @@ app.use(
     origin: CORS_ORIGIN,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 
 // Routes
 app.use("/chat", chatRoutes);
+app.use("/auth", authRoutes);
 
 // Health check endpoint
 app.get("/health", (req, res) => {
@@ -53,6 +59,7 @@ app.use(
 app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
   logger.info(`CORS enabled for origin: ${CORS_ORIGIN}`);
+  logger.info(`Authentication routes enabled at /auth`);
 });
 
 // Handle graceful shutdown
