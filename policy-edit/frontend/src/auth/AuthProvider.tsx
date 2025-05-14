@@ -1,30 +1,30 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { betterAuth } from "./auth";
 
 interface User {
   id: string;
   email: string;
   name?: string;
+  image?: string;
 }
 
 interface AuthContextType {
-  user: User | null;
-  isLoading: boolean;
   isAuthenticated: boolean;
+  isLoading: boolean;
+  user: User | null;
+  error: string | null;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-  error: string | null;
 }
 
 const AuthContext = createContext<AuthContextType>({
-  user: null,
-  isLoading: true,
   isAuthenticated: false,
+  isLoading: true,
+  user: null,
+  error: null,
   signIn: async () => {},
   signUp: async () => {},
   signOut: async () => {},
-  error: null,
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -34,23 +34,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         setIsLoading(true);
-        const session = await betterAuth.getSession();
-        
-        if (session) {
-          setUser(session.user as User);
+        const response = await fetch("/auth/session");
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.user) {
+            setUser(data.user as User);
+            setIsAuthenticated(true);
+          } else {
+            setIsAuthenticated(false);
+          }
         } else {
-          setUser(null);
+          setIsAuthenticated(false);
         }
-      } catch (err) {
-        console.error("Authentication check failed:", err);
-        setError("認証チェックに失敗しました");
-        setUser(null);
+      } catch (error) {
+        console.error("Failed to check authentication status:", error);
+        setIsAuthenticated(false);
       } finally {
         setIsLoading(false);
       }
@@ -63,21 +69,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       setIsLoading(true);
       setError(null);
-      
-      const result = await betterAuth.signIn({
-        email,
-        password,
+
+      const response = await fetch("/auth/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       });
-      
-      if (result.error) {
-        throw new Error(result.error);
+
+      if (!response.ok) {
+        setError(
+          "ログインに失敗しました。メールアドレスとパスワードを確認してください。"
+        );
+        throw new Error("Login failed");
       }
-      
-      setUser(result.user as User);
-    } catch (err) {
-      console.error("Sign in failed:", err);
-      setError("ログインに失敗しました。メールアドレスとパスワードを確認してください。");
-      throw err;
+
+      const data = await response.json();
+      if (data.user) {
+        setUser(data.user as User);
+        setIsAuthenticated(true);
+      }
+    } catch (error) {
+      console.error("Sign in error:", error);
+      setIsAuthenticated(false);
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -87,22 +103,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       setIsLoading(true);
       setError(null);
-      
-      const result = await betterAuth.signUp({
-        email,
-        password,
+
+      const response = await fetch("/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       });
-      
-      if (result.error) {
-        throw new Error(result.error);
+
+      if (!response.ok) {
+        setError(
+          "アカウント登録に失敗しました。別のメールアドレスを試してください。"
+        );
+        throw new Error("Registration failed");
       }
-      
-      if (result.user) {
-        setUser(result.user as User);
+
+      const data = await response.json();
+      if (data.user) {
+        setUser(data.user as User);
+        setIsAuthenticated(true);
       }
     } catch (err) {
       console.error("Sign up failed:", err);
-      setError("アカウント登録に失敗しました。別のメールアドレスを試してください。");
       throw err;
     } finally {
       setIsLoading(false);
@@ -113,13 +136,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       setIsLoading(true);
       setError(null);
-      
-      await betterAuth.signOut();
-      setUser(null);
-    } catch (err) {
-      console.error("Sign out failed:", err);
-      setError("ログアウトに失敗しました");
-      throw err;
+
+      const response = await fetch("/auth/signout", {
+        method: "POST",
+      });
+
+      if (response.ok) {
+        setUser(null);
+        setIsAuthenticated(false);
+      } else {
+        setError("ログアウトに失敗しました。");
+        throw new Error("Logout failed");
+      }
+    } catch (error) {
+      console.error("Sign out error:", error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -128,13 +159,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <AuthContext.Provider
       value={{
-        user,
+        isAuthenticated,
         isLoading,
-        isAuthenticated: !!user,
+        user,
+        error,
         signIn,
         signUp,
         signOut,
-        error,
       }}
     >
       {children}
