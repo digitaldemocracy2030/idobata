@@ -1,21 +1,29 @@
-import type { Session, User } from "@auth/core";
 import React, { createContext, useContext, useState, useEffect } from "react";
-import type { AuthConfig } from "./auth-config";
-import { authConfig } from "./auth-config";
+
+interface User {
+  id: string;
+  email: string;
+  name?: string;
+  image?: string;
+}
 
 interface AuthContextType {
-  session: Session | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
   user: User | null;
-  status: "loading" | "authenticated" | "unauthenticated";
-  signIn: (email: string) => Promise<void>;
+  error: string | null;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
-  session: null,
+  isAuthenticated: false,
+  isLoading: true,
   user: null,
-  status: "loading",
+  error: null,
   signIn: async () => {},
+  signUp: async () => {},
   signOut: async () => {},
 });
 
@@ -24,84 +32,138 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [status, setStatus] = useState<
-    "loading" | "authenticated" | "unauthenticated"
-  >("loading");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch("/api/auth/session");
+        setIsLoading(true);
+        const response = await fetch("/auth/session");
+        
         if (response.ok) {
           const data = await response.json();
-          if (data.session) {
-            setSession(data.session);
-            setUser(data.session.user);
-            setStatus("authenticated");
+          if (data.user) {
+            setUser(data.user as User);
+            setIsAuthenticated(true);
           } else {
-            setStatus("unauthenticated");
+            setIsAuthenticated(false);
           }
         } else {
-          setStatus("unauthenticated");
+          setIsAuthenticated(false);
         }
       } catch (error) {
         console.error("Failed to check authentication status:", error);
-        setStatus("unauthenticated");
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     checkAuth();
   }, []);
 
-  const signIn = async (email: string) => {
+  const signIn = async (email: string, password: string) => {
     try {
-      setStatus("loading");
-      const response = await fetch("/api/auth/signin/email", {
+      setIsLoading(true);
+      setError(null);
+      
+      const response = await fetch("/auth/signin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, password }),
       });
-
-      if (response.ok) {
-      } else {
-        setStatus("unauthenticated");
-        throw new Error("Failed to sign in");
+      
+      if (!response.ok) {
+        setError("ログインに失敗しました。メールアドレスとパスワードを確認してください。");
+        throw new Error("Login failed");
+      }
+      
+      const data = await response.json();
+      if (data.user) {
+        setUser(data.user as User);
+        setIsAuthenticated(true);
       }
     } catch (error) {
       console.error("Sign in error:", error);
-      setStatus("unauthenticated");
+      setIsAuthenticated(false);
       throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const signUp = async (email: string, password: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const response = await fetch("/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      
+      if (!response.ok) {
+        setError("アカウント登録に失敗しました。別のメールアドレスを試してください。");
+        throw new Error("Registration failed");
+      }
+      
+      const data = await response.json();
+      if (data.user) {
+        setUser(data.user as User);
+        setIsAuthenticated(true);
+      }
+    } catch (err) {
+      console.error("Sign up failed:", err);
+      throw err;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const signOut = async () => {
     try {
-      setStatus("loading");
-      const response = await fetch("/api/auth/signout", {
+      setIsLoading(true);
+      setError(null);
+      
+      const response = await fetch("/auth/signout", {
         method: "POST",
       });
-
+      
       if (response.ok) {
-        setSession(null);
         setUser(null);
-        setStatus("unauthenticated");
+        setIsAuthenticated(false);
       } else {
-        setStatus("authenticated");
-        throw new Error("Failed to sign out");
+        setError("ログアウトに失敗しました。");
+        throw new Error("Logout failed");
       }
     } catch (error) {
       console.error("Sign out error:", error);
-      setStatus("authenticated");
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, status, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        isLoading,
+        user,
+        error,
+        signIn,
+        signUp,
+        signOut,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
