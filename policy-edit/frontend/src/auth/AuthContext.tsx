@@ -42,7 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       try {
         setIsLoading(true);
         const response = await fetch("/auth/session");
-        
+
         if (response.ok) {
           const data = await response.json();
           if (data.user) {
@@ -69,7 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const response = await fetch("/auth/signin", {
         method: "POST",
         headers: {
@@ -77,12 +77,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         },
         body: JSON.stringify({ email, password }),
       });
-      
+
       if (!response.ok) {
-        setError("ログインに失敗しました。メールアドレスとパスワードを確認してください。");
+        setError(
+          "ログインに失敗しました。メールアドレスとパスワードを確認してください。"
+        );
         throw new Error("Login failed");
       }
-      
+
       const data = await response.json();
       if (data.user) {
         setUser(data.user as User);
@@ -96,12 +98,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsLoading(false);
     }
   };
-  
+
   const signUp = async (email: string, password: string) => {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const response = await fetch("/auth/signup", {
         method: "POST",
         headers: {
@@ -109,12 +111,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         },
         body: JSON.stringify({ email, password }),
       });
-      
+
       if (!response.ok) {
-        setError("アカウント登録に失敗しました。別のメールアドレスを試してください。");
+        setError(
+          "アカウント登録に失敗しました。別のメールアドレスを試してください。"
+        );
         throw new Error("Registration failed");
       }
-      
+
       const data = await response.json();
       if (data.user) {
         setUser(data.user as User);
@@ -132,11 +136,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const response = await fetch("/auth/signout", {
         method: "POST",
       });
-      
+
       if (response.ok) {
         setUser(null);
         setIsAuthenticated(false);
