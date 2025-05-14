@@ -1,5 +1,5 @@
 @import "tailwindcss";
-/* @import "highlight.js/styles/github.css"; */ /* Commented out for now */
+@import "highlight.js/styles/github.css"; /* Enable syntax highlighting */
 @import "github-markdown-css/github-markdown-light.css"; /* Import GitHub Markdown CSS (light theme) */
 
 /* Remove previously added custom .markdown styles */
