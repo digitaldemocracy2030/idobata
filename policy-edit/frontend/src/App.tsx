@@ -1,14 +1,14 @@
 import {
   BrowserRouter,
+  Navigate,
   Route,
   Routes,
   useParams,
-  Navigate,
 } from "react-router-dom";
+import { AuthProvider, useAuth } from "./auth/AuthProvider";
 import ContentExplorer from "./components/ContentExplorer";
 import Layout from "./components/Layout";
 import NotFound from "./components/NotFound"; // 404 page component
-import { AuthProvider, useAuth } from "./auth/AuthProvider";
 import { LoginForm } from "./components/auth/LoginForm";
 import { RegisterForm } from "./components/auth/RegisterForm";
 
