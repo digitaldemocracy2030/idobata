@@ -1,4 +1,10 @@
-import { BrowserRouter, Route, Routes, useParams, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  useParams,
+  Navigate,
+} from "react-router-dom";
 import ContentExplorer from "./components/ContentExplorer";
 import Layout from "./components/Layout";
 import NotFound from "./components/NotFound"; // 404 page component
@@ -20,7 +26,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Loading...
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
@@ -41,22 +51,22 @@ function App() {
           </Route>
           <Route path="/" element={<Layout />}>
             {/* Route for the repository root */}
-            <Route 
-              index 
+            <Route
+              index
               element={
                 <ProtectedRoute>
                   <ContentExplorer initialPath="" />
                 </ProtectedRoute>
-              } 
+              }
             />
             {/* Route for paths within the repository */}
-            <Route 
-              path="view/*" 
+            <Route
+              path="view/*"
               element={
                 <ProtectedRoute>
                   <ContentExplorerWrapper />
                 </ProtectedRoute>
-              } 
+              }
             />
             {/* Catch-all route for any other paths (404) */}
             <Route path="*" element={<NotFound />} />

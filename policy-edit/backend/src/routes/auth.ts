@@ -1,6 +1,6 @@
 import express from "express";
-import { auth } from "../auth/auth.js";
 import { Request as ExpressRequest } from "express";
+import { auth } from "../auth/auth.js";
 
 const router = express.Router();
 
@@ -9,7 +9,10 @@ router.all("/*", async (req: ExpressRequest, res) => {
     const request = new Request(req.url, {
       method: req.method,
       headers: req.headers as HeadersInit,
-      body: req.method !== "GET" && req.method !== "HEAD" ? JSON.stringify(req.body) : undefined,
+      body:
+        req.method !== "GET" && req.method !== "HEAD"
+          ? JSON.stringify(req.body)
+          : undefined,
     });
 
     const response = await auth.handler(request);
