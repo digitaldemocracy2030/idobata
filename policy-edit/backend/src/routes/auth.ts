@@ -1,20 +1,27 @@
 import express from "express";
 import { auth } from "../auth/auth.js";
+import { Request as ExpressRequest } from "express";
 
 const router = express.Router();
 
-router.all("/*", async (req, res) => {
+router.all("/*", async (req: ExpressRequest, res) => {
   try {
-    const response = await auth.handler(req);
-    
+    const request = new Request(req.url, {
+      method: req.method,
+      headers: req.headers as HeadersInit,
+      body: req.method !== "GET" && req.method !== "HEAD" ? JSON.stringify(req.body) : undefined,
+    });
+
+    const response = await auth.handler(request);
+
     res.status(response.status);
-    
+
     for (const [key, value] of Object.entries(response.headers)) {
       if (value) {
         res.setHeader(key, value);
       }
     }
-    
+
     if (response.body) {
       res.send(response.body);
     } else {

@@ -6,13 +6,13 @@ console.log("GITHUB_TARGET_OWNER:", process.env.GITHUB_TARGET_OWNER);
 console.log("GITHUB_TARGET_REPO:", process.env.GITHUB_TARGET_REPO);
 console.log("------------------------------------");
 import cors from "cors";
+import dotenv from "dotenv";
 // --- END DEBUG ---
 import express from "express";
 import { CORS_ORIGIN, PORT } from "./config.js";
-import chatRoutes from "./routes/chat.js";
 import authRoutes from "./routes/auth.js";
+import chatRoutes from "./routes/chat.js";
 import { logger } from "./utils/logger.js";
-import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -59,7 +59,7 @@ app.use(
 app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
   logger.info(`CORS enabled for origin: ${CORS_ORIGIN}`);
-  logger.info(`Authentication routes enabled at /auth`);
+  logger.info("Authentication routes enabled at /auth");
 });
 
 // Handle graceful shutdown
