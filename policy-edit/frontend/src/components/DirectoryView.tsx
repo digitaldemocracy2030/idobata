@@ -28,10 +28,16 @@ const DirectoryView: React.FC<DirectoryViewProps> = ({ data }) => {
 
   // Data is assumed to be pre-sorted by the store (folders first, then files, alphabetically)
 
+  const formatFileName = (name: string) => {
+    return name.endsWith(".md") ? name.slice(0, -3) : name;
+  };
+
+  const filteredData = data.filter((item) => !item.name.startsWith("."));
+
   return (
     <div className="border rounded overflow-hidden">
       <ul className="divide-y divide-gray-200">
-        {data.map((item) => (
+        {filteredData.map((item) => (
           <li
             key={item.sha}
             className="hover:bg-gray-50 transition-colors duration-150"
@@ -46,7 +52,9 @@ const DirectoryView: React.FC<DirectoryViewProps> = ({ data }) => {
               ) : (
                 <FaFileAlt className="w-5 h-5 mr-3 text-gray-500 flex-shrink-0" />
               )}
-              <span className="text-gray-800 truncate">{item.name}</span>
+              <span className="text-gray-800 truncate text-base">
+                {formatFileName(item.name)}
+              </span>
             </Link>
           </li>
         ))}

@@ -358,13 +358,13 @@ const ChatPanel: React.FC = () => {
     <div className="flex flex-col h-full p-4 border-l border-gray-300 relative">
       {" "}
       {/* Added relative positioning */}
-      {/* Display User Name and Branch ID at the top right */}
-      <div className="absolute top-2 right-2 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded flex items-center space-x-2">
+      {/* Display User Name and Branch ID at the top right - Removed for UI simplification */}
+      {/* <div className="absolute top-2 right-2 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded flex items-center space-x-2">
         {userName && <span>👤 {userName}</span>}
         {isMdFileActive && currentBranchId && (
           <span>🌿 ブランチ：{currentBranchId}</span>
         )}
-      </div>
+      </div> */}
       <div className="flex justify-between items-center mb-4 pt-2">
         {" "}
         {/* Added padding-top */}
@@ -422,7 +422,7 @@ const ChatPanel: React.FC = () => {
       >
         {!isMdFileActive ? (
           <div className="text-gray-500 text-center py-4 h-full flex items-center justify-center">
-            Markdownファイルを選択して表示またはチャットを開始してください。
+            気になるファイルをクリックしてチャットを開始しましょう。
           </div>
         ) : messages.length === 0 ? (
           <div className="text-gray-500 text-center py-4">
