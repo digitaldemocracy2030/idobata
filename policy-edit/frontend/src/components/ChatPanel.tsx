@@ -20,6 +20,11 @@ interface OpenAIMessage {
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/api";
 
+const GREETING_MESSAGE_1 =
+  "今ご覧になっている政策について、何かご不明な点はありますか？お気軽にご質問ください。";
+const GREETING_MESSAGE_2 =
+  "また、「もっとこうしたら良くなるのに」といったご意見や改善のためのアイデアがあれば、ぜひ私と一緒にお話ししませんか？ もし素晴らしい改善案がまとまれば、一緒に提案を出すことも可能です。";
+
 const ChatPanel: React.FC = () => {
   // Local state for input, loading, connection, and general errors
   const [inputValue, setInputValue] = useState("");
@@ -96,6 +101,14 @@ const ChatPanel: React.FC = () => {
             if (connectedAfterAttempt) {
               addMessageToThread(pathForMessage, {
                 text: "サーバーに自動接続しました。",
+                sender: "bot",
+              });
+              addMessageToThread(pathForMessage, {
+                text: GREETING_MESSAGE_1,
+                sender: "bot",
+              });
+              addMessageToThread(pathForMessage, {
+                text: GREETING_MESSAGE_2,
                 sender: "bot",
               });
             } else {
@@ -383,6 +396,8 @@ const ChatPanel: React.FC = () => {
                 if (isMdFileActive && currentPath) {
                   if (connected) {
                     addBotMessageToCurrentThread("手動接続に成功しました。");
+                    addBotMessageToCurrentThread(GREETING_MESSAGE_1);
+                    addBotMessageToCurrentThread(GREETING_MESSAGE_2);
                   } else {
                     addBotMessageToCurrentThread(
                       `エラー：手動接続に失敗しました。${error || ""}`.trim()
