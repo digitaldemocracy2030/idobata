@@ -1,8 +1,8 @@
 import express from "express";
-import { McpClient } from "../mcp/client.js";
-import { logger } from "../utils/logger.js";
 import { db } from "../db/index.js";
 import { interactionLogs } from "../db/schema.js";
+import { McpClient } from "../mcp/client.js";
+import { logger } from "../utils/logger.js";
 
 const router = express.Router();
 let mcpClient: McpClient | null = null;
@@ -78,7 +78,8 @@ router.post("/", async (req, res) => {
       await db.insert(interactionLogs).values({
         sessionId: sessionIdToLog,
         userMessage: message,
-        aiMessage: typeof response === 'string' ? response : JSON.stringify(response), // Assuming response might be an object
+        aiMessage:
+          typeof response === "string" ? response : JSON.stringify(response), // Assuming response might be an object
       });
       logger.info(`Interaction logged for session: ${sessionIdToLog}`);
     } catch (dbError) {
