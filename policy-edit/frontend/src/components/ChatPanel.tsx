@@ -98,21 +98,24 @@ const ChatPanel: React.FC = () => {
                 text: "サーバーに自動接続しました。",
                 sender: "bot",
               });
-              
+
               try {
-                const storedMessages = localStorage.getItem('greetingMessages');
+                const storedMessages = localStorage.getItem("greetingMessages");
                 if (storedMessages) {
                   const greetingMessages = JSON.parse(storedMessages);
-                  greetingMessages.forEach((message: string) => {
+                  for (const message of greetingMessages) {
                     addMessageToThread(pathForMessage, {
                       text: message,
                       sender: "bot",
                     });
-                  });
-                  localStorage.removeItem('greetingMessages');
+                  }
+                  localStorage.removeItem("greetingMessages");
                 }
               } catch (error) {
-                console.error("挨拶メッセージの処理中にエラーが発生しました:", error);
+                console.error(
+                  "挨拶メッセージの処理中にエラーが発生しました:",
+                  error
+                );
               }
             } else {
               // Use the error state which should have been set by connectToGithubContributionServer
@@ -230,7 +233,10 @@ const ChatPanel: React.FC = () => {
       if (response.ok) {
         setIsConnected(true);
         if (data.greetingMessages && Array.isArray(data.greetingMessages)) {
-          localStorage.setItem('greetingMessages', JSON.stringify(data.greetingMessages));
+          localStorage.setItem(
+            "greetingMessages",
+            JSON.stringify(data.greetingMessages)
+          );
         }
         // Message added in the .then block below
       } else {
@@ -402,18 +408,22 @@ const ChatPanel: React.FC = () => {
                 if (isMdFileActive && currentPath) {
                   if (connected) {
                     addBotMessageToCurrentThread("手動接続に成功しました。");
-                    
+
                     try {
-                      const storedMessages = localStorage.getItem('greetingMessages');
+                      const storedMessages =
+                        localStorage.getItem("greetingMessages");
                       if (storedMessages) {
                         const greetingMessages = JSON.parse(storedMessages);
-                        greetingMessages.forEach((message: string) => {
+                        for (const message of greetingMessages) {
                           addBotMessageToCurrentThread(message);
-                        });
-                        localStorage.removeItem('greetingMessages');
+                        }
+                        localStorage.removeItem("greetingMessages");
                       }
                     } catch (error) {
-                      console.error("挨拶メッセージの処理中にエラーが発生しました:", error);
+                      console.error(
+                        "挨拶メッセージの処理中にエラーが発生しました:",
+                        error
+                      );
                     }
                   } else {
                     addBotMessageToCurrentThread(
