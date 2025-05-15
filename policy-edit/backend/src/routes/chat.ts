@@ -1,4 +1,6 @@
 import express from "express";
+import { db } from "../db/index.js";
+import { interactionLogs } from "../db/schema.js";
 import { McpClient } from "../mcp/client.js";
 import { logger } from "../utils/logger.js";
 
@@ -69,6 +71,22 @@ router.post("/", async (req, res) => {
       fileContent,
       userName
     );
+
+    // Log interaction
+    try {
+      const sessionIdToLog = userName || "unknown_user";
+      await db.insert(interactionLogs).values({
+        sessionId: sessionIdToLog,
+        userMessage: message,
+        aiMessage:
+          typeof response === "string" ? response : JSON.stringify(response), // Assuming response might be an object
+      });
+      logger.info(`Interaction logged for session: ${sessionIdToLog}`);
+    } catch (dbError) {
+      logger.error("Failed to log interaction to database:", dbError);
+      // Do not fail the request if logging fails, but log the error
+    }
+
     return res.json({ response });
   } catch (error) {
     logger.error("Error processing chat message:", error);
