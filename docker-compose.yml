@@ -129,7 +129,21 @@ services:
       - ./python-service:/app # Mount source code for development
       - chroma_data:/data/chroma # ChromaDB data persistence
 
+  # --- PostgreSQL for policy-edit authentication ---
+  postgres:
+    container_name: postgres-auth-dev
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=idobata_auth
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
 volumes:
   mongo_data: # Define the named volume for MongoDB
   chroma_data: # Define the named volume for ChromaDB
+  postgres_data: # Define the named volume for PostgreSQL
   # Named volume for idea_backend_node_modules removed as we're using the multi-stage build approach

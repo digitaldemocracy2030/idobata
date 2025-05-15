@@ -16,12 +16,21 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.9.0",
+    "@neondatabase/serverless": "^1.0.0",
+    "better-auth": "^1.2.7",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
+    "drizzle-kit": "^0.31.1",
+    "drizzle-orm": "^0.43.1",
     "express": "^4.18.2",
-    "openai": "^4.28.0"
+    "openai": "^4.28.0",
+    "pg": "^8.16.0",
+    "postgres": "^3.4.5",
+    "resend": "^4.5.1"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.11.5",

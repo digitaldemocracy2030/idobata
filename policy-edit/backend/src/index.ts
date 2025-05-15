@@ -8,25 +8,59 @@ console.log("------------------------------------");
 import cors from "cors";
 // --- END DEBUG ---
 import express from "express";
+import cookieParser from "cookie-parser";
 import { CORS_ORIGIN, PORT } from "./config.js";
 import chatRoutes from "./routes/chat.js";
+import authRoutes from "./routes/auth.js";
 import { logger } from "./utils/logger.js";
+import { auth } from "./auth/auth.js";
 
 // Create Express app
 const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
 app.use(
   cors({
     origin: CORS_ORIGIN,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 
+// Authentication middleware
+const authMiddleware = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  try {
+    const headers = new Headers();
+    Object.entries(req.headers).forEach(([key, value]) => {
+      if (value) headers.append(key, Array.isArray(value) ? value.join(', ') : value.toString());
+    });
+
+    const session = await auth.api.getSession({
+      headers,
+    });
+
+    if (!session) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    (req as any).user = session.user;
+    next();
+  } catch (error) {
+    logger.error("Auth middleware error:", error);
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+};
+
 // Routes
+app.use("/auth", authRoutes);
 app.use("/chat", chatRoutes);
+
+app.get("/protected", authMiddleware, (req, res) => {
+  res.json({ message: "This is a protected route", user: (req as any).user });
+});
 
 // Health check endpoint
 app.get("/health", (req, res) => {
