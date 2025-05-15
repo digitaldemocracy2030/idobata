@@ -11,6 +11,26 @@ dotenv.config();
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+declare module "better-auth" {
+  interface BetterAuthAPI {
+    signInSocial(options: {
+      body: {
+        provider: "github" | "google";
+        callbackURL: string;
+      };
+    }): Promise<{ url: string }>;
+
+    callbackOAuth(options: {
+      query: {
+        code: string;
+      };
+      params: {
+        id: "github" | "google";
+      };
+    }): Promise<{ token: string }>;
+  }
+}
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",

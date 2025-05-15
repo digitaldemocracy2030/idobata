@@ -109,12 +109,14 @@ router.get("/oauth/:provider", async (req, res) => {
     const { provider } = req.params;
 
     const allowedProviders = ["github", "google"] as const;
-    if (!allowedProviders.includes(provider as any)) {
+    type AllowedProvider = typeof allowedProviders[number];
+    
+    if (!allowedProviders.includes(provider as AllowedProvider)) {
       return res.status(400).json({ success: false, message: "無効なプロバイダーです" });
     }
 
-    // @ts-ignore - TypeScript doesn't recognize this method but it exists at runtime
-    const result = await auth.api.signInSocial({
+    const api = auth.api as any;
+    const result = await api.signInSocial({
       body: {
         provider: provider as "github" | "google",
         callbackURL: `${process.env.BACKEND_URL}/auth/oauth/callback/${provider}`,
@@ -143,12 +145,14 @@ router.get("/oauth/callback/:provider", async (req, res) => {
     }
 
     const allowedProviders = ["github", "google"] as const;
-    if (!allowedProviders.includes(provider as any)) {
+    type AllowedProvider = typeof allowedProviders[number];
+    
+    if (!allowedProviders.includes(provider as AllowedProvider)) {
       return res.status(400).json({ success: false, message: "無効なプロバイダーです" });
     }
 
-    // @ts-ignore - TypeScript doesn't recognize this method but it exists at runtime
-    const result = await auth.api.callbackOAuth({
+    const api = auth.api as any;
+    const result = await api.callbackOAuth({
       query: {
         code,
       },
