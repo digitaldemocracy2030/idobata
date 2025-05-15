@@ -95,9 +95,16 @@ router.post("/connect", async (req, res) => {
     }
 
     await initializeMcpClient(serverPath);
+    
+    const greetingMessages = [
+      "今ご覧になっている政策について、何かご不明な点はありますか？お気軽にご質問ください。",
+      "また、「もっとこうしたら良くなるのに」といったご意見や改善のためのアイデアがあれば、ぜひ私と一緒にお話ししませんか？ もし素晴らしい改善案がまとまれば、一緒に提案を出すことも可能です。"
+    ];
+    
     return res.json({
       success: true,
       message: `Connected to MCP server at ${serverPath}`,
+      greetingMessages: greetingMessages
     });
   } catch (error) {
     logger.error("Error connecting to MCP server:", error);

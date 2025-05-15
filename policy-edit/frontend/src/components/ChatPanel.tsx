@@ -98,6 +98,22 @@ const ChatPanel: React.FC = () => {
                 text: "サーバーに自動接続しました。",
                 sender: "bot",
               });
+              
+              try {
+                const storedMessages = localStorage.getItem('greetingMessages');
+                if (storedMessages) {
+                  const greetingMessages = JSON.parse(storedMessages);
+                  greetingMessages.forEach((message: string) => {
+                    addMessageToThread(pathForMessage, {
+                      text: message,
+                      sender: "bot",
+                    });
+                  });
+                  localStorage.removeItem('greetingMessages');
+                }
+              } catch (error) {
+                console.error("挨拶メッセージの処理中にエラーが発生しました:", error);
+              }
             } else {
               // Use the error state which should have been set by connectToGithubContributionServer
               const currentError = error; // Capture error state after connect attempt
@@ -213,6 +229,9 @@ const ChatPanel: React.FC = () => {
       // Don't add messages here directly, let the check after connection handle it
       if (response.ok) {
         setIsConnected(true);
+        if (data.greetingMessages && Array.isArray(data.greetingMessages)) {
+          localStorage.setItem('greetingMessages', JSON.stringify(data.greetingMessages));
+        }
         // Message added in the .then block below
       } else {
         setError(data.error || "サーバーへの接続に失敗しました");
@@ -383,6 +402,19 @@ const ChatPanel: React.FC = () => {
                 if (isMdFileActive && currentPath) {
                   if (connected) {
                     addBotMessageToCurrentThread("手動接続に成功しました。");
+                    
+                    try {
+                      const storedMessages = localStorage.getItem('greetingMessages');
+                      if (storedMessages) {
+                        const greetingMessages = JSON.parse(storedMessages);
+                        greetingMessages.forEach((message: string) => {
+                          addBotMessageToCurrentThread(message);
+                        });
+                        localStorage.removeItem('greetingMessages');
+                      }
+                    } catch (error) {
+                      console.error("挨拶メッセージの処理中にエラーが発生しました:", error);
+                    }
                   } else {
                     addBotMessageToCurrentThread(
                       `エラー：手動接続に失敗しました。${error || ""}`.trim()
