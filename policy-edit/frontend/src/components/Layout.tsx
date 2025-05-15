@@ -49,7 +49,7 @@ const Layout: React.FC = () => {
               ? "h-1/2 translate-y-0 opacity-100 pointer-events-auto"
               : "h-1/2 translate-y-full opacity-0 pointer-events-none"
             : "h-screen md:w-1/3"
-        } md:translate-y-0 md:opacity-100 md:pointer-events-auto border-t md:border-t-0 md:border-r border-gray-300 overflow-y-auto fixed bottom-0 left-0 right-0 md:static md:order-1 transition-all duration-300 ease-in-out z-40 bg-white relative`}
+        } md:translate-y-0 md:opacity-100 md:pointer-events-auto border-t md:border-t-0 md:border-r border-gray-300 overflow-y-auto fixed bottom-0 left-0 right-0 md:static md:order-1 transition-all duration-300 ease-in-out z-40 bg-white`}
       >
         {/* Close button - Only visible on mobile when chat is visible */}
         {isMobile && isChatVisible && (
