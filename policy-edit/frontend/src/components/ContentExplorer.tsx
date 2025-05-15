@@ -20,7 +20,7 @@ const ContentExplorer: React.FC<ContentExplorerProps> = ({ initialPath }) => {
   const error = useContentStore((state) => state.error);
   const content = useContentStore((state) => state.content);
   const contentType = useContentStore((state) => state.contentType);
-  const currentPath = useContentStore((state) => state.currentPath);
+  // const currentPath = useContentStore((state) => state.currentPath);
   const chatThreads = useContentStore((state) => state.chatThreads);
   // We don't strictly need the default branch name here, just the presence of a branchId
   // initialPathが変更されたら（URLが変わったら）データを再取得
