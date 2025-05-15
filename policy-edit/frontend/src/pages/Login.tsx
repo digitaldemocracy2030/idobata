@@ -19,8 +19,9 @@ const Login: React.FC = () => {
     try {
       await signIn(email, password);
       navigate("/");
-    } catch (err: any) {
-      setError(err.message || "ログインに失敗しました");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "ログインに失敗しました";
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -29,8 +30,9 @@ const Login: React.FC = () => {
   const handleOAuthSignIn = async (provider: "github" | "google") => {
     try {
       await signInWithOAuth(provider);
-    } catch (err: any) {
-      setError(err.message || `${provider}でのログインに失敗しました`);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : `${provider}でのログインに失敗しました`;
+      setError(errorMessage);
     }
   };
 
@@ -123,6 +125,7 @@ const Login: React.FC = () => {
             <div className="mt-6 grid grid-cols-2 gap-3">
               <div>
                 <button
+                  type="button"
                   onClick={() => handleOAuthSignIn("github")}
                   className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
                 >
@@ -139,6 +142,7 @@ const Login: React.FC = () => {
 
               <div>
                 <button
+                  type="button"
                   onClick={() => handleOAuthSignIn("google")}
                   className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
                 >

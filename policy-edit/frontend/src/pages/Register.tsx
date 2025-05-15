@@ -32,8 +32,9 @@ const Register: React.FC = () => {
       setTimeout(() => {
         navigate("/login");
       }, 3000);
-    } catch (err: any) {
-      setError(err.message || "ユーザー登録に失敗しました");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "ユーザー登録に失敗しました";
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +54,9 @@ const Register: React.FC = () => {
             <div className="mb-4 rounded-md bg-red-50 p-4">
               <div className="flex">
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">{error}</h3>
+                  <h3 className="text-sm font-medium text-red-800">
+                    {error}
+                  </h3>
                 </div>
               </div>
             </div>
@@ -63,7 +66,9 @@ const Register: React.FC = () => {
             <div className="mb-4 rounded-md bg-green-50 p-4">
               <div className="flex">
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-green-800">{success}</h3>
+                  <h3 className="text-sm font-medium text-green-800">
+                    {success}
+                  </h3>
                 </div>
               </div>
             </div>
