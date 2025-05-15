@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 interface User {
   id: string;
@@ -35,7 +41,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
+  const BACKEND_URL =
+    import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -88,8 +95,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (data.success && data.user) {
         setUser(data.user);
       }
-    } catch (err: any) {
-      setError(err.message || "ログインに失敗しました");
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : "ログインに失敗しました";
+      setError(errorMessage);
       throw err;
     } finally {
       setLoading(false);
@@ -116,8 +125,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       return data;
-    } catch (err: any) {
-      setError(err.message || "ユーザー登録に失敗しました");
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : "ユーザー登録に失敗しました";
+      setError(errorMessage);
       throw err;
     } finally {
       setLoading(false);
@@ -144,8 +155,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       setUser(null);
-    } catch (err: any) {
-      setError(err.message || "ログアウトに失敗しました");
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : "ログアウトに失敗しました";
+      setError(errorMessage);
       throw err;
     } finally {
       setLoading(false);
@@ -174,8 +187,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (data.success && data.url) {
         window.location.href = data.url;
       }
-    } catch (err: any) {
-      setError(err.message || "OAuth認証の開始に失敗しました");
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : "OAuth認証の開始に失敗しました";
+      setError(errorMessage);
       throw err;
     } finally {
       setLoading(false);

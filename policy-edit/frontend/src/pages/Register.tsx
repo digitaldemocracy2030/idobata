@@ -33,7 +33,8 @@ const Register: React.FC = () => {
         navigate("/login");
       }, 3000);
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "ユーザー登録に失敗しました";
+      const errorMessage =
+        err instanceof Error ? err.message : "ユーザー登録に失敗しました";
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -54,9 +55,7 @@ const Register: React.FC = () => {
             <div className="mb-4 rounded-md bg-red-50 p-4">
               <div className="flex">
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">
-                    {error}
-                  </h3>
+                  <h3 className="text-sm font-medium text-red-800">{error}</h3>
                 </div>
               </div>
             </div>
@@ -76,7 +75,10 @@ const Register: React.FC = () => {
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700"
+              >
                 名前
               </label>
               <div className="mt-1">
@@ -94,7 +96,10 @@ const Register: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 メールアドレス
               </label>
               <div className="mt-1">
@@ -112,7 +117,10 @@ const Register: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 パスワード
               </label>
               <div className="mt-1">
@@ -130,7 +138,10 @@ const Register: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
                 パスワード（確認）
               </label>
               <div className="mt-1">
@@ -160,7 +171,10 @@ const Register: React.FC = () => {
 
           <div className="mt-6 flex justify-center">
             <div className="text-sm">
-              <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+              <Link
+                to="/login"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+              >
                 すでにアカウントをお持ちの方はこちら
               </Link>
             </div>

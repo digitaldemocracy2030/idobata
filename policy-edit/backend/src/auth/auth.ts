@@ -1,11 +1,11 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { twoFactor } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
+import { twoFactor } from "better-auth/plugins";
+import dotenv from "dotenv";
 import { Resend } from "resend";
 import { db } from "../db/db.js";
 import * as schema from "../db/schema.js";
-import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -37,7 +37,8 @@ export const auth = betterAuth({
     schema: schema,
     usePlural: true,
   }),
-  secret: process.env.BETTER_AUTH_SECRET || "your-secret-key-change-in-production",
+  secret:
+    process.env.BETTER_AUTH_SECRET || "your-secret-key-change-in-production",
   emailAndPassword: {
     enabled: true,
   },
@@ -56,7 +57,10 @@ export const auth = betterAuth({
     ],
   },
   email: {
-    async sendVerificationEmail({ email, token }: { email: string; token: string }) {
+    async sendVerificationEmail({
+      email,
+      token,
+    }: { email: string; token: string }) {
       try {
         await resend.emails.send({
           from: "noreply@yourdomain.com",
@@ -69,7 +73,10 @@ export const auth = betterAuth({
         throw new Error("メールの送信に失敗しました");
       }
     },
-    async sendPasswordResetEmail({ email, token }: { email: string; token: string }) {
+    async sendPasswordResetEmail({
+      email,
+      token,
+    }: { email: string; token: string }) {
       try {
         await resend.emails.send({
           from: "noreply@yourdomain.com",
@@ -83,10 +90,7 @@ export const auth = betterAuth({
       }
     },
   },
-  plugins: [
-    twoFactor(),
-    nextCookies(),
-  ],
+  plugins: [twoFactor(), nextCookies()],
 });
 
 export const authHandlers = auth.api;

@@ -1,10 +1,16 @@
-import { BrowserRouter, Route, Routes, useParams, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useParams,
+} from "react-router-dom";
 import ContentExplorer from "./components/ContentExplorer";
 import Layout from "./components/Layout";
 import NotFound from "./components/NotFound"; // 404 page component
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 // Wrapper component to extract path from URL splat and pass it to ContentExplorer
 function ContentExplorerWrapper() {
@@ -42,14 +48,23 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/verify-email" element={<div>メールアドレスを確認中...</div>} />
-          <Route path="/reset-password" element={<div>パスワードをリセット中...</div>} />
-          
-          <Route path="/" element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }>
+          <Route
+            path="/verify-email"
+            element={<div>メールアドレスを確認中...</div>}
+          />
+          <Route
+            path="/reset-password"
+            element={<div>パスワードをリセット中...</div>}
+          />
+
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
             {/* Route for the repository root */}
             <Route index element={<ContentExplorer initialPath="" />} />
             {/* Route for paths within the repository */}

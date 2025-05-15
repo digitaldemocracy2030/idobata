@@ -5,15 +5,23 @@ console.log("GITHUB_INSTALLATION_ID:", process.env.GITHUB_INSTALLATION_ID);
 console.log("GITHUB_TARGET_OWNER:", process.env.GITHUB_TARGET_OWNER);
 console.log("GITHUB_TARGET_REPO:", process.env.GITHUB_TARGET_REPO);
 console.log("------------------------------------");
+import cookieParser from "cookie-parser";
 import cors from "cors";
 // --- END DEBUG ---
 import express from "express";
-import cookieParser from "cookie-parser";
-import { CORS_ORIGIN, PORT } from "./config.js";
-import chatRoutes from "./routes/chat.js";
-import authRoutes from "./routes/auth.js";
-import { logger } from "./utils/logger.js";
 import { auth } from "./auth/auth.js";
+import { CORS_ORIGIN, PORT } from "./config.js";
+import authRoutes from "./routes/auth.js";
+import chatRoutes from "./routes/chat.js";
+import { logger } from "./utils/logger.js";
+
+interface AuthenticatedRequest extends express.Request {
+  user: {
+    id: string;
+    email: string;
+    name?: string;
+  };
+}
 
 // Create Express app
 const app = express();
@@ -31,12 +39,20 @@ app.use(
 );
 
 // Authentication middleware
-const authMiddleware = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+const authMiddleware = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
   try {
     const headers = new Headers();
-    Object.entries(req.headers).forEach(([key, value]) => {
-      if (value) headers.append(key, Array.isArray(value) ? value.join(', ') : value.toString());
-    });
+    for (const [key, value] of Object.entries(req.headers)) {
+      if (value)
+        headers.append(
+          key,
+          Array.isArray(value) ? value.join(", ") : value.toString()
+        );
+    }
 
     const session = await auth.api.getSession({
       headers,
@@ -46,7 +62,7 @@ const authMiddleware = async (req: express.Request, res: express.Response, next:
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    (req as any).user = session.user;
+    (req as AuthenticatedRequest).user = session.user;
     next();
   } catch (error) {
     logger.error("Auth middleware error:", error);
@@ -59,7 +75,10 @@ app.use("/auth", authRoutes);
 app.use("/chat", chatRoutes);
 
 app.get("/protected", authMiddleware, (req, res) => {
-  res.json({ message: "This is a protected route", user: (req as any).user });
+  res.json({
+    message: "This is a protected route",
+    user: (req as AuthenticatedRequest).user,
+  });
 });
 
 // Health check endpoint
