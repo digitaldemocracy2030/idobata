@@ -149,6 +149,25 @@ services:
       - ./python-service:/app # Mount source code for development
       - chroma_data:/data/chroma # ChromaDB data persistence
 
+  nginx:
+    container_name: nginx-prod
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443" # Uncomment if you configure SSL in nginx.conf
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      # Uncomment the following lines if you set up SSL certificates
+      # - ./path/to/your/certs:/etc/nginx/certs:ro
+    depends_on:
+      - idea-backend
+      - policy-frontend
+      - policy-backend
+      - frontend
+      - admin
+      - python-service
+    restart: always
+
 volumes:
   mongo_data: # Define the named volume for MongoDB
   chroma_data: # Define the named volume for ChromaDB
