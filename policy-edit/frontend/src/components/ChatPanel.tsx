@@ -434,7 +434,7 @@ const ChatPanel: React.FC = () => {
         ) : messages.length === 0 ? (
           <div className="text-gray-500 text-center py-4">
             {isConnected
-              ? `「${getFormattedFileName(currentPath)}」について質問や意見を入力してください。または「こんにちは」と挨拶してみましょう！`
+              ? `表示中のドキュメント「${getFormattedFileName(currentPath)}」について質問や意見を入力してください。または「こんにちは」と挨拶してみましょう！`
               : "チャットを開始するにはサーバーに接続してください。"}
           </div>
         ) : (
