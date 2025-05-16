@@ -197,7 +197,9 @@ const ThemeDetail = () => {
 
     return (
       <>
-        <ThemeDetailTemplate {...templateProps} />
+        <div className="md:mr-[50%]">
+          <ThemeDetailTemplate {...templateProps} />
+        </div>
         <FloatingChat ref={floatingChatRef} onSendMessage={handleSendMessage} />
       </>
     );

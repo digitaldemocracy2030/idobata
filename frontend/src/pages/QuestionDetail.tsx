@@ -291,15 +291,18 @@ const QuestionDetail = () => {
     ];
 
     return (
-      <div className="container mx-auto px-4 py-8">
-        <BreadcrumbView items={breadcrumbItems} />
-        <KeyQuestionHeader
-          question={questionData.question}
-          tagLine={questionData.tagLine}
-          tags={questionData.tags}
-          voteCount={questionData.voteCount}
-          questionId={questionData.id}
-        />
+        <>
+        <div className="md:mr-[50%]">
+          <div className="container mx-auto px-4 py-8">
+            <BreadcrumbView items={breadcrumbItems} />
+          </div>
+          <KeyQuestionHeader
+            question={questionData.question}
+            tagLine={questionData.tagLine}
+            tags={questionData.tags}
+            voteCount={questionData.voteCount}
+            questionId={questionData.id}
+          />
         <DebateSummary
           debateData={debateData}
           visualReport={questionDetail?.visualReport}
@@ -377,8 +380,9 @@ const QuestionDetail = () => {
           issues={reportExample.issues}
         />
 
+        </div>
         <FloatingChat ref={chatRef} onSendMessage={handleSendMessage} />
-      </div>
+        </>
     );
   }
 
