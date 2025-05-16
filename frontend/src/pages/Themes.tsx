@@ -1,8 +1,5 @@
 import { useRef } from "react";
-import {
-  FloatingChat,
-  type FloatingChatRef,
-} from "../components/chat";
+import { FloatingChat, type FloatingChatRef } from "../components/chat";
 import BreadcrumbView from "../components/common/BreadcrumbView";
 import SectionHeading from "../components/common/SectionHeading";
 import ThemeCard from "../components/home/ThemeCard";
@@ -27,7 +24,7 @@ const Themes = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-        <div className="md:mr-[50%]">
+      <div className="md:mr-[50%]">
         <BreadcrumbView items={breadcrumbItems} />
         <SectionHeading title="議論テーマ一覧" />
         <p className="text-base text-neutral-600 mb-8">

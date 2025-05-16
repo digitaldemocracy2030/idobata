@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  FloatingChat,
-  type FloatingChatRef,
-} from "../components/chat";
+import { FloatingChat, type FloatingChatRef } from "../components/chat";
 import ThemeDetailTemplate from "../components/theme/ThemeDetailTemplate";
 import { useAuth } from "../contexts/AuthContext";
 import { useMock } from "../contexts/MockContext";

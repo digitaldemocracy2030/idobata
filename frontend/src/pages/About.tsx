@@ -10,7 +10,6 @@ const About = () => {
 
   const { siteConfig, loading } = useSiteConfig();
 
-
   return (
     <div className="container mx-auto px-4 py-8 xl:max-w-none">
       <BreadcrumbView items={breadcrumbItems} />
@@ -29,7 +28,6 @@ const About = () => {
           © xxparty-policy.com
         </a>
       </div>
-
     </div>
   );
 };

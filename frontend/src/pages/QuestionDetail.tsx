@@ -1,10 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  FloatingChat,
-  type FloatingChatRef,
-} from "../components/chat";
+import { FloatingChat, type FloatingChatRef } from "../components/chat";
 import BreadcrumbView from "../components/common/BreadcrumbView";
 import SectionHeading from "../components/common/SectionHeading";
 import CitizenReportExample from "../components/question/CitizenReportExample";
@@ -291,7 +288,7 @@ const QuestionDetail = () => {
     ];
 
     return (
-        <>
+      <>
         <div className="md:mr-[50%]">
           <div className="container mx-auto px-4 py-8">
             <BreadcrumbView items={breadcrumbItems} />
@@ -303,86 +300,85 @@ const QuestionDetail = () => {
             voteCount={questionData.voteCount}
             questionId={questionData.id}
           />
-        <DebateSummary
-          debateData={debateData}
-          visualReport={questionDetail?.visualReport}
-        />
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex-grow">
-              <SectionHeading title="寄せられた意見" />
+          <DebateSummary
+            debateData={debateData}
+            visualReport={questionDetail?.visualReport}
+          />
+          <div className="mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex-grow">
+                <SectionHeading title="寄せられた意見" />
+              </div>
+              <Link
+                to={`/themes/${themeId}/questions/${qId}/comments`}
+                className="text-base text-primary-500 hover:underline"
+              >
+                すべて見る
+              </Link>
             </div>
-            <Link
-              to={`/themes/${themeId}/questions/${qId}/comments`}
-              className="text-base text-primary-500 hover:underline"
-            >
-              すべて見る
-            </Link>
-          </div>
 
-          <div className="flex border-b border-neutral-200 mb-4">
-            <button
-              className={`flex-1 py-2 px-4 text-base font-bold ${activeTab === "issues" ? "border-b-4 border-primary-500 text-primary-700" : "text-neutral-700"}`}
-              onClick={() => setActiveTab("issues")}
-              type="button"
-            >
-              課題点 ({opinions.issues.length})
-            </button>
-            <button
-              className={`flex-1 py-2 px-4 text-base font-bold ${activeTab === "solutions" ? "border-b-4 border-primary-500 text-primary-700" : "text-neutral-700 "}`}
-              onClick={() => setActiveTab("solutions")}
-              type="button"
-            >
-              解決策 ({opinions.solutions.length})
-            </button>
-          </div>
-
-          <div className="space-y-3">
-            {activeTab === "issues"
-              ? opinions.issues
-                  .slice(0, 3)
-                  .map((issue) => (
-                    <OpinionCard
-                      key={issue.id}
-                      id={issue.id}
-                      text={issue.text}
-                      type="課題点"
-                      relevance={issue.relevance || 0}
-                    />
-                  ))
-              : opinions.solutions
-                  .slice(0, 3)
-                  .map((solution) => (
-                    <OpinionCard
-                      key={solution.id}
-                      id={solution.id}
-                      text={solution.text}
-                      type="解決策"
-                      relevance={solution.relevance || 0}
-                    />
-                  ))}
-          </div>
-
-          {((activeTab === "issues" && opinions.issues.length > 3) ||
-            (activeTab === "solutions" && opinions.solutions.length > 3)) && (
-            <div className="flex justify-start">
-              <Button asChild size="lg" className="w-auto mt-4">
-                <Link to={`/themes/${themeId}/questions/${qId}/comments`}>
-                  もっと見る
-                  <ArrowRight className="h-5 w-5 ml-2" />
-                </Link>
-              </Button>
+            <div className="flex border-b border-neutral-200 mb-4">
+              <button
+                className={`flex-1 py-2 px-4 text-base font-bold ${activeTab === "issues" ? "border-b-4 border-primary-500 text-primary-700" : "text-neutral-700"}`}
+                onClick={() => setActiveTab("issues")}
+                type="button"
+              >
+                課題点 ({opinions.issues.length})
+              </button>
+              <button
+                className={`flex-1 py-2 px-4 text-base font-bold ${activeTab === "solutions" ? "border-b-4 border-primary-500 text-primary-700" : "text-neutral-700 "}`}
+                onClick={() => setActiveTab("solutions")}
+                type="button"
+              >
+                解決策 ({opinions.solutions.length})
+              </button>
             </div>
-          )}
-        </div>
-        <CitizenReportExample
-          introduction={reportExample.introduction}
-          issues={reportExample.issues}
-        />
 
+            <div className="space-y-3">
+              {activeTab === "issues"
+                ? opinions.issues
+                    .slice(0, 3)
+                    .map((issue) => (
+                      <OpinionCard
+                        key={issue.id}
+                        id={issue.id}
+                        text={issue.text}
+                        type="課題点"
+                        relevance={issue.relevance || 0}
+                      />
+                    ))
+                : opinions.solutions
+                    .slice(0, 3)
+                    .map((solution) => (
+                      <OpinionCard
+                        key={solution.id}
+                        id={solution.id}
+                        text={solution.text}
+                        type="解決策"
+                        relevance={solution.relevance || 0}
+                      />
+                    ))}
+            </div>
+
+            {((activeTab === "issues" && opinions.issues.length > 3) ||
+              (activeTab === "solutions" && opinions.solutions.length > 3)) && (
+              <div className="flex justify-start">
+                <Button asChild size="lg" className="w-auto mt-4">
+                  <Link to={`/themes/${themeId}/questions/${qId}/comments`}>
+                    もっと見る
+                    <ArrowRight className="h-5 w-5 ml-2" />
+                  </Link>
+                </Button>
+              </div>
+            )}
+          </div>
+          <CitizenReportExample
+            introduction={reportExample.introduction}
+            issues={reportExample.issues}
+          />
         </div>
         <FloatingChat ref={chatRef} onSendMessage={handleSendMessage} />
-        </>
+      </>
     );
   }
 

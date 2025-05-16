@@ -5,9 +5,7 @@ interface ChatHeaderProps {
   onSendMessage?: (message: string) => void;
 }
 
-export const ChatHeader: React.FC<ChatHeaderProps> = ({
-  onSendMessage,
-}) => {
+export const ChatHeader: React.FC<ChatHeaderProps> = ({ onSendMessage }) => {
   const handleChangeTopicClick = () => {
     if (onSendMessage) {
       onSendMessage("話題を変えましょう");

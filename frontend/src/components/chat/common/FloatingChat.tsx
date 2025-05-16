@@ -84,9 +84,11 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
         {/* Chat view - desktop: fixed sidebar, mobile: bottom sheet */}
         <div
           className={`
-            ${isDesktop ?
-              'fixed top-16 right-0 bottom-12 w-[40%] border-l border-b border-neutral-200 bg-white z-10 overflow-hidden' :
-              ''}
+            ${
+              isDesktop
+                ? "fixed top-16 right-0 bottom-12 w-[40%] border-l border-b border-neutral-200 bg-white z-10 overflow-hidden"
+                : ""
+            }
           `}
         >
           {(isDesktop || isOpen) && (
