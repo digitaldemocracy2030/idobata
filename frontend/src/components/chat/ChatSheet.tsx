@@ -30,7 +30,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
     maxHeight: window.innerHeight * 0.8,
     initialHeight: 500,
   });
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (!isSending && isOpen) {
@@ -102,14 +102,14 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
         <div className="p-4 border-t">
           <div className="bg-accentGradient rounded-full p-1">
             <div className="flex items-center bg-white rounded-full p-1">
-              <input
-                type="text"
+              <textarea
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="気になること・思ったことを伝える"
-                className="flex-grow px-5 py-3 bg-transparent border-none focus:outline-none text-base"
+                className="flex-grow px-5 py-3 bg-transparent border-none focus:outline-none text-base resize-none min-h-[40px] max-h-[120px] overflow-y-auto"
                 disabled={isSending}
+                rows={1}
                 ref={inputRef}
               />
               <Button
