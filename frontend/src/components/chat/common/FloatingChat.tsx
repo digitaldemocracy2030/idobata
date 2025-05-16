@@ -4,11 +4,13 @@ import { type MessageType } from "../../../types";
 import { FloatingChatButton } from "../mobile/FloatingChatButton";
 import { ChatProvider, useChat } from "./ChatProvider";
 import { ChatSheet } from "./ChatSheet";
+import { StarterQuestionModal } from "./StarterQuestionModal";
 
 interface FloatingChatProps {
   onSendMessage?: (message: string) => void;
   onClose?: () => void;
   onOpen?: () => void;
+  starterQuestions?: string[];
 }
 
 export interface FloatingChatRef {
@@ -20,9 +22,12 @@ export interface FloatingChatRef {
 }
 
 const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
-  ({ onSendMessage, onClose, onOpen }, ref) => {
+  ({ onSendMessage, onClose, onOpen, starterQuestions }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
     const [hasUnread, setHasUnread] = useState(false);
+    const [isStarterQuestionModalOpen, setIsStarterQuestionModalOpen] =
+      useState(false);
+    const [hasChatStarted, setHasChatStarted] = useState(false);
     const isDesktop = useMediaQuery("(min-width: 1280px)");
 
     const {
@@ -42,9 +47,24 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
     }, [isDesktop, isOpen, onOpen]);
 
     const handleOpen = () => {
+      if (
+        !isOpen &&
+        !hasChatStarted &&
+        starterQuestions &&
+        starterQuestions.length > 0
+      ) {
+        setIsStarterQuestionModalOpen(true);
+      }
       setIsOpen(true);
       setHasUnread(false);
       onOpen?.();
+    };
+
+    const handleSelectStarterQuestion = (question: string | null) => {
+      setHasChatStarted(true);
+      if (question && onSendMessage) {
+        onSendMessage(question);
+      }
     };
 
     const handleClose = () => {
@@ -80,6 +100,14 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
         {!isDesktop && !isOpen && (
           <FloatingChatButton onClick={handleOpen} hasUnread={hasUnread} />
         )}
+
+        {/* Starter Question Modal */}
+        <StarterQuestionModal
+          isOpen={isStarterQuestionModalOpen}
+          onClose={() => setIsStarterQuestionModalOpen(false)}
+          starterQuestions={starterQuestions || []}
+          onSelectQuestion={handleSelectStarterQuestion}
+        />
 
         {/* Chat view - desktop: fixed sidebar, mobile: bottom sheet */}
         <div

@@ -25,6 +25,10 @@ const themeSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    starterQuestions: {
+      type: [String],
+      default: [],
+    },
     clusteringResults: {
       type: Map,
       of: Object,

@@ -11,6 +11,7 @@ interface ThemeDetailTemplateProps {
     _id: string;
     title: string;
     description: string;
+    starterQuestions?: string[];
   };
   keyQuestions: {
     id: number | string;
@@ -163,7 +164,11 @@ const ThemeDetailTemplate = ({
         </div>
       </div>
 
-      <FloatingChat ref={chatRef} onSendMessage={handleSendMessage} />
+      <FloatingChat
+        ref={chatRef}
+        onSendMessage={handleSendMessage}
+        starterQuestions={theme.starterQuestions}
+      />
     </div>
   );
 };

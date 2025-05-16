@@ -28,6 +28,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
     slug: "",
     isActive: true,
     customPrompt: "",
+    starterQuestions: [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,6 +58,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
         slug: theme.slug,
         isActive: theme.isActive,
         customPrompt: theme.customPrompt || "",
+        starterQuestions: theme.starterQuestions || [],
       });
     }
   }, [isEdit, theme]);
@@ -396,6 +398,32 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
           onChange={handleChange}
           className="w-full px-3 py-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-ring"
           rows={8}
+        />
+      </div>
+
+      <div className="mb-4">
+        <label
+          htmlFor="starterQuestions"
+          className="block text-foreground font-medium mb-2"
+        >
+          スターター質問
+          <span className="text-muted-foreground ml-1 text-sm">
+            (1行に1つずつ入力してください)
+          </span>
+        </label>
+        <textarea
+          id="starterQuestions"
+          name="starterQuestions"
+          value={((formData.starterQuestions as string[]) || []).join("\n")}
+          onChange={(e) => {
+            const questions = e.target.value
+              .split("\n")
+              .filter((q) => q.trim() !== "");
+            setFormData((prev) => ({ ...prev, starterQuestions: questions }));
+          }}
+          className="w-full px-3 py-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-ring"
+          rows={5}
+          placeholder="例: このテーマについて議論したいことは何ですか？&#10;あなたの意見を教えてください。&#10;このテーマに対する課題は何だと思いますか？"
         />
       </div>
 

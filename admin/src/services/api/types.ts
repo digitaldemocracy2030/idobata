@@ -5,6 +5,7 @@ export interface Theme {
   slug: string;
   isActive: boolean;
   customPrompt?: string;
+  starterQuestions?: string[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -15,6 +16,7 @@ export interface CreateThemePayload {
   slug: string;
   isActive?: boolean;
   customPrompt?: string;
+  starterQuestions?: string[];
 }
 
 export interface UpdateThemePayload {
@@ -23,6 +25,7 @@ export interface UpdateThemePayload {
   slug?: string;
   isActive?: boolean;
   customPrompt?: string;
+  starterQuestions?: string[];
 }
 
 export interface User {

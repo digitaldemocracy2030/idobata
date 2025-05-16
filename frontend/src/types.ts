@@ -146,6 +146,7 @@ export interface Theme {
   title: string;
   description?: string;
   slug: string;
+  starterQuestions?: string[];
   keyQuestionCount?: number;
   commentCount?: number;
 }
