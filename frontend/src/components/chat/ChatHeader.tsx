@@ -6,11 +6,13 @@ import { SheetClose } from "../ui/sheet";
 interface ChatHeaderProps {
   onDragStart: (clientY: number) => void;
   onSendMessage?: (message: string) => void;
+  isDesktop?: boolean;
 }
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({
   onDragStart,
   onSendMessage,
+  isDesktop = false,
 }) => {
   const handleMouseDown = (e: React.MouseEvent) => {
     onDragStart(e.clientY);
@@ -27,6 +29,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       onSendMessage("話題を変えましょう");
     }
   };
+
+  // Desktop header is handled separately in ChatSheet
+  if (isDesktop) {
+    return null;
+  }
 
   return (
     <div
