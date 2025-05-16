@@ -212,7 +212,7 @@ export class McpClient {
         fileContent.length > maxContentLength
           ? `${fileContent.substring(0, maxContentLength)}\n... (content truncated)`
           : fileContent;
-      contextContent += `\nCurrent File Content:\n---\n${truncatedContent}\n---`;
+      contextContent += `\nCurrent File Content:\n\`\`\`\n${truncatedContent}\n\`\`\``;
     }
 
     if (contextContent) {
