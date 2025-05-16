@@ -15,8 +15,8 @@ import { Button } from "../components/ui/button";
 import { useAuth } from "../contexts/AuthContext";
 import { Link, useMock } from "../contexts/MockContext";
 import { useQuestionDetail } from "../hooks/useQuestionDetail";
+import { QuestionChatManager } from "../services/chatManagers/QuestionChatManager";
 import { MessageType } from "../types";
-import { QuestionChatManager } from "./QuestionChatManager";
 
 const QuestionDetail = () => {
   const { themeId, qId } = useParams<{ themeId: string; qId: string }>();
