@@ -1,6 +1,9 @@
-import { forwardRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { type MessageType } from "../../types";
-import { ChatBase, type ChatBaseRef } from "./ChatBase";
+import { ChatProvider, useChat } from "./ChatProvider";
+import { ChatSheet } from "./ChatSheet";
+import { FloatingChatButton } from "./FloatingChatButton";
 
 interface FloatingChatProps {
   onSendMessage?: (message: string) => void;
@@ -16,13 +19,97 @@ export interface FloatingChatRef {
   clearMessages: () => void;
 }
 
-/**
- * @deprecated Use ChatBase instead
- */
+const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
+  ({ onSendMessage, onClose, onOpen }, ref) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [hasUnread, setHasUnread] = useState(false);
+    const isDesktop = useMediaQuery("(min-width: 1024px)");
+
+    const {
+      addMessage,
+      startStreamingMessage,
+      updateStreamingMessage,
+      endStreamingMessage,
+      clearMessages,
+    } = useChat();
+
+    // On desktop, chat is always open
+    useEffect(() => {
+      if (isDesktop && !isOpen) {
+        setIsOpen(true);
+        onOpen?.();
+      }
+    }, [isDesktop, isOpen, onOpen]);
+
+    const handleOpen = () => {
+      setIsOpen(true);
+      setHasUnread(false);
+      onOpen?.();
+    };
+
+    const handleClose = () => {
+      // Only allow closing on mobile
+      if (!isDesktop) {
+        setIsOpen(false);
+        onClose?.();
+      }
+    };
+
+    const handleSendMessage = (message: string) => {
+      onSendMessage?.(message);
+    };
+
+    useImperativeHandle(ref, () => ({
+      addMessage: (content: string, type: MessageType) => {
+        addMessage(content, type);
+        if (!isOpen) setHasUnread(true);
+      },
+      startStreamingMessage: (content: string, type: MessageType) => {
+        const id = startStreamingMessage(content, type);
+        if (!isOpen) setHasUnread(true);
+        return id;
+      },
+      updateStreamingMessage,
+      endStreamingMessage,
+      clearMessages,
+    }));
+
+    return (
+      <>
+        {/* On mobile: Show floating button when chat is closed */}
+        {!isDesktop && !isOpen && (
+          <FloatingChatButton onClick={handleOpen} hasUnread={hasUnread} />
+        )}
+
+        {/* Chat view - desktop: fixed sidebar, mobile: bottom sheet */}
+        <div
+          className={`
+            ${isDesktop ?
+              'fixed top-16 right-0 bottom-0 w-[40%] border-l border-neutral-200 bg-white z-10' :
+              ''}
+          `}
+        >
+          {(isDesktop || isOpen) && (
+            <ChatSheet
+              isOpen={isOpen}
+              onClose={handleClose}
+              onSendMessage={handleSendMessage}
+              isDesktop={isDesktop}
+            />
+          )}
+        </div>
+      </>
+    );
+  }
+);
+
 export const FloatingChat = forwardRef<FloatingChatRef, FloatingChatProps>(
   (props, ref) => {
-    // This component now just wraps ChatBase for backward compatibility
-    return <ChatBase {...props} ref={ref as React.RefObject<ChatBaseRef>} />;
+    return (
+      <ChatProvider>
+        <FloatingChatInner {...props} ref={ref} />
+      </ChatProvider>
+    );
   }
 );
 
