@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import {
   FloatingChat,
   type FloatingChatRef,
-} from "../components/chat/FloatingChat";
+} from "../components/chat";
 import BreadcrumbView from "../components/common/BreadcrumbView";
 import SectionHeading from "../components/common/SectionHeading";
 import CitizenReportExample from "../components/question/CitizenReportExample";

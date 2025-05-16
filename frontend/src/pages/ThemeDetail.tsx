@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import {
   FloatingChat,
   type FloatingChatRef,
-} from "../components/chat/FloatingChat";
+} from "../components/chat";
 import ThemeDetailTemplate from "../components/theme/ThemeDetailTemplate";
 import { useAuth } from "../contexts/AuthContext";
 import { useMock } from "../contexts/MockContext";

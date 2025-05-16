@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { apiClient } from "../../services/api/apiClient";
-import { FloatingChat, type FloatingChatRef } from "../chat/FloatingChat";
+import { FloatingChat, type FloatingChatRef } from "../chat";
 import BreadcrumbView from "../common/BreadcrumbView";
 import SectionHeading from "../common/SectionHeading";
 import CommentCard from "./CommentCard";

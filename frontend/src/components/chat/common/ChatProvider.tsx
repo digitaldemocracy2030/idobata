@@ -1,7 +1,7 @@
 import type React from "react";
 import { createContext, useCallback, useContext, useState } from "react";
-import type { Message, MessageType } from "../../types";
-import { SystemMessage, SystemNotification, UserMessage } from "../../types";
+import type { Message, MessageType } from "../../../types";
+import { SystemMessage, SystemNotification, UserMessage } from "../../../types";
 
 interface ChatContextType {
   messages: Message[];

@@ -1,13 +1,14 @@
 import { Loader2, Send } from "lucide-react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
-import { useDraggable } from "../../hooks/useDraggable";
-import { Button } from "../ui/button";
+import { useDraggable } from "../../../hooks/useDraggable";
+import { Button } from "../../ui/button";
 import {
   ChatSheet as BaseChatSheet,
   ChatSheetContent,
-} from "../ui/chat/chat-sheet";
-import { ChatHeader } from "./ChatHeader";
+} from "../../ui/chat/chat-sheet";
+import { ChatHeader as DesktopChatHeader } from "../desktop/ChatHeader";
+import { ChatHeader as MobileChatHeader } from "../mobile/ChatHeader";
 import { useChat } from "./ChatProvider";
 import ExtendedChatHistory from "./ExtendedChatHistory";
 
@@ -88,17 +89,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
   if (isDesktop) {
     return (
       <div className="flex flex-col h-full">
-        <div className="border-b flex items-center justify-between p-3">
-          <h3 className="font-medium">チャット</h3>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onSendMessage?.("話題を変えましょう")}
-            className="text-sm bg-blue-100 text-blue-800 border border-blue-300 hover:bg-blue-200"
-          >
-            話題を変える
-          </Button>
-        </div>
+        <DesktopChatHeader onSendMessage={onSendMessage} />
         <div className="flex-grow overflow-auto h-[calc(100%-120px)]">
           <ExtendedChatHistory messages={messages} />
         </div>
@@ -146,10 +137,9 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
           inputRef.current?.focus();
         }}
       >
-        <ChatHeader
+        <MobileChatHeader
           onDragStart={handleDragStart}
           onSendMessage={onSendMessage}
-          isDesktop={isDesktop}
         />
         <div className="flex-grow overflow-auto h-[calc(100%-120px)]">
           <ExtendedChatHistory messages={messages} />

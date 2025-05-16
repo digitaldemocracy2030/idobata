@@ -1,17 +1,17 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
-import { type MessageType } from "../../types";
+import { useMediaQuery } from "../../../hooks/useMediaQuery";
+import { type MessageType } from "../../../types";
+import { FloatingChatButton } from "../mobile/FloatingChatButton";
 import { ChatProvider, useChat } from "./ChatProvider";
 import { ChatSheet } from "./ChatSheet";
-import { FloatingChatButton } from "./FloatingChatButton";
 
-interface ChatBaseProps {
+interface FloatingChatProps {
   onSendMessage?: (message: string) => void;
   onClose?: () => void;
   onOpen?: () => void;
 }
 
-export interface ChatBaseRef {
+export interface FloatingChatRef {
   addMessage: (content: string, type: MessageType) => void;
   startStreamingMessage: (content: string, type: MessageType) => string;
   updateStreamingMessage: (id: string, content: string) => void;
@@ -19,11 +19,11 @@ export interface ChatBaseRef {
   clearMessages: () => void;
 }
 
-const ChatBaseInner = forwardRef<ChatBaseRef, ChatBaseProps>(
+const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
   ({ onSendMessage, onClose, onOpen }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
     const [hasUnread, setHasUnread] = useState(false);
-    const isDesktop = useMediaQuery("(min-width: 1024px)");
+    const isDesktop = useMediaQuery("(min-width: 1280px)");
 
     const {
       addMessage,
@@ -85,7 +85,7 @@ const ChatBaseInner = forwardRef<ChatBaseRef, ChatBaseProps>(
         <div
           className={`
             ${isDesktop ?
-              'fixed top-16 right-0 bottom-0 w-[40%] border-l border-neutral-200 bg-white z-10' :
+              'fixed top-16 right-0 bottom-0 w-[40%] border-l border-neutral-200 bg-white z-10 overflow-hidden' :
               ''}
           `}
         >
@@ -103,14 +103,14 @@ const ChatBaseInner = forwardRef<ChatBaseRef, ChatBaseProps>(
   }
 );
 
-export const ChatBase = forwardRef<ChatBaseRef, ChatBaseProps>(
+export const FloatingChat = forwardRef<FloatingChatRef, FloatingChatProps>(
   (props, ref) => {
     return (
       <ChatProvider>
-        <ChatBaseInner {...props} ref={ref} />
+        <FloatingChatInner {...props} ref={ref} />
       </ChatProvider>
     );
   }
 );
 
-ChatBase.displayName = "ChatBase";
+FloatingChat.displayName = "FloatingChat";

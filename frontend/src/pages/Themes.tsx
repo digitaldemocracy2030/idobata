@@ -2,7 +2,7 @@ import { useRef } from "react";
 import {
   FloatingChat,
   type FloatingChatRef,
-} from "../components/chat/FloatingChat";
+} from "../components/chat";
 import BreadcrumbView from "../components/common/BreadcrumbView";
 import SectionHeading from "../components/common/SectionHeading";
 import ThemeCard from "../components/home/ThemeCard";
