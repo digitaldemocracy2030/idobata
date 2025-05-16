@@ -5,6 +5,12 @@ import { decodeBase64Content } from "../lib/github"; // Import the decoder
 import useContentStore from "../store/contentStore"; // Import the Zustand store
 import MarkdownViewer from "./MarkdownViewer"; // Import the MarkdownViewer component
 
+const getFormattedFileName = (path: string): string => {
+  if (!path) return "";
+  const fileName = path.split("/").pop() || "";
+  return fileName.endsWith(".md") ? fileName.slice(0, -3) : fileName;
+};
+
 // Define the structure for OpenAI API messages
 interface OpenAIMessage {
   role: "user" | "assistant" | "system" | "function";
@@ -428,7 +434,7 @@ const ChatPanel: React.FC = () => {
         ) : messages.length === 0 ? (
           <div className="text-gray-500 text-center py-4">
             {isConnected
-              ? "表示中のドキュメントについて質問や意見を入力してください。または「こんにちは」と挨拶してみましょう！"
+              ? `表示中のドキュメント「${getFormattedFileName(currentPath)}」について質問や意見を入力してください。または「こんにちは」と挨拶してみましょう！`
               : "チャットを開始するにはサーバーに接続してください。"}
           </div>
         ) : (
