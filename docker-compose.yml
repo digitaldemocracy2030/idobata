@@ -68,8 +68,28 @@ services:
       - NODE_ENV=development
       # Ensure CORS allows the frontend origin (running on host port 5174)
       - POLICY_CORS_ORIGIN=${POLICY_CORS_ORIGIN}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres-policy:5432/${POSTGRES_DB:-policy_db}
+    depends_on:
+      - postgres-policy
     # Run the production start command
     command: npm start
+
+  postgres-policy:
+    container_name: postgres-policy-dev
+    image: postgres:latest
+    ports:
+      - "5433:5432" # Expose to host port 5433 to avoid conflict if local 5432 is used
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-policy_db}
+    volumes:
+      - postgres_policy_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-policy_db}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # --- Unified Frontend ---
   frontend:
@@ -114,8 +134,9 @@ services:
       - .env
     environment:
       - NODE_ENV=development
-      - VITE_API_BASE_URL=http://localhost:3000 # idea-discussionバックエンドを指す
-      
+      - VITE_API_BASE_URL=${ADMIN_API_BASE_URL} # idea-discussionバックエンドを指す
+      - VITE_ADMIN_FRONTEND_ALLOWED_HOSTS=${VITE_ADMIN_FRONTEND_ALLOWED_HOSTS}
+
   # --- Python Embedding Service ---
   python-service:
     container_name: idobata-python-service
@@ -129,7 +150,28 @@ services:
       - ./python-service:/app # Mount source code for development
       - chroma_data:/data/chroma # ChromaDB data persistence
 
+  nginx:
+    container_name: nginx-prod
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443" # Uncomment if you configure SSL in nginx.conf
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      # Uncomment the following lines if you set up SSL certificates
+      # - ./path/to/your/certs:/etc/nginx/certs:ro
+    depends_on:
+      - idea-backend
+      - policy-frontend
+      - policy-backend
+      - frontend
+      - admin
+      - python-service
+    restart: always
+
 volumes:
   mongo_data: # Define the named volume for MongoDB
   chroma_data: # Define the named volume for ChromaDB
-  # Named volume for idea_backend_node_modules removed as we're using the multi-stage build approach
+  postgres_policy_data:
+    # Define the named volume for policy PostgreSQL
+    # Named volume for idea_backend_node_modules removed as we're using the multi-stage build approach

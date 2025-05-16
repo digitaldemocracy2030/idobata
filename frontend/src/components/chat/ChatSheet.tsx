@@ -1,6 +1,6 @@
 import { Loader2, Send } from "lucide-react";
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDraggable } from "../../hooks/useDraggable";
 import { Button } from "../ui/button";
 import {
@@ -30,6 +30,13 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
     maxHeight: window.innerHeight * 0.8,
     initialHeight: 500,
   });
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (!isSending && isOpen) {
+      inputRef.current.focus();
+    }
+  }, [isSending]);
 
   const handleSendMessage = () => {
     if (inputValue.trim() && !isSending) {
@@ -80,6 +87,10 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
       <ChatSheetContent
         className="p-0 h-auto rounded-t-xl overflow-hidden"
         style={{ height: `${height}px` }}
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+          inputRef.current.focus();
+        }}
       >
         <ChatHeader
           onDragStart={handleDragStart}
@@ -99,6 +110,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
                 className="flex-grow px-5 py-3 bg-transparent border-none focus:outline-none text-base resize-none min-h-[40px] max-h-[120px] overflow-y-auto"
                 disabled={isSending}
                 rows={1}
+                ref={inputRef}
               />
               <Button
                 onClick={handleSendMessage}

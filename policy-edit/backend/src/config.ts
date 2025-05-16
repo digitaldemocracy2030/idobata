@@ -24,9 +24,17 @@ export const GITHUB_REPO_NAME = process.env.GITHUB_REPO_NAME;
 export const CORS_ORIGIN =
   process.env.POLICY_CORS_ORIGIN || "http://localhost:5174";
 
+// Database configuration
+export const DATABASE_URL = process.env.DATABASE_URL;
+
 // Validate required environment variables
 if (!OPENROUTER_API_KEY) {
   console.warn(
     "OPENROUTER_API_KEY is not set. The chatbot will not function properly."
+  );
+}
+if (!DATABASE_URL) {
+  console.warn(
+    "DATABASE_URL is not set. Database operations will not function."
   );
 }

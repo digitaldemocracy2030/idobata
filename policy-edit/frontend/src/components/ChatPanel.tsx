@@ -5,6 +5,12 @@ import { decodeBase64Content } from "../lib/github"; // Import the decoder
 import useContentStore from "../store/contentStore"; // Import the Zustand store
 import MarkdownViewer from "./MarkdownViewer"; // Import the MarkdownViewer component
 
+const getFormattedFileName = (path: string): string => {
+  if (!path) return "";
+  const fileName = path.split("/").pop() || "";
+  return fileName.endsWith(".md") ? fileName.slice(0, -3) : fileName;
+};
+
 // Define the structure for OpenAI API messages
 interface OpenAIMessage {
   role: "user" | "assistant" | "system" | "function";
@@ -153,20 +159,6 @@ const ChatPanel: React.FC = () => {
     const storedName = localStorage.getItem("userName");
     if (storedName) {
       setUserName(storedName);
-    } else {
-      const name = prompt(
-        "お名前を入力してください（あなたの提案の記名に使用されます）："
-      );
-      if (name) {
-        setUserName(name);
-        localStorage.setItem("userName", name);
-      } else {
-        // Handle case where user cancels or enters nothing (optional)
-        console.warn("ユーザーが名前を提供しませんでした。");
-        // You might want to set a default name or handle this differently
-        setUserName("匿名ユーザー");
-        localStorage.setItem("userName", "匿名ユーザー");
-      }
     }
   }, []); // Run only once on mount
 
@@ -255,6 +247,20 @@ const ChatPanel: React.FC = () => {
     )
       return;
 
+    if (!userName) {
+      const name = prompt(
+        "お名前を入力してください（あなたの提案の記名に使用されます）："
+      );
+      if (name) {
+        setUserName(name);
+        localStorage.setItem("userName", name);
+      } else {
+        console.warn("ユーザーが名前を提供しませんでした。");
+        setUserName("匿名ユーザー");
+        localStorage.setItem("userName", "匿名ユーザー");
+      }
+    }
+
     const userMessageContent = {
       text: inputValue,
       sender: "user" as const, // Explicitly type sender
@@ -297,6 +303,7 @@ const ChatPanel: React.FC = () => {
       branchId: currentBranchId, // Add branchId
       fileContent: fileContent, // Add decoded file content (or null)
       userName: userName, // Add user name
+      filePath: currentPath, // Add file path
     };
 
     try {
@@ -358,13 +365,13 @@ const ChatPanel: React.FC = () => {
     <div className="flex flex-col h-full p-4 border-l border-gray-300 relative">
       {" "}
       {/* Added relative positioning */}
-      {/* Display User Name and Branch ID at the top right */}
-      <div className="absolute top-2 right-2 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded flex items-center space-x-2">
+      {/* Display User Name and Branch ID at the top right - Removed for UI simplification */}
+      {/* <div className="absolute top-2 right-2 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded flex items-center space-x-2">
         {userName && <span>👤 {userName}</span>}
         {isMdFileActive && currentBranchId && (
           <span>🌿 ブランチ：{currentBranchId}</span>
         )}
-      </div>
+      </div> */}
       <div className="flex justify-between items-center mb-4 pt-2">
         {" "}
         {/* Added padding-top */}
@@ -422,12 +429,12 @@ const ChatPanel: React.FC = () => {
       >
         {!isMdFileActive ? (
           <div className="text-gray-500 text-center py-4 h-full flex items-center justify-center">
-            Markdownファイルを選択して表示またはチャットを開始してください。
+            気になるファイルをクリックしてチャットを開始しましょう。
           </div>
         ) : messages.length === 0 ? (
           <div className="text-gray-500 text-center py-4">
             {isConnected
-              ? "表示中のドキュメントについて質問や意見を入力してください。または「こんにちは」と挨拶してみましょう！"
+              ? `表示中のドキュメント「${getFormattedFileName(currentPath)}」について質問や意見を入力してください。または「こんにちは」と挨拶してみましょう！`
               : "チャットを開始するにはサーバーに接続してください。"}
           </div>
         ) : (

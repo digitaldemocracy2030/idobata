@@ -20,7 +20,7 @@ const ContentExplorer: React.FC<ContentExplorerProps> = ({ initialPath }) => {
   const error = useContentStore((state) => state.error);
   const content = useContentStore((state) => state.content);
   const contentType = useContentStore((state) => state.contentType);
-  const currentPath = useContentStore((state) => state.currentPath);
+  // const currentPath = useContentStore((state) => state.currentPath);
   const chatThreads = useContentStore((state) => state.chatThreads);
   // We don't strictly need the default branch name here, just the presence of a branchId
   // initialPathが変更されたら（URLが変わったら）データを再取得
@@ -89,8 +89,8 @@ const ContentExplorer: React.FC<ContentExplorerProps> = ({ initialPath }) => {
       {/* Breadcrumbs */}
       <Breadcrumbs />
 
-      {/* Draft Indicator */}
-      {(() => {
+      {/* Draft Indicator - Removed for UI simplification */}
+      {/* {(() => {
         // Determine the branchId being used for the current view
         let viewingBranchId: string | null = null;
         // Check if the current content is a file and ends with .md
@@ -111,7 +111,7 @@ const ContentExplorer: React.FC<ContentExplorerProps> = ({ initialPath }) => {
           );
         }
         return null; // Don't render anything if not a draft branch MD file
-      })()}
+      })()} */}
 
       {/* Debug Info (Optional) */}
       {/* <div className="text-xs text-gray-400 mb-2">Current Store Path: /{currentPath}</div> */}
