@@ -153,20 +153,6 @@ const ChatPanel: React.FC = () => {
     const storedName = localStorage.getItem("userName");
     if (storedName) {
       setUserName(storedName);
-    } else {
-      const name = prompt(
-        "お名前を入力してください（あなたの提案の記名に使用されます）："
-      );
-      if (name) {
-        setUserName(name);
-        localStorage.setItem("userName", name);
-      } else {
-        // Handle case where user cancels or enters nothing (optional)
-        console.warn("ユーザーが名前を提供しませんでした。");
-        // You might want to set a default name or handle this differently
-        setUserName("匿名ユーザー");
-        localStorage.setItem("userName", "匿名ユーザー");
-      }
     }
   }, []); // Run only once on mount
 
@@ -254,6 +240,20 @@ const ChatPanel: React.FC = () => {
       !currentThread
     )
       return;
+
+    if (!userName) {
+      const name = prompt(
+        "お名前を入力してください（あなたの提案の記名に使用されます）："
+      );
+      if (name) {
+        setUserName(name);
+        localStorage.setItem("userName", name);
+      } else {
+        console.warn("ユーザーが名前を提供しませんでした。");
+        setUserName("匿名ユーザー");
+        localStorage.setItem("userName", "匿名ユーザー");
+      }
+    }
 
     const userMessageContent = {
       text: inputValue,
