@@ -1,13 +1,14 @@
 import { Loader2, Send } from "lucide-react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
-import { useDraggable } from "../../hooks/useDraggable";
-import { Button } from "../ui/button";
+import { useDraggable } from "../../../hooks/useDraggable";
+import { Button } from "../../ui/button";
 import {
   ChatSheet as BaseChatSheet,
   ChatSheetContent,
-} from "../ui/chat/chat-sheet";
-import { ChatHeader } from "./ChatHeader";
+} from "../../ui/chat/chat-sheet";
+import { ChatHeader as DesktopChatHeader } from "../desktop/ChatHeader";
+import { ChatHeader as MobileChatHeader } from "../mobile/ChatHeader";
 import { useChat } from "./ChatProvider";
 import ExtendedChatHistory from "./ExtendedChatHistory";
 
@@ -15,12 +16,14 @@ interface ChatSheetProps {
   isOpen: boolean;
   onClose: () => void;
   onSendMessage?: (message: string) => void;
+  isDesktop?: boolean;
 }
 
 export const ChatSheet: React.FC<ChatSheetProps> = ({
   isOpen,
   onClose,
   onSendMessage,
+  isDesktop = false,
 }) => {
   const { messages, addMessage } = useChat();
   const [inputValue, setInputValue] = useState("");
@@ -33,10 +36,10 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (!isSending && isOpen) {
+    if (!isSending && isOpen && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [isSending]);
+  }, [isSending, isOpen]);
 
   const handleSendMessage = () => {
     if (inputValue.trim() && !isSending) {
@@ -82,6 +85,48 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
     }
   };
 
+  // For desktop view, we don't use the sheet component
+  if (isDesktop) {
+    return (
+      <div className="flex flex-col h-full">
+        <DesktopChatHeader onSendMessage={onSendMessage} />
+        <div className="flex-grow overflow-auto h-[calc(100%-120px)]">
+          <ExtendedChatHistory messages={messages} />
+        </div>
+        <div className="p-4 border-t">
+          <div className="bg-accentGradient rounded-full p-1">
+            <div className="flex items-center bg-white rounded-full p-1">
+              <textarea
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="気になること・思ったことを伝える"
+                className="flex-grow px-5 py-3 bg-transparent border-none focus:outline-none text-base resize-none min-h-[40px] max-h-[120px] overflow-y-auto"
+                disabled={isSending}
+                rows={1}
+                ref={inputRef}
+              />
+              <Button
+                onClick={handleSendMessage}
+                variant="ghost"
+                size="icon"
+                className="rounded-full h-10 w-10 mr-1 flex items-center justify-center"
+                disabled={!inputValue.trim() || isSending}
+              >
+                {isSending ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Send className="h-5 w-5" />
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Mobile view uses the sheet component
   return (
     <BaseChatSheet open={isOpen} onOpenChange={onClose}>
       <ChatSheetContent
@@ -89,10 +134,10 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
         style={{ height: `${height}px` }}
         onOpenAutoFocus={(e) => {
           e.preventDefault();
-          inputRef.current.focus();
+          inputRef.current?.focus();
         }}
       >
-        <ChatHeader
+        <MobileChatHeader
           onDragStart={handleDragStart}
           onSendMessage={onSendMessage}
         />

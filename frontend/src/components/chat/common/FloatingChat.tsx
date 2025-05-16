@@ -1,8 +1,9 @@
-import { forwardRef, useImperativeHandle, useState } from "react";
-import { type MessageType } from "../../types";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { useMediaQuery } from "../../../hooks/useMediaQuery";
+import { type MessageType } from "../../../types";
+import { FloatingChatButton } from "../mobile/FloatingChatButton";
 import { ChatProvider, useChat } from "./ChatProvider";
 import { ChatSheet } from "./ChatSheet";
-import { FloatingChatButton } from "./FloatingChatButton";
 
 interface FloatingChatProps {
   onSendMessage?: (message: string) => void;
@@ -22,6 +23,8 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
   ({ onSendMessage, onClose, onOpen }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
     const [hasUnread, setHasUnread] = useState(false);
+    const isDesktop = useMediaQuery("(min-width: 1280px)");
+
     const {
       addMessage,
       startStreamingMessage,
@@ -30,6 +33,14 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
       clearMessages,
     } = useChat();
 
+    // On desktop, chat is always open
+    useEffect(() => {
+      if (isDesktop && !isOpen) {
+        setIsOpen(true);
+        onOpen?.();
+      }
+    }, [isDesktop, isOpen, onOpen]);
+
     const handleOpen = () => {
       setIsOpen(true);
       setHasUnread(false);
@@ -37,8 +48,11 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
     };
 
     const handleClose = () => {
-      setIsOpen(false);
-      onClose?.();
+      // Only allow closing on mobile
+      if (!isDesktop) {
+        setIsOpen(false);
+        onClose?.();
+      }
     };
 
     const handleSendMessage = (message: string) => {
@@ -62,14 +76,30 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
 
     return (
       <>
-        {!isOpen && (
+        {/* On mobile: Show floating button when chat is closed */}
+        {!isDesktop && !isOpen && (
           <FloatingChatButton onClick={handleOpen} hasUnread={hasUnread} />
         )}
-        <ChatSheet
-          isOpen={isOpen}
-          onClose={handleClose}
-          onSendMessage={handleSendMessage}
-        />
+
+        {/* Chat view - desktop: fixed sidebar, mobile: bottom sheet */}
+        <div
+          className={`
+            ${
+              isDesktop
+                ? "fixed top-16 right-0 bottom-12 w-[40%] border-l border-b border-neutral-200 bg-white z-10 overflow-hidden"
+                : ""
+            }
+          `}
+        >
+          {(isDesktop || isOpen) && (
+            <ChatSheet
+              isOpen={isOpen}
+              onClose={handleClose}
+              onSendMessage={handleSendMessage}
+              isDesktop={isDesktop}
+            />
+          )}
+        </div>
       </>
     );
   }

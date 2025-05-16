@@ -1,7 +1,7 @@
 import { Send } from "lucide-react";
 import type React from "react";
-import { cn } from "../../lib/utils";
-import { Button } from "../ui/button";
+import { cn } from "../../../lib/utils";
+import { Button } from "../../ui/button";
 
 interface FloatingChatButtonProps {
   onClick: () => void;

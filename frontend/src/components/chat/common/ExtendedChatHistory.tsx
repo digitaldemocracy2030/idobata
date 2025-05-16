@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "../../../lib/utils";
 import {
   Message,
   SystemMessage,
   SystemNotification,
   UserMessage,
-} from "../../types";
+} from "../../../types";
 import { StreamingText } from "./StreamingText";
 
 interface ExtendedChatHistoryProps {
