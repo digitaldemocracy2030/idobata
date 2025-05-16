@@ -12,7 +12,7 @@ const PageLayout = ({ children }: PageLayoutProps) => {
     <div className="min-h-screen flex flex-col pt-14">
       <Header />
       <Sidebar />
-      <main className="flex-grow xl:ml-[260px] px-4 xl:px-8">{children}</main>
+      <main className="flex-grow xl:ml-[260px] xl:mr-[40%] px-4 xl:px-8">{children}</main>
       <Footer />
     </div>
   );

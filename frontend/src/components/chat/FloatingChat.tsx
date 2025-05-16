@@ -23,7 +23,7 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
   ({ onSendMessage, onClose, onOpen }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
     const [hasUnread, setHasUnread] = useState(false);
-    const isDesktop = useMediaQuery("(min-width: 1024px)");
+    const isDesktop = useMediaQuery("(min-width: 1280px)");
 
     const {
       addMessage,
@@ -85,7 +85,7 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
         <div
           className={`
             ${isDesktop ?
-              'fixed top-16 right-0 bottom-0 w-[40%] border-l border-neutral-200 bg-white z-10' :
+              'fixed top-16 right-0 bottom-0 w-[40%] border-l border-neutral-200 bg-white z-10 overflow-hidden' :
               ''}
           `}
         >
