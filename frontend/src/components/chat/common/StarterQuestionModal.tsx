@@ -36,40 +36,28 @@ export const StarterQuestionModal: React.FC<StarterQuestionModalProps> = ({
           </p>
           <div className="space-y-2">
             {starterQuestions.map((question, index) => (
-              <div
+              <button
+                type="button"
                 key={`starter-question-${index}-${question.substring(0, 10)}`}
-                className="flex items-center p-3 rounded-lg border cursor-pointer hover:bg-accent/10"
+                className="flex items-center w-full p-3 rounded-lg border cursor-pointer hover:bg-accent/10 text-left"
                 onClick={() => handleSelectQuestion(question)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    handleSelectQuestion(question);
-                  }
-                }}
-                tabIndex={0}
-                role="button"
                 aria-label={`質問を選択: ${question}`}
               >
                 <div className="flex-1">
                   <p className="text-sm font-medium">{question}</p>
                 </div>
-              </div>
+              </button>
             ))}
-            <div
-              className="flex items-center p-3 rounded-lg border cursor-pointer hover:bg-accent/10"
+            <button
+              type="button"
+              className="flex items-center w-full p-3 rounded-lg border cursor-pointer hover:bg-accent/10 text-left"
               onClick={() => handleSelectQuestion(null)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  handleSelectQuestion(null);
-                }
-              }}
-              tabIndex={0}
-              role="button"
               aria-label="自由に会話する"
             >
               <div className="flex-1">
                 <p className="text-sm font-medium">自由に会話する</p>
               </div>
-            </div>
+            </button>
           </div>
         </div>
       </SheetContent>
