@@ -1,13 +1,13 @@
-import { apiClient } from "../services/api/apiClient";
-import { socketClient } from "../services/socket/socketClient";
-import type { NewExtractionEvent } from "../services/socket/socketClient";
+import { apiClient } from "../../services/api/apiClient";
+import { socketClient } from "../../services/socket/socketClient";
+import type { NewExtractionEvent } from "../../services/socket/socketClient";
 import {
   Message,
   MessageType,
   SystemMessage,
   SystemNotification,
   UserMessage,
-} from "../types";
+} from "../../types";
 
 export interface ThemeDetailChatManagerOptions {
   themeId: string;

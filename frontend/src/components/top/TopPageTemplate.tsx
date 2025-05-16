@@ -1,11 +1,11 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useTheme } from "../../ThemeContext";
 import BreadcrumbView from "../../components/common/BreadcrumbView";
 import DiscussionCard from "../../components/home/DiscussionCard";
 import HeroSection from "../../components/home/HeroSection";
 import ThemeCard from "../../components/home/ThemeCard";
 import { Section } from "../../components/ui/section";
+import { useTheme } from "../../contexts/ThemeContext";
 import { Button } from "../ui/button";
 
 export interface TopPageTemplateProps {

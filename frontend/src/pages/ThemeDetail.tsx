@@ -8,10 +8,10 @@ import ThemeDetailTemplate from "../components/theme/ThemeDetailTemplate";
 import { useAuth } from "../contexts/AuthContext";
 import { useMock } from "../contexts/MockContext";
 import { useThemeDetail } from "../hooks/useThemeDetail";
+import { ThemeDetailChatManager } from "../services/chatManagers/ThemeDetailChatManager";
 import type { NewExtractionEvent } from "../services/socket/socketClient";
 import type { Message } from "../types";
 import { SystemMessage, SystemNotification } from "../types";
-import { ThemeDetailChatManager } from "./ThemeDetailChatManager";
 
 const ThemeDetail = () => {
   const { themeId } = useParams<{ themeId: string }>();
