@@ -135,6 +135,7 @@ services:
     environment:
       - NODE_ENV=development
       - VITE_API_BASE_URL=http://localhost:3000 # idea-discussionバックエンドを指す
+      - VITE_ADMIN_FRONTEND_ALLOWED_HOSTS=${VITE_ADMIN_FRONTEND_ALLOWED_HOSTS}
 
   # --- Python Embedding Service ---
   python-service:

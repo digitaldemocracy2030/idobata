@@ -12,5 +12,7 @@ export default defineConfig({
   server: {
     port: 5175,
     host: "0.0.0.0",
+    allowedHosts:
+      process.env.VITE_ADMIN_FRONTEND_ALLOWED_HOSTS?.split(",") || [],
   },
 });
