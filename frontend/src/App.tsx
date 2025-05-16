@@ -1,9 +1,9 @@
 import { Navigate, Outlet, createBrowserRouter } from "react-router-dom";
-import { ThemeProvider } from "./ThemeContext";
 import AppLayout from "./components/AppLayout";
 import PageLayout from "./components/layout/PageLayout";
 import { AuthProvider } from "./contexts/AuthContext";
 import { MockProvider } from "./contexts/MockContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import About from "./pages/About";
 import CommentsPage from "./pages/CommentsPage";
 import DataPage from "./pages/DataPage";
