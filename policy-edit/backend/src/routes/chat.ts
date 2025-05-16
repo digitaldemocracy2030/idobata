@@ -28,7 +28,8 @@ const initializeMcpClient = async (serverPath: string): Promise<void> => {
 router.post("/", async (req, res) => {
   try {
     // Extract message, history, and the new context fields
-    const { message, history, branchId, fileContent, userName } = req.body;
+    const { message, history, branchId, fileContent, userName, filePath } =
+      req.body;
 
     if (!message || typeof message !== "string") {
       return res
@@ -51,6 +52,11 @@ router.post("/", async (req, res) => {
         .status(400)
         .json({ error: "userName must be a string if provided" });
     }
+    if (filePath && typeof filePath !== "string") {
+      return res
+        .status(400)
+        .json({ error: "filePath must be a string if provided" });
+    }
 
     // Validate history if provided
     if (history && !Array.isArray(history)) {
@@ -69,7 +75,8 @@ router.post("/", async (req, res) => {
       history || [],
       branchId,
       fileContent,
-      userName
+      userName,
+      filePath
     );
 
     // Log interaction

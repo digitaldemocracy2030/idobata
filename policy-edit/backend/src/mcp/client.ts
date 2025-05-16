@@ -169,7 +169,8 @@ export class McpClient {
     history: OpenAI.Chat.ChatCompletionMessageParam[] = [],
     branchId?: string,
     fileContent?: string,
-    userName?: string
+    userName?: string,
+    filePath?: string
   ): Promise<string> {
     if (!this._initialized || !this.mcp) {
       return "Error: MCP client is not connected.";
@@ -200,6 +201,9 @@ export class McpClient {
     let contextContent = "";
     if (branchId) {
       contextContent += `Current Branch ID: ${branchId}\n`;
+    }
+    if (filePath) {
+      contextContent += `Current File Path: ${filePath}\n`;
     }
     if (fileContent) {
       // Truncate potentially long file content to avoid excessive token usage
