@@ -7,6 +7,7 @@ import { ChatSheet } from "./ChatSheet";
 
 interface FloatingChatProps {
   onSendMessage?: (message: string) => void;
+  onRestart?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
 }
@@ -20,7 +21,7 @@ export interface FloatingChatRef {
 }
 
 const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
-  ({ onSendMessage, onClose, onOpen }, ref) => {
+  ({ onSendMessage, onRestart, onClose, onOpen }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
     const [hasUnread, setHasUnread] = useState(false);
     const isDesktop = useMediaQuery("(min-width: 1280px)");
@@ -96,6 +97,7 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
               isOpen={isOpen}
               onClose={handleClose}
               onSendMessage={handleSendMessage}
+              onRestart={onRestart}
               isDesktop={isDesktop}
             />
           )}
