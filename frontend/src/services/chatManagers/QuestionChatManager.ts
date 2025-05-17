@@ -248,6 +248,92 @@ export class QuestionChatManager {
         return;
       }
 
+      const storedThreadId = localStorage.getItem("currentThreadId");
+
+      if (storedThreadId) {
+        console.log(
+          `[QuestionChatManager] Using stored threadId from localStorage: ${storedThreadId}`
+        );
+
+        if (storedThreadId.startsWith("invalid_")) {
+          console.log(
+            "[QuestionChatManager] Invalid threadId detected, starting new conversation"
+          );
+          this.threadId = storedThreadId;
+          this.clearMessages();
+          this.showQuestionNotification();
+          return;
+        }
+
+        try {
+          const questionThreadUserId = `${this.userId}_question_${this.questionId}`;
+
+          const initResult = await apiClient.sendQuestionMessage(
+            questionThreadUserId,
+            "", // Empty message
+            this.themeId,
+            this.questionId,
+            storedThreadId
+          );
+
+          if (initResult.isOk()) {
+            const { threadId } = initResult.value;
+            this.threadId = threadId;
+
+            const messagesResult = await apiClient.getThreadMessages(
+              threadId,
+              this.themeId
+            );
+
+            if (messagesResult.isOk()) {
+              const { messages } = messagesResult.value;
+
+              if (!messages || messages.length === 0) {
+                console.log(
+                  "[QuestionChatManager] No chat history found for stored threadId"
+                );
+                this.clearMessages();
+                this.showQuestionNotification();
+                return;
+              }
+
+              this.clearMessages();
+              this.showQuestionNotification();
+
+              for (const msg of messages as Array<{
+                role: string;
+                content: string;
+              }>) {
+                const { role, content } = msg;
+
+                if (role === "user") {
+                  const userMessage = new UserMessage(content);
+                  this.messages.push(userMessage);
+                  this.onNewMessage?.(userMessage);
+                } else if (role === "assistant") {
+                  const systemMessage = new SystemMessage(content);
+                  this.messages.push(systemMessage);
+                  this.onNewMessage?.(systemMessage);
+                }
+              }
+
+              console.log(
+                `[QuestionChatManager] Loaded ${messages.length} messages from chat history using stored threadId`
+              );
+              return;
+            }
+          }
+        } catch (error) {
+          console.error(
+            "[QuestionChatManager] Error using stored threadId:",
+            error
+          );
+        }
+      }
+
+      console.log(
+        "[QuestionChatManager] Falling back to getting thread by user and theme"
+      );
       const questionThreadUserId = `${this.userId}_question_${this.questionId}`;
 
       const result = await apiClient.getThreadByUserAndTheme(
@@ -263,6 +349,7 @@ export class QuestionChatManager {
       const { threadId, messages } = result.value;
 
       this.threadId = threadId;
+      localStorage.setItem("currentThreadId", threadId);
       this.saveThreadIdToStorage();
 
       if (!messages || messages.length === 0) {
