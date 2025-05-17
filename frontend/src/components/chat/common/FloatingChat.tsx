@@ -1,5 +1,6 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useMediaQuery } from "../../../hooks/useMediaQuery";
+import { useResizable } from "../../../hooks/useResizable";
 import { type MessageType } from "../../../types";
 import { FloatingChatButton } from "../mobile/FloatingChatButton";
 import { ChatProvider, useChat } from "./ChatProvider";
@@ -24,6 +25,11 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
     const [isOpen, setIsOpen] = useState(false);
     const [hasUnread, setHasUnread] = useState(false);
     const isDesktop = useMediaQuery("(min-width: 1280px)");
+    const { width, handleResizeStart } = useResizable({
+      minWidth: "20%",
+      maxWidth: "60%",
+      initialWidth: "40%",
+    });
 
     const {
       addMessage,
@@ -86,11 +92,20 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
           className={`
             ${
               isDesktop
-                ? "fixed top-16 right-0 bottom-12 w-[40%] border-l border-b border-neutral-200 bg-white z-10 overflow-hidden"
+                ? "fixed top-16 right-0 bottom-12 border-l border-b border-neutral-200 bg-white z-10 overflow-hidden"
                 : ""
             }
           `}
+          style={{ width: isDesktop ? width : "auto" }}
         >
+          {/* Resize handle for desktop */}
+          {isDesktop && (
+            <div
+              className="absolute top-0 left-0 h-full w-1 cursor-ew-resize hover:bg-neutral-300 active:bg-neutral-400 transition-colors"
+              onMouseDown={(e) => handleResizeStart(e.clientX)}
+            />
+          )}
+          
           {(isDesktop || isOpen) && (
             <ChatSheet
               isOpen={isOpen}
