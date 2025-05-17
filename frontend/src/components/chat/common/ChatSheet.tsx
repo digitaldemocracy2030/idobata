@@ -16,6 +16,7 @@ interface ChatSheetProps {
   isOpen: boolean;
   onClose: () => void;
   onSendMessage?: (message: string) => void;
+  onRestart?: () => void;
   isDesktop?: boolean;
 }
 
@@ -23,6 +24,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
   isOpen,
   onClose,
   onSendMessage,
+  onRestart,
   isDesktop = false,
 }) => {
   const { messages, addMessage } = useChat();
@@ -89,7 +91,10 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
   if (isDesktop) {
     return (
       <div className="flex flex-col h-full">
-        <DesktopChatHeader onSendMessage={onSendMessage} />
+        <DesktopChatHeader
+          onSendMessage={onSendMessage}
+          onRestart={onRestart}
+        />
         <div className="flex-grow overflow-auto h-[calc(100%-120px)]">
           <ExtendedChatHistory messages={messages} />
         </div>
@@ -140,6 +145,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
         <MobileChatHeader
           onDragStart={handleDragStart}
           onSendMessage={onSendMessage}
+          onRestart={onRestart}
         />
         <div className="flex-grow overflow-auto h-[calc(100%-120px)]">
           <ExtendedChatHistory messages={messages} />

@@ -3,12 +3,15 @@ import { Button } from "../../ui/button";
 
 interface ChatHeaderProps {
   onSendMessage?: (message: string) => void;
+  onRestart?: () => void;
 }
 
-export const ChatHeader: React.FC<ChatHeaderProps> = ({ onSendMessage }) => {
-  const handleChangeTopicClick = () => {
-    if (onSendMessage) {
-      onSendMessage("話題を変えましょう");
+export const ChatHeader: React.FC<ChatHeaderProps> = ({
+  onRestart,
+}) => {
+  const handleRestartClick = () => {
+    if (onRestart) {
+      onRestart();
     }
   };
 
@@ -18,10 +21,10 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ onSendMessage }) => {
       <Button
         variant="outline"
         size="sm"
-        onClick={handleChangeTopicClick}
+        onClick={handleRestartClick}
         className="text-sm bg-blue-100 text-blue-800 border border-blue-300 hover:bg-blue-200"
       >
-        話題を変える
+        再スタート
       </Button>
     </div>
   );

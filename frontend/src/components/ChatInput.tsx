@@ -2,9 +2,10 @@ import { useState } from "react";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
+  onRestart?: () => void;
 }
 
-function ChatInput({ onSendMessage }: ChatInputProps) {
+function ChatInput({ onSendMessage, onRestart }: ChatInputProps) {
   const [message, setMessage] = useState<string>("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -16,53 +17,66 @@ function ChatInput({ onSendMessage }: ChatInputProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-full relative">
-      <textarea
-        value={message}
-        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-          setMessage(e.target.value)
-        }
-        placeholder="メッセージを入力..."
-        className="w-full bg-white border border-neutral-300 focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 rounded-xl text-neutral-800 placeholder:text-neutral-400 py-2 md:py-3 px-3 md:px-4 pr-12 md:pr-16 min-h-[50px] md:min-h-[60px] text-sm md:text-base resize-none"
-        onKeyDown={(
-          e: React.KeyboardEvent<HTMLTextAreaElement> & {
-            isComposing?: boolean;
-            nativeEvent: { isComposing?: boolean };
+    <div className="w-full">
+      {onRestart && (
+        <div className="mb-2 flex justify-end">
+          <button
+            type="button"
+            onClick={onRestart}
+            className="px-2 py-1 rounded-md text-xs border border-neutral-300 transition-colors duration-200 bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+          >
+            再スタート
+          </button>
+        </div>
+      )}
+      <form onSubmit={handleSubmit} className="flex w-full relative">
+        <textarea
+          value={message}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+            setMessage(e.target.value)
           }
-        ) => {
-          // Only handle Enter key press when not in IME composition
-          if (
-            e.key === "Enter" &&
-            !e.shiftKey &&
-            !e.isComposing &&
-            !e.nativeEvent.isComposing &&
-            message.trim()
-          ) {
-            e.preventDefault();
-            handleSubmit(e);
-          }
-        }}
-      />
-      <button
-        type="submit"
-        className="absolute right-2 md:right-3 top-[50%] transform -translate-y-1/2 h-8 w-8 md:h-10 md:w-10 rounded-full text-sm font-medium bg-neutral-700 text-white hover:bg-neutral-800 transition-colors duration-200 flex items-center justify-center"
-        disabled={!message.trim()}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5"
-          viewBox="0 0 20 20"
-          fill="currentColor"
+          placeholder="メッセージを入力..."
+          className="w-full bg-white border border-neutral-300 focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 rounded-xl text-neutral-800 placeholder:text-neutral-400 py-2 md:py-3 px-3 md:px-4 pr-12 md:pr-16 min-h-[50px] md:min-h-[60px] text-sm md:text-base resize-none"
+          onKeyDown={(
+            e: React.KeyboardEvent<HTMLTextAreaElement> & {
+              isComposing?: boolean;
+              nativeEvent: { isComposing?: boolean };
+            }
+          ) => {
+            // Only handle Enter key press when not in IME composition
+            if (
+              e.key === "Enter" &&
+              !e.shiftKey &&
+              !e.isComposing &&
+              !e.nativeEvent.isComposing &&
+              message.trim()
+            ) {
+              e.preventDefault();
+              handleSubmit(e);
+            }
+          }}
+        />
+        <button
+          type="submit"
+          className="absolute right-2 md:right-3 top-[50%] transform -translate-y-1/2 h-8 w-8 md:h-10 md:w-10 rounded-full text-sm font-medium bg-neutral-700 text-white hover:bg-neutral-800 transition-colors duration-200 flex items-center justify-center"
+          disabled={!message.trim()}
         >
-          <title>送信</title>
-          <path
-            fillRule="evenodd"
-            d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-            clipRule="evenodd"
-          />
-        </svg>
-      </button>
-    </form>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <title>送信</title>
+            <path
+              fillRule="evenodd"
+              d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
+      </form>
+    </div>
   );
 }
 

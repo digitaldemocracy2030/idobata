@@ -36,6 +36,15 @@ function AppLayout() {
     });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const handleResetConversation = () => {
+    // Clear current thread and start a new conversation
+    localStorage.removeItem("currentThreadId");
+    setCurrentThreadId(null);
+    setMessages([]);
+    setPreviousExtractions({ problems: [], solutions: [] });
+    // テーマIDはリセットしない
+  };
+
   const handleSendMessage = async (
     newMessageContent: string
   ): Promise<void> => {
@@ -398,7 +407,10 @@ function AppLayout() {
 
         {/* Input Area */}
         <div className="bg-white shadow-inner border-t border-neutral-200 p-3 md:p-4">
-          <ChatInput onSendMessage={handleSendMessage} />
+          <ChatInput
+            onSendMessage={handleSendMessage}
+            onRestart={handleResetConversation}
+          />
         </div>
       </div>
 
