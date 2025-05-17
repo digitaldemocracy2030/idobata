@@ -408,22 +408,22 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
         >
           スターター質問
           <span className="text-muted-foreground ml-1 text-sm">
-            (各質問は空行で区切ってください)
+            (1行に1つずつ入力してください)
           </span>
         </label>
         <textarea
           id="starterQuestions"
           name="starterQuestions"
-          value={((formData.starterQuestions as string[]) || []).join("\n\n")}
+          value={((formData.starterQuestions as string[]) || []).join("\n")}
           onChange={(e) => {
             const questions = e.target.value
-              .split(/\n\s*\n/)
+              .split("\n")
               .filter((q) => q.trim() !== "");
             setFormData((prev) => ({ ...prev, starterQuestions: questions }));
           }}
           className="w-full px-3 py-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-ring"
-          rows={8}
-          placeholder="例: このテーマについて議論したいことは何ですか？&#10;&#10;あなたの意見を教えてください。&#10;&#10;このテーマに対する課題は何だと思いますか？"
+          rows={5}
+          placeholder="例: このテーマについて議論したいことは何ですか？&#10;あなたの意見を教えてください。&#10;このテーマに対する課題は何だと思いますか？"
         />
       </div>
 
