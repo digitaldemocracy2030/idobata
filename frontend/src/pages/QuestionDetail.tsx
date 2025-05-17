@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import { FloatingChat, type FloatingChatRef } from "../components/chat";
 import BreadcrumbView from "../components/common/BreadcrumbView";
 import SectionHeading from "../components/common/SectionHeading";
@@ -80,7 +81,8 @@ const QuestionDetail = () => {
   };
 
   const handleRestart = () => {
-    localStorage.removeItem("currentThreadId");
+    const newThreadId = `invalid_${uuidv4()}`;
+    localStorage.setItem("currentThreadId", newThreadId);
     if (chatRef.current) {
       chatRef.current.clearMessages();
     }

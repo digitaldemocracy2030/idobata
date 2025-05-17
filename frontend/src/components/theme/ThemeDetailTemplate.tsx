@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { apiClient } from "../../services/api/apiClient";
 import { FloatingChat, type FloatingChatRef } from "../chat";
 import BreadcrumbView from "../common/BreadcrumbView";
@@ -80,7 +81,8 @@ const ThemeDetailTemplate = ({
   };
 
   const handleRestart = () => {
-    localStorage.removeItem("currentThreadId");
+    const newThreadId = `invalid_${uuidv4()}`;
+    localStorage.setItem("currentThreadId", newThreadId);
     setThreadId(null);
     if (chatRef.current) {
       chatRef.current.clearMessages();

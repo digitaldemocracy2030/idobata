@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import { FloatingChat, type FloatingChatRef } from "../components/chat";
 import ThemeDetailTemplate from "../components/theme/ThemeDetailTemplate";
 import { useAuth } from "../contexts/AuthContext";
@@ -137,7 +138,8 @@ const ThemeDetail = () => {
   };
 
   const handleRestart = () => {
-    localStorage.removeItem("currentThreadId");
+    const newThreadId = `invalid_${uuidv4()}`;
+    localStorage.setItem("currentThreadId", newThreadId);
     if (floatingChatRef.current) {
       floatingChatRef.current.clearMessages();
     }

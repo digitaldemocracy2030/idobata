@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Outlet, useOutletContext } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import { Link } from "../contexts/MockContext";
 import { apiClient } from "../services/api/apiClient";
 import type {
@@ -37,9 +38,9 @@ function AppLayout() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleResetConversation = () => {
-    // Clear current thread and start a new conversation
-    localStorage.removeItem("currentThreadId");
-    setCurrentThreadId(null);
+    const newThreadId = `invalid_${uuidv4()}`; // Prefix with 'invalid_' to ensure it doesn't match any existing MongoDB ID
+    localStorage.setItem("currentThreadId", newThreadId);
+    setCurrentThreadId(newThreadId);
     setMessages([]);
     setPreviousExtractions({ problems: [], solutions: [] });
     // テーマIDはリセットしない
