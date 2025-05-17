@@ -6,9 +6,7 @@ interface ChatHeaderProps {
   onRestart?: () => void;
 }
 
-export const ChatHeader: React.FC<ChatHeaderProps> = ({
-  onRestart,
-}) => {
+export const ChatHeader: React.FC<ChatHeaderProps> = ({ onRestart }) => {
   const handleRestartClick = () => {
     if (onRestart) {
       onRestart();
