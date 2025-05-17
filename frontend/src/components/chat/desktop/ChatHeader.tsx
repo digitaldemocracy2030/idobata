@@ -6,9 +6,9 @@ interface ChatHeaderProps {
 }
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({ onSendMessage }) => {
-  const handleChangeTopicClick = () => {
+  const handleRestartClick = () => {
     if (onSendMessage) {
-      onSendMessage("話題を変えましょう");
+      onSendMessage("__RESET_CONVERSATION__");
     }
   };
 
@@ -18,10 +18,10 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ onSendMessage }) => {
       <Button
         variant="outline"
         size="sm"
-        onClick={handleChangeTopicClick}
+        onClick={handleRestartClick}
         className="text-sm bg-blue-100 text-blue-800 border border-blue-300 hover:bg-blue-200"
       >
-        話題を変える
+        再スタート
       </Button>
     </div>
   );
