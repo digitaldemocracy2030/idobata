@@ -232,14 +232,6 @@ export class ThemeDetailChatManager {
     if (storedThreadId) {
       console.log(`Using stored threadId from localStorage: ${storedThreadId}`);
 
-      if (storedThreadId.startsWith("invalid_")) {
-        console.log("Invalid threadId detected, starting new conversation");
-        this.threadId = storedThreadId;
-        this.clearMessages();
-        this.showThemeNotification();
-        return;
-      }
-
       try {
         const initResult = await apiClient.sendMessage(
           this.userId,

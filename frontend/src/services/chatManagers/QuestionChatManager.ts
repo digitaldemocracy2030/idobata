@@ -255,16 +255,6 @@ export class QuestionChatManager {
           `[QuestionChatManager] Using stored threadId from localStorage: ${storedThreadId}`
         );
 
-        if (storedThreadId.startsWith("invalid_")) {
-          console.log(
-            "[QuestionChatManager] Invalid threadId detected, starting new conversation"
-          );
-          this.threadId = storedThreadId;
-          this.clearMessages();
-          this.showQuestionNotification();
-          return;
-        }
-
         try {
           const questionThreadUserId = `${this.userId}_question_${this.questionId}`;
 
