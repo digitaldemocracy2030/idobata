@@ -213,6 +213,10 @@ export class ThemeDetailChatManager {
 
   clearMessages(): void {
     this.messages = [];
+
+    this.threadId = undefined;
+
+    localStorage.removeItem(`chat_thread_${this.themeId}`);
   }
 
   private saveThreadIdToStorage(): void {
