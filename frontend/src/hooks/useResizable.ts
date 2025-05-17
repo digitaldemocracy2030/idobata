@@ -21,26 +21,35 @@ export const useResizable = (options: ResizableOptions) => {
       if (!isResizing) return;
 
       const deltaX = clientX - startX;
-      
-      let currentWidth = typeof width === 'string' && width.endsWith('%') 
-        ? parseFloat(width) 
-        : (typeof width === 'number' ? width : parseFloat(String(width)));
-      
-      let minWidthNum = typeof options.minWidth === 'string' && options.minWidth.endsWith('%')
-        ? parseFloat(options.minWidth)
-        : (typeof options.minWidth === 'number' ? options.minWidth : parseFloat(String(options.minWidth)));
-      
-      let maxWidthNum = typeof options.maxWidth === 'string' && options.maxWidth.endsWith('%')
-        ? parseFloat(options.maxWidth)
-        : (typeof options.maxWidth === 'number' ? options.maxWidth : parseFloat(String(options.maxWidth)));
+
+      const currentWidth =
+        typeof width === "string" && width.endsWith("%")
+          ? Number.parseFloat(width)
+          : typeof width === "number"
+            ? width
+            : Number.parseFloat(String(width));
+
+      const minWidthNum =
+        typeof options.minWidth === "string" && options.minWidth.endsWith("%")
+          ? Number.parseFloat(options.minWidth)
+          : typeof options.minWidth === "number"
+            ? options.minWidth
+            : Number.parseFloat(String(options.minWidth));
+
+      const maxWidthNum =
+        typeof options.maxWidth === "string" && options.maxWidth.endsWith("%")
+          ? Number.parseFloat(options.maxWidth)
+          : typeof options.maxWidth === "number"
+            ? options.maxWidth
+            : Number.parseFloat(String(options.maxWidth));
 
       const viewportWidth = window.innerWidth;
-      const pixelDelta = deltaX / viewportWidth * 100; // Convert to percentage
+      const pixelDelta = (deltaX / viewportWidth) * 100; // Convert to percentage
 
       let newWidth = currentWidth - pixelDelta; // Subtract because we're resizing from right edge
-      
+
       newWidth = Math.min(Math.max(minWidthNum, newWidth), maxWidthNum);
-      
+
       setWidth(`${newWidth}%`);
       setStartX(clientX);
     },

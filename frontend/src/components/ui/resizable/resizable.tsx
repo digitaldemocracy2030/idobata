@@ -23,11 +23,7 @@ const Resizable = React.forwardRef<HTMLDivElement, ResizableProps>(
     ref
   ) => {
     return (
-      <div
-        ref={ref}
-        className={cn("relative", className)}
-        {...props}
-      >
+      <div ref={ref} className={cn("relative", className)} {...props}>
         {children}
         {(direction === "horizontal" || direction === "both") && (
           <div

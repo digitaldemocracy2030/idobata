@@ -105,7 +105,7 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
               onMouseDown={(e) => handleResizeStart(e.clientX)}
             />
           )}
-          
+
           {(isDesktop || isOpen) && (
             <ChatSheet
               isOpen={isOpen}
