@@ -22,6 +22,13 @@ const Themes = () => {
     }, 500);
   };
 
+  const handleRestart = () => {
+    localStorage.removeItem("currentThreadId");
+    if (chatRef.current) {
+      chatRef.current.clearMessages();
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="md:mr-[50%]">
@@ -66,7 +73,11 @@ const Themes = () => {
         )}
       </div>
 
-      <FloatingChat ref={chatRef} onSendMessage={handleSendMessage} />
+      <FloatingChat
+        ref={chatRef}
+        onSendMessage={handleSendMessage}
+        onRestart={handleRestart}
+      />
     </div>
   );
 };
