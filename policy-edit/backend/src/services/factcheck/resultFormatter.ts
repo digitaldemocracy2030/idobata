@@ -10,12 +10,12 @@ export function formatFactCheckResult(analysis: FactCheckAnalysis): string {
     minute: "numeric",
   });
 
-  let markdown = `# 🔍 ファクトチェック結果\n\n`;
+  let markdown = "# 🔍 ファクトチェック結果\n\n";
   markdown += `**実施日時**: ${timestamp} JST\n\n`;
 
   markdown += `## 📋 概要\n\n${analysis.summary}\n\n`;
 
-  markdown += `## 📊 詳細分析\n\n`;
+  markdown += "## 📊 詳細分析\n\n";
 
   analysis.details.forEach((detail, index) => {
     markdown += `### ${index + 1}. ${detail.topic}\n\n`;
@@ -23,11 +23,11 @@ export function formatFactCheckResult(analysis: FactCheckAnalysis): string {
     markdown += `**✓ 事実確認**: ${detail.isFactual ? "正確です" : "**不正確** です"}。${detail.correction}\n\n`;
 
     if (detail.sources && detail.sources.length > 0) {
-      markdown += `**参考**:\n`;
-      detail.sources.forEach((source) => {
+      markdown += "**参考**:\n";
+      for (const source of detail.sources) {
         markdown += `- [${source.title}](${source.url})\n`;
-      });
-      markdown += `\n`;
+      }
+      markdown += "\n";
     }
   });
 

@@ -25,25 +25,25 @@ export function registerFactCheckTool(server: McpServer): void {
             },
           ],
         };
-      } else {
-        return {
-          isError: true,
-          content: [
-            {
-              type: "text",
-              text: `ファクトチェックに失敗しました: ${result.error.message}`,
-            },
-          ],
-        };
       }
-    } catch (error: any) {
+
+      return {
+        isError: true,
+        content: [
+          {
+            type: "text",
+            text: `ファクトチェックに失敗しました: ${result.error.message}`,
+          },
+        ],
+      };
+    } catch (error: unknown) {
       logger.error("Error in factcheck tool:", error);
       return {
         isError: true,
         content: [
           {
             type: "text",
-            text: `ファクトチェック処理中にエラーが発生しました: ${error.message || "不明なエラー"}`,
+            text: `ファクトチェック処理中にエラーが発生しました: ${error && typeof error === "object" && "message" in error ? error.message : "不明なエラー"}`,
           },
         ],
       };

@@ -17,7 +17,10 @@ export class FactCheckUseCase {
     private readonly octokit: Octokit,
     private readonly openaiClient: OpenAI,
     private readonly validCredential: string,
-    private readonly logger: any
+    private readonly logger: {
+      error: (message: string, ...args: unknown[]) => void;
+      info: (message: string, ...args: unknown[]) => void;
+    }
   ) {}
 
   public async execute(
@@ -98,8 +101,13 @@ export class FactCheckUseCase {
             ? diffResponse.data
             : JSON.stringify(diffResponse.data),
       };
-    } catch (error: any) {
-      if (error.status === 404) {
+    } catch (error: unknown) {
+      if (
+        error &&
+        typeof error === "object" &&
+        "status" in error &&
+        error.status === 404
+      ) {
         throw new FactCheckError(
           "PR_NOT_FOUND",
           "指定されたPRが見つかりませんでした。PRが存在するか、アクセス権があるか確認してください。"
@@ -174,7 +182,7 @@ export class FactCheckUseCase {
       }
 
       return this.parseFactCheckResponse(content);
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error("Error performing fact check:", error);
       throw new FactCheckError(
         "LLM_API_ERROR",
@@ -191,14 +199,14 @@ export class FactCheckUseCase {
     const summaryMatch = content.match(
       /(?:^|\n)(?:##?\s*)?(?:概要|[1１]\.\s*概要)[\s\n:]*([\s\S]*?)(?:\n##|\n\d\.|\n$)/i
     );
-    if (summaryMatch && summaryMatch[1]) {
+    if (summaryMatch?.at(1)) {
       summary = summaryMatch[1].trim();
     }
 
     const conclusionMatch = content.match(
       /(?:^|\n)(?:##?\s*)?(?:結論|[3３]\.\s*結論)[\s\n:]*([\s\S]*?)(?:\n##|\n\d\.|\n$)/i
     );
-    if (conclusionMatch && conclusionMatch[1]) {
+    if (conclusionMatch?.at(1)) {
       conclusion = conclusionMatch[1].trim();
     }
 
@@ -206,7 +214,7 @@ export class FactCheckUseCase {
       /(?:^|\n)(?:##?\s*)?(?:詳細分析|[2２]\.\s*詳細分析)([\s\S]*?)(?:\n##|\n[3３]\.|\n$)/i
     );
 
-    if (detailsSection && detailsSection[1]) {
+    if (detailsSection?.at(1)) {
       const topicMatches = detailsSection[1].matchAll(
         /(?:\n###\s*([^\n]+)|\n\d+\.\s*([^\n]+))[\s\S]*?(?=\n###|\n\d+\.|\n##|\n$)/g
       );
@@ -295,7 +303,7 @@ export class FactCheckUseCase {
       });
 
       return comment.html_url;
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error("Error posting comment:", error);
       throw new FactCheckError(
         "COMMENT_FAILED",
@@ -304,7 +312,7 @@ export class FactCheckUseCase {
     }
   }
 
-  private handleError(error: any): FactCheckErrorResult {
+  private handleError(error: unknown): FactCheckErrorResult {
     if (error instanceof FactCheckError) {
       return {
         success: false,
