@@ -10,6 +10,7 @@ import cors from "cors";
 import express from "express";
 import { CORS_ORIGIN, PORT } from "./config.js";
 import chatRoutes from "./routes/chat.js";
+import factcheckRoutes from "./routes/factcheck.js";
 import { logger } from "./utils/logger.js";
 
 // Create Express app
@@ -27,6 +28,7 @@ app.use(
 
 // Routes
 app.use("/chat", chatRoutes);
+app.use("/factcheck", factcheckRoutes);
 
 // Health check endpoint
 app.get("/health", (req, res) => {

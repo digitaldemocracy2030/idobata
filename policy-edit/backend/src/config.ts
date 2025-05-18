@@ -16,6 +16,8 @@ export const NODE_ENV = process.env.NODE_ENV || "development";
 // OpenRouter API configuration
 export const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
+export const FACTCHECK_CREDENTIAL = process.env.FACTCHECK_CREDENTIAL;
+
 // GitHub repository settings
 export const GITHUB_REPO_OWNER = process.env.GITHUB_REPO_OWNER;
 export const GITHUB_REPO_NAME = process.env.GITHUB_REPO_NAME;
@@ -36,5 +38,10 @@ if (!OPENROUTER_API_KEY) {
 if (!DATABASE_URL) {
   console.warn(
     "DATABASE_URL is not set. Database operations will not function."
+  );
+}
+if (!FACTCHECK_CREDENTIAL) {
+  console.warn(
+    "FACTCHECK_CREDENTIAL is not set. The factcheck feature will not function properly."
   );
 }
