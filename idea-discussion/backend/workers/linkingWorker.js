@@ -52,7 +52,9 @@ async function linkItemToQuestions(itemId, itemType) {
     // Only fetch questions from the same theme
     const questions = await SharpQuestion.find({ themeId: itemThemeId });
     if (questions.length === 0) {
-      console.log(`[LinkingWorker] No sharp questions found in theme ${itemThemeId} to link against.`);
+      console.log(
+        `[LinkingWorker] No sharp questions found in theme ${itemThemeId} to link against.`
+      );
       return;
     }
 
