@@ -119,36 +119,64 @@ export class FactCheckUseCase {
 
   private async performFactCheck(prDiff: PrDiff): Promise<FactCheckAnalysis> {
     try {
+      type SystemMessage = { role: "system"; content: string };
+      type UserMessage = { role: "user"; content: string };
+      type AssistantMessage = {
+        role: "assistant";
+        content: string;
+        tool_calls?: Array<{
+          id: string;
+          type: "function";
+          function: {
+            name: string;
+            arguments: string;
+          };
+        }>;
+      };
+      type ToolMessage = {
+        role: "tool";
+        tool_call_id: string;
+        content: string;
+      };
+
+      type Message =
+        | SystemMessage
+        | UserMessage
+        | AssistantMessage
+        | ToolMessage;
+
+      const initialMessages: Array<SystemMessage | UserMessage> = [
+        {
+          role: "system",
+          content: `あなたは政策文書のファクトチェックを行う専門家です。以下の政策変更提案（PR）の差分を分析し、事実と異なる記述や誤解を招く表現を特定してください。
+          インターネット検索を活用して、最新の情報や統計データと照らし合わせて検証を行ってください。
+          結果は以下の形式で返してください：
+
+          1. 概要：主な問題点の要約
+          2. 詳細分析：各問題点について、元の記述、事実確認結果、正しい情報、参考情報源を明記
+          3. 結論：全体的な評価
+
+          マークダウン形式で返答し、事実と異なる箇所を明確にハイライトしてください。`,
+        },
+        {
+          role: "user",
+          content: `以下のPR差分をファクトチェックしてください：
+
+          タイトル: ${prDiff.title}
+
+          説明:
+          ${prDiff.description}
+
+          変更内容:
+          \`\`\`diff
+          ${prDiff.changes}
+          \`\`\``,
+        },
+      ];
+
       const response = await this.openaiClient.chat.completions.create({
         model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: `あなたは政策文書のファクトチェックを行う専門家です。以下の政策変更提案（PR）の差分を分析し、事実と異なる記述や誤解を招く表現を特定してください。
-            インターネット検索を活用して、最新の情報や統計データと照らし合わせて検証を行ってください。
-            結果は以下の形式で返してください：
-
-            1. 概要：主な問題点の要約
-            2. 詳細分析：各問題点について、元の記述、事実確認結果、正しい情報、参考情報源を明記
-            3. 結論：全体的な評価
-
-            マークダウン形式で返答し、事実と異なる箇所を明確にハイライトしてください。`,
-          },
-          {
-            role: "user",
-            content: `以下のPR差分をファクトチェックしてください：
-
-            タイトル: ${prDiff.title}
-
-            説明:
-            ${prDiff.description}
-
-            変更内容:
-            \`\`\`diff
-            ${prDiff.changes}
-            \`\`\``,
-          },
-        ],
+        messages: initialMessages as OpenAI.Chat.ChatCompletionMessageParam[],
         temperature: 0.7,
         max_tokens: 4000,
         tools: [
@@ -173,15 +201,77 @@ export class FactCheckUseCase {
         tool_choice: "auto",
       });
 
+      this.logger.info(
+        "Initial response received:",
+        response.choices[0]?.message
+      );
+
       const content = response.choices[0]?.message?.content;
-      if (!content) {
-        throw new FactCheckError(
-          "LLM_API_ERROR",
-          "ファクトチェック結果の取得に失敗しました。"
-        );
+      if (content && content.trim() !== "") {
+        return this.parseFactCheckResponse(content);
       }
 
-      return this.parseFactCheckResponse(content);
+      const toolCalls = response.choices[0]?.message?.tool_calls;
+      if (toolCalls && toolCalls.length > 0) {
+        this.logger.info("Processing tool calls...");
+        const messages: Message[] = [...initialMessages];
+
+        messages.push({
+          role: "assistant",
+          content: response.choices[0].message.content || "",
+          tool_calls: toolCalls,
+        } as AssistantMessage);
+
+        for (const toolCall of toolCalls) {
+          if (toolCall.function.name === "web_search") {
+            try {
+              const args = JSON.parse(toolCall.function.arguments);
+              const query = args.query;
+
+              this.logger.info(`Processing web_search for query: ${query}`);
+
+              const searchResult = `検索結果: "${query}"に関する情報です。これはモックの検索結果です。実際の実装では、ここで本物の検索結果が返されます。`;
+
+              messages.push({
+                tool_call_id: toolCall.id,
+                role: "tool",
+                content: searchResult,
+              } as ToolMessage);
+            } catch (error) {
+              this.logger.error("Error processing tool call:", error);
+              messages.push({
+                tool_call_id: toolCall.id,
+                role: "tool",
+                content: "検索処理中にエラーが発生しました。",
+              } as ToolMessage);
+            }
+          }
+        }
+
+        this.logger.info("Sending follow-up request with tool results...");
+        const followUpResponse =
+          await this.openaiClient.chat.completions.create({
+            model: "gpt-4o",
+            messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
+            temperature: 0.7,
+            max_tokens: 4000,
+          });
+
+        const followUpContent = followUpResponse.choices[0]?.message?.content;
+        if (!followUpContent) {
+          throw new FactCheckError(
+            "LLM_API_ERROR",
+            "ファクトチェック結果の取得に失敗しました。"
+          );
+        }
+
+        return this.parseFactCheckResponse(followUpContent);
+      }
+
+      throw new FactCheckError(
+        "LLM_API_ERROR",
+        "ファクトチェック結果の取得に失敗しました。"
+      );
     } catch (error: unknown) {
       this.logger.error("Error performing fact check:", error);
       throw new FactCheckError(
@@ -199,14 +289,14 @@ export class FactCheckUseCase {
     const summaryMatch = content.match(
       /(?:^|\n)(?:##?\s*)?(?:概要|[1１]\.\s*概要)[\s\n:]*([\s\S]*?)(?:\n##|\n\d\.|\n$)/i
     );
-    if (summaryMatch?.at(1)) {
+    if (summaryMatch?.[1]) {
       summary = summaryMatch[1].trim();
     }
 
     const conclusionMatch = content.match(
       /(?:^|\n)(?:##?\s*)?(?:結論|[3３]\.\s*結論)[\s\n:]*([\s\S]*?)(?:\n##|\n\d\.|\n$)/i
     );
-    if (conclusionMatch?.at(1)) {
+    if (conclusionMatch?.[1]) {
       conclusion = conclusionMatch[1].trim();
     }
 
@@ -214,7 +304,7 @@ export class FactCheckUseCase {
       /(?:^|\n)(?:##?\s*)?(?:詳細分析|[2２]\.\s*詳細分析)([\s\S]*?)(?:\n##|\n[3３]\.|\n$)/i
     );
 
-    if (detailsSection?.at(1)) {
+    if (detailsSection?.[1]) {
       const topicMatches = detailsSection[1].matchAll(
         /(?:\n###\s*([^\n]+)|\n\d+\.\s*([^\n]+))[\s\S]*?(?=\n###|\n\d+\.|\n##|\n$)/g
       );
