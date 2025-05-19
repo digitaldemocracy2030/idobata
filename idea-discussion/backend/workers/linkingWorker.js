@@ -40,14 +40,24 @@ async function linkItemToQuestions(itemId, itemType) {
       return;
     }
 
-    const questions = await SharpQuestion.find({});
+    // Get the theme ID from the item
+    const itemThemeId = item.themeId;
+    if (!itemThemeId) {
+      console.error(
+        `[LinkingWorker] ${itemType} ${itemId} does not have a themeId. Cannot proceed with linking.`
+      );
+      return;
+    }
+
+    // Only fetch questions from the same theme
+    const questions = await SharpQuestion.find({ themeId: itemThemeId });
     if (questions.length === 0) {
-      console.log("[LinkingWorker] No sharp questions found to link against.");
+      console.log(`[LinkingWorker] No sharp questions found in theme ${itemThemeId} to link against.`);
       return;
     }
 
     console.log(
-      `[LinkingWorker] Found ${questions.length} questions. Checking links for ${itemType} ID: ${itemId}`
+      `[LinkingWorker] Found ${questions.length} questions in theme ${itemThemeId}. Checking links for ${itemType} ID: ${itemId}`
     );
 
     for (const question of questions) {
@@ -113,9 +123,9 @@ Analyze the relationship and provide the JSON output.`,
       `[LinkingWorker] Finished linking for ${itemType} ID: ${itemId}`
     );
 
-    const themeId = item.themeId;
-    if (themeId) {
-      emitExtractionUpdate(themeId, null, itemType, item);
+    // Use the itemThemeId we already have
+    if (itemThemeId) {
+      emitExtractionUpdate(itemThemeId, null, itemType, item);
     }
   } catch (error) {
     console.error(
@@ -249,12 +259,22 @@ async function linkQuestionToAllItems(questionId) {
       return;
     }
 
-    const problems = await Problem.find({});
-    const solutions = await Solution.find({});
+    // Get the theme ID from the question
+    const themeId = question.themeId;
+    if (!themeId) {
+      console.error(
+        `[LinkingWorker] Question ${questionId} does not have a themeId. Cannot proceed with linking.`
+      );
+      return;
+    }
+
+    // Only fetch problems and solutions from the same theme
+    const problems = await Problem.find({ themeId });
+    const solutions = await Solution.find({ themeId });
 
     totalTasks = problems.length + solutions.length;
     console.log(
-      `[LinkingWorker] Linking Question ${questionId} to ${problems.length} problems and ${solutions.length} solutions. Total tasks: ${totalTasks}`
+      `[LinkingWorker] Linking Question ${questionId} to ${problems.length} problems and ${solutions.length} solutions from theme ${themeId}. Total tasks: ${totalTasks}`
     );
 
     const tasks = [];
