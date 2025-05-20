@@ -2,6 +2,11 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import config from "../config.js";
 import { getAuthenticatedOctokit } from "../github/client.js";
+import {
+  applyLabelsToPR,
+  fetchRepoLabels,
+  selectLabelsWithLLM,
+} from "../github/labels.js";
 import { findOrCreateDraftPr } from "../github/utils.js"; // findOrCreateDraftPr をインポート
 import logger from "../logger.js";
 
@@ -67,6 +72,29 @@ export async function handleUpdatePr(
     const { data: updatedPr } = await octokit.rest.pulls.update({
       ...updatePayload,
     });
+
+    try {
+      const labels = await fetchRepoLabels(octokit);
+      const selectedLabels = await selectLabelsWithLLM(
+        updatedPr.title,
+        updatedPr.body || "",
+        labels
+      );
+
+      if (selectedLabels.length > 0) {
+        await applyLabelsToPR(octokit, pull_number, selectedLabels);
+        logger.info(
+          `Applied LLM-selected labels to PR #${pull_number}: ${selectedLabels.join(
+            ", "
+          )}`
+        );
+      }
+    } catch (labelError) {
+      logger.error(
+        { error: labelError },
+        `Failed to apply LLM-selected labels to PR #${pull_number}, but PR was updated successfully`
+      );
+    }
 
     // findOrCreateDraftPr で作成された場合、description は既に設定されているが、
     // 既存PRの場合に更新が必要なため、常に update を呼び出す (冪等性のため問題ない)

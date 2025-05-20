@@ -11,6 +11,7 @@ const envSchema = z.object({
   GITHUB_TARGET_REPO: z.string(),
   GITHUB_BASE_BRANCH: z.string().default("main"),
   GITHUB_API_BASE_URL: z.string().optional(), // GHE用
+  OPENROUTER_API_KEY: z.string(), // OpenRouter APIキーを追加
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

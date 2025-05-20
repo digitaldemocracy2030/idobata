@@ -1,6 +1,11 @@
 import type { Octokit } from "@octokit/rest";
 import config from "../config.js";
 import logger from "../logger.js";
+import {
+  applyLabelsToPR,
+  fetchRepoLabels,
+  selectLabelsWithLLM,
+} from "./labels.js";
 
 /**
  * 指定されたブランチが存在することを確認し、存在しない場合は作成する。
@@ -128,6 +133,26 @@ export async function findOrCreateDraftPr(
     logger.info(
       `Created draft PR #${newPr.number} for branch ${branchName}. URL: ${newPr.html_url}`
     );
+
+    try {
+      const labels = await fetchRepoLabels(octokit);
+      const selectedLabels = await selectLabelsWithLLM(title, body, labels);
+
+      if (selectedLabels.length > 0) {
+        await applyLabelsToPR(octokit, newPr.number, selectedLabels);
+        logger.info(
+          `Applied LLM-selected labels to new PR #${
+            newPr.number
+          }: ${selectedLabels.join(", ")}`
+        );
+      }
+    } catch (labelError) {
+      logger.error(
+        { error: labelError },
+        `Failed to apply LLM-selected labels to new PR #${newPr.number}, but PR was created successfully`
+      );
+    }
+
     return { number: newPr.number, html_url: newPr.html_url };
   } catch (error) {
     logger.error(
