@@ -2,6 +2,7 @@
 import type React from "react";
 import { FaFileAlt, FaFolder } from "react-icons/fa"; // Folder and File icons
 import { Link } from "react-router-dom";
+import { ignoredDirectories } from "../lib/config"; // Import ignored directories config
 
 // Define the expected structure of items in the directory data array
 // This should align with the GitHub API response for directory contents
@@ -32,7 +33,25 @@ const DirectoryView: React.FC<DirectoryViewProps> = ({ data }) => {
     return name.endsWith(".md") ? name.slice(0, -3) : name;
   };
 
-  const filteredData = data.filter((item) => !item.name.startsWith("."));
+  // Filter out hidden files and ignored directories
+  const filteredData = data.filter((item) => {
+    // Skip hidden files/directories (starting with .)
+    if (item.name.startsWith(".")) return false;
+
+    // Skip directories that are in the ignoredDirectories list
+    if (item.type === "dir" && ignoredDirectories.includes(item.name)) return false;
+
+    // Skip files/directories that are inside ignored directories
+    // Check if the path contains any of the ignored directory names
+    for (const ignoredDir of ignoredDirectories) {
+      // Match exact directory or subdirectory pattern
+      // e.g., "images" or "path/images" or "path/images/subdir"
+      const pathPattern = new RegExp(`(^|/)${ignoredDir}(/|$)`);
+      if (pathPattern.test(item.path)) return false;
+    }
+
+    return true;
+  });
 
   return (
     <div className="border rounded overflow-hidden">
