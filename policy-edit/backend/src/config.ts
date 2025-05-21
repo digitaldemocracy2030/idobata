@@ -19,6 +19,10 @@ export const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 // GitHub repository settings
 export const GITHUB_REPO_OWNER = process.env.GITHUB_REPO_OWNER;
 export const GITHUB_REPO_NAME = process.env.GITHUB_REPO_NAME;
+export const GITHUB_BASE_BRANCH = process.env.GITHUB_BASE_BRANCH || "main";
+export const GITHUB_APP_ID = process.env.GITHUB_APP_ID;
+export const GITHUB_INSTALLATION_ID = process.env.GITHUB_INSTALLATION_ID;
+export const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 // CORS settings
 export const CORS_ORIGIN =
