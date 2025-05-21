@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  getThreadByUserAndTheme,
   getThreadExtractionsByTheme,
   getThreadMessagesByTheme,
   handleNewMessageByTheme,
@@ -12,5 +13,7 @@ router.post("/messages", handleNewMessageByTheme);
 router.get("/threads/:threadId/extractions", getThreadExtractionsByTheme);
 
 router.get("/threads/:threadId/messages", getThreadMessagesByTheme);
+
+router.get("/thread", getThreadByUserAndTheme);
 
 export default router;

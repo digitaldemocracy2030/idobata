@@ -1,13 +1,25 @@
 import { err, ok } from "neverthrow";
+import type { QuestionDetailResponse } from "../../hooks/useQuestionDetail";
 import type {
   DigestDraft,
   PolicyDraft,
   Problem,
   Question,
-  QuestionDetails,
   Solution,
   Theme,
 } from "../../types";
+
+// テーマ詳細データのレスポンス型
+export interface ThemeDetailResponse {
+  theme: Theme;
+  keyQuestions: (Question & {
+    voteCount: number;
+    issueCount: number;
+    solutionCount: number;
+  })[];
+  issues: Problem[];
+  solutions: Solution[];
+}
 import { ApiError, ApiErrorType } from "./apiError";
 import { HttpClient, type HttpResult } from "./httpClient";
 
@@ -111,9 +123,9 @@ export class ApiClient {
   async getQuestionDetails(
     questionId: string,
     themeId: string
-  ): Promise<HttpResult<QuestionDetails>> {
+  ): Promise<HttpResult<QuestionDetailResponse>> {
     return this.withRetry(() =>
-      this.httpClient.get<QuestionDetails>(
+      this.httpClient.get<QuestionDetailResponse>(
         `/themes/${themeId}/questions/${questionId}/details`
       )
     );
@@ -224,6 +236,30 @@ export class ApiClient {
     );
   }
 
+  async sendQuestionMessage(
+    userId: string,
+    message: string,
+    themeId: string,
+    questionId: string,
+    threadId?: string
+  ): Promise<
+    HttpResult<{ response: string; threadId: string; userId: string }>
+  > {
+    return this.withRetry(() =>
+      this.httpClient.post<{
+        response: string;
+        threadId: string;
+        userId: string;
+      }>(`/themes/${themeId}/chat/messages`, {
+        userId,
+        message,
+        threadId,
+        questionId, // Pass questionId as part of the request body
+        context: "question", // Add context to indicate this is a question-specific message
+      })
+    );
+  }
+
   async getPolicyDraftsByQuestion(
     themeId: string,
     questionId: string
@@ -264,6 +300,118 @@ export class ApiClient {
     return this.withRetry(() =>
       this.httpClient.post<void>(
         `/themes/${themeId}/questions/${questionId}/generate-digest`
+      )
+    );
+  }
+
+  async getThemeDetail(id: string): Promise<HttpResult<ThemeDetailResponse>> {
+    return this.withRetry(() =>
+      this.httpClient.get<ThemeDetailResponse>(`/themes/${id}/detail`)
+    );
+  }
+
+  async getSiteConfig(): Promise<
+    HttpResult<{
+      _id: string;
+      title: string;
+      aboutMessage: string;
+    }>
+  > {
+    return this.withRetry(() =>
+      this.httpClient.get<{
+        _id: string;
+        title: string;
+        aboutMessage: string;
+      }>("/site-config")
+    );
+  }
+
+  async getUserInfo(
+    userId: string
+  ): Promise<
+    HttpResult<{ displayName: string | null; profileImagePath: string | null }>
+  > {
+    return this.withRetry(() =>
+      this.httpClient.get<{
+        displayName: string | null;
+        profileImagePath: string | null;
+      }>(`/users/${userId}`)
+    );
+  }
+
+  async updateUserDisplayName(
+    userId: string,
+    displayName: string
+  ): Promise<HttpResult<void>> {
+    return this.withRetry(() =>
+      this.httpClient.put<void>(`/users/${userId}`, { displayName })
+    );
+  }
+
+  async uploadProfileImage(
+    userId: string,
+    file: File
+  ): Promise<HttpResult<{ profileImageUrl: string }>> {
+    const formData = new FormData();
+    formData.append("profileImage", file);
+
+    return this.withRetry(() =>
+      this.httpClient.postFormData<{ profileImageUrl: string }>(
+        `/users/${userId}/profile-image`,
+        formData
+      )
+    );
+  }
+
+  async getTopPageData(): Promise<
+    HttpResult<{
+      latestThemes: Theme[];
+      latestQuestions: Question[];
+    }>
+  > {
+    return this.withRetry(() =>
+      this.httpClient.get<{
+        latestThemes: Theme[];
+        latestQuestions: Question[];
+      }>("/top-page-data")
+    );
+  }
+
+  async getLikeStatus(
+    targetType: string,
+    targetId: string,
+    userId?: string
+  ): Promise<HttpResult<{ liked: boolean; count: number }>> {
+    let url = `/likes/${targetType}/${targetId}`;
+    if (userId) {
+      url += `?userId=${userId}`;
+    }
+
+    return this.withRetry(() =>
+      this.httpClient.get<{ liked: boolean; count: number }>(url)
+    );
+  }
+
+  async toggleLike(
+    targetType: string,
+    targetId: string,
+    userId: string
+  ): Promise<HttpResult<{ liked: boolean; count: number }>> {
+    return this.withRetry(() =>
+      this.httpClient.post<{ liked: boolean; count: number }>(
+        `/likes/${targetType}/${targetId}`,
+        { userId }
+      )
+    );
+  }
+
+  async getThreadByUserAndTheme(
+    userId: string,
+    themeId: string
+  ): Promise<HttpResult<{ threadId: string; messages: unknown[] }>> {
+    return this.withRetry(() =>
+      this.httpClient.get<{ threadId: string; messages: unknown[] }>(
+        `/themes/${themeId}/chat/thread?userId=${encodeURIComponent(userId)}`
       )
     );
   }

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, Outlet, useOutletContext } from "react-router-dom";
+import { Outlet, useOutletContext } from "react-router-dom";
+import { Link } from "../contexts/MockContext";
 import { apiClient } from "../services/api/apiClient";
 import type {
   Message,
@@ -7,6 +8,7 @@ import type {
   OutletContext,
   PreviousExtractions,
 } from "../types";
+import { SystemMessage, UserMessage } from "../types";
 import ChatHistory from "./ChatHistory";
 import ChatInput from "./ChatInput";
 import Notification from "./Notification";
@@ -39,11 +41,7 @@ function AppLayout() {
   ): Promise<void> => {
     const currentUserId = userId;
 
-    const newUserMessage = {
-      role: "user",
-      content: newMessageContent,
-      timestamp: new Date(),
-    };
+    const newUserMessage = new UserMessage(newMessageContent);
 
     setMessages((prevMessages) => [...prevMessages, newUserMessage]);
 
@@ -76,11 +74,7 @@ function AppLayout() {
 
       const responseData = result.value;
 
-      const assistantMessage = {
-        role: "assistant",
-        content: responseData.response,
-        timestamp: new Date(),
-      };
+      const assistantMessage = new SystemMessage(responseData.response);
 
       setMessages((prevMessages) => [...prevMessages, assistantMessage]);
 
@@ -94,11 +88,9 @@ function AppLayout() {
       }
     } catch (error) {
       console.error("Failed to send message:", error);
-      const errorMessage = {
-        role: "assistant",
-        content: `メッセージ送信エラー: ${error.message}`,
-        timestamp: new Date(),
-      };
+      const errorMessage = new SystemMessage(
+        `メッセージ送信エラー: ${error.message}`
+      );
       setMessages((prevMessages) => [...prevMessages, errorMessage]);
     }
   };

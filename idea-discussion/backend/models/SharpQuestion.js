@@ -7,6 +7,14 @@ const sharpQuestionSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    tagLine: {
+      type: String,
+      required: false,
+    },
+    tags: {
+      type: [String],
+      default: [],
+    },
     sourceProblemIds: [
       {
         // (任意) この問いの生成に使用された `problems` のIDリスト
@@ -19,6 +27,11 @@ const sharpQuestionSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Theme",
       required: true,
+    },
+    clusteringResults: {
+      type: Map,
+      of: Object,
+      default: {},
     },
   },
   { timestamps: true }

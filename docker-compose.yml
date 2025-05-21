@@ -2,15 +2,13 @@ services:
   idea-backend:
     container_name: idea-backend-dev
     build:
-      context: .
-      dockerfile: idea-discussion/backend/Dockerfile.dev
+      context: . # Change context to the root directory
+      dockerfile: ./idea-discussion/backend/Dockerfile # Specify Dockerfile path relative to new context
+      target: development # Build the development stage
     volumes:
-      - ./idea-discussion/backend:/app
-      # Explicitly exclude node_modules from the host mount      
-      - /app/node_modules
-      # Add a named volume for node_modules to persist between container restarts
-      - idea_backend_node_modules:/app/node_modules
-
+      - ./idea-discussion/backend:/app/idea-discussion/backend # Mount source code for hot-reload
+      # Exclude node_modules from the host mount to use the container's node_modules
+      - /app/idea-discussion/backend/node_modules
     ports:
       - "3000:3000" # Expose backend API port
     depends_on:
@@ -29,7 +27,10 @@ services:
       - GITHUB_BASE_BRANCH=${GITHUB_BASE_BRANCH}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - IDEA_CORS_ORIGIN=${IDEA_CORS_ORIGIN}
-    command: npm run dev # Command defined in Dockerfile.dev, but explicit here
+      - JWT_SECRET=${JWT_SECRET} # Pass JWT secret from .env
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-1d} # Pass expiration, default to 1 day
+    # Use the CMD defined in the Dockerfile's development stage
+    command: npm run dev
 
   # --- policy-edit ---
   policy-frontend:
@@ -68,16 +69,36 @@ services:
       - NODE_ENV=development
       # Ensure CORS allows the frontend origin (running on host port 5174)
       - POLICY_CORS_ORIGIN=${POLICY_CORS_ORIGIN}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres-policy:5432/${POSTGRES_DB:-policy_db}
     volumes: # OGP機能のために追加した volumes
       - ./policy-edit/backend/generated_ogp_images:/app/policy-edit/backend/generated_ogp_images # 生成画像をホストと共有
       - ./policy-edit/backend/fonts:/app/policy-edit/backend/fonts # フォントをコンテナにマウント
+    depends_on:
+      - postgres-policy
     # Run the production start command
     command: npm start
+
+  postgres-policy:
+    container_name: postgres-policy-dev
+    image: postgres:latest
+    ports:
+      - "5433:5432" # Expose to host port 5433 to avoid conflict if local 5432 is used
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-policy_db}
+    volumes:
+      - postgres_policy_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-policy_db}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # --- Unified Frontend ---
   frontend:
     container_name: frontend-dev
-    image: node:20-alpine
+    image: node:20-slim
     working_dir: /app
     volumes:
       - ./frontend:/app
@@ -111,15 +132,49 @@ services:
       - ./admin:/app
       - /app/node_modules
     ports:
-      - "5175:5173" # 他のサービスとポートが重複しないようにする
+      - "5175:5175"
     command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
     env_file:
       - .env
     environment:
       - NODE_ENV=development
-      - VITE_API_BASE_URL=http://localhost:3000 # idea-discussionバックエンドを指す
+      - VITE_API_BASE_URL=${ADMIN_API_BASE_URL} # idea-discussionバックエンドを指す
+      - VITE_ADMIN_FRONTEND_ALLOWED_HOSTS=${VITE_ADMIN_FRONTEND_ALLOWED_HOSTS}
+
+  # --- Python Embedding Service ---
+  python-service:
+    container_name: idobata-python-service
+    build:
+      context: ./python-service
+    ports:
+      - "8000:8000" # Expose port for debugging
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY} # Pass from host environment
+    volumes:
+      - ./python-service:/app # Mount source code for development
+      - chroma_data:/data/chroma # ChromaDB data persistence
+
+  nginx:
+    container_name: nginx-prod
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443" # Uncomment if you configure SSL in nginx.conf
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      # Uncomment the following lines if you set up SSL certificates
+      # - ./path/to/your/certs:/etc/nginx/certs:ro
+    depends_on:
+      - idea-backend
+      - policy-frontend
+      - policy-backend
+      - frontend
+      - admin
+      - python-service
+    restart: always
 
 volumes:
   mongo_data: # Define the named volume for MongoDB
-  idea_backend_node_modules: # Define the named volume for idea-backend node_modules
-  # Removed node_modules volumes as they are part of the production image
+  chroma_data: # Define the named volume for ChromaDB
+  postgres_policy_data: # Define the named volume for policy PostgreSQL
+  idea_backend_node_modules: # Named volume for idea_backend_node_modules

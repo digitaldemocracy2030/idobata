@@ -1,3 +1,5 @@
+import { Link } from "../../contexts/MockContext";
+
 interface BreadcrumbItem {
   label: string;
   href: string;
@@ -9,12 +11,12 @@ interface BreadcrumbViewProps {
 
 export function BreadcrumbView({ items }: BreadcrumbViewProps) {
   return (
-    <nav className="text-xs text-muted-foreground mb-4" aria-label="Breadcrumb">
+    <nav className="text-sm text-muted-foreground mb-4" aria-label="Breadcrumb">
       {items.map((item, index) => (
         <span key={`${item.label}-${index}`}>
-          <a href={item.href} className="underline">
+          <Link to={item.href} className="underline">
             {item.label}
-          </a>
+          </Link>
           {index < items.length - 1 && " ＞ "}
         </span>
       ))}

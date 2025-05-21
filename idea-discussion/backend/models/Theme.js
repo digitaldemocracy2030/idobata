@@ -21,6 +21,15 @@ const themeSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    customPrompt: {
+      type: String,
+      required: false,
+    },
+    clusteringResults: {
+      type: Map,
+      of: Object,
+      default: {},
+    },
   },
   { timestamps: true }
 );

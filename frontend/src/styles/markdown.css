@@ -1,0 +1,52 @@
+.prose h2 {
+  @apply text-xl font-bold text-foreground font-biz leading-6;
+}
+
+.prose h3 {
+  @apply text-lg font-semibold mb-2;
+}
+
+.prose p {
+  @apply mb-4 text-neutral-700;
+}
+
+.prose ul {
+  @apply list-disc pl-5 mb-4;
+}
+
+.prose ol {
+  @apply list-decimal pl-5 mb-4;
+}
+
+.prose a {
+  @apply text-primary hover:text-primary underline;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-neutral-300 pl-4 italic;
+}
+
+.prose code {
+  @apply bg-neutral-100 px-1 py-0.5 rounded text-sm;
+}
+
+.prose pre {
+  @apply bg-neutral-100 p-4 rounded overflow-x-auto;
+}
+
+.prose img {
+  @apply max-w-full h-auto rounded;
+}
+
+.prose table {
+  @apply w-full border-collapse mb-4;
+}
+
+.prose th,
+.prose td {
+  @apply border border-neutral-300 p-2;
+}
+
+.prose th {
+  @apply bg-neutral-100;
+}

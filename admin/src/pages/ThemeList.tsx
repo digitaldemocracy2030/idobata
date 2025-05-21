@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import type { FC } from "react";
 import { Link } from "react-router-dom";
 import ThemeTable from "../components/theme/ThemeTable";
-import Button from "../components/ui/Button";
+import { Button } from "../components/ui/button";
 import { apiClient } from "../services/api/apiClient";
 import type { Theme } from "../services/api/types";
 

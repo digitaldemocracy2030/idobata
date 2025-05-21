@@ -1,31 +1,21 @@
-import { useEffect, useState } from "react";
 import { Navigate, Outlet, createBrowserRouter } from "react-router-dom";
-import { ThemeProvider } from "./ThemeContext";
 import AppLayout from "./components/AppLayout";
 import PageLayout from "./components/layout/PageLayout";
+import { AuthProvider } from "./contexts/AuthContext";
+import { MockProvider } from "./contexts/MockContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import About from "./pages/About";
+import CommentsPage from "./pages/CommentsPage";
 import DataPage from "./pages/DataPage";
 import MainPage from "./pages/MainPage";
+import MyPage from "./pages/MyPage";
 import QuestionDetail from "./pages/QuestionDetail";
 import ThemeDetail from "./pages/ThemeDetail";
 import Themes from "./pages/Themes";
 import Top from "./pages/Top";
 
 function App() {
-  const [userId, setUserId] = useState<string | null>(
-    localStorage.getItem("policyChatUserId") || null
-  );
-
-  useEffect(() => {
-    if (userId) {
-      localStorage.setItem("policyChatUserId", userId);
-    } else {
-      // Optional: Clear localStorage if userId becomes null (e.g., on logout)
-      // localStorage.removeItem('policyChatUserId');
-    }
-  }, [userId]);
-
-  return <Outlet context={{ userId, setUserId }} />;
+  return <Outlet />;
 }
 
 export const router = createBrowserRouter([
@@ -33,7 +23,11 @@ export const router = createBrowserRouter([
     path: "/",
     element: (
       <ThemeProvider>
-        <App />
+        <AuthProvider>
+          <MockProvider>
+            <App />
+          </MockProvider>
+        </AuthProvider>
       </ThemeProvider>
     ),
     children: [
@@ -84,6 +78,22 @@ export const router = createBrowserRouter([
         element: (
           <PageLayout>
             <QuestionDetail />
+          </PageLayout>
+        ),
+      },
+      {
+        path: "themes/:themeId/questions/:qId/comments",
+        element: (
+          <PageLayout>
+            <CommentsPage />
+          </PageLayout>
+        ),
+      },
+      {
+        path: "mypage",
+        element: (
+          <PageLayout>
+            <MyPage />
           </PageLayout>
         ),
       },

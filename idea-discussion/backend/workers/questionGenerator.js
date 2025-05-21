@@ -27,16 +27,23 @@ async function generateSharpQuestions(themeId) {
         role: "system",
         content: `You are an AI assistant specialized in synthesizing problem statements into insightful "How Might We..." (HMW) questions based on Design Thinking principles. Your goal is to generate concise, actionable, and thought-provoking questions that capture the essence of the underlying challenges presented in the input problem statements. Consolidate similar problems into broader HMW questions where appropriate.
 
-IMPORTANT: When generating questions, focus exclusively on describing both the current state ("現状はこう") and the desired state ("それをこうしたい") with high detail. Do NOT suggest or imply any specific means, methods, or solutions in the questions. The questions should keep the problem space open for creative solutions rather than narrowing the range of possible answers.
+For question 1-3, focus exclusively on describing both the current state ("現状はこう") and the desired state ("それをこうしたい") with high detail. Do NOT suggest or imply any specific means, methods, or solutions in the questions. The questions should keep the problem space open for creative solutions rather than narrowing the range of possible answers.
+For question 4-6, focus on questions in the format 「現状は○○だが、それが○○になるの望ましいだろうか？」. This format is intended to question the validity or desirability of the potential future state itself, especially for points where consensus on the ideal might be lacking.
 
-Generate all questions in Japanese language, using the format "〜にはどうすればいいだろうか？" instead of "How Might We...". Respond ONLY with a JSON object containing a single key "questions" which holds an array of strings, where each string is a generated question in Japanese.
+Generate all questions in Japanese language.
+All generated text ("question", "tagLine", "tags") should use language easily understandable by those who has completed compulsory education in Japan.
+Respond ONLY with a JSON object containing a single key: "questions".
+The value of "questions" should be an array of objects. Each object in the array must contain the following keys:
+1. "question": A string containing the generated question in Japanese (50-100 characters).
+2. "tagLine": A string about 20 characters providing a catchy & easy-to-understand summary of the question.
+3. "tags": An array of 2 strings, each being a short, simple word (2-7 characters) representing categories for the question.
 
-Generate 5 questions. 50-100字以内程度。
+Generate 6 question objects in total within the "questions" array.
 `,
       },
       {
         role: "user",
-        content: `Based on the following problem statements, please generate relevant questions in Japanese using the format "How Might We...":\n\n${problemStatements.join("\n- ")}\n\nFor each question, clearly describe both the current state ("現状はこう") and the desired state ("それをこうしたい") with high detail. Focus exclusively on describing these states without suggesting any specific means, methods, or solutions that could narrow the range of possible answers.\n\nPlease provide the output as a JSON object with a "questions" array containing Japanese questions only.`,
+        content: `Based on the following problem statements, please generate relevant questions in Japanese using the format "How Might We...":\n\n${problemStatements.join("\n- ")}\n\nFor each question, clearly describe both the current state ("現状はこう") and the desired state ("それをこうしたい") with high detail. Focus exclusively on describing these states without suggesting any specific means, methods, or solutions that could narrow the range of possible answers.\n\nPlease provide the output as a JSON object containing a "questions" array, where each element is an object with "question", "tagLine", and "tags" keys.`,
       },
     ];
 
@@ -54,24 +61,28 @@ Generate 5 questions. 50-100字以内程度。
       llmResponse.questions.length === 0
     ) {
       console.error(
-        "[QuestionGenerator] Failed to get valid questions from LLM response:",
+        "[QuestionGenerator] Failed to get valid questions array from LLM response:",
         llmResponse
       );
       return;
     }
 
-    const generatedQuestions = llmResponse.questions;
+    const generatedQuestionObjects = llmResponse.questions;
     console.log(
-      `[QuestionGenerator] LLM generated ${generatedQuestions.length} questions.`
+      `[QuestionGenerator] LLM generated ${generatedQuestionObjects.length} question objects.`
     );
 
     // 4. Save questions to DB (avoid duplicates)
     let savedCount = 0;
-    for (const questionText of generatedQuestions) {
+    for (const questionObj of generatedQuestionObjects) {
+      const questionText = questionObj.question;
+      const tagLine = questionObj.tagLine || "";
+      const tags = questionObj.tags || [];
+
       if (!questionText || typeof questionText !== "string") {
         console.warn(
-          "[QuestionGenerator] Skipping invalid question text:",
-          questionText
+          "[QuestionGenerator] Skipping invalid question object (missing or invalid text):",
+          questionObj
         );
         continue;
       }
@@ -82,6 +93,8 @@ Generate 5 questions. 50-100字以内程度。
           {
             $setOnInsert: {
               questionText: questionText.trim(),
+              tagLine: tagLine,
+              tags: tags,
               themeId,
               createdAt: new Date(),
             },

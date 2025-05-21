@@ -2,18 +2,12 @@ import dotenv from "dotenv";
 import OpenAI from "openai";
 
 // dotenv is loaded in server.js, no need to load it again here.
-// Ensure .env file exists in the 'backend' directory and contains OPENROUTER_API_KEY.
 
 dotenv.config({ override: true }); // Load environment variables from .env file
 
 const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENROUTER_API_KEY,
-  // Optional: Set headers if needed by OpenRouter or specific models
-  // defaultHeaders: {
-  //   "HTTP-Referer": $YOUR_SITE_URL, // Optional, for OpenRouter tracking
-  //   "X-Title": $YOUR_SITE_NAME, // Optional, for OpenRouter tracking
-  // },
+  apiKey: process.env.OPENROUTER_API_KEY || "mock-api-key",
 });
 /**
  * Call an LLM model via OpenRouter API

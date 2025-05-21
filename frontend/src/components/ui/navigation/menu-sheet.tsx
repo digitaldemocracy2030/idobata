@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Link, type LinkProps } from "react-router-dom";
+import { type LinkProps } from "react-router-dom";
+import { Link } from "../../../contexts/MockContext";
 import {
   Sheet,
   SheetClose,
@@ -11,26 +12,11 @@ import {
   SheetTrigger,
 } from "../base/sheet";
 
-// Navigation-specific sheet component with legacy UI link
 const NavigationSheetContent = React.forwardRef<
   React.ElementRef<typeof SheetContent>,
   React.ComponentPropsWithoutRef<typeof SheetContent>
 >(({ className, children, ...props }, ref) => (
   <SheetContent ref={ref} className={className} side="left" {...props}>
-    {/* Add a visible title for the navigation menu */}
-    <SheetTitle className="mb-4">メニュー</SheetTitle>
-    {/* Add a description for accessibility */}
-    <SheetDescription className="mb-4">
-      サイト内のナビゲーションメニューです
-    </SheetDescription>
-    <div className="mb-4">
-      <NavigationLink
-        href="/legacy"
-        className="text-sm text-blue-600 hover:underline"
-      >
-        旧UI
-      </NavigationLink>
-    </div>
     {children}
   </SheetContent>
 ));
@@ -50,9 +36,9 @@ const NavigationLink: React.FC<NavigationLinkProps> = ({
 }) => {
   return (
     <SheetClose asChild>
-      <a href={href} {...props}>
+      <Link to={href} {...props}>
         {children}
-      </a>
+      </Link>
     </SheetClose>
   );
 };

@@ -1,4 +1,6 @@
-import express, { Request, Response, Router } from "express";
+import express, { Request, Response } from "express";
+import { db } from "../db/index.js";
+import { interactionLogs } from "../db/schema.js";
 import { McpClient } from "../mcp/client.js";
 import { logger } from "../utils/logger.js";
 
@@ -26,7 +28,8 @@ const initializeMcpClient = async (serverPath: string): Promise<void> => {
 router.post("/", async (req, res) => {
   try {
     // Extract message, history, and the new context fields
-    const { message, history, branchId, fileContent, userName } = req.body;
+    const { message, history, branchId, fileContent, userName, filePath } =
+      req.body;
 
     if (!message || typeof message !== "string") {
       return res
@@ -49,6 +52,11 @@ router.post("/", async (req, res) => {
         .status(400)
         .json({ error: "userName must be a string if provided" });
     }
+    if (filePath && typeof filePath !== "string") {
+      return res
+        .status(400)
+        .json({ error: "filePath must be a string if provided" });
+    }
 
     // Validate history if provided
     if (history && !Array.isArray(history)) {
@@ -67,8 +75,25 @@ router.post("/", async (req, res) => {
       history || [],
       branchId,
       fileContent,
-      userName
+      userName,
+      filePath
     );
+
+    // Log interaction
+    try {
+      const sessionIdToLog = userName || "unknown_user";
+      await db.insert(interactionLogs).values({
+        sessionId: sessionIdToLog,
+        userMessage: message,
+        aiMessage:
+          typeof response === "string" ? response : JSON.stringify(response), // Assuming response might be an object
+      });
+      logger.info(`Interaction logged for session: ${sessionIdToLog}`);
+    } catch (dbError) {
+      logger.error("Failed to log interaction to database:", dbError);
+      // Do not fail the request if logging fails, but log the error
+    }
+
     return res.json({ response });
   } catch (error) {
     logger.error("Error processing chat message:", error);

@@ -1,13 +1,20 @@
 import { type Result, err, ok } from "neverthrow";
 import { ApiError, ApiErrorType } from "./apiError";
 import type {
+  ClusteringParams,
+  ClusteringResult,
   CreateThemePayload,
   CreateUserPayload,
   LoginCredentials,
   LoginResponse,
+  Question,
+  SiteConfig,
   Theme,
+  UpdateSiteConfigPayload,
   UpdateThemePayload,
   UserResponse,
+  VectorSearchParams,
+  VectorSearchResult,
 } from "./types";
 
 export type ApiResult<T> = Result<T, ApiError>;
@@ -138,6 +145,106 @@ export class ApiClient {
       method: "POST",
       body: JSON.stringify(userData),
     });
+  }
+
+  async getSiteConfig(): Promise<ApiResult<SiteConfig>> {
+    return this.request<SiteConfig>("/site-config");
+  }
+
+  async updateSiteConfig(
+    config: UpdateSiteConfigPayload
+  ): Promise<ApiResult<SiteConfig>> {
+    return this.request<SiteConfig>("/site-config", {
+      method: "PUT",
+      body: JSON.stringify(config),
+    });
+  }
+
+  async generateThemeEmbeddings(
+    themeId: string,
+    itemType?: "problem" | "solution"
+  ): Promise<ApiResult<{ status: string; processedCount: number }>> {
+    return this.request<{ status: string; processedCount: number }>(
+      `/themes/${themeId}/embeddings/generate`,
+      {
+        method: "POST",
+        body: JSON.stringify({ itemType }),
+      }
+    );
+  }
+
+  async searchTheme(
+    themeId: string,
+    params: VectorSearchParams
+  ): Promise<ApiResult<VectorSearchResult[]>> {
+    // Manually encode the query parameters to ensure proper handling of non-ASCII characters
+    const queryText = encodeURIComponent(params.queryText);
+    const itemType = encodeURIComponent(params.itemType);
+    const kParam = params.k
+      ? `&k=${encodeURIComponent(params.k.toString())}`
+      : "";
+
+    const queryString = `queryText=${queryText}&itemType=${itemType}${kParam}`;
+
+    return this.request<VectorSearchResult[]>(
+      `/themes/${themeId}/search?${queryString}`
+    );
+  }
+
+  async clusterTheme(
+    themeId: string,
+    params: ClusteringParams
+  ): Promise<ApiResult<ClusteringResult>> {
+    return this.request<ClusteringResult>(`/themes/${themeId}/cluster`, {
+      method: "POST",
+      body: JSON.stringify(params),
+    });
+  }
+
+  async getQuestionsByTheme(themeId: string): Promise<ApiResult<Question[]>> {
+    return this.request<Question[]>(`/themes/${themeId}/questions`);
+  }
+
+  async generateQuestions(themeId: string): Promise<ApiResult<void>> {
+    return this.request<void>(`/themes/${themeId}/generate-questions`, {
+      method: "POST",
+    });
+  }
+
+  async generateVisualReport(
+    themeId: string,
+    questionId: string
+  ): Promise<ApiResult<{ message: string }>> {
+    return this.request<{ message: string }>(
+      `/themes/${themeId}/questions/${questionId}/generate-visual-report`,
+      {
+        method: "POST",
+      }
+    );
+  }
+
+  async generateReportExample(
+    themeId: string,
+    questionId: string
+  ): Promise<ApiResult<{ message: string }>> {
+    return this.request<{ message: string }>(
+      `/themes/${themeId}/questions/${questionId}/generate-report`,
+      {
+        method: "POST",
+      }
+    );
+  }
+
+  async generateDebateAnalysis(
+    themeId: string,
+    questionId: string
+  ): Promise<ApiResult<{ message: string }>> {
+    return this.request<{ message: string }>(
+      `/themes/${themeId}/questions/${questionId}/generate-debate-analysis`,
+      {
+        method: "POST",
+      }
+    );
   }
 }
 

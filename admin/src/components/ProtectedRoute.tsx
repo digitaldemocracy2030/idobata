@@ -18,8 +18,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="mt-4 text-gray-600">読み込み中...</p>
+          <div className="w-16 h-16 border-4 border-primary-700 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="mt-4 text-muted-foreground">読み込み中...</p>
         </div>
       </div>
     );
@@ -32,7 +32,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   if (requireAdmin && user?.role !== "admin") {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center text-red-500">
+        <div className="text-center text-destructive">
           この機能にアクセスするには管理者権限が必要です
         </div>
       </div>
