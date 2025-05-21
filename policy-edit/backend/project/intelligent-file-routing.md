@@ -10,23 +10,16 @@
 
 ユーザーの変更提案を受け取った際に、その内容を分析し、リポジトリ内の既存ファイルの中から最も適切なファイルを選択して変更を適用します。
 
-1. 設定ファイル（target_file_rules.txt）に定義されたルールに基づいて、提案内容に最適なファイルを判断
-2. 選択されたファイルに対して変更を適用し、PRを作成
-3. ユーザーに選択されたファイルとその理由を説明
+1. 対象リポジトリの `/.meta/target_file_rules.txt` から取得したルールに基づいて、提案内容に最適なファイルを判断
+2. ルールファイルの取得に失敗した場合は、ファイル名のみから判定
+3. 選択されたファイルに対して変更を適用し、PRを作成
+4. ユーザーに選択されたファイルとその理由を説明
 
 ## 技術設計
 
-### 1. ルール設定ファイルの作成と読み込み
+### 1. ルール設定ファイルの取得
 
-`target_file_rules.txt`ファイルを作成し、提案内容とファイルのマッピングルールをフローチャート形式で定義します。このファイルは環境変数のように設定され、gitignoreされます。
-
-```
-policy-edit/
-  ├── backend/
-  │   └── src/
-  │       └── config/
-  │           └── target_file_rules.txt (gitignore対象)
-```
+対象リポジトリの `/.meta/target_file_rules.txt` からルールファイルを取得します。このファイルには、提案内容とファイルのマッピングルールがフローチャート形式で定義されています。
 
 **target_file_rules.txtの例：**
 
@@ -53,7 +46,9 @@ MCPクライアントの処理フローに、ファイル選択ステップを�
 
 1. `McpClient`クラスに新しいメソッド`determineTargetFile`を追加
 2. このメソッドは、ユーザーの提案内容と現在のファイルパスを入力として受け取り、最適なファイルパスを返す
-3. LLMを使用して提案内容を分析し、ルールに基づいて適切なファイルを選択
+3. 対象リポジトリから`/.meta/target_file_rules.txt`を取得し、取得成功時はそのルールに基づいて判定
+4. 取得失敗時はファイル名のみから判定
+5. LLMを使用して提案内容を分析し、適切なファイルを選択
 
 ```typescript
 // policy-edit/backend/src/mcp/client.ts に追加
@@ -73,26 +68,50 @@ async function determineTargetFile(
   currentFilePath: string
 ): Promise<{ targetFilePath: string; reason: string }> {
   try {
-    // 1. ルールファイルの読み込み
-    const rulesFilePath = path.resolve(process.env.TARGET_FILE_RULES_PATH || './config/target_file_rules.txt');
-    if (!fs.existsSync(rulesFilePath)) {
-      logger.warn(`Rules file not found at ${rulesFilePath}, using current file path`);
-      return {
-        targetFilePath: currentFilePath,
-        reason: "ルールファイルが見つからないため、現在のファイルを使用します。"
-      };
-    }
+    // 1. 対象リポジトリからルールファイルを取得
+    const octokit = await getAuthenticatedOctokit();
+    const owner = config.GITHUB_TARGET_OWNER;
+    const repo = config.GITHUB_TARGET_REPO;
+    const baseBranch = config.GITHUB_BASE_BRANCH;
+    const rulesFilePath = '.meta/target_file_rules.txt';
 
-    const rulesContent = fs.readFileSync(rulesFilePath, 'utf-8');
-    const rules: FileRule[] = parseRulesFile(rulesContent);
+    let rules: FileRule[] = [];
+    let rulesSource = 'filename'; // デフォルトはファイル名のみから判定
+
+    try {
+      // リポジトリからルールファイルを取得
+      const { data } = await octokit.rest.repos.getContent({
+        owner,
+        repo,
+        path: rulesFilePath,
+        ref: baseBranch,
+      });
+
+      if (!Array.isArray(data) && data.type === 'file' && data.content) {
+        // Base64でエンコードされたコンテンツをデコード
+        const rulesContent = Buffer.from(data.content, 'base64').toString('utf-8');
+        rules = parseRulesFile(rulesContent);
+        rulesSource = 'rules';
+        logger.info(`Successfully loaded rules from ${rulesFilePath}`);
+      }
+    } catch (error) {
+      logger.warn(`Rules file not found at ${rulesFilePath}, will use filename-based selection`);
+      // ルールファイルが見つからない場合は、ファイル名のみから判定するモードに
+    }
 
     // 2. 既存ファイル一覧の取得（リポジトリ内の.mdファイル）
     const existingFiles = await getRepositoryFiles();
 
-    // 3. LLMを使用して最適なファイルを選択
-    const result = await this.callLLMForFileSelection(query, rules, existingFiles, currentFilePath);
-
-    return result;
+    // 3. 判定方法に応じて処理を分岐
+    if (rulesSource === 'rules' && rules.length > 0) {
+      // ルールファイルが取得できた場合、LLMを使用して最適なファイルを選択
+      const result = await this.callLLMForFileSelection(query, rules, existingFiles, currentFilePath);
+      return result;
+    } else {
+      // ルールファイルが取得できなかった場合、ファイル名のみから判定
+      const result = await this.selectFileByName(query, existingFiles, currentFilePath);
+      return result;
+    }
   } catch (error) {
     logger.error("Error determining target file:", error);
     return {
@@ -123,7 +142,61 @@ function parseRulesFile(content: string): FileRule[] {
   return rules;
 }
 
-// LLMを使用したファイル選択
+// ファイル名のみから判定するメソッド
+async function selectFileByName(
+  query: string,
+  existingFiles: string[],
+  currentFilePath: string
+): Promise<{ targetFilePath: string; reason: string }> {
+  // LLMに送信するプロンプト
+  const prompt = `
+あなたは政策提案の内容を分析し、最も適切なファイルを選択するアシスタントです。
+以下の変更提案を分析し、ファイル名だけを見て、どのファイルに適用するのが最も適切か判断してください。
+
+【ユーザーの変更提案】
+${query}
+
+【利用可能なファイル一覧】
+${existingFiles.join('\n')}
+
+【現在表示中のファイル】
+${currentFilePath}
+
+以下の形式で回答してください：
+ファイルパス: [選択したファイルのパス]
+理由: [選択理由の説明]
+`;
+
+  // LLM APIを呼び出し
+  const response = await openai.chat.completions.create({
+    model: "google/gemini-2.5-pro-preview-03-25",
+    messages: [{ role: "user", content: prompt }],
+    max_tokens: 1000,
+  });
+
+  // レスポンスからファイルパスと理由を抽出
+  const content = response.choices[0].message.content || "";
+  const filePathMatch = content.match(/ファイルパス:\s*(.+)/);
+  const reasonMatch = content.match(/理由:\s*(.+)/);
+
+  const targetFilePath = filePathMatch ? filePathMatch[1].trim() : currentFilePath;
+  const reason = reasonMatch
+    ? reasonMatch[1].trim() + "（ファイル名のみから判断しました）"
+    : "ファイル名から最適なファイルを判断しました";
+
+  // 選択されたファイルが存在するか確認
+  if (!existingFiles.includes(targetFilePath)) {
+    logger.warn(`Selected file ${targetFilePath} does not exist, using current file path`);
+    return {
+      targetFilePath: currentFilePath,
+      reason: `選択されたファイル ${targetFilePath} が存在しないため、現在のファイルを使用します。`
+    };
+  }
+
+  return { targetFilePath, reason };
+}
+
+// LLMを使用したファイル選択（ルールベース）
 async function callLLMForFileSelection(
   query: string,
   rules: FileRule[],
@@ -165,7 +238,9 @@ ${currentFilePath}
   const reasonMatch = content.match(/理由:\s*(.+)/);
 
   const targetFilePath = filePathMatch ? filePathMatch[1].trim() : currentFilePath;
-  const reason = reasonMatch ? reasonMatch[1].trim() : "LLMによる判断";
+  const reason = reasonMatch
+    ? reasonMatch[1].trim() + "（リポジトリのルールファイルに基づいて判断しました）"
+    : "リポジトリのルールファイルに基づいて最適なファイルを判断しました";
 
   // 選択されたファイルが存在するか確認
   if (!existingFiles.includes(targetFilePath)) {
@@ -308,7 +383,8 @@ async processQuery(
 ## 実装計画
 
 1. **フェーズ1: 基本機能の実装**
-   - target_file_rules.txt ファイルの作成と読み込み機能の実装
+   - 対象リポジトリから `/.meta/target_file_rules.txt` を取得する機能の実装
+   - ファイル名のみから判定するロジックの実装
    - determineTargetFile メソッドの実装
    - processQuery メソッドの修正
 
@@ -338,4 +414,4 @@ async processQuery(
 
 ## まとめ
 
-この機能により、ユーザーの変更提案が自動的に最適なファイルに振り分けられるようになり、リポジトリの構造と内容の質が向上します。LLMを活用したインテリジェントなファイル選択により、ユーザーは技術的な詳細を気にすることなく、内容に集中して提案を行うことができます。
+この機能により、ユーザーの変更提案が自動的に最適なファイルに振り分けられるようになり、リポジトリの構造と内容の質が向上します。対象リポジトリから直接ルールを取得することで、ルールの一元管理が可能になり、メンテナンス性も向上します。ルールファイルが取得できない場合でも、ファイル名のみから判定することで、常に最適なファイル選択を試みます。LLMを活用したインテリジェントなファイル選択により、ユーザーは技術的な詳細を気にすることなく、内容に集中して提案を行うことができます。
