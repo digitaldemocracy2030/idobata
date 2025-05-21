@@ -4,6 +4,7 @@ import config from "../config.js";
 import { getAuthenticatedOctokit } from "../github/client.js";
 import { ensureBranchExists } from "../github/utils.js";
 import logger from "../logger.js";
+import { trimTrailingContentSeparators } from "../utils/stringUtils.js";
 
 export const upsertFileSchema = z.object({
   // Temporarily remove refine to check type error
@@ -109,7 +110,10 @@ export async function handleUpsertFile(
         repo,
         path: fullPath,
         message: commitMessage,
-        content: Buffer.from(content, "utf8").toString("base64"),
+        content: Buffer.from(
+          trimTrailingContentSeparators(content),
+          "utf8"
+        ).toString("base64"),
         branch: branchName,
         sha: currentSha, // 存在する場合のみSHAを指定 (更新)
       });

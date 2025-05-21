@@ -4,6 +4,7 @@ import config from "../config.js";
 import { getAuthenticatedOctokit } from "../github/client.js";
 import { findOrCreateDraftPr } from "../github/utils.js"; // findOrCreateDraftPr をインポート
 import logger from "../logger.js";
+import { trimTrailingContentSeparators } from "../utils/stringUtils.js";
 
 export const updatePrSchema = z.object({
   branchName: z.string().min(1),
@@ -54,7 +55,7 @@ export async function handleUpdatePr(
       owner,
       repo,
       pull_number,
-      body: description,
+      body: trimTrailingContentSeparators(description),
     };
 
     if (title) {

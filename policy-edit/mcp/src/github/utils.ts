@@ -1,6 +1,7 @@
 import type { Octokit } from "@octokit/rest";
 import config from "../config.js";
 import logger from "../logger.js";
+import { trimTrailingContentSeparators } from "../utils/stringUtils.js";
 
 /**
  * 指定されたブランチが存在することを確認し、存在しない場合は作成する。
@@ -122,7 +123,7 @@ export async function findOrCreateDraftPr(
       title: title, // 引数で受け取ったタイトルを使用
       head: branchName,
       base: baseBranch,
-      body: body, // 引数で受け取った本文を使用
+      body: trimTrailingContentSeparators(body), // 引数で受け取った本文を使用
       draft: true,
     });
     logger.info(
