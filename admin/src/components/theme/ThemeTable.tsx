@@ -15,6 +15,10 @@ const ThemeTable: FC<ThemeTableProps> = ({ themes, onDelete }) => {
     return new Date(dateString).toLocaleString("ja-JP");
   };
 
+  // 環境変数からテーマ削除機能の有効/無効を取得
+  // VITE_で始まる環境変数はクライアントサイドで利用可能
+  const allowDeleteTheme = import.meta.env.VITE_ALLOW_DELETE_THEME === "true";
+
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-background border border-border">
@@ -60,12 +64,14 @@ const ThemeTable: FC<ThemeTableProps> = ({ themes, onDelete }) => {
                   <Link to={`/themes/${theme._id}`}>
                     <Button variant="secondary">編集</Button>
                   </Link>
-                  <Button
-                    variant="destructive"
-                    onClick={() => onDelete(theme._id)}
-                  >
-                    削除
-                  </Button>
+                  {allowDeleteTheme && (
+                    <Button
+                      variant="destructive"
+                      onClick={() => onDelete(theme._id)}
+                    >
+                      削除
+                    </Button>
+                  )}
                 </td>
               </tr>
             ))
