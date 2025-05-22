@@ -79,6 +79,14 @@ const ThemeDetailTemplate = ({
     }
   };
 
+  const handleRestart = () => {
+    localStorage.removeItem("currentThreadId");
+    setThreadId(null);
+    if (chatRef.current) {
+      chatRef.current.clearMessages();
+    }
+  };
+
   const breadcrumbItems = [
     { label: "TOP", href: "/" },
     { label: "テーマ一覧", href: "/themes" },
@@ -163,7 +171,11 @@ const ThemeDetailTemplate = ({
         </div>
       </div>
 
-      <FloatingChat ref={chatRef} onSendMessage={handleSendMessage} />
+      <FloatingChat
+        ref={chatRef}
+        onSendMessage={handleSendMessage}
+        onRestart={handleRestart}
+      />
     </div>
   );
 };

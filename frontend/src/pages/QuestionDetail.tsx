@@ -79,6 +79,13 @@ const QuestionDetail = () => {
     }
   };
 
+  const handleRestart = () => {
+    localStorage.removeItem("currentThreadId");
+    if (chatRef.current) {
+      chatRef.current.clearMessages();
+    }
+  };
+
   const mockQuestionData = {
     id: qId,
     question: "どうすれば若者が安心してキャリアを築ける社会を実現できるか？",
@@ -377,7 +384,11 @@ const QuestionDetail = () => {
             issues={reportExample.issues}
           />
         </div>
-        <FloatingChat ref={chatRef} onSendMessage={handleSendMessage} />
+        <FloatingChat
+          ref={chatRef}
+          onSendMessage={handleSendMessage}
+          onRestart={handleRestart}
+        />
       </>
     );
   }
