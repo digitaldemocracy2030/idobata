@@ -28,6 +28,12 @@ export const CORS_ORIGIN =
 export const DATABASE_URL = process.env.DATABASE_URL;
 
 // Research service model configuration
+export const OPENAI_DEFAULT_MODEL =
+  process.env.OPENAI_DEFAULT_MODEL || "gpt-3.5-turbo";
+export const GEMINI_DEFAULT_MODEL =
+  process.env.GEMINI_DEFAULT_MODEL || "gemini-2.5-pro-preview-03-25";
+export const CLAUDE_DEFAULT_MODEL =
+  process.env.CLAUDE_DEFAULT_MODEL || "claude-3-opus-20240229";
 export const RESEARCH_DEFAULT_MODEL =
   process.env.RESEARCH_DEFAULT_MODEL || "google/gemini-2.5-pro-preview-03-25";
 export const SYNTHESIS_DEFAULT_MODEL =

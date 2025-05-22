@@ -3,28 +3,27 @@ import { logger } from "../../utils/logger.js";
 import { LLMClient } from "./LLMClient.js";
 
 /**
- * OpenRouter client that can use models from multiple providers through the OpenRouter API
+ * ChatGPT (OpenAI) models client implementation
  */
-export class OpenRouterLLMClient implements LLMClient {
+export class ChatGPTClient implements LLMClient {
   private openai: OpenAI;
 
   /**
-   * Creates a new OpenRouterLLMClient
-   * @param apiKey The OpenRouter API key
-   * @param model The full model identifier (e.g., "google/gemini-2.5-pro-preview-03-25")
+   * Creates a new ChatGPTClient
+   * @param apiKey The OpenAI API key
+   * @param model The model to use (defaults to gpt-3.5-turbo)
    */
   constructor(
     private apiKey: string,
-    private model = "google/gemini-2.5-pro-preview-03-25"
+    private model = "gpt-3.5-turbo"
   ) {
     this.openai = new OpenAI({
-      baseURL: "https://openrouter.ai/api/v1",
       apiKey: this.apiKey,
     });
   }
 
   /**
-   * Completes a prompt using the configured model via OpenRouter
+   * Completes a prompt using OpenAI's models
    * @param prompt The prompt to complete
    * @returns The completion text
    */
@@ -42,7 +41,7 @@ export class OpenRouterLLMClient implements LLMClient {
 
       return response.choices[0].message.content || "";
     } catch (error) {
-      logger.error(`Error completing prompt with OpenRouter: ${error}`);
+      logger.error(`Error completing prompt with OpenAI: ${error}`);
       throw error;
     }
   }

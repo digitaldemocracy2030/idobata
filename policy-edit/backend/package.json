@@ -17,6 +17,8 @@
     "db:migrate": "node --loader ts-node/esm src/db/migrate.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.51.0",
+    "@google/generative-ai": "^0.24.1",
     "@modelcontextprotocol/sdk": "^1.9.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
