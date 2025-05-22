@@ -40,21 +40,33 @@
 デフォルト: README.md
 ```
 
-### 2. ファイル選択ロジックの実装
+### 2. MCPサーバーでのファイル選択ツールの実装
 
-MCPクライアントの処理フローに、ファイル選択ステップを追加します：
+ファイル選択ロジックをMCPクライアントからMCPサーバーに移動し、専用のツールとして実装します：
 
-1. `McpClient`クラスに新しいメソッド`determineTargetFile`を追加
-2. このメソッドは、ユーザーの提案内容と現在のファイルパスを入力として受け取り、最適なファイルパスを返す
+1. MCPサーバーに新しいツール `determine_target_file` を追加
+2. このツールは、ユーザーの提案内容と現在のファイルパスを入力として受け取り、最適なファイルパスと選択理由を返す
 3. 対象リポジトリから`/.meta/target_file_rules.txt`を取得し、取得成功時はそのルールに基づいて判定
 4. 取得失敗時はファイル名のみから判定
 5. LLMを使用して提案内容を分析し、適切なファイルを選択
 
 ```typescript
-// policy-edit/backend/src/mcp/client.ts に追加
+// policy-edit/mcp/src/handlers/determineTargetFile.ts
 
-import fs from 'fs';
-import path from 'path';
+import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import { z } from "zod";
+import config from "../config.js";
+import { getAuthenticatedOctokit } from "../github/client.js";
+import logger from "../logger.js";
+import { OpenAI } from "openai";
+
+// ツール入力のスキーマ定義
+export const determineTargetFileSchema = z.object({
+  query: z.string().min(1),
+  currentFilePath: z.string(),
+});
+
+export type DetermineTargetFileInput = z.infer<typeof determineTargetFileSchema>;
 
 // ファイルルールの型定義
 interface FileRule {
@@ -62,11 +74,11 @@ interface FileRule {
   filePath: string;
 }
 
-// ターゲットファイル決定メソッド
-async function determineTargetFile(
-  query: string,
-  currentFilePath: string
-): Promise<{ targetFilePath: string; reason: string }> {
+export async function handleDetermineTargetFile(
+  params: DetermineTargetFileInput
+): Promise<CallToolResult> {
+  const { query, currentFilePath } = params;
+
   try {
     // 1. 対象リポジトリからルールファイルを取得
     const octokit = await getAuthenticatedOctokit();
@@ -100,23 +112,40 @@ async function determineTargetFile(
     }
 
     // 2. 既存ファイル一覧の取得（リポジトリ内の.mdファイル）
-    const existingFiles = await getRepositoryFiles();
+    const existingFiles = await getRepositoryFiles(octokit, owner, repo, baseBranch);
 
     // 3. 判定方法に応じて処理を分岐
+    let result;
     if (rulesSource === 'rules' && rules.length > 0) {
       // ルールファイルが取得できた場合、LLMを使用して最適なファイルを選択
-      const result = await this.callLLMForFileSelection(query, rules, existingFiles, currentFilePath);
-      return result;
+      result = await callLLMForFileSelection(query, rules, existingFiles, currentFilePath);
     } else {
       // ルールファイルが取得できなかった場合、ファイル名のみから判定
-      const result = await this.selectFileByName(query, existingFiles, currentFilePath);
-      return result;
+      result = await selectFileByName(query, existingFiles, currentFilePath);
     }
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify({
+            targetFilePath: result.targetFilePath,
+            reason: result.reason
+          })
+        }
+      ]
+    };
   } catch (error) {
     logger.error("Error determining target file:", error);
+
     return {
-      targetFilePath: currentFilePath,
-      reason: "ファイル選択中にエラーが発生したため、現在のファイルを使用します。"
+      isError: true,
+      content: [
+        {
+          type: "text",
+          text: `Error determining target file: ${error instanceof Error ? error.message : String(error)}`
+        }
+      ]
     };
   }
 }
@@ -140,6 +169,39 @@ function parseRulesFile(content: string): FileRule[] {
   }
 
   return rules;
+}
+
+// リポジトリ内のファイル一覧取得（GitHub APIを使用）
+async function getRepositoryFiles(
+  octokit: any,
+  owner: string,
+  repo: string,
+  baseBranch: string
+): Promise<string[]> {
+  // リポジトリ内のファイル一覧を再帰的に取得
+  async function getFilesRecursively(path = ''): Promise<string[]> {
+    const { data } = await octokit.rest.repos.getContent({
+      owner,
+      repo,
+      path,
+      ref: baseBranch,
+    });
+
+    let files: string[] = [];
+
+    for (const item of Array.isArray(data) ? data : [data]) {
+      if (item.type === 'file' && item.path.endsWith('.md')) {
+        files.push(item.path);
+      } else if (item.type === 'dir') {
+        const subFiles = await getFilesRecursively(item.path);
+        files = [...files, ...subFiles];
+      }
+    }
+
+    return files;
+  }
+
+  return getFilesRecursively();
 }
 
 // ファイル名のみから判定するメソッド
@@ -168,6 +230,10 @@ ${currentFilePath}
 `;
 
   // LLM APIを呼び出し
+  const openai = new OpenAI({
+    apiKey: config.OPENAI_API_KEY
+  });
+
   const response = await openai.chat.completions.create({
     model: "google/gemini-2.5-pro-preview-03-25",
     messages: [{ role: "user", content: prompt }],
@@ -226,6 +292,10 @@ ${currentFilePath}
 `;
 
   // LLM APIを呼び出し
+  const openai = new OpenAI({
+    apiKey: config.OPENAI_API_KEY
+  });
+
   const response = await openai.chat.completions.create({
     model: "google/gemini-2.5-pro-preview-03-25",
     messages: [{ role: "user", content: prompt }],
@@ -253,127 +323,69 @@ ${currentFilePath}
 
   return { targetFilePath, reason };
 }
-
-// リポジトリ内のファイル一覧取得（GitHub APIを使用）
-async function getRepositoryFiles(): Promise<string[]> {
-  const octokit = await getAuthenticatedOctokit();
-  const owner = config.GITHUB_TARGET_OWNER;
-  const repo = config.GITHUB_TARGET_REPO;
-  const baseBranch = config.GITHUB_BASE_BRANCH;
-
-  // リポジトリ内のファイル一覧を再帰的に取得
-  async function getFilesRecursively(path = ''): Promise<string[]> {
-    const { data } = await octokit.rest.repos.getContent({
-      owner,
-      repo,
-      path,
-      ref: baseBranch,
-    });
-
-    let files: string[] = [];
-
-    for (const item of Array.isArray(data) ? data : [data]) {
-      if (item.type === 'file' && item.path.endsWith('.md')) {
-        files.push(item.path);
-      } else if (item.type === 'dir') {
-        const subFiles = await getFilesRecursively(item.path);
-        files = [...files, ...subFiles];
-      }
-    }
-
-    return files;
-  }
-
-  return getFilesRecursively();
-}
 ```
 
-### 3. 処理フローの変更
+### 3. MCPサーバーへのツール登録
 
-`processQuery`メソッドを修正して、ファイル選択ロジックを組み込みます：
+`server.ts` ファイルにツールを登録します：
 
 ```typescript
-// policy-edit/backend/src/mcp/client.ts の processQuery メソッドを修正
+// policy-edit/mcp/src/server.ts に追加
 
-async processQuery(
-  query: string,
-  history: OpenAI.Chat.ChatCompletionMessageParam[] = [],
-  branchId?: string,
-  fileContent?: string,
-  userName?: string,
-  filePath?: string
-): Promise<string> {
-  if (!this._initialized || !this.mcp) {
-    return "Error: MCP client is not connected.";
-  }
+import { handleDetermineTargetFile, determineTargetFileSchema } from "./handlers/determineTargetFile.js";
 
-  // ファイル選択ロジックを追加
-  let targetFilePath = filePath || "";
-  let fileSelectionReason = "";
+// 既存のツール登録に追加
+const determineTargetFileAnnotations = {
+  title: "Determine Target File",
+  description: "Analyzes change content and determines the most appropriate file to apply the changes to.",
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: false,
+};
 
-  // ユーザーの提案内容に基づいて適切なファイルを選択
-  if (filePath) {
-    const fileSelection = await this.determineTargetFile(query, filePath);
-    targetFilePath = fileSelection.targetFilePath;
-    fileSelectionReason = fileSelection.reason;
+server.tool(
+  "determine_target_file",
+  determineTargetFileSchema.shape,
+  handleDetermineTargetFile
+);
+```
+
+### 4. クライアント側での実装
+
+クライアント側では、MCPツールを呼び出してファイル選択を行います：
+
+```typescript
+// クライアント側のコード例
+
+// ユーザーの提案内容に基づいて適切なファイルを選択
+if (filePath) {
+  try {
+    // MCPツールを呼び出し
+    const result = await mcpClient.callTool("determine_target_file", {
+      query: userProposal,
+      currentFilePath: filePath
+    });
+
+    // 結果をJSONとしてパース
+    const { targetFilePath, reason } = JSON.parse(result);
+
+    // 選択されたファイルパスと理由を使用
+    console.log(`Selected file: ${targetFilePath}`);
+    console.log(`Reason: ${reason}`);
 
     // 選択されたファイルが現在のファイルと異なる場合、そのファイルの内容を取得
     if (targetFilePath !== filePath) {
-      try {
-        const octokit = await getAuthenticatedOctokit();
-        const owner = config.GITHUB_TARGET_OWNER;
-        const repo = config.GITHUB_TARGET_REPO;
-        const baseBranch = config.GITHUB_BASE_BRANCH;
-
-        const { data } = await octokit.rest.repos.getContent({
-          owner,
-          repo,
-          path: targetFilePath,
-          ref: baseBranch,
-        });
-
-        if (!Array.isArray(data) && data.type === 'file' && data.content) {
-          // Base64でエンコードされたコンテンツをデコード
-          fileContent = Buffer.from(data.content, 'base64').toString('utf-8');
-        }
-      } catch (error) {
-        logger.error(`Error fetching content for ${targetFilePath}:`, error);
-        // エラーが発生した場合は元のファイルパスとコンテンツを使用
-        targetFilePath = filePath;
-        fileSelectionReason = "選択したファイルの内容取得に失敗したため、現在のファイルを使用します。";
-      }
+      // ファイル内容取得処理...
     }
+  } catch (error) {
+    console.error("Error determining target file:", error);
+    // エラー処理...
   }
-
-  // 以下、既存の処理を継続...
-  const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
-    {
-      role: "system",
-      content: `あなたは、ユーザーが政策案の改善提案を作成するのを支援するAIアシスタントです。「現在のファイル内容」として提供された政策文書について、ユーザー（名前：${userName || "不明"}）が改善提案を練り上げるのを手伝うことがあなたの目標です。
-
-      政策案は共有オンラインワークスペース（GitHub）で保管・管理されています。あなたのタスクは、改善の可能性についてユーザーと議論し、ファイル内容を変更し、他の人によるレビューのために準備することです。
-
-      以下の手順で協力しましょう：
-      1.  **改善点の議論:** ユーザーが政策改善のアイデアを共有します。これらのアイデアについて、批判的に議論してください。ユーザーの提案に疑問を投げかけ、最終的な変更が強力でよく考慮されたものになるように、その影響をユーザーが考えるのを手伝ってください。提供されたテキストのみを扱ってください。
-      2.  **下書きの編集:** 具体的な変更点について合意したら、利用可能なツールを使って、これらの変更をあなた専用の下書きスペース（ブランチ）にて、「${targetFilePath}」にあるファイルの新しいバージョン（コミット）として保存します。これはユーザーの個人的な編集作業です。変更点の要約を提示して最終確認を求め、承認を得たら直接変更をコミットします。変更箇所は本当に必要なものだけにしてください。コミットメッセージにはユーザー名（${userName || "不明"}）を含めてください。
-          この作業は、ユーザーが望む限り何度でも繰り返せます。
-      3.  **改善提案の投稿の準備:** 下書きの編集にユーザーが満足したら、改善提案を投稿する準備をします。利用可能なツールを使ってプルリクエストのタイトルと説明を設定してください。ツールで設定するプルリクエストの説明には、行われた改善点、その意図や目的、背景などを可能な限り明確かつ詳細（1000文字以上）に述べ、ユーザー名（${userName || "匿名"}）を記載しましょう。このメッセージは、変更内容とその理由を他の人に伝えるために使われます（プルリクエスト）。
-      4.  **リンクの共有:** ツールを使ってプルリクエストを更新した後に、提案された変更へのウェブリンク（プルリクエストリンク）をユーザーに提供してください。
-
-      注意点：ユーザーは「Git」、「コミット」、「ブランチ」、「プルリクエスト」のような技術用語に詳しくありません。プロセスやあなたが取る行動を説明する際には、シンプルで日常的な言葉を使用してください。提供された政策文書の内容改善にのみ集中しましょう。
-
-      ${fileSelectionReason ? `【ファイル選択について】: ${fileSelectionReason}` : ''}
-
-      返答は最大500文字。`,
-    },
-    ...history,
-  ];
-
-  // 以下、既存の処理を継続...
 }
 ```
 
-### 4. フロントエンドの変更
+### 5. フロントエンドの変更
 
 フロントエンドでは、選択されたファイルがユーザーに表示されるように、UIを更新します。
 
@@ -383,10 +395,10 @@ async processQuery(
 ## 実装計画
 
 1. **フェーズ1: 基本機能の実装**
-   - 対象リポジトリから `/.meta/target_file_rules.txt` を取得する機能の実装
+   - MCPサーバーに `determine_target_file` ツールを実装
+   - ルールファイル取得機能の実装
    - ファイル名のみから判定するロジックの実装
-   - determineTargetFile メソッドの実装
-   - processQuery メソッドの修正
+   - クライアント側でのツール呼び出し実装
 
 2. **フェーズ2: 拡張機能の実装**
    - ユーザーへのフィードバック改善
@@ -415,3 +427,5 @@ async processQuery(
 ## まとめ
 
 この機能により、ユーザーの変更提案が自動的に最適なファイルに振り分けられるようになり、リポジトリの構造と内容の質が向上します。対象リポジトリから直接ルールを取得することで、ルールの一元管理が可能になり、メンテナンス性も向上します。ルールファイルが取得できない場合でも、ファイル名のみから判定することで、常に最適なファイル選択を試みます。LLMを活用したインテリジェントなファイル選択により、ユーザーは技術的な詳細を気にすることなく、内容に集中して提案を行うことができます。
+
+MCPサーバー側でこの機能を実装することで、複数のクライアントから同じロジックを利用できるようになり、一貫性のあるファイル選択が可能になります。また、ロジックの更新も一箇所で行えるため、メンテナンス性が向上します。
