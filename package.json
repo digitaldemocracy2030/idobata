@@ -23,5 +23,8 @@
     "format": "biome check --write .",
     "knip": "knip",
     "knip:fix": "knip --fix"
+  },
+  "dependencies": {
+    "@octokit/rest": "^21.1.1"
   }
 }
