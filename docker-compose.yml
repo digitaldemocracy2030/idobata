@@ -29,7 +29,7 @@ services:
       - IDEA_CORS_ORIGIN=${IDEA_CORS_ORIGIN}
       - JWT_SECRET=${JWT_SECRET} # Pass JWT secret from .env
       - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-1d} # Pass expiration, default to 1 day
-      - ALLOW_DELETE_THEME=${ALLOW_DELETE_THEME:-false} # Pass theme deletion control, default to false
+      - ALLOW_DELETE_THEME=${ALLOW_DELETE_THEME} # Pass theme deletion control
     # Use the CMD defined in the Dockerfile's development stage
     command: npm run dev
 
