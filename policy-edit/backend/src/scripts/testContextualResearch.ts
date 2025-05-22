@@ -1,8 +1,5 @@
 import { OPENROUTER_API_KEY } from "../config.js";
-import {
-  createClaudeClient,
-  createGeminiClient,
-} from "../services/llm/LLMClientFactory.js";
+import { createLLMClient } from "../services/llm/LLMClientFactory.js";
 import { ContextualResearchService } from "../services/research/ContextualResearchService.js";
 import { logger } from "../utils/logger.js";
 
@@ -12,9 +9,9 @@ async function testContextualResearch() {
     process.exit(1);
   }
 
-  const researchLLM1 = createGeminiClient("gemini-2.5-pro-preview-03-25");
-  const researchLLM2 = createClaudeClient("claude-3-5-sonnet-20240620");
-  const synthesisLLM = createClaudeClient("claude-3-opus-20240229");
+  const researchLLM1 = createLLMClient("google/gemini-2.5-pro-preview-03-25");
+  const researchLLM2 = createLLMClient("anthropic/claude-3-5-sonnet-20240620");
+  const synthesisLLM = createLLMClient("anthropic/claude-3-opus-20240229");
 
   const researchService = new ContextualResearchService(
     [researchLLM1, researchLLM2],
