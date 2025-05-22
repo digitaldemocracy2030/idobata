@@ -25,6 +25,10 @@ const themeSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    disableNewComment: {
+      type: Boolean,
+      default: false,
+    },
     clusteringResults: {
       type: Map,
       of: Object,

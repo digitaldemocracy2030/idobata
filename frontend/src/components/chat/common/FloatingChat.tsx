@@ -9,6 +9,8 @@ interface FloatingChatProps {
   onSendMessage?: (message: string) => void;
   onClose?: () => void;
   onOpen?: () => void;
+  disabled?: boolean;
+  disabledMessage?: string;
 }
 
 export interface FloatingChatRef {
@@ -20,7 +22,16 @@ export interface FloatingChatRef {
 }
 
 const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
-  ({ onSendMessage, onClose, onOpen }, ref) => {
+  (
+    {
+      onSendMessage,
+      onClose,
+      onOpen,
+      disabled = false,
+      disabledMessage = "このテーマではコメントが無効化されています",
+    },
+    ref
+  ) => {
     const [isOpen, setIsOpen] = useState(false);
     const [hasUnread, setHasUnread] = useState(false);
     const isDesktop = useMediaQuery("(min-width: 1280px)");
@@ -78,7 +89,11 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
       <>
         {/* On mobile: Show floating button when chat is closed */}
         {!isDesktop && !isOpen && (
-          <FloatingChatButton onClick={handleOpen} hasUnread={hasUnread} />
+          <FloatingChatButton
+            onClick={handleOpen}
+            hasUnread={hasUnread}
+            disabled={disabled}
+          />
         )}
 
         {/* Chat view - desktop: fixed sidebar, mobile: bottom sheet */}
@@ -97,6 +112,8 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
               onClose={handleClose}
               onSendMessage={handleSendMessage}
               isDesktop={isDesktop}
+              disabled={disabled}
+              disabledMessage={disabledMessage}
             />
           )}
         </div>

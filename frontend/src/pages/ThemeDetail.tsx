@@ -29,6 +29,10 @@ const ThemeDetail = () => {
   const isLoading = isMockMode ? false : apiIsLoading;
   const error = isMockMode ? null : apiError;
 
+  const isCommentDisabled = isMockMode
+    ? false
+    : themeDetail?.theme?.disableNewComment === true;
+
   const mockThemeData = {
     _id: themeId || "",
     title: "若者の雇用とキャリア支援",
@@ -197,7 +201,11 @@ const ThemeDetail = () => {
         <div className="md:mr-[50%]">
           <ThemeDetailTemplate {...templateProps} />
         </div>
-        <FloatingChat ref={floatingChatRef} onSendMessage={handleSendMessage} />
+        <FloatingChat
+          ref={floatingChatRef}
+          onSendMessage={handleSendMessage}
+          disabled={isCommentDisabled}
+        />
       </>
     );
   }

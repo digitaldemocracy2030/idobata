@@ -28,6 +28,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
     slug: "",
     isActive: true,
     customPrompt: "",
+    disableNewComment: false,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,6 +58,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
         slug: theme.slug,
         isActive: theme.isActive,
         customPrompt: theme.customPrompt || "",
+        disableNewComment: theme.disableNewComment || false,
       });
     }
   }, [isEdit, theme]);
@@ -397,6 +399,20 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
           className="w-full px-3 py-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-ring"
           rows={8}
         />
+      </div>
+
+      <div className="mb-4 flex items-center">
+        <input
+          type="checkbox"
+          id="disableNewComment"
+          name="disableNewComment"
+          checked={formData.disableNewComment as boolean}
+          onChange={handleChange}
+          className="mr-2"
+        />
+        <label htmlFor="disableNewComment" className="text-foreground">
+          新規コメントを無効化
+        </label>
       </div>
 
       <div className="flex space-x-4">
