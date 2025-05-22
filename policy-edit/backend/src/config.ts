@@ -27,6 +27,12 @@ export const CORS_ORIGIN =
 // Database configuration
 export const DATABASE_URL = process.env.DATABASE_URL;
 
+// Research service model configuration
+export const RESEARCH_DEFAULT_MODEL =
+  process.env.RESEARCH_DEFAULT_MODEL || "google/gemini-2.5-pro-preview-03-25";
+export const SYNTHESIS_DEFAULT_MODEL =
+  process.env.SYNTHESIS_DEFAULT_MODEL || "anthropic/claude-3-opus-20240229";
+
 // Validate required environment variables
 if (!OPENROUTER_API_KEY) {
   console.warn(
