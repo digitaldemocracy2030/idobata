@@ -29,6 +29,7 @@ services:
       - IDEA_CORS_ORIGIN=${IDEA_CORS_ORIGIN}
       - JWT_SECRET=${JWT_SECRET} # Pass JWT secret from .env
       - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-1d} # Pass expiration, default to 1 day
+      - ALLOW_DELETE_THEME=${ALLOW_DELETE_THEME} # Pass theme deletion control
     # Use the CMD defined in the Dockerfile's development stage
     command: npm run dev
 
@@ -136,6 +137,7 @@ services:
       - NODE_ENV=development
       - VITE_API_BASE_URL=${ADMIN_API_BASE_URL} # idea-discussionバックエンドを指す
       - VITE_ADMIN_FRONTEND_ALLOWED_HOSTS=${VITE_ADMIN_FRONTEND_ALLOWED_HOSTS}
+      - VITE_ALLOW_DELETE_THEME=${ALLOW_DELETE_THEME}
 
   # --- Python Embedding Service ---
   python-service:
