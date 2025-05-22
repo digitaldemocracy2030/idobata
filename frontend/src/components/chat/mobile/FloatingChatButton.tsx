@@ -14,42 +14,47 @@ export const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
   hasUnread = false,
   disabled = false,
 }) => {
+  if (disabled) {
+    return (
+      <div className="fixed bottom-4 left-4 right-4 z-50">
+        <div className="bg-accentGradient rounded-full shadow-lg p-1 opacity-50">
+          <div className="flex flex-grow items-center bg-white rounded-full justify-center">
+            <div className="text-gray-500 text-center py-4">
+              コメントが無効化されています
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed bottom-4 left-4 right-4 z-50">
       <div
         className={cn(
           "bg-accentGradient rounded-full shadow-lg p-1",
-          hasUnread && "animate-pulse",
-          disabled && "opacity-50"
+          hasUnread && "animate-pulse"
         )}
       >
-        <div className="flex flex-grow items-center bg-white rounded-full ">
-          {disabled ? (
-            <div className="text-gray-500 text-center w-full px-5 py-4">
-              コメントが無効化されています
-            </div>
-          ) : (
-            <>
-              <input
-                type="text"
-                placeholder="気になること・思ったことを伝える"
-                className="placeholder-gradient flex-grow px-5 py-4 bg-transparent border-none focus:outline-none text-base"
-                readOnly
-                onClick={onClick}
-              />
-              <Button
-                onClick={onClick}
-                variant="ghost"
-                size="icon"
-                className="rounded-full h-10 w-10 mr-2 flex items-center justify-center"
-              >
-                <Send className="h-5 w-5" />
-                {hasUnread && (
-                  <span className="absolute top-1 right-1 h-3 w-3 rounded-full bg-red-500" />
-                )}
-              </Button>
-            </>
-          )}
+        <div className="flex flex-grow items-center bg-white rounded-full">
+          <input
+            type="text"
+            placeholder="気になること・思ったことを伝える"
+            className="placeholder-gradient flex-grow px-5 py-4 bg-transparent border-none focus:outline-none text-base"
+            readOnly
+            onClick={onClick}
+          />
+          <Button
+            onClick={onClick}
+            variant="ghost"
+            size="icon"
+            className="rounded-full h-10 w-10 mr-2 flex items-center justify-center"
+          >
+            <Send className="h-5 w-5" />
+            {hasUnread && (
+              <span className="absolute top-1 right-1 h-3 w-3 rounded-full bg-red-500" />
+            )}
+          </Button>
         </div>
       </div>
     </div>
