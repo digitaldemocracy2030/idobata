@@ -11,14 +11,12 @@ const MyPage: React.FC = () => {
   const [newDisplayName, setNewDisplayName] = useState(user.displayName || "");
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    setSaveError(null);
     setSaveSuccess(false);
 
     const success = await setDisplayName(newDisplayName);
@@ -26,7 +24,6 @@ const MyPage: React.FC = () => {
       setSaveSuccess(true);
       addNotification("表示名が保存されました");
     } else {
-      setSaveError("表示名の保存に失敗しました。もう一度お試しください。");
       addNotification(`エラー: ${error || "表示名の保存に失敗しました"}`);
     }
 
@@ -38,13 +35,9 @@ const MyPage: React.FC = () => {
 
     const file = e.target.files[0];
     setIsUploading(true);
-    setSaveError(null);
 
     const success = await uploadProfileImage(file);
     if (!success) {
-      setSaveError(
-        "画像のアップロードに失敗しました。もう一度お試しください。"
-      );
       addNotification(`エラー: ${error || "画像のアップロードに失敗しました"}`);
     } else {
       addNotification("プロフィール画像がアップロードされました");
@@ -137,18 +130,6 @@ const MyPage: React.FC = () => {
           {saveSuccess && (
             <div className="bg-green-100 text-green-700 p-2 rounded mb-4">
               保存されました
-            </div>
-          )}
-
-          {saveError && (
-            <div className="bg-red-100 text-red-700 p-2 rounded mb-4">
-              {saveError}
-            </div>
-          )}
-
-          {error && (
-            <div className="bg-red-100 text-red-700 p-2 rounded mb-4">
-              {error}
             </div>
           )}
         </form>
