@@ -131,7 +131,32 @@ const ThemeDetail = () => {
   };
 
   const handleSendMessage = async (message: string) => {
-    if (chatManager) {
+    if (message === "__RESET_CONVERSATION__") {
+      if (chatManager) {
+        chatManager.clearMessages();
+        localStorage.removeItem(`chat_thread_${themeId}`);
+
+        const themeName = isMockMode
+          ? mockThemeData.title
+          : (themeDetail?.theme?.title ?? "");
+
+        const newManager = new ThemeDetailChatManager({
+          themeId,
+          themeName,
+          userId: user.id,
+          onNewMessage: handleNewMessage,
+          onNewExtraction: handleNewExtraction,
+        });
+
+        setChatManager(newManager);
+
+        if (floatingChatRef.current) {
+          floatingChatRef.current.clearMessages();
+        }
+
+        return;
+      }
+    } else if (chatManager) {
       await chatManager.addMessage(message, "user");
     }
   };
