@@ -2,10 +2,12 @@ import React, { useRef, useState } from "react";
 import SectionHeading from "../components/common/SectionHeading";
 import { Button } from "../components/ui/button";
 import { useAuth } from "../contexts/AuthContext";
+import { useNotification } from "../contexts/NotificationContext";
 
 const MyPage: React.FC = () => {
   const { user, setDisplayName, uploadProfileImage, loading, error } =
     useAuth();
+  const { addNotification } = useNotification();
   const [newDisplayName, setNewDisplayName] = useState(user.displayName || "");
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -22,8 +24,10 @@ const MyPage: React.FC = () => {
     const success = await setDisplayName(newDisplayName);
     if (success) {
       setSaveSuccess(true);
+      addNotification("表示名が保存されました");
     } else {
       setSaveError("表示名の保存に失敗しました。もう一度お試しください。");
+      addNotification(`エラー: ${error || "表示名の保存に失敗しました"}`);
     }
 
     setIsSaving(false);
@@ -41,6 +45,9 @@ const MyPage: React.FC = () => {
       setSaveError(
         "画像のアップロードに失敗しました。もう一度お試しください。"
       );
+      addNotification(`エラー: ${error || "画像のアップロードに失敗しました"}`);
+    } else {
+      addNotification("プロフィール画像がアップロードされました");
     }
 
     setIsUploading(false);

@@ -3,6 +3,7 @@ import AppLayout from "./components/AppLayout";
 import PageLayout from "./components/layout/PageLayout";
 import { AuthProvider } from "./contexts/AuthContext";
 import { MockProvider } from "./contexts/MockContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import About from "./pages/About";
 import CommentsPage from "./pages/CommentsPage";
@@ -24,9 +25,11 @@ export const router = createBrowserRouter([
     element: (
       <ThemeProvider>
         <AuthProvider>
-          <MockProvider>
-            <App />
-          </MockProvider>
+          <NotificationProvider>
+            <MockProvider>
+              <App />
+            </MockProvider>
+          </NotificationProvider>
         </AuthProvider>
       </ThemeProvider>
     ),
