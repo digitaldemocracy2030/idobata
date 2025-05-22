@@ -157,7 +157,8 @@ export const deleteTheme = async (req, res) => {
   // テーマ削除機能が無効の場合は400エラーを返す
   if (!allowDeleteTheme) {
     return res.status(400).json({
-      message: "Theme deletion is disabled. Set ALLOW_DELETE_THEME=true to enable this feature."
+      message:
+        "Theme deletion is disabled. Set ALLOW_DELETE_THEME=true to enable this feature.",
     });
   }
 
