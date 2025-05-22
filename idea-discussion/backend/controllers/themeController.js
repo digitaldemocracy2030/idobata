@@ -150,6 +150,17 @@ export const updateTheme = async (req, res) => {
 export const deleteTheme = async (req, res) => {
   const { themeId } = req.params;
 
+  // 環境変数からテーマ削除機能の有効/無効を取得
+  // 設定がない場合やfalseの場合は、テーマの削除機能は無効
+  const allowDeleteTheme = process.env.ALLOW_DELETE_THEME === "true";
+
+  // テーマ削除機能が無効の場合は400エラーを返す
+  if (!allowDeleteTheme) {
+    return res.status(400).json({
+      message: "Theme deletion is disabled. Set ALLOW_DELETE_THEME=true to enable this feature."
+    });
+  }
+
   if (!mongoose.Types.ObjectId.isValid(themeId)) {
     return res.status(400).json({ message: "Invalid theme ID format" });
   }
