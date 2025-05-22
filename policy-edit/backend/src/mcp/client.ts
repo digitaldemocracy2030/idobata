@@ -176,6 +176,40 @@ export class McpClient {
       return "Error: MCP client is not connected.";
     }
 
+    let effectiveFilePath = filePath;
+
+    if (
+      effectiveFilePath &&
+      this.tools.some((tool) => tool.name === "determine_target_file")
+    ) {
+      try {
+        const result = await this.mcp.callTool({
+          name: "determine_target_file",
+          arguments: {
+            query,
+            currentFilePath: effectiveFilePath,
+          },
+        });
+
+        const resultContent =
+          (result.content as Array<{ type: string; text: string }>) || [];
+        const resultText =
+          resultContent.length > 0 && resultContent[0].type === "text"
+            ? resultContent[0].text
+            : "{}";
+        const { targetFilePath, reason } = JSON.parse(resultText);
+
+        if (targetFilePath && targetFilePath !== effectiveFilePath) {
+          logger.info(
+            `Selected target file: ${targetFilePath} (Reason: ${reason})`
+          );
+          effectiveFilePath = targetFilePath; // ファイルパスを更新
+        }
+      } catch (error) {
+        logger.error("Error determining target file:", error);
+      }
+    }
+
     // Define messages with proper typing for OpenAI API, starting with the system prompt and history
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
       {

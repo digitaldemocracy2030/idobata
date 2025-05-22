@@ -1,4 +1,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import {
+  determineTargetFileSchema,
+  handleDetermineTargetFile,
+} from "./handlers/determineTargetFile.js"; // インポート追加
 import { handleUpdatePr, updatePrSchema } from "./handlers/updatePr.js"; // インポート追加
 // import { z } from 'zod'; // Zod is imported in handlers now
 import { handleUpsertFile, upsertFileSchema } from "./handlers/upsertFile.js"; // インポート追加
@@ -45,6 +49,23 @@ server.tool(
   "update_pr",
   updatePrSchema.shape, // Pass the Zod schema shape
   handleUpdatePr // Pass the handler function
+  // Remove annotations argument for now
+);
+
+const determineTargetFileAnnotations = {
+  title: "Determine Target File",
+  description:
+    "Analyzes change content and determines the most appropriate file to apply the changes to.",
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: false,
+};
+
+server.tool(
+  "determine_target_file",
+  determineTargetFileSchema.shape,
+  handleDetermineTargetFile
   // Remove annotations argument for now
 );
 
