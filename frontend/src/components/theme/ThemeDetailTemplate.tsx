@@ -29,6 +29,8 @@ interface ThemeDetailTemplateProps {
     id: number | string;
     text: string;
   }[];
+  disabled?: boolean;
+  onSendMessage?: (message: string) => void;
 }
 
 const ThemeDetailTemplate = ({
@@ -36,6 +38,8 @@ const ThemeDetailTemplate = ({
   keyQuestions,
   issues,
   solutions,
+  disabled = false,
+  onSendMessage,
 }: ThemeDetailTemplateProps) => {
   const [activeTab, setActiveTab] = useState<"issues" | "solutions">("issues");
   const chatRef = useRef<FloatingChatRef>(null);
@@ -44,8 +48,13 @@ const ThemeDetailTemplate = ({
     localStorage.getItem("userId") || crypto.randomUUID()
   );
 
-  const handleSendMessage = async (message: string) => {
+  const handleSendMessageInternal = async (message: string) => {
     console.log("Message sent:", message);
+
+    if (onSendMessage) {
+      onSendMessage(message);
+      return;
+    }
 
     chatRef.current?.addMessage(message, "user");
 
@@ -163,7 +172,11 @@ const ThemeDetailTemplate = ({
         </div>
       </div>
 
-      <FloatingChat ref={chatRef} onSendMessage={handleSendMessage} />
+      <FloatingChat
+        ref={chatRef}
+        onSendMessage={handleSendMessageInternal}
+        disabled={disabled}
+      />
     </div>
   );
 };

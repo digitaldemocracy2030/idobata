@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { FloatingChat, type FloatingChatRef } from "../components/chat";
+import { type FloatingChatRef } from "../components/chat";
 import ThemeDetailTemplate from "../components/theme/ThemeDetailTemplate";
 import { useAuth } from "../contexts/AuthContext";
 import { useMock } from "../contexts/MockContext";
@@ -199,13 +199,12 @@ const ThemeDetail = () => {
     return (
       <>
         <div className="md:mr-[50%]">
-          <ThemeDetailTemplate {...templateProps} />
+          <ThemeDetailTemplate
+            {...templateProps}
+            onSendMessage={handleSendMessage}
+            disabled={isCommentDisabled}
+          />
         </div>
-        <FloatingChat
-          ref={floatingChatRef}
-          onSendMessage={handleSendMessage}
-          disabled={isCommentDisabled}
-        />
       </>
     );
   }
