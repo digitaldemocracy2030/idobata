@@ -69,7 +69,14 @@ export const getThemeById = async (req, res) => {
 };
 
 export const createTheme = async (req, res) => {
-  const { title, description, slug, isActive, customPrompt } = req.body;
+  const {
+    title,
+    description,
+    slug,
+    isActive,
+    customPrompt,
+    disableNewComment,
+  } = req.body;
 
   if (!title || !slug) {
     return res.status(400).json({ message: "Title and slug are required" });
@@ -89,6 +96,8 @@ export const createTheme = async (req, res) => {
       slug,
       isActive: isActive !== undefined ? isActive : true,
       customPrompt,
+      disableNewComment:
+        disableNewComment !== undefined ? disableNewComment : false,
     });
 
     const savedTheme = await theme.save();
@@ -103,7 +112,14 @@ export const createTheme = async (req, res) => {
 
 export const updateTheme = async (req, res) => {
   const { themeId } = req.params;
-  const { title, description, slug, isActive, customPrompt } = req.body;
+  const {
+    title,
+    description,
+    slug,
+    isActive,
+    customPrompt,
+    disableNewComment,
+  } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(themeId)) {
     return res.status(400).json({ message: "Invalid theme ID format" });
@@ -134,6 +150,10 @@ export const updateTheme = async (req, res) => {
         isActive: isActive !== undefined ? isActive : theme.isActive,
         customPrompt:
           customPrompt !== undefined ? customPrompt : theme.customPrompt,
+        disableNewComment:
+          disableNewComment !== undefined
+            ? disableNewComment
+            : theme.disableNewComment,
       },
       { new: true, runValidators: true }
     );

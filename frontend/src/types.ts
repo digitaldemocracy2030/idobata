@@ -148,6 +148,7 @@ export interface Theme {
   slug: string;
   keyQuestionCount?: number;
   commentCount?: number;
+  disableNewComment?: boolean;
 }
 
 export type MessageType = "user" | "system" | "system-message";

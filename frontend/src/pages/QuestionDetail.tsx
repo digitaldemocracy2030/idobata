@@ -12,6 +12,7 @@ import { Button } from "../components/ui/button";
 import { useAuth } from "../contexts/AuthContext";
 import { Link, useMock } from "../contexts/MockContext";
 import { useQuestionDetail } from "../hooks/useQuestionDetail";
+import { useThemeDetail } from "../hooks/useThemeDetail";
 import { QuestionChatManager } from "../services/chatManagers/QuestionChatManager";
 import { MessageType } from "../types";
 
@@ -28,6 +29,12 @@ const QuestionDetail = () => {
   const { questionDetail, isLoading, error } = isMockMode
     ? { questionDetail: null, isLoading: false, error: null }
     : useQuestionDetail(themeId || "", qId || "");
+
+  const { themeDetail: themeInfo } = useThemeDetail(themeId || "");
+
+  const isCommentDisabled = isMockMode
+    ? false
+    : themeInfo?.theme?.disableNewComment === true;
 
   useEffect(() => {
     if (
@@ -377,7 +384,11 @@ const QuestionDetail = () => {
             issues={reportExample.issues}
           />
         </div>
-        <FloatingChat ref={chatRef} onSendMessage={handleSendMessage} />
+        <FloatingChat
+          ref={chatRef}
+          onSendMessage={handleSendMessage}
+          disabled={isCommentDisabled}
+        />
       </>
     );
   }

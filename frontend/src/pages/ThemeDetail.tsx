@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { FloatingChat, type FloatingChatRef } from "../components/chat";
+import { type FloatingChatRef } from "../components/chat";
 import ThemeDetailTemplate from "../components/theme/ThemeDetailTemplate";
 import { useAuth } from "../contexts/AuthContext";
 import { useMock } from "../contexts/MockContext";
@@ -28,6 +28,10 @@ const ThemeDetail = () => {
   const themeDetail = isMockMode ? null : apiThemeDetail;
   const isLoading = isMockMode ? false : apiIsLoading;
   const error = isMockMode ? null : apiError;
+
+  const isCommentDisabled = isMockMode
+    ? false
+    : themeDetail?.theme?.disableNewComment === true;
 
   const mockThemeData = {
     _id: themeId || "",
@@ -195,9 +199,13 @@ const ThemeDetail = () => {
     return (
       <>
         <div className="md:mr-[50%]">
-          <ThemeDetailTemplate {...templateProps} />
+          <ThemeDetailTemplate
+            {...templateProps}
+            onSendMessage={handleSendMessage}
+            disabled={isCommentDisabled}
+            ref={floatingChatRef}
+          />
         </div>
-        <FloatingChat ref={floatingChatRef} onSendMessage={handleSendMessage} />
       </>
     );
   }

@@ -6,12 +6,28 @@ import { Button } from "../../ui/button";
 interface FloatingChatButtonProps {
   onClick: () => void;
   hasUnread?: boolean;
+  disabled?: boolean;
 }
 
 export const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
   onClick,
   hasUnread = false,
+  disabled = false,
 }) => {
+  if (disabled) {
+    return (
+      <div className="fixed bottom-4 left-4 right-4 z-50">
+        <div className="bg-accentGradient rounded-full shadow-lg p-1 opacity-50">
+          <div className="flex flex-grow items-center bg-white rounded-full justify-center">
+            <div className="text-gray-500 text-center py-4">
+              コメントが無効化されています
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed bottom-4 left-4 right-4 z-50">
       <div
@@ -20,7 +36,7 @@ export const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
           hasUnread && "animate-pulse"
         )}
       >
-        <div className="flex flex-grow items-center bg-white rounded-full ">
+        <div className="flex flex-grow items-center bg-white rounded-full">
           <input
             type="text"
             placeholder="気になること・思ったことを伝える"
