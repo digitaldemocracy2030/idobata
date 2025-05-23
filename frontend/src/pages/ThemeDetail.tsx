@@ -203,6 +203,7 @@ const ThemeDetail = () => {
             {...templateProps}
             onSendMessage={handleSendMessage}
             disabled={isCommentDisabled}
+            ref={floatingChatRef}
           />
         </div>
       </>
