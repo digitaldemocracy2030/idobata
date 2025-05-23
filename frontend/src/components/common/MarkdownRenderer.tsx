@@ -53,12 +53,38 @@ export function MarkdownRenderer({
               {...props}
             />
           ),
-          blockquote: ({ node, ...props }) => (
-            <blockquote
-              className="border-l-4 border-neutral-300 pl-4 italic"
-              {...props}
-            />
-          ),
+          blockquote: ({ children, ...props }) => {
+            const childrenText = children?.toString() || "";
+            const sourceIdMatch = childrenText.match(/^\[([^\]]+)\]\s/);
+            const sourceId = sourceIdMatch ? sourceIdMatch[1] : null;
+
+            let displayContent = children;
+            if (sourceId) {
+              const modifiedText = childrenText.replace(/^\[[^\]]+\]\s/, "");
+              displayContent = (
+                <ReactMarkdown
+                  rehypePlugins={[rehypeRaw, rehypeSanitize]}
+                  remarkPlugins={[remarkGfm]}
+                >
+                  {modifiedText}
+                </ReactMarkdown>
+              );
+            }
+
+            return (
+              <blockquote
+                className="border-l-4 border-neutral-300 pl-4 italic bg-neutral-50 p-4 rounded-r-md relative mb-6"
+                data-source-url={
+                  sourceId
+                    ? `https://github.com/digitaldemocracy2030/idobata/issues/${sourceId}`
+                    : ""
+                }
+                {...props}
+              >
+                {displayContent}
+              </blockquote>
+            );
+          },
           code: ({ node, ...props }) => (
             <code
               className="bg-neutral-100 px-1 py-0.5 rounded text-sm"

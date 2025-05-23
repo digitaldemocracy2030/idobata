@@ -23,7 +23,12 @@
 }
 
 .prose blockquote {
-  @apply border-l-4 border-neutral-300 pl-4 italic;
+  @apply border-l-4 border-neutral-300 pl-4 italic bg-neutral-50 p-4 rounded-r-md relative mb-6;
+}
+
+.prose blockquote::after {
+  content: attr(data-source-url);
+  @apply absolute bottom-1 right-2 text-xs text-primary underline opacity-80 hover:opacity-100;
 }
 
 .prose code {

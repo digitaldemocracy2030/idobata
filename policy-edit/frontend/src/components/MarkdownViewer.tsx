@@ -17,32 +17,46 @@ interface MarkdownViewerProps {
 
 const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ content }) => {
   return (
-    <div className="markdown-body">
-      {" "}
-      {/* Use github-markdown-css class, remove others */}
-      {/* Apply Tailwind Typography plugin class */}
-      {/* Adjust prose classes as needed (e.g., prose-sm, prose-lg) */}
+    <div className="markdown-body prose">
       <ReactMarkdown
-        // className prop removed from here
         remarkPlugins={[remarkGfm]} // Enable GFM features
         rehypePlugins={[rehypeRaw, rehypeSanitize, rehypeHighlight]} // Enable raw HTML, sanitize, and syntax highlighting
-        // Optional: Customize components (e.g., links to open in new tabs)
-        // Optional: Customize components (e.g., links to open in new tabs)
         components={{
           a: ({ node, ...props }) => (
             <a {...props} target="_blank" rel="noopener noreferrer" />
           ),
-          // You can customize other elements like headings, code blocks, etc.
-          // code({node, inline, className, children, ...props}) {
-          //   const match = /language-(\w+)/.exec(className || '')
-          //   return !inline && match ? (
-          //      // Custom code block rendering if needed
-          //   ) : (
-          //     <code className={className} {...props}>
-          //       {children}
-          //     </code>
-          //   )
-          // }
+          blockquote: ({ children, ...props }) => {
+            const childrenText = children?.toString() || "";
+            const sourceIdMatch = childrenText.match(/^\[([^\]]+)\]\s/);
+            const sourceId = sourceIdMatch ? sourceIdMatch[1] : null;
+
+            let displayContent = children;
+            if (sourceId) {
+              const modifiedText = childrenText.replace(/^\[[^\]]+\]\s/, "");
+              displayContent = (
+                <ReactMarkdown
+                  rehypePlugins={[rehypeRaw, rehypeSanitize]}
+                  remarkPlugins={[remarkGfm]}
+                >
+                  {modifiedText}
+                </ReactMarkdown>
+              );
+            }
+
+            return (
+              <blockquote
+                className="border-l-4 border-neutral-300 pl-4 italic bg-neutral-50 p-4 rounded-r-md relative mb-6"
+                data-source-url={
+                  sourceId
+                    ? `https://github.com/digitaldemocracy2030/idobata/issues/${sourceId}`
+                    : ""
+                }
+                {...props}
+              >
+                {displayContent}
+              </blockquote>
+            );
+          },
         }}
       >
         {content}
