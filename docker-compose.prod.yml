@@ -1,0 +1,127 @@
+services:
+  idea-backend:
+    container_name: idea-backend-prod
+    build:
+      context: .
+      dockerfile: ./idea-discussion/backend/Dockerfile
+      target: production
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+    env_file:
+      - .env.production
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongo:27017/idea_discussion_db
+      - GITHUB_APP_ID=${GITHUB_APP_ID}
+      - GITHUB_INSTALLATION_ID=${GITHUB_INSTALLATION_ID}
+      - GITHUB_TARGET_OWNER=${GITHUB_TARGET_OWNER}
+      - GITHUB_TARGET_REPO=${GITHUB_TARGET_REPO}
+      - GITHUB_BASE_BRANCH=${GITHUB_BASE_BRANCH}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - IDEA_CORS_ORIGIN=${IDEA_CORS_ORIGIN}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-1d}
+      - ALLOW_DELETE_THEME=${ALLOW_DELETE_THEME}
+    restart: always
+
+  policy-frontend:
+    container_name: policy-frontend-prod
+    build:
+      context: ./policy-edit/frontend
+      dockerfile: Dockerfile
+    restart: always
+
+  policy-backend:
+    container_name: policy-backend-prod
+    build:
+      context: .
+      dockerfile: ./policy-edit/backend/Dockerfile
+      target: production
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env.production
+    environment:
+      - NODE_ENV=production
+      - POLICY_CORS_ORIGIN=${POLICY_CORS_ORIGIN}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres-policy:5432/${POSTGRES_DB:-policy_db}
+    depends_on:
+      - postgres-policy
+    restart: always
+
+  frontend:
+    container_name: frontend-prod
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+
+  admin:
+    container_name: admin-prod
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    restart: always
+
+  mongo:
+    container_name: mongo-prod
+    image: mongo:latest
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+    command: ["--auth"]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: idea_discussion_db
+
+  postgres-policy:
+    container_name: postgres-policy-prod
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-policy_db}
+    volumes:
+      - postgres_policy_data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-policy_db}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  python-service:
+    container_name: idobata-python-service-prod
+    build:
+      context: ./python-service
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - chroma_data:/data/chroma
+    restart: always
+
+  nginx:
+    container_name: nginx-prod
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - idea-backend
+      - policy-frontend
+      - policy-backend
+      - frontend
+      - admin
+      - python-service
+    restart: always
+
+volumes:
+  mongo_data:
+  chroma_data:
+  postgres_policy_data:

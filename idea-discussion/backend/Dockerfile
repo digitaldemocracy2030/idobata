@@ -12,8 +12,8 @@ RUN npm install --workspace=idobata-idea-discussion-backend
 WORKDIR /app/idea-discussion/backend
 # Copy the backend source code
 COPY ./idea-discussion/backend ./
-# Build backend if needed (uncomment if you have a build step)
-# RUN npm run build
+# Build backend for production
+RUN npm run build
 
 # Stage 2: Final Production/Development Image
 FROM node:20-alpine AS production
