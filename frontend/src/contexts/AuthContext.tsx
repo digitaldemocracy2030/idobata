@@ -78,7 +78,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     if (result.isErr()) {
       console.error("Failed to update display name:", result.error);
-      setError("表示名の更新に失敗しました");
+      const errorMessage =
+        typeof result.error.data === "object" &&
+        result.error.data !== null &&
+        "error" in result.error.data
+          ? String(result.error.data.error)
+          : "表示名の更新に失敗しました";
+      setError(errorMessage);
       return false;
     }
 
@@ -91,7 +97,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
     if (result.isErr()) {
       console.error("Failed to upload profile image:", result.error);
-      setError("プロフィール画像のアップロードに失敗しました");
+      const errorMessage =
+        typeof result.error.data === "object" &&
+        result.error.data !== null &&
+        "error" in result.error.data
+          ? String(result.error.data.error)
+          : "プロフィール画像のアップロードに失敗しました";
+      setError(errorMessage);
       return false;
     }
 
