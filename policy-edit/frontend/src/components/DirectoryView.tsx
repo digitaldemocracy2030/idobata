@@ -32,7 +32,13 @@ const DirectoryView: React.FC<DirectoryViewProps> = ({ data }) => {
     return name.endsWith(".md") ? name.slice(0, -3) : name;
   };
 
-  const filteredData = data.filter((item) => !item.name.startsWith("."));
+  const filteredData = data.filter(
+    (item) =>
+      !item.name.startsWith(".") &&
+      !["license", "license.md", "license.txt", "license.rst"].includes(
+        item.name.toLowerCase()
+      )
+  );
 
   return (
     <div className="border rounded overflow-hidden">
