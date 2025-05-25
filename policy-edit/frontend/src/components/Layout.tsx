@@ -84,6 +84,18 @@ const Layout: React.FC = () => {
         onClick={toggleChat}
         isVisible={isMobile && !isChatVisible}
       />
+
+      {/* Footer */}
+      <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 p-2 text-center text-xs text-gray-400 z-30 md:static md:order-3 md:bg-gray-50">
+        <a
+          href="https://dd2030.org"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-gray-600 transition-colors"
+        >
+          Powered by Digital Democracy 2030
+        </a>
+      </footer>
     </div>
   );
 };
