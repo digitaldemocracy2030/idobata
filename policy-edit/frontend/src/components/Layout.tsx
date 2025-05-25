@@ -36,9 +36,20 @@ const Layout: React.FC = () => {
     <div className="flex flex-col md:flex-row h-screen">
       {/* Content Area - Full height on mobile when chat is hidden, Right side on desktop */}
       <div
-        className={`${isMobile && isChatVisible ? "h-1/2" : "h-full"} md:h-screen md:w-2/3 overflow-y-auto p-4 order-1 md:order-2`}
+        className={`${isMobile && isChatVisible ? "h-1/2" : "h-full"} md:h-screen md:w-2/3 overflow-y-auto p-4 order-1 md:order-2 flex flex-col`}
       >
         <Outlet /> {/* Nested routes will render here */}
+        {/* Footer - Inside content area to appear at bottom when scrolled */}
+        <footer className="bg-white border-t border-gray-300 p-2 text-center text-xs text-gray-400 mt-auto">
+          <a
+            href="https://dd2030.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-600 transition-colors"
+          >
+            Powered by デジタル民主主義2030
+          </a>
+        </footer>
       </div>
 
       {/* Chat Panel - Bottom half on mobile when visible, Left side on desktop */}
@@ -84,18 +95,6 @@ const Layout: React.FC = () => {
         onClick={toggleChat}
         isVisible={isMobile && !isChatVisible}
       />
-
-      {/* Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 p-2 text-center text-xs text-gray-400 z-30 md:static md:order-3 md:bg-gray-50">
-        <a
-          href="https://dd2030.org"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:text-gray-600 transition-colors"
-        >
-          Powered by デジタル民主主義2030 (dd2030.org)
-        </a>
-      </footer>
     </div>
   );
 };

@@ -8,7 +8,7 @@ const Footer = () => {
           rel="noopener noreferrer"
           className="text-neutral-400 hover:text-neutral-600 transition-colors"
         >
-          Powered by デジタル民主主義2030 (dd2030.org)
+          Powered by デジタル民主主義2030
         </a>
       </div>
     </footer>
