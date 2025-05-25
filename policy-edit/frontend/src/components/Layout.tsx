@@ -93,7 +93,7 @@ const Layout: React.FC = () => {
           rel="noopener noreferrer"
           className="hover:text-gray-600 transition-colors"
         >
-          Powered by Digital Democracy 2030
+          Powered by デジタル民主主義2030 (dd2030.org)
         </a>
       </footer>
     </div>
