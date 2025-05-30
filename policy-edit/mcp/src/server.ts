@@ -15,8 +15,6 @@ const server = new McpServer({
 // upsert_file_and_commit ツールを登録
 const upsertFileAnnotations = {
   title: "Update File and Commit",
-  description:
-    "Creates or updates a specified Markdown file in a branch and commits the changes. Automatically creates the branch and a draft pull request if they don't exist.",
   readOnlyHint: false,
   destructiveHint: false, // 上書きはするが破壊的ではない
   idempotentHint: false, // 同じ内容でもコミットは増える
@@ -25,16 +23,15 @@ const upsertFileAnnotations = {
 
 server.tool(
   "upsert_file_and_commit",
+  "Creates or updates a specified Markdown file in a branch and commits the changes. Automatically creates the branch and a draft pull request if they don't exist.",
   upsertFileSchema.shape, // Pass the Zod schema shape
+  upsertFileAnnotations,
   handleUpsertFile // Pass the handler function
-  // Remove annotations argument for now
 );
 
 // update_pr_description ツールを登録
 const updatePrAnnotations = {
   title: "Update Pull Request Title and Description",
-  description:
-    "Updates the title and/or description (body) of the open pull request associated with the specified branch.",
   readOnlyHint: false,
   destructiveHint: false,
   idempotentHint: true, // 同じ説明文なら結果は同じ
@@ -43,9 +40,10 @@ const updatePrAnnotations = {
 
 server.tool(
   "update_pr",
+  "Updates the title and/or description (body) of the open pull request associated with the specified branch.",
   updatePrSchema.shape, // Pass the Zod schema shape
+  updatePrAnnotations,
   handleUpdatePr // Pass the handler function
-  // Remove annotations argument for now
 );
 
 export default server;
