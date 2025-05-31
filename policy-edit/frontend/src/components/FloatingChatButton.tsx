@@ -1,5 +1,6 @@
+import { MessageCircle } from "lucide-react";
 import React from "react";
-import { FaComments } from "react-icons/fa";
+import { Button } from "./ui/button";
 
 interface FloatingChatButtonProps {
   onClick: () => void;
@@ -11,16 +12,17 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
   isVisible,
 }) => {
   return (
-    <button
-      type="button"
+    <Button
       onClick={onClick}
-      className={`fixed bottom-4 right-4 bg-blue-500 text-white rounded-full p-3 shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 z-50 ${
+      variant="default"
+      size="lg"
+      className={`fixed bottom-4 right-4 bg-blue-500 text-white rounded-full p-3 shadow-lg hover:bg-blue-600 transition-all duration-300 z-50 ${
         isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
       aria-label="チャットを開く"
     >
-      <FaComments className="text-xl" />
-    </button>
+      <MessageCircle className="text-xl" />
+    </Button>
   );
 };
 
