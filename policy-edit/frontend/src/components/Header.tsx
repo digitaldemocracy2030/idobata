@@ -1,3 +1,4 @@
+import { siteConfig } from "@/config/siteConfig";
 import { cn } from "@/lib/utils";
 import type React from "react";
 import { Link } from "react-router-dom";
@@ -18,9 +19,16 @@ function Header({ className }: HeaderProps): React.ReactElement {
     >
       <Link
         to="/"
-        className="text-xl font-semibold text-foreground hover:text-foreground/80 transition-colors"
+        className="flex items-center text-xl md:text-xl font-semibold text-foreground hover:text-foreground/80 transition-colors"
       >
-        いどばた政策
+        {siteConfig.logoUrl && (
+          <img
+            src={siteConfig.logoUrl}
+            alt={`${siteConfig.siteName} ロゴ`}
+            className="h-6 md:h-8 w-auto mr-1.5 md:mr-2"
+          />
+        )}
+        <span className="text-lg md:text-xl">{siteConfig.siteName}</span>
       </Link>
     </header>
   );
