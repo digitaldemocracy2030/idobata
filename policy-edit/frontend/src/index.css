@@ -11,44 +11,8 @@
   }
 }
 
-/* Custom color definitions for Tailwind CSS v4 */
-@theme {
-  --color-primary-50: hsl(212 100.0% 91.2%);
-  --color-primary-100: hsl(214 100.0% 86.5%);
-  --color-primary-200: hsl(215 100.0% 81.8%);
-  --color-primary-300: hsl(215 100.0% 77.1%);
-  --color-primary-400: hsl(216 100.0% 72.4%);
-  --color-primary-500: hsl(216 100.0% 67.6%);
-  --color-primary-600: hsl(216 100.0% 62.9%);
-  --color-primary-700: hsl(216 100.0% 58.4%);
-  --color-primary-800: hsl(216 73.1% 46.7%);
-  --color-primary-900: hsl(216 76.5% 35.1%);
-  --color-primary-950: hsl(216 83.2% 23.3%);
-
-  --color-secondary-50: #f9fafb;
-  --color-secondary-100: #f3f4f6;
-  --color-secondary-200: #e5e7eb;
-  --color-secondary-300: #d1d5db;
-  --color-secondary-400: #9ca3af;
-  --color-secondary-500: #6b7280;
-  --color-secondary-600: #4b5563;
-  --color-secondary-700: #374151;
-  --color-secondary-800: #1f2937;
-  --color-secondary-900: #111827;
-  --color-secondary-950: #030712;
-
-  --color-accent-50: hsl(170 64.3% 83.5%);
-  --color-accent-100: hsl(170 64.1% 77.1%);
-  --color-accent-200: hsl(170 62.7% 70.6%);
-  --color-accent-300: hsl(170 62.8% 64.1%);
-  --color-accent-400: hsl(170 62.2% 57.5%);
-  --color-accent-500: hsl(170 62.2% 51.2%);
-  --color-accent-600: hsl(170 77.1% 44.5%);
-  --color-accent-700: hsl(170 100.0% 38.2%);
-  --color-accent-800: hsl(170 100.0% 31.8%);
-  --color-accent-900: hsl(170 100.0% 25.5%);
-  --color-accent-950: hsl(170 100.0% 19.2%);
-}
+/* Custom color definitions are now dynamically generated via CSS variables injection */
+/* See src/utils/cssVariables.ts for dynamic color palette generation */
 
 /* Override github-markdown-css font family to use our custom fonts */
 .markdown-body {
