@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
-import ContentExplorer from "./components/ContentExplorer";
-import Layout from "./components/Layout";
-import NotFound from "./components/NotFound"; // 404 page component
+import Layout from "./components/layout/Layout";
+import ContentExplorer from "./components/page-specific/ContentExplorer";
+import NotFound from "./components/page-specific/NotFound"; // 404 page component
 
 // Wrapper component to extract path from URL splat and pass it to ContentExplorer
 function ContentExplorerWrapper() {
