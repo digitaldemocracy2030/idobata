@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import MenuButton from "./MenuButton";
 import MenuOverlay from "./MenuOverlay";
 import MenuPanel from "./MenuPanel";

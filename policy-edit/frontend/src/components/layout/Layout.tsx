@@ -25,11 +25,7 @@ const Layout: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!isMobile) {
-      setIsChatVisible(true);
-    } else {
-      setIsChatVisible(false); // Hide chat by default on mobile
-    }
+    setIsChatVisible(!isMobile);
   }, [isMobile]);
 
   const toggleChat = () => {
