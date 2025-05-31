@@ -1,5 +1,11 @@
-// GitHub APIレスポンスの型定義 (必要に応じて詳細化)
-// ディレクトリの場合
+import { Result, err, ok } from "neverthrow";
+import type { HttpError } from "./errors";
+import {
+  createGitHubError,
+  createNetworkError,
+  createUnknownError,
+} from "./errors";
+
 export interface GitHubDirectoryItem {
   name: string;
   path: string;
@@ -17,7 +23,6 @@ export interface GitHubDirectoryItem {
   };
 }
 
-// ファイルの場合
 export interface GitHubFile {
   name: string;
   path: string;
@@ -28,7 +33,7 @@ export interface GitHubFile {
   git_url: string;
   download_url: string | null;
   type: "file";
-  content: string; // Base64 encoded content
+  content: string;
   encoding: "base64";
   _links: {
     self: string;
@@ -37,101 +42,88 @@ export interface GitHubFile {
   };
 }
 
-// APIエラーレスポンスの型 (簡略版)
 interface GitHubApiError {
   message: string;
   documentation_url: string;
 }
 
-/**
- * GitHub Contents APIからファイルまたはディレクトリの情報を取得します。
- * @param owner リポジトリのオーナー名
- * @param repo リポジトリ名
- * @param path 取得するファイルまたはディレクトリのパス (ルートの場合は空文字列)
- * @param ref 取得するブランチ名、タグ名、またはコミットSHA (オプション)
- * @returns 成功時はファイル情報(GitHubFile)またはディレクトリ情報(GitHubDirectoryItem[])、失敗時はエラーをスロー
- */
-export async function fetchGitHubContent(
-  owner: string,
-  repo: string,
-  path = "",
-  ref?: string // Add optional ref parameter
-): Promise<GitHubFile | GitHubDirectoryItem[]> {
-  if (!owner || !repo) {
-    throw new Error("Repository owner and name are required.");
+export class GitHubClient {
+  private readonly baseUrl = "https://api.github.com";
+  private readonly defaultHeaders: Record<string, string>;
+
+  constructor(token?: string) {
+    this.defaultHeaders = {
+      Accept: "application/vnd.github.v3+json",
+      ...(token && { Authorization: `token ${token}` }),
+    };
   }
 
-  let apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-  if (ref) {
-    apiUrl += `?ref=${encodeURIComponent(ref)}`; // Append ref query parameter if provided
-  }
-  console.log(`Fetching from GitHub API: ${apiUrl}`); // デバッグ用ログ
+  async fetchContent(
+    owner: string,
+    repo: string,
+    path = "",
+    ref?: string
+  ): Promise<Result<GitHubFile | GitHubDirectoryItem[], HttpError>> {
+    if (!owner || !repo) {
+      return err(createGitHubError("Repository owner and name are required."));
+    }
 
-  try {
-    const response = await fetch(apiUrl, {
-      headers: {
-        // パブリックリポジトリなので認証は不要だが、レート制限緩和のために
-        // トークンがある場合は設定することも可能 (今回は不要)
-        // 'Authorization': `token YOUR_GITHUB_TOKEN`
-        Accept: "application/vnd.github.v3+json", // APIバージョン指定
-      },
-    });
+    let apiUrl = `${this.baseUrl}/repos/${owner}/${repo}/contents/${path}`;
+    if (ref) {
+      apiUrl += `?ref=${encodeURIComponent(ref)}`;
+    }
 
-    if (!response.ok) {
-      let errorMessage = `GitHub API error: ${response.status} ${response.statusText}`;
-      try {
-        // エラーレスポンスに詳細が含まれている場合がある
-        const errorData: GitHubApiError = await response.json();
-        errorMessage += ` - ${errorData.message}`;
-        if (
-          response.status === 403 &&
-          errorData.message.includes("rate limit exceeded")
-        ) {
-          errorMessage += " (Rate limit exceeded)";
-        } else if (response.status === 404) {
-          errorMessage += " (Not Found)";
-        }
-      } catch (jsonError) {
-        // JSONパース失敗時はステータス情報のみ
+    try {
+      const response = await fetch(apiUrl, {
+        headers: this.defaultHeaders,
+      });
+
+      if (!response.ok) {
+        let errorMessage = `GitHub API error: ${response.status} ${response.statusText}`;
+        try {
+          const errorData: GitHubApiError = await response.json();
+          errorMessage += ` - ${errorData.message}`;
+          if (
+            response.status === 403 &&
+            errorData.message.includes("rate limit exceeded")
+          ) {
+            errorMessage += " (Rate limit exceeded)";
+          } else if (response.status === 404) {
+            errorMessage += " (Not Found)";
+          }
+        } catch {}
+        return err(createGitHubError(errorMessage, response.status));
       }
-      console.error(errorMessage); // エラーログ
-      throw new Error(errorMessage);
-    }
 
-    const data: GitHubFile | GitHubDirectoryItem[] = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching GitHub content:", error);
-    // fetch自体が失敗した場合 (ネットワークエラーなど)
-    if (error instanceof Error) {
-      throw error; // 元のエラーを再スロー
+      const data: GitHubFile | GitHubDirectoryItem[] = await response.json();
+      return ok(data);
+    } catch (error) {
+      if (error instanceof Error) {
+        return err(createNetworkError("Network request failed", error));
+      }
+      return err(
+        createUnknownError("An unknown error occurred during fetch.", error)
+      );
     }
-    throw new Error("An unknown error occurred during fetch.");
   }
-}
 
-/**
- * Base64エンコードされた文字列をUTF-8文字列にデコードします。
- * @param base64String Base64エンコードされた文字列
- * @returns デコードされたUTF-8文字列
- */
-export function decodeBase64Content(base64String: string): string {
-  try {
-    const binaryString = atob(base64String);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
+  decodeBase64Content(base64String: string): Result<string, HttpError> {
+    try {
+      const binaryString = atob(base64String);
+      const len = binaryString.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      return ok(new TextDecoder().decode(bytes));
+    } catch (error) {
+      if (
+        error instanceof DOMException &&
+        error.name === "InvalidCharacterError"
+      ) {
+        return err(createGitHubError("Invalid Base64 string"));
+      }
+      return err(createGitHubError("Error decoding content"));
     }
-    return new TextDecoder().decode(bytes);
-  } catch (error) {
-    console.error("Error decoding Base64 content:", error);
-    if (
-      error instanceof DOMException &&
-      error.name === "InvalidCharacterError"
-    ) {
-      return "Error: Invalid Base64 string";
-    }
-    return "Error decoding content"; // General error message
   }
 }
