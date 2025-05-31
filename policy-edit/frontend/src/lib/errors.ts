@@ -3,6 +3,7 @@ export enum HttpErrorType {
   VALIDATION_ERROR = "VALIDATION_ERROR",
   SERVER_ERROR = "SERVER_ERROR",
   UNKNOWN_ERROR = "UNKNOWN_ERROR",
+  GITHUB_ERROR = "GITHUB_ERROR",
 }
 
 export interface HttpError {
@@ -48,3 +49,10 @@ export const createUnknownError = (
   details?: unknown
 ): HttpError =>
   createHttpError(HttpErrorType.UNKNOWN_ERROR, message, undefined, details);
+
+export const createGitHubError = (
+  message: string,
+  status?: number,
+  details?: unknown
+): HttpError =>
+  createHttpError(HttpErrorType.GITHUB_ERROR, message, status, details);
