@@ -9,24 +9,9 @@ interface HamburgerMenuProps {
 
 const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(true); // モバイル版専用なのでtrueに固定
 
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768); // md breakpoint
-    };
-
-    checkIfMobile();
-    window.addEventListener("resize", checkIfMobile);
-
-    return () => window.removeEventListener("resize", checkIfMobile);
-  }, []);
-
-  useEffect(() => {
-    if (!isMobile) {
-      setIsOpen(false); // Close menu when switching to desktop
-    }
-  }, [isMobile]);
+  // モバイル版専用なので、画面サイズ監視は不要
 
   const toggleMenu = () => {
     setIsOpen((prev) => !prev);
@@ -39,7 +24,7 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ children }) => {
   return (
     <>
       <MenuButton isOpen={isOpen} onClick={toggleMenu} />
-      <MenuOverlay isVisible={isOpen && isMobile} onClick={closeMenu} />
+      <MenuOverlay isVisible={isOpen} onClick={closeMenu} />
       <MenuPanel isOpen={isOpen} isMobile={isMobile}>
         {children}
       </MenuPanel>

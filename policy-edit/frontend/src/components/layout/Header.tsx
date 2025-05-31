@@ -1,4 +1,5 @@
 import type React from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { siteConfig } from "../../config/siteConfig";
 import { cn } from "../../lib/utils";
@@ -9,6 +10,19 @@ interface HeaderProps {
 }
 
 function Header({ className }: HeaderProps): React.ReactElement {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+
+    checkIfMobile();
+    window.addEventListener("resize", checkIfMobile);
+
+    return () => window.removeEventListener("resize", checkIfMobile);
+  }, []);
+
   return (
     <header
       className={cn(
@@ -19,10 +33,19 @@ function Header({ className }: HeaderProps): React.ReactElement {
       )}
     >
       <div className="flex items-center">
-        <HamburgerMenu />
+        {/* モバイル版のみハンバーガーメニューを表示 */}
+        {isMobile && (
+          <div className="mr-2">
+            <HamburgerMenu>
+              <div className="text-gray-500 text-sm">
+                メニューコンテンツは後から追加されます
+              </div>
+            </HamburgerMenu>
+          </div>
+        )}
         <Link
           to="/"
-          className="flex items-center text-xl md:text-xl font-semibold transition-colors ml-2 md:ml-0"
+          className="flex items-center text-xl md:text-xl font-semibold transition-colors"
         >
           {siteConfig.logoUrl && (
             <img

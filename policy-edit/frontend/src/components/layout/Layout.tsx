@@ -6,6 +6,7 @@ import ChatPanel from "../chat/ChatPanel";
 import FloatingChatButton from "../chat/FloatingChatButton";
 import { Button } from "../ui/button";
 import Header from "./Header";
+import MenuPanel from "./menu/MenuPanel";
 
 const Layout: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -42,14 +43,14 @@ const Layout: React.FC = () => {
 
       {/* Main Content Area - ヘッダー下に配置 */}
       <div className="flex flex-1 min-h-0">
-        {/* Menu Panel - PC版で左側に表示 */}
-        <div className="hidden md:block w-64 bg-white border-r border-gray-300">
-          <div className="p-4">
+        {/* PC版メニューパネル - 左側に常時表示 */}
+        {!isMobile && (
+          <MenuPanel isOpen={true} isMobile={false}>
             <div className="text-gray-500 text-sm">
               メニューコンテンツは後から追加されます
             </div>
-          </div>
-        </div>
+          </MenuPanel>
+        )}
 
         {/* Content and Chat Area */}
         <div className="flex flex-col md:flex-row flex-1 min-h-0">

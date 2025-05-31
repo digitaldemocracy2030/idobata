@@ -19,7 +19,7 @@ const MenuPanel: React.FC<MenuPanelProps> = ({
             ? `fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white border-r border-gray-300 z-40 transition-transform duration-300 ease-in-out ${
                 isOpen ? "translate-x-0" : "-translate-x-full"
               }`
-            : "hidden md:block w-64 bg-white border-r border-gray-300 h-full"
+            : "w-64 bg-white border-r border-gray-300 h-full"
         }
       `}
       aria-label="ナビゲーションメニュー"
