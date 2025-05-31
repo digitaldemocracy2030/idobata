@@ -109,25 +109,6 @@
   --input: 240 5.9% 90%;
   --ring: 262.1 83.3% 57.8%;
   --color-success: #10b981;
-
-  /* Dynamic color palette - fallback values (will be overridden by JavaScript) */
-  --color-primary-50: #ffeee6;
-  --color-primary-200: #ffb899;
-  --color-primary-500: #ff6b35;
-  --color-primary-700: #cc4a1f;
-  --color-primary-900: #992e0f;
-
-  --color-secondary-50: #f9fafb;
-  --color-secondary-200: #e5e7eb;
-  --color-secondary-500: #6b7280;
-  --color-secondary-700: #374151;
-  --color-secondary-900: #111827;
-
-  --color-accent-50: #a7f3d0;
-  --color-accent-200: #6ee7b7;
-  --color-accent-500: #10b981;
-  --color-accent-700: #047857;
-  --color-accent-900: #064e3b;
 }
 
 /* ===== Custom Color Classes ===== */
