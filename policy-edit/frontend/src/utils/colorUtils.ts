@@ -64,12 +64,14 @@ export function generateAccentPalette(
   }
 ): AccentPalette {
   // accentが指定されている場合はそれを使用、なければprimaryから自動生成
-  const accentBase = accentConfig?.accent || generateAccentFromPrimaryBrightness(primaryColor);
+  const accentBase =
+    accentConfig?.accent || generateAccentFromPrimaryBrightness(primaryColor);
 
   return {
     default: accentBase,
     light: accentConfig?.accentLight || chroma(accentBase).brighten(0.5).hex(),
-    superLight: accentConfig?.accentSuperLight || chroma(accentBase).brighten(1.2).hex(),
+    superLight:
+      accentConfig?.accentSuperLight || chroma(accentBase).brighten(1.2).hex(),
     dark: accentConfig?.accentDark || chroma(accentBase).darken(0.8).hex(),
   };
 }

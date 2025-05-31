@@ -8,11 +8,11 @@ const DEFAULT_PRIMARY_COLOR = "#1c74c8";
 console.log(import.meta.env.VITE_COLOR_PRIMARY);
 const colorConfig = {
   primary: import.meta.env.VITE_COLOR_PRIMARY || DEFAULT_PRIMARY_COLOR,
-  secondary: import.meta.env.VITE_COLOR_SECONDARY,           // オプショナル
-  accent: import.meta.env.VITE_COLOR_ACCENT,                 // オプショナル
-  accentLight: import.meta.env.VITE_COLOR_ACCENT_LIGHT,      // オプショナル
+  secondary: import.meta.env.VITE_COLOR_SECONDARY, // オプショナル
+  accent: import.meta.env.VITE_COLOR_ACCENT, // オプショナル
+  accentLight: import.meta.env.VITE_COLOR_ACCENT_LIGHT, // オプショナル
   accentSuperLight: import.meta.env.VITE_COLOR_ACCENT_SUPER_LIGHT, // オプショナル
-  accentDark: import.meta.env.VITE_COLOR_ACCENT_DARK,        // オプショナル
+  accentDark: import.meta.env.VITE_COLOR_ACCENT_DARK, // オプショナル
 };
 
 // 統合されたカラーシステムの初期化

@@ -1,5 +1,14 @@
-import type { CSSColorVariables, ColorSystemConfig, SiteConfig } from "../types/siteConfig";
-import { generateAccentPalette, generateCSSColorVariables, generatePrimaryPalette, generateSecondaryPalette } from "./colorUtils";
+import type {
+  CSSColorVariables,
+  ColorSystemConfig,
+  SiteConfig,
+} from "../types/siteConfig";
+import {
+  generateAccentPalette,
+  generateCSSColorVariables,
+  generatePrimaryPalette,
+  generateSecondaryPalette,
+} from "./colorUtils";
 
 /**
  * CSS変数をDOMに適用
@@ -56,7 +65,9 @@ export function initializeColorPalette(
 }
 
 // 新規追加: siteConfigからCSS変数を自動生成
-export function generateCSSVariablesFromSiteConfig(colors: SiteConfig['colors']): Record<string, string> {
+export function generateCSSVariablesFromSiteConfig(
+  colors: SiteConfig["colors"]
+): Record<string, string> {
   const variables: Record<string, string> = {};
 
   // Primary (11段階)
@@ -70,16 +81,18 @@ export function generateCSSVariablesFromSiteConfig(colors: SiteConfig['colors'])
   }
 
   // Accent (4段階)
-  variables['--color-accent'] = colors.accent.default;
-  variables['--color-accent-light'] = colors.accent.light;
-  variables['--color-accent-super-light'] = colors.accent.superLight;
-  variables['--color-accent-dark'] = colors.accent.dark;
+  variables["--color-accent"] = colors.accent.default;
+  variables["--color-accent-light"] = colors.accent.light;
+  variables["--color-accent-super-light"] = colors.accent.superLight;
+  variables["--color-accent-dark"] = colors.accent.dark;
 
   return variables;
 }
 
 // 新規追加: siteConfigベースの初期化
-export function initializeColorSystem(config: ColorSystemConfig): SiteConfig['colors'] {
+export function initializeColorSystem(
+  config: ColorSystemConfig
+): SiteConfig["colors"] {
   console.log(config);
   const colors = {
     primary: generatePrimaryPalette(config.primary),

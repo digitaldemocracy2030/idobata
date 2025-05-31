@@ -6,7 +6,8 @@
 
 @theme {
   /* フォント設定 */
-  --font-family-sans: "Inter", "BIZ UDGothic", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-sans: "Inter", "BIZ UDGothic", system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   /* レスポンシブブレークポイント */
   --breakpoint-sm: 640px;

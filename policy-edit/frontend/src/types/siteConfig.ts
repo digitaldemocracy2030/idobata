@@ -29,10 +29,10 @@ export interface GeneratedColorScheme {
 
 // 新規追加: Accentカラー用の4段階パレット
 export interface AccentPalette {
-  light: string;      // accent-light
-  default: string;    // accent
+  light: string; // accent-light
+  default: string; // accent
   superLight: string; // accent-super-light
-  dark: string;       // accent-dark
+  dark: string; // accent-dark
 }
 
 // CSS変数生成用の新しいインターフェース
@@ -51,6 +51,6 @@ export interface SiteConfig {
   colors: {
     primary: ColorPalette;
     secondary: ColorPalette;
-    accent: AccentPalette;  // 変更: ColorPalette → AccentPalette
+    accent: AccentPalette; // 変更: ColorPalette → AccentPalette
   };
 }

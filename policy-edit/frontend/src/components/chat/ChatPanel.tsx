@@ -419,7 +419,9 @@ const ChatPanel: React.FC = () => {
           </Button>
         )}
         {isConnected && (
-          <span className="text-sm text-accent-dark font-medium">✓ 接続済み</span>
+          <span className="text-sm text-accent-dark font-medium">
+            ✓ 接続済み
+          </span>
         )}
       </div>
       {/* Chat messages area */}
