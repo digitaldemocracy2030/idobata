@@ -84,7 +84,12 @@ export function initializeColorSystem(config: ColorSystemConfig): SiteConfig['co
   const colors = {
     primary: generatePrimaryPalette(config.primary),
     secondary: generateSecondaryPalette(config.primary), // primaryColorから自動生成
-    accent: generateAccentPalette(config.primary), // primaryColorから自動生成
+    accent: generateAccentPalette(config.primary, {
+      accent: config.accent,
+      accentLight: config.accentLight,
+      accentSuperLight: config.accentSuperLight,
+      accentDark: config.accentDark,
+    }), // 指定があれば使用、なければprimaryから自動生成
   };
 
   // CSS変数を自動適用

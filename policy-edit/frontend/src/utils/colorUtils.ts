@@ -53,16 +53,24 @@ export function generateSecondaryPalette(primaryColor: string): ColorPalette {
   return generatePrimaryPalette(secondaryBase.hex());
 }
 
-// accentカラーの4段階生成（常に自動生成、primaryの明るさ違いを使用）
-export function generateAccentPalette(primaryColor: string): AccentPalette {
-  // primaryから明るさ違いのaccentを自動生成
-  const accentBase = generateAccentFromPrimaryBrightness(primaryColor);
+// accentカラーの4段階生成（指定がなければprimaryの明るさ違いを自動生成）
+export function generateAccentPalette(
+  primaryColor: string,
+  accentConfig?: {
+    accent?: string;
+    accentLight?: string;
+    accentSuperLight?: string;
+    accentDark?: string;
+  }
+): AccentPalette {
+  // accentが指定されている場合はそれを使用、なければprimaryから自動生成
+  const accentBase = accentConfig?.accent || generateAccentFromPrimaryBrightness(primaryColor);
 
   return {
     default: accentBase,
-    light: chroma(accentBase).brighten(0.5).hex(),
-    superLight: chroma(accentBase).brighten(1.2).hex(),
-    dark: chroma(accentBase).darken(0.8).hex(),
+    light: accentConfig?.accentLight || chroma(accentBase).brighten(0.5).hex(),
+    superLight: accentConfig?.accentSuperLight || chroma(accentBase).brighten(1.2).hex(),
+    dark: accentConfig?.accentDark || chroma(accentBase).darken(0.8).hex(),
   };
 }
 
