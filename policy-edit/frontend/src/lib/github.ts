@@ -1,8 +1,6 @@
 import { Result, err, ok } from "neverthrow";
 import type { HttpError } from "./errors";
-import {
-  createGitHubError,
-} from "./errors";
+import { createGitHubError } from "./errors";
 import { HttpClient } from "./httpClient";
 
 export interface GitHubDirectoryItem {
@@ -41,11 +39,6 @@ export interface GitHubFile {
   };
 }
 
-interface GitHubApiError {
-  message: string;
-  documentation_url: string;
-}
-
 export class GitHubClient {
   private httpClient: HttpClient;
 
@@ -72,11 +65,16 @@ export class GitHubClient {
       endpoint += `?ref=${encodeURIComponent(ref)}`;
     }
 
-    const result = await this.httpClient.get<GitHubFile | GitHubDirectoryItem[]>(endpoint);
+    const result = await this.httpClient.get<
+      GitHubFile | GitHubDirectoryItem[]
+    >(endpoint);
 
     return result.mapErr((error) => {
       let errorMessage = `GitHub API error: ${error.message}`;
-      if (error.status === 403 && error.message.includes("rate limit exceeded")) {
+      if (
+        error.status === 403 &&
+        error.message.includes("rate limit exceeded")
+      ) {
         errorMessage += " (Rate limit exceeded)";
       } else if (error.status === 404) {
         errorMessage += " (Not Found)";
@@ -90,7 +88,9 @@ export class GitHubClient {
   }
 }
 
-export function decodeBase64Content(base64String: string): Result<string, HttpError> {
+export function decodeBase64Content(
+  base64String: string
+): Result<string, HttpError> {
   try {
     const binaryString = atob(base64String);
     const len = binaryString.length;
