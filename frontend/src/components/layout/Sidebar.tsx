@@ -5,7 +5,7 @@ const Sidebar = () => {
   const { themes, isLoading, error } = useThemes();
 
   return (
-    <aside className="hidden xl:block w-[260px] fixed top-14 bottom-0 left-0 shadow-md  bg-white overflow-y-auto">
+    <aside className="hidden md:block w-[260px] fixed top-14 bottom-0 left-0 shadow-md  bg-white overflow-y-auto">
       <nav className="flex flex-col gap-4 p-4">
         <Link
           to="/"
