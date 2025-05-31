@@ -19,7 +19,7 @@ function Header({ className }: HeaderProps): React.ReactElement {
     >
       <Link
         to="/"
-        className="flex items-center text-xl md:text-xl font-semibold text-foreground hover:text-foreground/80 transition-colors"
+        className="flex items-center text-xl md:text-xl font-semibold text-primary-500 hover:text-primary-600 transition-colors"
       >
         {siteConfig.logoUrl && (
           <img
