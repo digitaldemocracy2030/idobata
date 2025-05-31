@@ -5,16 +5,16 @@ const colors = require("tailwindcss/colors");
 
 const primaryColors = {
   50: "var(--color-primary-50)",
-  100: "var(--color-primary-50)", // 100は50にマップ
+  100: "var(--color-primary-100)",
   200: "var(--color-primary-200)",
-  300: "var(--color-primary-200)", // 300は200にマップ
-  400: "var(--color-primary-500)", // 400は500にマップ
+  300: "var(--color-primary-300)",
+  400: "var(--color-primary-400)",
   500: "var(--color-primary-500)",
-  600: "var(--color-primary-700)", // 600は700にマップ
+  600: "var(--color-primary-600)",
   700: "var(--color-primary-700)",
-  800: "var(--color-primary-900)", // 800は900にマップ
+  800: "var(--color-primary-800)",
   900: "var(--color-primary-900)",
-  950: "var(--color-primary-900)", // 950は900にマップ
+  950: "var(--color-primary-950)",
 };
 primaryColors.DEFAULT = primaryColors[700];
 primaryColors.dark = primaryColors[800];
@@ -24,16 +24,16 @@ primaryColors.foreground = "#fff";
 
 const secondaryColors = {
   50: "var(--color-secondary-50)",
-  100: "var(--color-secondary-50)", // 100は50にマップ
+  100: "var(--color-secondary-100)",
   200: "var(--color-secondary-200)",
-  300: "var(--color-secondary-200)", // 300は200にマップ
-  400: "var(--color-secondary-500)", // 400は500にマップ
+  300: "var(--color-secondary-300)",
+  400: "var(--color-secondary-400)",
   500: "var(--color-secondary-500)",
-  600: "var(--color-secondary-700)", // 600は700にマップ
+  600: "var(--color-secondary-600)",
   700: "var(--color-secondary-700)",
-  800: "var(--color-secondary-900)", // 800は900にマップ
+  800: "var(--color-secondary-800)",
   900: "var(--color-secondary-900)",
-  950: "var(--color-secondary-900)", // 950は900にマップ
+  950: "var(--color-secondary-950)",
 };
 secondaryColors.DEFAULT = secondaryColors[300];
 secondaryColors.dark = secondaryColors[200];
@@ -43,16 +43,16 @@ secondaryColors.foreground = "#fff";
 
 const accentColors = {
   50: "var(--color-accent-50)",
-  100: "var(--color-accent-50)", // 100は50にマップ
+  100: "var(--color-accent-100)",
   200: "var(--color-accent-200)",
-  300: "var(--color-accent-200)", // 300は200にマップ
-  400: "var(--color-accent-500)", // 400は500にマップ
+  300: "var(--color-accent-300)",
+  400: "var(--color-accent-400)",
   500: "var(--color-accent-500)",
-  600: "var(--color-accent-700)", // 600は700にマップ
+  600: "var(--color-accent-600)",
   700: "var(--color-accent-700)",
-  800: "var(--color-accent-900)", // 800は900にマップ
+  800: "var(--color-accent-800)",
   900: "var(--color-accent-900)",
-  950: "var(--color-accent-900)", // 950は900にマップ
+  950: "var(--color-accent-950)",
 };
 
 accentColors.DEFAULT = accentColors[700];
