@@ -6,6 +6,9 @@ import "./App.css";
 import "./styles/markdown.css";
 import { router } from "./App";
 import { SiteConfigProvider } from "./contexts/SiteConfigContext";
+import { injectCSSVariables } from "./utils/cssVariables";
+
+injectCSSVariables();
 
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Failed to find the root element");
