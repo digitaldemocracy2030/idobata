@@ -1,7 +1,10 @@
 import { Result, err, ok } from "neverthrow";
 import { db } from "../db/index.js";
 import { interactionLogs } from "../db/schema.js";
-import { McpClient } from "../mcp/client.js";
+import {
+  IdobataMcpService,
+  IdobataMcpServiceError,
+} from "../mcp/idobataMcpService.js";
 import {
   DatabaseError,
   McpClientError,
@@ -11,23 +14,19 @@ import { ChatMessageRequest, ChatMessageResponse } from "../types/requests.js";
 import { logger } from "../utils/logger.js";
 
 export class ProcessChatMessageUsecase {
-  constructor(private mcpClient: McpClient | null) {}
+  constructor(private idobataMcpService: IdobataMcpService) {}
 
   async execute(
     request: ChatMessageRequest
   ): Promise<
     Result<
       ChatMessageResponse,
-      ValidationError | McpClientError | DatabaseError
+      ValidationError | IdobataMcpServiceError | McpClientError | DatabaseError
     >
   > {
     const validationResult = this.validateInput(request);
     if (validationResult.isErr()) {
       return err(validationResult.error);
-    }
-
-    if (!this.mcpClient) {
-      return err(new McpClientError("MCP client is not initialized"));
     }
 
     const mcpResult = await this.processMcpQuery(request);
@@ -79,27 +78,21 @@ export class ProcessChatMessageUsecase {
 
   private async processMcpQuery(
     request: ChatMessageRequest
-  ): Promise<Result<string, McpClientError>> {
-    try {
-      const response = await this.mcpClient?.processQuery(
-        request.message,
-        request.history || [],
-        request.branchId,
-        request.fileContent,
-        request.userName,
-        request.filePath
-      );
-      if (!response) {
-        return err(new McpClientError("MCP client returned no response"));
-      }
-      return ok(response);
-    } catch (error) {
-      return err(
-        new McpClientError(
-          `Failed to process MCP query: ${error instanceof Error ? error.message : "Unknown error"}`
-        )
-      );
+  ): Promise<Result<string, IdobataMcpServiceError | McpClientError>> {
+    const result = await this.idobataMcpService.processQuery(
+      request.message,
+      request.history || [],
+      request.branchId,
+      request.fileContent,
+      request.userName,
+      request.filePath
+    );
+
+    if (result.isErr()) {
+      return err(result.error);
     }
+
+    return ok(result.value);
   }
 
   private async logInteraction(
