@@ -1,0 +1,114 @@
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
+import type {
+  NavigatorState,
+  TreeNodeData,
+} from "../features/navigation/types/navigation";
+import type { GitHubDirectoryItem } from "../lib/github";
+import useContentStore from "./contentStore";
+
+const useNavigatorStore = create<NavigatorState>()(
+  devtools(
+    (set, get) => ({
+      treeData: [],
+      expandedPaths: new Set<string>(),
+      loadingPaths: new Set<string>(),
+
+      toggleExpanded: async (path: string) => {
+        const { expandedPaths, loadDirectory } = get();
+        const newExpandedPaths = new Set(expandedPaths);
+
+        if (expandedPaths.has(path)) {
+          newExpandedPaths.delete(path);
+        } else {
+          newExpandedPaths.add(path);
+          await loadDirectory(path);
+        }
+
+        set({ expandedPaths: newExpandedPaths });
+      },
+
+      loadDirectory: async (path: string) => {
+        const { loadingPaths } = get();
+        if (loadingPaths.has(path)) return;
+
+        const newLoadingPaths = new Set(loadingPaths);
+        newLoadingPaths.add(path);
+        set({ loadingPaths: newLoadingPaths });
+
+        try {
+          const contentStore = useContentStore.getState();
+          await contentStore.fetchContent(path);
+
+          const content = contentStore.content;
+          if (Array.isArray(content)) {
+            set((state) => ({
+              treeData: updateTreeData(state.treeData, path, content),
+              loadingPaths: new Set(
+                [...state.loadingPaths].filter((p) => p !== path)
+              ),
+            }));
+          }
+        } catch (error) {
+          console.error(`Failed to load directory: ${path}`, error);
+          set((state) => ({
+            loadingPaths: new Set(
+              [...state.loadingPaths].filter((p) => p !== path)
+            ),
+          }));
+        }
+      },
+
+      initializeRoot: async () => {
+        const { loadDirectory } = get();
+        await loadDirectory("");
+      },
+    }),
+    {
+      name: "navigator-store",
+    }
+  )
+);
+
+function updateTreeData(
+  treeData: TreeNodeData[],
+  targetPath: string,
+  newChildren: GitHubDirectoryItem[]
+): TreeNodeData[] {
+  if (targetPath === "") {
+    return newChildren.map((item) => ({
+      name: item.name,
+      path: item.path,
+      type: item.type === "dir" ? "dir" : "file",
+      children: item.type === "dir" ? [] : undefined,
+      isExpanded: false,
+      isLoaded: item.type === "file",
+    }));
+  }
+
+  return treeData.map((node) => {
+    if (node.path === targetPath && node.type === "dir") {
+      return {
+        ...node,
+        children: newChildren.map((item) => ({
+          name: item.name,
+          path: item.path,
+          type: item.type === "dir" ? "dir" : "file",
+          children: item.type === "dir" ? [] : undefined,
+          isExpanded: false,
+          isLoaded: item.type === "file",
+        })),
+        isLoaded: true,
+      };
+    }
+    if (node.children) {
+      return {
+        ...node,
+        children: updateTreeData(node.children, targetPath, newChildren),
+      };
+    }
+    return node;
+  });
+}
+
+export default useNavigatorStore;

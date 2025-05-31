@@ -1,4 +1,5 @@
 import React from "react";
+import DirectoryNavigator from "../../../features/navigation/components/DirectoryNavigator";
 
 interface MenuPanelProps {
   isOpen: boolean;
@@ -28,9 +29,13 @@ const MenuPanel: React.FC<MenuPanelProps> = ({
       {isMobile && <div className="h-16 bg-transparent pointer-events-none" />}
 
       <div className="p-4">
+        <DirectoryNavigator />
+
+        {children && <hr className="my-4 border-gray-200" />}
+
         {children || (
           <div className="text-gray-500 text-sm">
-            メニューコンテンツは後から追加されます
+            その他のメニューコンテンツ
           </div>
         )}
       </div>
