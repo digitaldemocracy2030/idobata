@@ -53,23 +53,23 @@ const Layout: React.FC = () => {
         )}
 
         {/* Content and Chat Area */}
-        <div className="flex flex-col md:flex-row flex-1 min-h-0">
-          {/* Content Area - 右側 (2/3幅) */}
+        <div className="flex flex-col md:flex-row flex-1 min-h-0 min-w-0">
+          {/* Content Area - 右側 */}
           <div
-            className={`${isMobile && isChatVisible ? "h-1/2" : "flex-1"} md:flex-[2] overflow-y-auto p-4 order-1 md:order-2 min-h-0`}
+            className={`${isMobile && isChatVisible ? "h-1/2" : "flex-1"} ${!isMobile ? "flex-[2]" : ""} overflow-y-auto p-4 order-1 md:order-2 min-h-0 min-w-0`}
           >
             <Outlet /> {/* Nested routes will render here */}
           </div>
 
-          {/* Chat Panel - 左側 (1/3幅) */}
+          {/* Chat Panel - 左側 */}
           <div
             className={`${
               isMobile
                 ? isChatVisible
                   ? "h-1/2 translate-y-0 opacity-100 pointer-events-auto"
                   : "h-1/2 translate-y-full opacity-0 pointer-events-none"
-                : "md:flex-[1]"
-            } md:translate-y-0 md:opacity-100 md:pointer-events-auto border-t md:border-t-0 md:border-r border-gray-300 overflow-y-auto fixed bottom-0 left-0 right-0 md:static md:order-1 transition-all duration-300 ease-in-out z-40 bg-white min-h-0`}
+                : "flex-[1]"
+            } md:translate-y-0 md:opacity-100 md:pointer-events-auto border-t md:border-t-0 md:border-r border-gray-300 overflow-y-auto fixed bottom-0 left-0 right-0 md:static md:order-1 transition-all duration-300 ease-in-out z-40 bg-white min-h-0 min-w-0`}
           >
             {/* Close button - モバイルでチャットが表示されている時のみ表示 */}
             {isMobile && isChatVisible && (

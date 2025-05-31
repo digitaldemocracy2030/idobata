@@ -9,7 +9,6 @@ interface HamburgerMenuProps {
 
 const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(true); // モバイル版専用なのでtrueに固定
 
   // モバイル版専用なので、画面サイズ監視は不要
 
@@ -25,7 +24,7 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ children }) => {
     <>
       <MenuButton isOpen={isOpen} onClick={toggleMenu} />
       <MenuOverlay isVisible={isOpen} onClick={closeMenu} />
-      <MenuPanel isOpen={isOpen} isMobile={isMobile}>
+      <MenuPanel isOpen={isOpen} isMobile={true}>
         {children}
       </MenuPanel>
     </>
