@@ -14,7 +14,7 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ isVisible, onClick }) => {
 
   return (
     <div
-      className={`fixed inset-0 transition-opacity duration-300 z-30 md:hidden ${
+      className={`fixed inset-0 transition-opacity duration-300 z-40 md:hidden ${
         isVisible
           ? "opacity-100 pointer-events-auto"
           : "opacity-0 pointer-events-none"
@@ -24,10 +24,12 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ isVisible, onClick }) => {
       tabIndex={isVisible ? 0 : -1}
       aria-label="メニューを閉じる"
     >
-      {/* メニューエリア（白背景） */}
+      {/* ヘッダーエリア（透明） - MenuButtonが見えるように */}
+      <div className="absolute top-0 left-0 w-64 h-16 bg-transparent pointer-events-none" />
+      {/* メニューエリア（白背景） - ヘッダー下から */}
       <div className="absolute top-16 left-0 w-64 h-[calc(100vh-4rem)] bg-white" />
-      {/* 残りのエリア（半透明黒背景） */}
-      <div className="absolute top-16 left-64 right-0 h-[calc(100vh-4rem)] bg-black opacity-50" />
+      {/* 残りのエリア（半透明黒背景） - 全画面の高さ */}
+      <div className="absolute top-0 left-64 right-0 h-screen bg-black opacity-50" />
     </div>
   );
 };

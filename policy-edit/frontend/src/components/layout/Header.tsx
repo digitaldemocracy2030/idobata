@@ -35,7 +35,7 @@ function Header({ className }: HeaderProps): React.ReactElement {
       <div className="flex items-center">
         {/* モバイル版のみハンバーガーメニューを表示 */}
         {isMobile && (
-          <div className="mr-2">
+          <div className="mr-2 z-50 relative">
             <HamburgerMenu>
               <div className="text-gray-500 text-sm">
                 メニューコンテンツは後から追加されます

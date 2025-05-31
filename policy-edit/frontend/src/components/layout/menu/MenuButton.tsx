@@ -18,7 +18,7 @@ const MenuButton: React.FC<MenuButtonProps> = ({
       variant="ghost"
       size="icon"
       onClick={onClick}
-      className={`md:hidden transition-transform duration-200 ${className}`}
+      className={`md:hidden transition-transform duration-200 z-[60] relative bg-white hover:bg-gray-100 ${className}`}
       aria-label={isOpen ? "メニューを閉じる" : "メニューを開く"}
       aria-expanded={isOpen}
     >
