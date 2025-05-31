@@ -4,17 +4,17 @@ const colors = require("tailwindcss/colors");
 /** カスタマイズ部分 ここから */
 
 const primaryColors = {
-  50: "hsl(212 100.0% 91.2%)",
-  100: "hsl(214 100.0% 86.5%)",
-  200: "hsl(215 100.0% 81.8%)",
-  300: "hsl(215 100.0% 77.1%)",
-  400: "hsl(216 100.0% 72.4%)",
-  500: "hsl(216 100.0% 67.6%)",
-  600: "hsl(216 100.0% 62.9%)",
-  700: "hsl(216 100.0% 58.4%)",
-  800: "hsl(216 73.1% 46.7%)",
-  900: "hsl(216 76.5% 35.1%)",
-  950: "hsl(216 83.2% 23.3%)",
+  50: "var(--color-primary-50)",
+  100: "var(--color-primary-50)", // 100は50にマップ
+  200: "var(--color-primary-200)",
+  300: "var(--color-primary-200)", // 300は200にマップ
+  400: "var(--color-primary-500)", // 400は500にマップ
+  500: "var(--color-primary-500)",
+  600: "var(--color-primary-700)", // 600は700にマップ
+  700: "var(--color-primary-700)",
+  800: "var(--color-primary-900)", // 800は900にマップ
+  900: "var(--color-primary-900)",
+  950: "var(--color-primary-900)", // 950は900にマップ
 };
 primaryColors.DEFAULT = primaryColors[700];
 primaryColors.dark = primaryColors[800];
@@ -23,17 +23,17 @@ primaryColors.weak = primaryColors[50];
 primaryColors.foreground = "#fff";
 
 const secondaryColors = {
-  50: colors.gray[50],
-  100: colors.gray[100],
-  200: colors.gray[200],
-  300: colors.gray[300],
-  400: colors.gray[400],
-  500: colors.gray[500],
-  600: colors.gray[600],
-  700: colors.gray[700],
-  800: colors.gray[800],
-  900: colors.gray[900],
-  950: colors.gray[950],
+  50: "var(--color-secondary-50)",
+  100: "var(--color-secondary-50)", // 100は50にマップ
+  200: "var(--color-secondary-200)",
+  300: "var(--color-secondary-200)", // 300は200にマップ
+  400: "var(--color-secondary-500)", // 400は500にマップ
+  500: "var(--color-secondary-500)",
+  600: "var(--color-secondary-700)", // 600は700にマップ
+  700: "var(--color-secondary-700)",
+  800: "var(--color-secondary-900)", // 800は900にマップ
+  900: "var(--color-secondary-900)",
+  950: "var(--color-secondary-900)", // 950は900にマップ
 };
 secondaryColors.DEFAULT = secondaryColors[300];
 secondaryColors.dark = secondaryColors[200];
@@ -42,17 +42,17 @@ secondaryColors.weak = secondaryColors[50];
 secondaryColors.foreground = "#fff";
 
 const accentColors = {
-  50: "hsl(170 64.3% 83.5%)",
-  100: "hsl(170 64.1% 77.1%)",
-  200: "hsl(170 62.7% 70.6%)",
-  300: "hsl(170 62.8% 64.1%)",
-  400: "hsl(170 62.2% 57.5%)",
-  500: "hsl(170 62.2% 51.2%)",
-  600: "hsl(170 77.1% 44.5%)",
-  700: "hsl(170 100.0% 38.2%)",
-  800: "hsl(170 100.0% 31.8%)",
-  900: "hsl(170 100.0% 25.5%)",
-  950: "hsl(170 100.0% 19.2%)",
+  50: "var(--color-accent-50)",
+  100: "var(--color-accent-50)", // 100は50にマップ
+  200: "var(--color-accent-200)",
+  300: "var(--color-accent-200)", // 300は200にマップ
+  400: "var(--color-accent-500)", // 400は500にマップ
+  500: "var(--color-accent-500)",
+  600: "var(--color-accent-700)", // 600は700にマップ
+  700: "var(--color-accent-700)",
+  800: "var(--color-accent-900)", // 800は900にマップ
+  900: "var(--color-accent-900)",
+  950: "var(--color-accent-900)", // 950は900にマップ
 };
 
 accentColors.DEFAULT = accentColors[700];

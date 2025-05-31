@@ -57,6 +57,7 @@ services:
       # Site configuration
       - VITE_SITE_NAME=${VITE_SITE_NAME}
       - VITE_SITE_LOGO_URL=${VITE_SITE_LOGO_URL}
+      - VITE_PRIMARY_COLOR=${VITE_PRIMARY_COLOR}
 
   policy-backend:
     container_name: policy-backend-dev
@@ -113,6 +114,10 @@ services:
       - NODE_ENV=development
       - VITE_API_BASE_URL=${IDEA_FRONTEND_API_BASE_URL} # 初期段階ではidea-discussionのAPIを使用
       - VITE_FRONTEND_ALLOWED_HOSTS=${VITE_FRONTEND_ALLOWED_HOSTS}
+      # Site configuration
+      - VITE_SITE_NAME=${VITE_SITE_NAME}
+      - VITE_SITE_LOGO_URL=${VITE_SITE_LOGO_URL}
+      - VITE_PRIMARY_COLOR=${VITE_PRIMARY_COLOR}
 
   # --- Database ---
   mongo:
