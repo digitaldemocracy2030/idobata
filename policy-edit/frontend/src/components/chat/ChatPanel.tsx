@@ -1,11 +1,11 @@
 import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { GitHubFile } from "../lib/github"; // Import the type
-import { decodeBase64Content } from "../lib/github"; // Import the decoder
-import useContentStore from "../store/contentStore"; // Import the Zustand store
-import MarkdownViewer from "./MarkdownViewer"; // Import the MarkdownViewer component
-import { Button } from "./ui/button";
-import { Textarea } from "./ui/textarea";
+import type { GitHubFile } from "../../lib/github"; // Import the type
+import { decodeBase64Content } from "../../lib/github"; // Import the decoder
+import useContentStore from "../../store/contentStore"; // Import the Zustand store
+import MarkdownViewer from "../ui/MarkdownViewer"; // Import the MarkdownViewer component
+import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
 
 const getFormattedFileName = (path: string): string => {
   if (!path) return "";

@@ -2,10 +2,10 @@ import { X } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import ChatPanel from "./ChatPanel";
-import FloatingChatButton from "./FloatingChatButton";
+import ChatPanel from "../chat/ChatPanel";
+import FloatingChatButton from "../chat/FloatingChatButton";
+import { Button } from "../ui/button";
 import Header from "./Header";
-import { Button } from "./ui/button";
 
 const Layout: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);

@@ -1,13 +1,13 @@
 import type React from "react";
 import { useEffect } from "react";
-import type { GitHubFile } from "../lib/github"; // Import the GitHubFile type
-import useContentStore from "../store/contentStore";
-import Breadcrumbs from "./Breadcrumbs";
-import DirectoryView from "./DirectoryView";
-import ErrorDisplay from "./ErrorDisplay";
-import FileView from "./FileView";
+import type { GitHubFile } from "../../lib/github"; // Import the GitHubFile type
+import useContentStore from "../../store/contentStore";
+import Breadcrumbs from "../layout/Breadcrumbs";
+import ErrorDisplay from "../ui/ErrorDisplay";
 // No need for shallow import when selecting primitives individually
-import LoadingIndicator from "./LoadingIndicator";
+import LoadingIndicator from "../ui/LoadingIndicator";
+import DirectoryView from "./DirectoryView";
+import FileView from "./FileView";
 
 interface ContentExplorerProps {
   initialPath: string;
