@@ -1,9 +1,11 @@
 import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { GitHubFile } from "../../lib/github"; // Import the type
-import { decodeBase64Content } from "../../lib/github"; // Import the decoder
-import useContentStore from "../../store/contentStore"; // Import the Zustand store
-import MarkdownViewer from "../ui/MarkdownViewer"; // Import the MarkdownViewer component
+import { chatApiClient } from "../../lib/api";
+import type { GitHubFile } from "../../lib/github";
+import { decodeBase64Content } from "../../lib/github";
+import useContentStore from "../../store/contentStore";
+import type { ChatMessageRequest, OpenAIMessage } from "../../types/api";
+import MarkdownViewer from "../ui/MarkdownViewer";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 
@@ -12,21 +14,6 @@ const getFormattedFileName = (path: string): string => {
   const fileName = path.split("/").pop() || "";
   return fileName.endsWith(".md") ? fileName.slice(0, -3) : fileName;
 };
-
-// Define the structure for OpenAI API messages
-interface OpenAIMessage {
-  role: "user" | "assistant" | "system" | "function";
-  content: string | null;
-  name?: string;
-  function_call?: {
-    name: string;
-    arguments: string;
-  };
-}
-
-// API base URL from environment variables
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/api";
 
 const ChatPanel: React.FC = () => {
   // Local state for input, loading, connection, and general errors
@@ -167,17 +154,17 @@ const ChatPanel: React.FC = () => {
   // Check if the backend is connected to an MCP server
   // Check if the backend is connected and return the status
   const checkConnectionStatus = async (): Promise<boolean> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/chat/status`);
-      const data = await response.json();
-      const status = data.initialized as boolean;
-      setIsConnected(status);
-      return status; // Return the connection status
-    } catch (err) {
-      console.error("接続ステータスの確認に失敗しました:", err);
+    const result = await chatApiClient.getStatus();
+
+    if (result.isErr()) {
+      console.error("接続ステータスの確認に失敗しました:", result.error);
       setIsConnected(false);
-      return false; // Return false on error
+      return false;
     }
+
+    const status = result.value.initialized;
+    setIsConnected(status);
+    return status;
   };
 
   // Scroll to bottom when messages update
@@ -193,33 +180,18 @@ const ChatPanel: React.FC = () => {
     setIsLoading(true);
     setError(null);
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/chat/connect`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // No body needed, server path is now read from backend .env
-      });
+    const result = await chatApiClient.connect();
 
-      const data = await response.json();
-
-      // Don't add messages here directly, let the check after connection handle it
-      if (response.ok) {
-        setIsConnected(true);
-        // Message added in the .then block below
-      } else {
-        setError(data.error || "サーバーへの接続に失敗しました");
-        // Error message added in the .then block below
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "不明なエラー";
+    if (result.isErr()) {
+      const errorMessage =
+        result.error.message || "サーバーへの接続に失敗しました";
       setError(errorMessage);
-      // Add error message to the current thread if an MD file is active
-      // Error state is set, message will be added by the caller (useEffect or button handler) if needed
-    } finally {
-      setIsLoading(false);
+      setIsConnected(false);
+    } else {
+      setIsConnected(true);
     }
+
+    setIsLoading(false);
   };
 
   // Add a bot message to the chat
@@ -299,54 +271,37 @@ const ChatPanel: React.FC = () => {
       }
     }
 
-    const payload = {
+    const request: ChatMessageRequest = {
       message: userInput,
       history: historyForAPI,
-      branchId: currentBranchId, // Add branchId
-      fileContent: fileContent, // Add decoded file content (or null)
-      userName: userName, // Add user name
-      filePath: currentPath, // Add file path
+      branchId: currentBranchId,
+      fileContent: fileContent,
+      userName: userName,
+      filePath: currentPath,
     };
 
-    try {
-      // Send message, history, and context to backend
-      const response = await fetch(`${API_BASE_URL}/chat`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload), // Send the updated payload
-      });
+    const result = await chatApiClient.sendMessage(request);
 
-      const data = await response.json();
-
-      if (response.ok) {
-        // Add bot response to the current thread in the store
-        // Add bot response to the current thread in the store
-        addMessageToThread(currentPath, { text: data.response, sender: "bot" });
-        // Reload the content after receiving the bot's response
-        console.log(
-          "ボットの応答を受信しました。コンテンツを再読み込みしています..."
-        );
-        reloadCurrentContent();
-      } else {
-        const errorMsg = data.error || "応答の取得に失敗しました";
-        setError(errorMsg);
-        addMessageToThread(currentPath, {
-          text: `エラー：${errorMsg}`,
-          sender: "bot",
-        });
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "不明なエラー";
+    if (result.isErr()) {
+      const errorMessage = result.error.message || "応答の取得に失敗しました";
       setError(errorMessage);
       addMessageToThread(currentPath, {
         text: `エラー：${errorMessage}`,
         sender: "bot",
       });
-    } finally {
       setIsLoading(false);
+      return;
     }
+
+    addMessageToThread(currentPath, {
+      text: result.value.response,
+      sender: "bot",
+    });
+    console.log(
+      "ボットの応答を受信しました。コンテンツを再読み込みしています..."
+    );
+    reloadCurrentContent();
+    setIsLoading(false);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
