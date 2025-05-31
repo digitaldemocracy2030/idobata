@@ -4,6 +4,95 @@
 @import "highlight.js/styles/github.css";
 @import "github-markdown-css/github-markdown-light.css";
 
+@theme {
+  /* フォント設定 */
+  --font-family-sans: "Inter", "BIZ UDGothic", system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* レスポンシブブレークポイント */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* Tailwindのデフォルト色を保持 */
+  --color-inherit: inherit;
+  --color-current: current;
+  --color-transparent: transparent;
+  --color-black: #000;
+  --color-white: #fff;
+
+  /* Gray colors */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-gray-950: #030712;
+
+  /* カスタムカラー - CSS変数を参照 */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-ring: hsl(var(--ring));
+
+  /* Primary colors (11段階) */
+  --color-primary-50: var(--color-primary-50);
+  --color-primary-100: var(--color-primary-100);
+  --color-primary-200: var(--color-primary-200);
+  --color-primary-300: var(--color-primary-300);
+  --color-primary-400: var(--color-primary-400);
+  --color-primary-500: var(--color-primary-500);
+  --color-primary-600: var(--color-primary-600);
+  --color-primary-700: var(--color-primary-700);
+  --color-primary-800: var(--color-primary-800);
+  --color-primary-900: var(--color-primary-900);
+  --color-primary-950: var(--color-primary-950);
+  --color-primary: var(--color-primary-500);
+
+  /* Secondary colors (11段階) */
+  --color-secondary-50: var(--color-secondary-50);
+  --color-secondary-100: var(--color-secondary-100);
+  --color-secondary-200: var(--color-secondary-200);
+  --color-secondary-300: var(--color-secondary-300);
+  --color-secondary-400: var(--color-secondary-400);
+  --color-secondary-500: var(--color-secondary-500);
+  --color-secondary-600: var(--color-secondary-600);
+  --color-secondary-700: var(--color-secondary-700);
+  --color-secondary-800: var(--color-secondary-800);
+  --color-secondary-900: var(--color-secondary-900);
+  --color-secondary-950: var(--color-secondary-950);
+  --color-secondary: var(--color-secondary-500);
+
+  /* Accent colors (4段階) */
+  --color-accent: var(--color-accent);
+  --color-accent-light: var(--color-accent-light);
+  --color-accent-super-light: var(--color-accent-super-light);
+  --color-accent-dark: var(--color-accent-dark);
+
+  /* 後方互換性のため */
+  --color-bg-sub: var(--color-secondary-50);
+}
+
+/*
+Safelist設定の代替 - 動的に使用されるクラス名:
+- border-accent-light, border-accent-dark, border-accent
+- bg-accent-light, bg-accent-dark, bg-accent
+- text-accent-light, text-accent-dark, text-accent
+- border-primary-500, border-primary-600
+- bg-primary-500, bg-primary-600
+- text-primary-500, text-primary-600
+- border-secondary-200, border-secondary-300
+- bg-secondary-200, bg-secondary-300
+- text-secondary-800, text-secondary-900
+*/
+
 /* Apply Inter for English and BIZ UDGothic for Japanese */
 @layer base {
   html {
@@ -11,44 +100,8 @@
   }
 }
 
-/* Custom color definitions for Tailwind CSS v4 */
-@theme {
-  --color-primary-50: hsl(212 100.0% 91.2%);
-  --color-primary-100: hsl(214 100.0% 86.5%);
-  --color-primary-200: hsl(215 100.0% 81.8%);
-  --color-primary-300: hsl(215 100.0% 77.1%);
-  --color-primary-400: hsl(216 100.0% 72.4%);
-  --color-primary-500: hsl(216 100.0% 67.6%);
-  --color-primary-600: hsl(216 100.0% 62.9%);
-  --color-primary-700: hsl(216 100.0% 58.4%);
-  --color-primary-800: hsl(216 73.1% 46.7%);
-  --color-primary-900: hsl(216 76.5% 35.1%);
-  --color-primary-950: hsl(216 83.2% 23.3%);
-
-  --color-secondary-50: #f9fafb;
-  --color-secondary-100: #f3f4f6;
-  --color-secondary-200: #e5e7eb;
-  --color-secondary-300: #d1d5db;
-  --color-secondary-400: #9ca3af;
-  --color-secondary-500: #6b7280;
-  --color-secondary-600: #4b5563;
-  --color-secondary-700: #374151;
-  --color-secondary-800: #1f2937;
-  --color-secondary-900: #111827;
-  --color-secondary-950: #030712;
-
-  --color-accent-50: hsl(170 64.3% 83.5%);
-  --color-accent-100: hsl(170 64.1% 77.1%);
-  --color-accent-200: hsl(170 62.7% 70.6%);
-  --color-accent-300: hsl(170 62.8% 64.1%);
-  --color-accent-400: hsl(170 62.2% 57.5%);
-  --color-accent-500: hsl(170 62.2% 51.2%);
-  --color-accent-600: hsl(170 77.1% 44.5%);
-  --color-accent-700: hsl(170 100.0% 38.2%);
-  --color-accent-800: hsl(170 100.0% 31.8%);
-  --color-accent-900: hsl(170 100.0% 25.5%);
-  --color-accent-950: hsl(170 100.0% 19.2%);
-}
+/* CSS変数は動的に生成されるため、ここでは定義しません */
+/* siteConfig.tsのinitializeColorSystemで自動生成されます */
 
 /* Override github-markdown-css font family to use our custom fonts */
 .markdown-body {

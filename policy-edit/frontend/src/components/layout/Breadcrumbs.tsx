@@ -29,7 +29,7 @@ const Breadcrumbs: React.FC = () => {
           // 途中の要素はリンク
           <Link
             to={`/view/${pathToSegment}`}
-            className="text-blue-600 hover:text-blue-800 hover:underline"
+            className="text-primary-600 hover:text-primary-800 hover:underline"
           >
             {segment}
           </Link>
@@ -48,7 +48,7 @@ const Breadcrumbs: React.FC = () => {
           {/* ルートへのリンク */}
           <Link
             to="/view/" // ルートパスを指定
-            className="flex items-center text-blue-600 hover:text-blue-800 hover:underline"
+            className="flex items-center text-primary-600 hover:text-primary-800 hover:underline"
             title={`${repoOwner}/${repoName} ルート`}
           >
             <FaHome className="mr-1 h-4 w-4" />

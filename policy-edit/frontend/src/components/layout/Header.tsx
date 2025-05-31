@@ -11,7 +11,7 @@ function Header({ className }: HeaderProps): React.ReactElement {
   return (
     <header
       className={cn(
-        "w-full h-16 bg-background border-b-2 border-primary-700",
+        "w-full h-16 bg-background border-b-2 border-accent-light",
         "flex items-center px-4 md:px-6",
         "sticky top-0 z-50",
         className
@@ -19,7 +19,7 @@ function Header({ className }: HeaderProps): React.ReactElement {
     >
       <Link
         to="/"
-        className="flex items-center text-xl md:text-xl font-semibold text-foreground hover:text-foreground/80 transition-colors"
+        className="flex items-center text-xl md:text-xl font-semibold transition-colors"
       >
         {siteConfig.logoUrl && (
           <img

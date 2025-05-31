@@ -23,7 +23,7 @@ function ChatInput({ onSendMessage }: ChatInputProps) {
           setMessage(e.target.value)
         }
         placeholder="メッセージを入力..."
-        className="w-full bg-white border border-neutral-300 focus:border-neutral-400 focus:ring-1 focus:ring-neutral-400 rounded-xl text-neutral-800 placeholder:text-neutral-400 py-2 md:py-3 px-3 md:px-4 pr-12 md:pr-16 min-h-[50px] md:min-h-[60px] text-sm md:text-base resize-none"
+        className="w-full bg-white border-t border-b border-l border-neutral-300 focus:border-t-neutral-400 focus:border-b-neutral-400 focus:border-l-neutral-400 focus:ring-1 focus:ring-neutral-400 rounded-xl text-neutral-800 placeholder:text-neutral-400 py-2 md:py-3 px-3 md:px-4 pr-12 md:pr-16 min-h-[50px] md:min-h-[60px] text-sm md:text-base resize-none"
         onKeyDown={(
           e: React.KeyboardEvent<HTMLTextAreaElement> & {
             isComposing?: boolean;
