@@ -1,7 +1,8 @@
 /* Import Inter and BIZ UDGothic fonts from Google Fonts */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=BIZ+UDGothic:wght@400;700&display=swap");
-
 @import "tailwindcss";
+@import "highlight.js/styles/github.css";
+@import "github-markdown-css/github-markdown-light.css";
 
 /* Apply Inter for English and BIZ UDGothic for Japanese */
 @layer base {
@@ -49,14 +50,10 @@
   --color-accent-950: hsl(170 100.0% 19.2%);
 }
 
-@import "highlight.js/styles/github.css";
-/* Enable syntax highlighting */
-@import "github-markdown-css/github-markdown-light.css";
-/* Import GitHub Markdown CSS (light theme) */
-
 /* Override github-markdown-css font family to use our custom fonts */
 .markdown-body {
-  font-family: "Inter", "BIZ UDGothic", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  font-family: "Inter", "BIZ UDGothic", system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
 }
 
 /* Mobile chat transitions */

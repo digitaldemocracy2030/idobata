@@ -16,7 +16,10 @@ function Header({ className }: HeaderProps): React.ReactElement {
         className
       )}
     >
-      <Link to="/" className="text-xl font-semibold text-foreground hover:text-foreground/80 transition-colors">
+      <Link
+        to="/"
+        className="text-xl font-semibold text-foreground hover:text-foreground/80 transition-colors"
+      >
         いどばた政策
       </Link>
     </header>
