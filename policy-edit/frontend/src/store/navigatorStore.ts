@@ -40,7 +40,9 @@ const useNavigatorStore = create<NavigatorState>()(
           const contentStore = useContentStore.getState();
           await contentStore.fetchContent(path);
 
-          const content = contentStore.content;
+          // fetchContent後の状態を再取得
+          const updatedContentStore = useContentStore.getState();
+          const content = updatedContentStore.content;
           if (Array.isArray(content)) {
             set((state) => ({
               treeData: updateTreeData(state.treeData, path, content),
