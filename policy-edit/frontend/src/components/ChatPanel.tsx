@@ -4,6 +4,8 @@ import type { GitHubFile } from "../lib/github"; // Import the type
 import { decodeBase64Content } from "../lib/github"; // Import the decoder
 import useContentStore from "../store/contentStore"; // Import the Zustand store
 import MarkdownViewer from "./MarkdownViewer"; // Import the MarkdownViewer component
+import { Button } from "./ui/button";
+import { Textarea } from "./ui/textarea";
 
 const getFormattedFileName = (path: string): string => {
   if (!path) return "";
@@ -377,16 +379,13 @@ const ChatPanel: React.FC = () => {
         {/* Added padding-top */}
         <h2 className="text-lg font-semibold flex-shrink-0">チャット</h2>
         {!isConnected && (
-          <button
-            // Manual connect button - attempts connection and updates status.
-            // Messages are handled by state changes or potentially added here if needed for manual action feedback.
+          <Button
             onClick={async () => {
               setIsLoading(true);
               setError(null);
               try {
                 await connectToGithubContributionServer();
-                const connected = await checkConnectionStatus(); // Check status after manual attempt
-                // Optionally add a message specific to manual connection success/failure if desired
+                const connected = await checkConnectionStatus();
                 if (isMdFileActive && currentPath) {
                   if (connected) {
                     addBotMessageToCurrentThread("手動接続に成功しました。");
@@ -401,7 +400,7 @@ const ChatPanel: React.FC = () => {
                 const errorMessage =
                   err instanceof Error ? err.message : "不明なエラー";
                 setError(errorMessage);
-                await checkConnectionStatus(); // Update status
+                await checkConnectionStatus();
                 if (isMdFileActive && currentPath) {
                   addBotMessageToCurrentThread(
                     `エラー：手動接続に失敗しました。${errorMessage}`
@@ -412,11 +411,12 @@ const ChatPanel: React.FC = () => {
               }
             }}
             disabled={isLoading}
-            className="bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
-            type="button"
+            variant="default"
+            size="sm"
+            className="bg-green-500 hover:bg-green-600"
           >
             {isLoading ? "接続中..." : "サーバーに接続"}
-          </button>
+          </Button>
         )}
         {isConnected && (
           <span className="text-sm text-green-600 font-medium">✓ 接続済み</span>
@@ -469,7 +469,7 @@ const ChatPanel: React.FC = () => {
       <div
         className={`flex-shrink-0 flex ${!isMdFileActive ? "opacity-50 cursor-not-allowed" : ""}`}
       >
-        <textarea
+        <Textarea
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
@@ -478,23 +478,23 @@ const ChatPanel: React.FC = () => {
               ? "メッセージを入力してください（Shift+Enterで改行）..."
               : "MDファイルを選択"
           }
-          disabled={isLoading || !isConnected || !isMdFileActive} // Disable if loading, not connected, or no MD file active
-          className="flex-grow border border-gray-300 rounded-l-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400 resize-none whitespace-pre-wrap" // Added resize-none and whitespace-pre-wrap
-          rows={3} // Start with a reasonable height
+          disabled={isLoading || !isConnected || !isMdFileActive}
+          rows={3}
+          className="resize-none rounded-r-none"
         />
-        <button
+        <Button
           onClick={handleSendMessage}
           disabled={
             isLoading ||
             !isConnected ||
             !isMdFileActive ||
             inputValue.trim() === ""
-          } // Also disable if no MD file active or input is empty
-          className="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-300"
-          type="button"
+          }
+          variant="default"
+          className="rounded-l-none"
         >
           {isLoading ? "..." : "送信"}
-        </button>
+        </Button>
       </div>
     </div>
   );
