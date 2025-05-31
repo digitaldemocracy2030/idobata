@@ -1,9 +1,11 @@
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import { Result, err, ok } from "neverthrow";
 import { z } from "zod";
 import config from "../config.js";
 import { getAuthenticatedOctokit } from "../github/client.js";
 import { findOrCreateDraftPr } from "../github/utils.js"; // findOrCreateDraftPr をインポート
 import logger from "../logger.js";
+import { GitHubApiError } from "../types/errors.js";
 import { trimTrailingContentSeparators } from "../utils/stringUtils.js";
 
 export const updatePrSchema = z.object({
@@ -27,8 +29,54 @@ export async function handleUpdatePr(
     "Handling update_pr request"
   );
 
+  const updatePrResult = await updatePrInternal(
+    owner,
+    repo,
+    branchName,
+    title,
+    description
+  );
+  if (updatePrResult.isErr()) {
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Failed to update PR: ${updatePrResult.error.message}`,
+        },
+      ],
+      isError: true,
+    };
+  }
+
+  const updatedFields = title ? "title and description" : "description";
+  return {
+    content: [
+      {
+        type: "text",
+        text: `Successfully updated pull request ${updatedFields}. View PR: ${updatePrResult.value.html_url}`,
+      },
+    ],
+  };
+}
+
+async function updatePrInternal(
+  owner: string,
+  repo: string,
+  branchName: string,
+  title?: string,
+  description?: string
+): Promise<Result<{ html_url: string }, GitHubApiError>> {
   try {
-    const octokit = await getAuthenticatedOctokit();
+    const octokitResult = await getAuthenticatedOctokit();
+    if (octokitResult.isErr()) {
+      return err(
+        new GitHubApiError(
+          `Authentication failed: ${octokitResult.error.message}`
+        )
+      );
+    }
+
+    const octokit = octokitResult.value;
 
     // 1. PRを検索または作成
     // 新規作成時のデフォルトタイトル（title が指定されていない場合に使用）
@@ -38,7 +86,7 @@ export async function handleUpdatePr(
       octokit,
       branchName,
       defaultPrTitle,
-      description
+      description || ""
     );
     const pull_number = prInfo.number;
     const prHtmlUrl = prInfo.html_url; // PRのURLを取得
@@ -55,7 +103,7 @@ export async function handleUpdatePr(
       owner,
       repo,
       pull_number,
-      body: trimTrailingContentSeparators(description),
+      body: trimTrailingContentSeparators(description || ""),
     };
 
     if (title) {
@@ -76,33 +124,16 @@ export async function handleUpdatePr(
       `Successfully ensured PR #${pull_number} exists and updated ${updatedFields}. URL: ${prHtmlUrl}`
     );
 
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Successfully updated pull request ${updatedFields}. View PR: ${prHtmlUrl}`, // 取得したURLを使用
-        },
-      ],
-    };
+    return ok({ html_url: prHtmlUrl });
   } catch (error: unknown) {
     logger.error(
-      { error, params },
-      `Error processing update_pr for branch ${branchName}`
+      { error, owner, repo, branchName, title, description },
+      "Failed to update PR"
     );
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    const status =
-      error instanceof Error && "status" in error
-        ? ` (Status: ${error.status})`
-        : "";
-    return {
-      isError: true,
-      content: [
-        {
-          type: "text",
-          text: `Error updating PR for branch ${branchName}: ${errorMessage}${status}`,
-        },
-      ],
-    };
+    return err(
+      new GitHubApiError(
+        `Failed to update PR: ${error instanceof Error ? error.message : "Unknown error"}`
+      )
+    );
   }
 }

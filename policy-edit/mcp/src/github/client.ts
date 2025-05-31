@@ -4,8 +4,10 @@ import { App } from "@octokit/app";
 import { restEndpointMethods } from "@octokit/plugin-rest-endpoint-methods";
 import type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods"; // Use the documented type export
 import { Octokit } from "@octokit/rest";
+import { Result, err, ok } from "neverthrow";
 import config from "../config.js";
 import logger from "../logger.js";
+import { AuthenticationError, FileSystemError } from "../types/errors.js";
 
 let app: App | null = null;
 // Define a more specific type for the cached Octokit instance
@@ -18,28 +20,35 @@ type InstallationOctokit = InstanceType<typeof OctokitWithRest> & {
 let installationOctokit: InstallationOctokit | null = null;
 // tokenExpiration is removed as getInstallationOctokit likely handles token refresh.
 
-function getPrivateKey(): string {
+function getPrivateKey(): Result<string, FileSystemError> {
   const keyPath = "/app/secrets/github-key.pem"; // Fixed path inside the container
   try {
     logger.info(`Reading private key from file: ${keyPath}`);
-    return fs.readFileSync(keyPath, "utf8");
+    const privateKey = fs.readFileSync(keyPath, "utf8");
+    return ok(privateKey);
   } catch (error) {
     logger.error(
       { error, path: keyPath },
       "Failed to read private key from file"
     );
-    throw new Error(
-      `Could not read GitHub App private key file from ${keyPath}. Ensure the file exists and has correct permissions.`
+    return err(
+      new FileSystemError(
+        `Could not read GitHub App private key file from ${keyPath}. Ensure the file exists and has correct permissions.`
+      )
     );
   }
 }
 
-function getApp(): App {
+function getApp(): Result<App, FileSystemError> {
   if (!app) {
-    const privateKey = getPrivateKey();
+    const privateKeyResult = getPrivateKey();
+    if (privateKeyResult.isErr()) {
+      return err(privateKeyResult.error);
+    }
+
     app = new App({
       appId: config.GITHUB_APP_ID,
-      privateKey: privateKey,
+      privateKey: privateKeyResult.value,
       webhooks: { secret: "dummy-secret" }, // Webhookを使わない場合でも必要
       // Use the custom Octokit class that includes the REST plugin
       Octokit: OctokitWithRest.defaults({
@@ -48,20 +57,31 @@ function getApp(): App {
     });
     logger.info("GitHub App initialized.");
   }
-  return app;
+  return ok(app);
 }
 
 // Adjust return type to match the specific InstallationOctokit type
-export async function getAuthenticatedOctokit(): Promise<InstallationOctokit> {
+export async function getAuthenticatedOctokit(): Promise<
+  Result<InstallationOctokit, AuthenticationError | FileSystemError>
+> {
   // Check if we already have a cached Octokit instance.
   // getInstallationOctokit might handle caching/refresh, but this adds a layer.
   if (!installationOctokit) {
     logger.info("Initializing GitHub installation Octokit instance...");
     try {
-      const appInstance = getApp();
+      const appResult = getApp();
+      if (appResult.isErr()) {
+        return err(appResult.error);
+      }
+
+      const appInstance = appResult.value;
       const installationId = Number.parseInt(config.GITHUB_INSTALLATION_ID, 10);
       if (Number.isNaN(installationId)) {
-        throw new Error("Invalid GITHUB_INSTALLATION_ID. Must be a number.");
+        return err(
+          new AuthenticationError(
+            "Invalid GITHUB_INSTALLATION_ID. Must be a number."
+          )
+        );
       }
 
       // Directly get the authenticated Octokit instance for the installation
@@ -76,10 +96,12 @@ export async function getAuthenticatedOctokit(): Promise<InstallationOctokit> {
       );
     } catch (error) {
       logger.error({ error }, "Failed to get GitHub installation token");
-      throw new Error("Could not authenticate with GitHub App.");
+      return err(
+        new AuthenticationError("Could not authenticate with GitHub App.")
+      );
     }
   } else {
     logger.debug("Using cached GitHub installation token.");
   }
-  return installationOctokit;
+  return ok(installationOctokit);
 }

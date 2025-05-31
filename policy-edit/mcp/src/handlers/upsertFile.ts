@@ -1,9 +1,12 @@
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import type { Octokit } from "@octokit/rest";
+import { Result, err, ok } from "neverthrow";
 import { z } from "zod";
 import config from "../config.js";
 import { getAuthenticatedOctokit } from "../github/client.js";
 import { ensureBranchExists } from "../github/utils.js";
 import logger from "../logger.js";
+import { GitHubApiError } from "../types/errors.js";
 import { trimTrailingContentSeparators } from "../utils/stringUtils.js";
 
 export const upsertFileSchema = z.object({
@@ -46,59 +49,46 @@ export async function handleUpsertFile(
     "Handling upsert_file_and_commit request"
   );
 
-  try {
-    const octokit = await getAuthenticatedOctokit();
+  const octokitResult = await getAuthenticatedOctokit();
+  if (octokitResult.isErr()) {
+    return {
+      isError: true,
+      content: [
+        {
+          type: "text",
+          text: `Authentication failed: ${octokitResult.error.message}`,
+        },
+      ],
+    };
+  }
 
+  const octokit = octokitResult.value;
+
+  try {
     // 1. ブランチの存在確認・作成
     await ensureBranchExists(octokit, branchName);
 
     // 2. 既存ファイル情報取得 (SHA取得のため)
-    let currentSha: string | undefined = undefined;
-    try {
-      const { data: contentData } = await octokit.rest.repos.getContent({
-        owner,
-        repo,
-        path: fullPath,
-        ref: branchName,
-      });
-      // contentDataが配列の場合 (ディレクトリの場合など) はエラーとするか、適切に処理
-      if (Array.isArray(contentData)) {
-        throw new Error(`Path ${fullPath} refers to a directory, not a file.`);
-      }
-      // contentData が null や undefined でないこと、および type プロパティが存在することを確認
-      if (contentData && contentData.type === "file") {
-        // contentData が file の場合、sha プロパティが存在することを確認
-        if ("sha" in contentData) {
-          currentSha = contentData.sha;
-          logger.debug(
-            `Found existing file ${fullPath} with SHA: ${currentSha}`
-          );
-        } else {
-          logger.warn(
-            `Path ${fullPath} is a file but SHA is missing. Proceeding without SHA.`
-          );
-        }
-      } else if (contentData) {
-        logger.warn(
-          `Path ${fullPath} exists but is not a file (type: ${contentData.type}). Proceeding to overwrite.`
-        );
-      } else {
-        // contentData が null や undefined の場合 (通常は 404 になるはずだが念のため)
-        logger.info(
-          `Could not retrieve content data for ${fullPath}. Assuming file does not exist.`
-        );
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error && "status" in error && error.status === 404) {
-        logger.info(
-          `File ${fullPath} does not exist in branch ${branchName}. Will create it.`
-        );
-        // ファイルが存在しない場合はSHAなしで作成に進む (正常系)
-      } else {
-        logger.error({ error }, `Failed to get content for ${fullPath}`);
-        throw error; // その他のエラーは再スロー
-      }
+    const fileContentResult = await getFileContent(
+      octokit,
+      owner,
+      repo,
+      fullPath,
+      branchName
+    );
+    if (fileContentResult.isErr()) {
+      return {
+        isError: true,
+        content: [
+          {
+            type: "text",
+            text: `Failed to get file content: ${fileContentResult.error.message}`,
+          },
+        ],
+      };
     }
+
+    const currentSha = fileContentResult.value?.sha;
 
     // 3. ファイル作成/更新
     logger.info(
@@ -158,5 +148,73 @@ export async function handleUpsertFile(
         },
       ],
     };
+  }
+}
+
+async function getFileContent(
+  octokit: Octokit,
+  owner: string,
+  repo: string,
+  filePath: string,
+  branchName: string
+): Promise<Result<{ sha: string; content: string } | null, GitHubApiError>> {
+  try {
+    const { data: contentData } = await octokit.rest.repos.getContent({
+      owner,
+      repo,
+      path: filePath,
+      ref: branchName,
+    });
+
+    // contentDataが配列の場合 (ディレクトリの場合など) はエラーとする
+    if (Array.isArray(contentData)) {
+      return err(
+        new GitHubApiError(
+          `Path ${filePath} refers to a directory, not a file.`
+        )
+      );
+    }
+
+    // contentData が null や undefined でないこと、および type プロパティが存在することを確認
+    if (contentData && contentData.type === "file") {
+      // contentData が file の場合、sha プロパティが存在することを確認
+      if ("sha" in contentData && "content" in contentData) {
+        const decodedContent = Buffer.from(
+          contentData.content,
+          "base64"
+        ).toString("utf8");
+        logger.debug(
+          `Found existing file ${filePath} with SHA: ${contentData.sha}`
+        );
+        return ok({ sha: contentData.sha, content: decodedContent });
+      }
+      logger.warn(
+        `Path ${filePath} is a file but SHA or content is missing. Proceeding without SHA.`
+      );
+      return ok(null);
+    }
+    if (contentData) {
+      logger.warn(
+        `Path ${filePath} exists but is not a file (type: ${contentData.type}). Proceeding to overwrite.`
+      );
+      return ok(null);
+    }
+    // contentData が null や undefined の場合 (通常は 404 になるはずだが念のため)
+    logger.info(
+      `Could not retrieve content data for ${filePath}. Assuming file does not exist.`
+    );
+    return ok(null);
+  } catch (error: unknown) {
+    if (error instanceof Error && "status" in error && error.status === 404) {
+      logger.info(
+        `File ${filePath} does not exist in branch ${branchName}. Will create it.`
+      );
+      return ok(null);
+    }
+    return err(
+      new GitHubApiError(
+        `Failed to get file content: ${error instanceof Error ? error.message : "Unknown error"}`
+      )
+    );
   }
 }

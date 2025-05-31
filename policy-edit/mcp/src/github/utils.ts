@@ -1,6 +1,8 @@
 import type { Octokit } from "@octokit/rest";
+import { Result, err, ok } from "neverthrow";
 import config from "../config.js";
 import logger from "../logger.js";
+import { GitHubApiError } from "../types/errors.js";
 import { trimTrailingContentSeparators } from "../utils/stringUtils.js";
 
 /**
@@ -20,24 +22,19 @@ export async function ensureBranchExists(
 
   logger.info(`Ensuring branch ${branchName} exists...`);
 
-  let branchExists = false;
-  try {
-    await octokit.rest.git.getRef({
-      owner,
-      repo,
-      ref: `heads/${branchName}`,
-    });
-    branchExists = true;
-    logger.info(`Branch ${branchName} already exists.`);
-  } catch (error: unknown) {
-    if (error instanceof Error && "status" in error && error.status === 404) {
-      logger.info(`Branch ${branchName} does not exist. Creating...`);
-      // ブランチが存在しない場合は作成に進む
-    } else {
-      logger.error({ error }, `Failed to check branch ${branchName}`);
-      throw error; // その他のエラーは再スロー
-    }
+  const branchExistsResult = await checkBranchExists(
+    octokit,
+    owner,
+    repo,
+    branchName
+  );
+  if (branchExistsResult.isErr()) {
+    throw new Error(
+      `Failed to check branch existence: ${branchExistsResult.error.message}`
+    );
   }
+
+  let branchExists = branchExistsResult.value;
 
   if (!branchExists) {
     try {
@@ -66,6 +63,33 @@ export async function ensureBranchExists(
   }
 
   // ブランチの存在確認・作成は完了
+}
+
+async function checkBranchExists(
+  octokit: Octokit,
+  owner: string,
+  repo: string,
+  branchName: string
+): Promise<Result<boolean, GitHubApiError>> {
+  try {
+    await octokit.rest.git.getRef({
+      owner,
+      repo,
+      ref: `heads/${branchName}`,
+    });
+    logger.info(`Branch ${branchName} already exists.`);
+    return ok(true);
+  } catch (error: unknown) {
+    if (error instanceof Error && "status" in error && error.status === 404) {
+      logger.info(`Branch ${branchName} does not exist. Creating...`);
+      return ok(false);
+    }
+    return err(
+      new GitHubApiError(
+        `Failed to check branch existence: ${error instanceof Error ? error.message : "Unknown error"}`
+      )
+    );
+  }
 }
 
 /**
