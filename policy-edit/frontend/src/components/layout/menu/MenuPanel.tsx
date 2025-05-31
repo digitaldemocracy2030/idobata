@@ -1,5 +1,5 @@
 import React from "react";
-import DirectoryNavigator from "../../../features/navigation/components/DirectoryNavigator";
+import DirectoryNavigator from "./DirectoryNavigator";
 
 interface MenuPanelProps {
   isOpen: boolean;
@@ -10,7 +10,6 @@ interface MenuPanelProps {
 const MenuPanel: React.FC<MenuPanelProps> = ({
   isOpen,
   isMobile,
-  children,
 }) => {
   return (
     <nav
@@ -30,14 +29,6 @@ const MenuPanel: React.FC<MenuPanelProps> = ({
 
       <div className="p-4">
         <DirectoryNavigator />
-
-        {children && <hr className="my-4 border-gray-200" />}
-
-        {children || (
-          <div className="text-gray-500 text-sm">
-            その他のメニューコンテンツ
-          </div>
-        )}
       </div>
     </nav>
   );
