@@ -80,16 +80,11 @@ export function generateCSSVariablesFromSiteConfig(colors: SiteConfig['colors'])
 
 // 新規追加: siteConfigベースの初期化
 export function initializeColorSystem(config: ColorSystemConfig): SiteConfig['colors'] {
+  console.log(config);
   const colors = {
     primary: generatePrimaryPalette(config.primary),
-    secondary: generateSecondaryPalette(config.secondary),
-    accent: generateAccentPalette({
-      accent: config.accent,
-      accentLight: config.accentLight,
-      accentSuperLight: config.accentSuperLight,
-      accentDark: config.accentDark,
-      primaryColor: config.primary,
-    }),
+    secondary: generateSecondaryPalette(config.primary), // primaryColorから自動生成
+    accent: generateAccentPalette(config.primary), // primaryColorから自動生成
   };
 
   // CSS変数を自動適用

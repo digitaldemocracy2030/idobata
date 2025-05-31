@@ -40,83 +40,47 @@ export function generatePrimaryPalette(baseColor: string): ColorPalette {
   };
 }
 
-export function getFixedSecondaryPalette(): ColorPalette {
+// secondaryカラーの動的生成（常に自動生成）
+export function generateSecondaryPalette(primaryColor: string): ColorPalette {
+  // primaryカラーから彩度を下げたニュートラルなセカンダリカラーを生成
+  const baseHsl = chroma(primaryColor).hsl();
+  const secondaryBase = chroma.hsl(
+    baseHsl[0], // 同じ色相を維持
+    Math.max(0.05, baseHsl[1] * 0.1), // 彩度を大幅に下げる（最小5%）
+    0.5 // 明度は中間値
+  );
+
+  return generatePrimaryPalette(secondaryBase.hex());
+}
+
+// accentカラーの4段階生成（常に自動生成、primaryの明るさ違いを使用）
+export function generateAccentPalette(primaryColor: string): AccentPalette {
+  // primaryから明るさ違いのaccentを自動生成
+  const accentBase = generateAccentFromPrimaryBrightness(primaryColor);
+
   return {
-    50: "#f9fafb",
-    100: "#f3f4f6",
-    200: "#e5e7eb",
-    300: "#d1d5db",
-    400: "#9ca3af",
-    500: "#6b7280",
-    600: "#4b5563",
-    700: "#374151",
-    800: "#1f2937",
-    900: "#111827",
-    950: "#030712",
+    default: accentBase,
+    light: chroma(accentBase).brighten(0.5).hex(),
+    superLight: chroma(accentBase).brighten(1.2).hex(),
+    dark: chroma(accentBase).darken(0.8).hex(),
   };
 }
 
-// 新規追加: secondaryカラーの動的生成
-export function generateSecondaryPalette(baseColor?: string): ColorPalette {
-  if (baseColor) {
-    // カスタムsecondaryカラーから生成
-    return generatePrimaryPalette(baseColor);
+// 印象的なアクセントカラー生成（類似色から選択）
+function generateAccentFromPrimaryBrightness(baseColor: string): string {
+  // primaryカラーの明るさ違いでアクセントカラーを生成
+  const baseChroma = chroma(baseColor);
+
+  // 元の色が暗い場合は明るく、明るい場合は少し暗くして印象的にする
+  const hsl = baseChroma.hsl();
+  const lightness = hsl[2];
+
+  if (lightness < 0.5) {
+    // 暗い色の場合：明るくする
+    return baseChroma.brighten(1.0).hex();
   }
-
-  // デフォルトのグレースケール
-  return getFixedSecondaryPalette();
-}
-
-// 新規追加: accentカラーの4段階生成
-export function generateAccentPalette(config: {
-  accent?: string;
-  accentLight?: string;
-  accentSuperLight?: string;
-  accentDark?: string;
-  primaryColor?: string;
-}): AccentPalette {
-  const { accent, accentLight, accentSuperLight, accentDark, primaryColor } = config;
-
-  let accentBase: string;
-  if (accent) {
-    accentBase = accent;
-  } else if (primaryColor) {
-    // primaryから補色系のaccentを自動生成
-    accentBase = generateComplementaryColor(primaryColor);
-  } else {
-    // デフォルトのaccent色
-    accentBase = "#30bca7";
-  }
-
-  return {
-    default: accent || accentBase,
-    light: accentLight || chroma(accentBase).brighten(0.5).hex(),
-    superLight: accentSuperLight || chroma(accentBase).brighten(1.2).hex(),
-    dark: accentDark || chroma(accentBase).darken(0.8).hex(),
-  };
-}
-
-export function getFixedAccentPalette(): ColorPalette {
-  return {
-    50: "#ecfdf5",
-    100: "#d1fae5",
-    200: "#a7f3d0",
-    300: "#6ee7b7",
-    400: "#34d399",
-    500: "#10b981",
-    600: "#059669",
-    700: "#047857",
-    800: "#065f46",
-    900: "#064e3b",
-    950: "#022c22",
-  };
-}
-
-// 新規追加: 補色生成
-function generateComplementaryColor(baseColor: string): string {
-  const hsl = chroma(baseColor).hsl();
-  const complementaryHue = (hsl[0] + 180) % 360;
-  return chroma.hsl(complementaryHue, hsl[1], hsl[2]).hex();
+  // 明るい色の場合：少し暗くして彩度を上げる
+  return baseChroma.darken(0.3).saturate(0.5).hex();
 }
 
 /**

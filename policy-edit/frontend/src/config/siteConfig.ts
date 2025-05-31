@@ -3,8 +3,9 @@ import { initializeColorSystem } from "../utils/cssVariableManager";
 
 const DEFAULT_SITE_NAME = "いどばた政策";
 const DEFAULT_LOGO_URL = "";
-const DEFAULT_PRIMARY_COLOR = "#089781";
+const DEFAULT_PRIMARY_COLOR = "#1c74c8";
 
+console.log(import.meta.env.VITE_COLOR_PRIMARY);
 const colorConfig = {
   primary: import.meta.env.VITE_COLOR_PRIMARY || DEFAULT_PRIMARY_COLOR,
   secondary: import.meta.env.VITE_COLOR_SECONDARY,           // オプショナル
