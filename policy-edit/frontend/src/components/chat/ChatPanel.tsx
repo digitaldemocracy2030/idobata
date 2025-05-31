@@ -89,9 +89,13 @@ const ChatPanel: React.FC = () => {
 
       if (!isActiveMd || !pathForMessage) {
         if (connectedAfterAttempt) {
-          console.log("自動接続しましたが、メッセージを表示するアクティブなMDファイルがありません。");
+          console.log(
+            "自動接続しましたが、メッセージを表示するアクティブなMDファイルがありません。"
+          );
         } else {
-          console.warn("自動接続に失敗しましたが、メッセージを表示するアクティブなMDファイルがありません。");
+          console.warn(
+            "自動接続に失敗しましたが、メッセージを表示するアクティブなMDファイルがありません。"
+          );
         }
         setIsLoading(false);
         return;
@@ -152,7 +156,8 @@ const ChatPanel: React.FC = () => {
     const result = await chatApiClient.connect();
 
     if (result.isErr()) {
-      const errorMessage = result.error.message || "サーバーへの接続に失敗しました";
+      const errorMessage =
+        result.error.message || "サーバーへの接続に失敗しました";
       setError(errorMessage);
       setIsConnected(false);
       setIsLoading(false);
@@ -165,7 +170,9 @@ const ChatPanel: React.FC = () => {
 
   const addBotMessageToCurrentThread = (text: string) => {
     if (!isMdFileActive || !currentPath) {
-      console.warn("アクティブなMDファイルがないときにボットメッセージを追加しようとしました。");
+      console.warn(
+        "アクティブなMDファイルがないときにボットメッセージを追加しようとしました。"
+      );
       return;
     }
 
@@ -178,12 +185,19 @@ const ChatPanel: React.FC = () => {
   };
 
   const handleSendMessage = async () => {
-    if (inputValue.trim() === "" || !isMdFileActive || !currentPath || !currentThread) {
+    if (
+      inputValue.trim() === "" ||
+      !isMdFileActive ||
+      !currentPath ||
+      !currentThread
+    ) {
       return;
     }
 
     if (!userName) {
-      const name = prompt("お名前を入力してください（あなたの提案の記名に使用されます）：");
+      const name = prompt(
+        "お名前を入力してください（あなたの提案の記名に使用されます）："
+      );
       const finalName = name || "匿名ユーザー";
       setUserName(finalName);
       localStorage.setItem("userName", finalName);
@@ -204,10 +218,12 @@ const ChatPanel: React.FC = () => {
     setIsLoading(true);
     setError(null);
 
-    const historyForAPI: OpenAIMessage[] = currentThread.messages.map((msg) => ({
-      role: msg.sender === "user" ? "user" : "assistant",
-      content: msg.text,
-    }));
+    const historyForAPI: OpenAIMessage[] = currentThread.messages.map(
+      (msg) => ({
+        role: msg.sender === "user" ? "user" : "assistant",
+        content: msg.text,
+      })
+    );
     historyForAPI.push({ role: "user", content: userInput });
 
     let fileContent: string | null = null;
@@ -241,7 +257,9 @@ const ChatPanel: React.FC = () => {
       text: result.value.response,
       sender: "bot",
     });
-    console.log("ボットの応答を受信しました。コンテンツを再読み込みしています...");
+    console.log(
+      "ボットの応答を受信しました。コンテンツを再読み込みしています..."
+    );
     reloadCurrentContent();
     setIsLoading(false);
   };
