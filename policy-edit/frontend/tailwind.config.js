@@ -28,6 +28,17 @@ export default {
         xl: "1280px",
         "2xl": "1536px",
       },
+      colors: {
+        primary: "var(--color-primary)",
+        "bg-sub": "var(--color-bg-sub)",
+        accent: {
+          DEFAULT: "var(--color-accent)",
+          light: "var(--color-accent-light)",
+          "super-light": "var(--color-accent-super-light)",
+          dark: "var(--color-accent-dark)",
+        },
+        secondary: "var(--color-secondary)",
+      },
     },
   },
   plugins: [],
