@@ -11,7 +11,7 @@ function Header({ className }: HeaderProps): React.ReactElement {
   return (
     <header
       className={cn(
-        "w-full h-16 bg-background border-b-2 border-primary-500",
+        "w-full h-16 bg-background border-b-2 border-primary-600",
         "flex items-center px-4 md:px-6",
         "sticky top-0 z-50",
         className
