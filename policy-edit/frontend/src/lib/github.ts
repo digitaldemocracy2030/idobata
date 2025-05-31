@@ -76,8 +76,11 @@ export class GitHubClient {
         error.message.includes("rate limit exceeded")
       ) {
         errorMessage += " (Rate limit exceeded)";
-      } else if (error.status === 404) {
+        return createGitHubError(errorMessage, error.status);
+      }
+      if (error.status === 404) {
         errorMessage += " (Not Found)";
+        return createGitHubError(errorMessage, error.status);
       }
       return createGitHubError(errorMessage, error.status);
     });

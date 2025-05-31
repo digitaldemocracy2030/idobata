@@ -229,11 +229,11 @@ const ChatPanel: React.FC = () => {
     let fileContent: string | null = null;
     if (contentType === "file" && content && "content" in content) {
       const decodeResult = decodeBase64Content((content as GitHubFile).content);
-      if (decodeResult.isOk()) {
-        fileContent = decodeResult.value;
-      } else {
+      if (decodeResult.isErr()) {
         console.error("Base64デコードに失敗しました:", decodeResult.error);
         fileContent = null;
+      } else {
+        fileContent = decodeResult.value;
       }
     }
 

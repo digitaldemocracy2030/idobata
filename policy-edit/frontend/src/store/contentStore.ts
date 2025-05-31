@@ -116,25 +116,26 @@ const useContentStore = create<ContentState>()(
             }
 
             const fallbackData = fallbackResult.value;
-            if (Array.isArray(fallbackData)) {
-              const sortedData = [...fallbackData].sort((a, b) => {
-                if (a.type === b.type) return a.name.localeCompare(b.name);
-                return a.type === "dir" ? -1 : 1;
-              });
-              set({
-                content: sortedData,
-                contentType: "dir",
-                error: null,
-                isLoading: false,
-              });
-            } else {
+            if (!Array.isArray(fallbackData)) {
               set({
                 content: fallbackData,
                 contentType: "file",
                 error: null,
                 isLoading: false,
               });
+              return;
             }
+
+            const sortedData = [...fallbackData].sort((a, b) => {
+              if (a.type === b.type) return a.name.localeCompare(b.name);
+              return a.type === "dir" ? -1 : 1;
+            });
+            set({
+              content: sortedData,
+              contentType: "dir",
+              error: null,
+              isLoading: false,
+            });
           } else {
             set({
               error,
@@ -147,17 +148,18 @@ const useContentStore = create<ContentState>()(
         }
 
         const data = result.value;
-        if (Array.isArray(data)) {
-          const sortedData = [...data].sort((a, b) => {
-            if (a.type === b.type) {
-              return a.name.localeCompare(b.name);
-            }
-            return a.type === "dir" ? -1 : 1;
-          });
-          set({ content: sortedData, contentType: "dir", isLoading: false });
-        } else {
+        if (!Array.isArray(data)) {
           set({ content: data, contentType: "file", isLoading: false });
+          return;
         }
+
+        const sortedData = [...data].sort((a, b) => {
+          if (a.type === b.type) {
+            return a.name.localeCompare(b.name);
+          }
+          return a.type === "dir" ? -1 : 1;
+        });
+        set({ content: sortedData, contentType: "dir", isLoading: false });
       },
 
       // --- Chat Actions ---
