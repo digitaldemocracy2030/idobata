@@ -30,7 +30,8 @@ const ChatPanel: React.FC = () => {
     contentType, // Get the content type ('file' or 'dir')
     content, // Get the raw content object
     chatThreads,
-    getOrCreateChatThread,
+    getChatThread,
+    createChatThread,
     addMessageToThread,
     ensureBranchIdForThread,
     reloadCurrentContent, // Import the reload action
@@ -41,13 +42,13 @@ const ChatPanel: React.FC = () => {
     return contentType === "file" && currentPath.endsWith(".md");
   }, [contentType, currentPath]);
 
-  // Get the current chat thread and ensure branchId exists when an MD file is active
+  // Get the current chat thread when an MD file is active
   const currentThread = useMemo(() => {
     if (isMdFileActive) {
-      return getOrCreateChatThread(currentPath);
+      return getChatThread(currentPath);
     }
     return null; // Return null if no MD file is active
-  }, [isMdFileActive, currentPath, chatThreads, getOrCreateChatThread]); // chatThreads dependency is important
+  }, [isMdFileActive, currentPath, chatThreads, getChatThread]); // chatThreads dependency is important
 
   const currentBranchId = useMemo(() => {
     if (isMdFileActive && currentPath) {
@@ -61,6 +62,13 @@ const ChatPanel: React.FC = () => {
   const messages = useMemo(() => {
     return currentThread?.messages ?? [];
   }, [currentThread]);
+
+  // Create chat thread if MD file is active but thread doesn't exist
+  useEffect(() => {
+    if (isMdFileActive && currentPath && !currentThread) {
+      createChatThread(currentPath);
+    }
+  }, [isMdFileActive, currentPath, currentThread, createChatThread]);
 
   // Check backend connection status on component mount
   // Check connection status and attempt auto-connect on mount
@@ -188,10 +196,15 @@ const ChatPanel: React.FC = () => {
     if (
       inputValue.trim() === "" ||
       !isMdFileActive ||
-      !currentPath ||
-      !currentThread
+      !currentPath
     ) {
       return;
+    }
+
+    // Ensure thread exists before sending message
+    let thread = currentThread;
+    if (!thread) {
+      thread = createChatThread(currentPath);
     }
 
     if (!userName) {
@@ -218,7 +231,7 @@ const ChatPanel: React.FC = () => {
     setIsLoading(true);
     setError(null);
 
-    const historyForAPI: OpenAIMessage[] = currentThread.messages.map(
+    const historyForAPI: OpenAIMessage[] = thread.messages.map(
       (msg) => ({
         role: msg.sender === "user" ? "user" : "assistant",
         content: msg.text,

@@ -33,7 +33,8 @@ interface ContentState {
   setRepoInfo: (owner: string, name: string) => void;
   fetchContent: (path: string, ref?: string) => Promise<void>; // Add optional ref parameter
   // Chat related actions
-  getOrCreateChatThread: (path: string) => ChatThread;
+  getChatThread: (path: string) => ChatThread | null;
+  createChatThread: (path: string) => ChatThread;
   addMessageToThread: (path: string, message: Omit<Message, "id">) => void; // Pass message content, ID is generated internally
   ensureBranchIdForThread: (path: string) => string; // Ensures branchId exists and returns it
   reloadCurrentContent: () => Promise<void>; // Action to reload content for the current path
@@ -163,18 +164,22 @@ const useContentStore = create<ContentState>()(
       },
 
       // --- Chat Actions ---
-      getOrCreateChatThread: (path) => {
+      getChatThread: (path) => {
+        const state = get();
+        return state.chatThreads[path] || null;
+      },
+
+      createChatThread: (path) => {
         const state = get();
         if (!state.chatThreads[path]) {
-          // Create a new thread if it doesn't exist
+          const newThread = { messages: [], branchId: null, nextMessageId: 1 };
           set((prevState) => ({
             chatThreads: {
               ...prevState.chatThreads,
-              [path]: { messages: [], branchId: null, nextMessageId: 1 },
+              [path]: newThread,
             },
           }));
-          // Return the newly created structure
-          return { messages: [], branchId: null, nextMessageId: 1 };
+          return newThread;
         }
         return state.chatThreads[path];
       },
@@ -211,7 +216,7 @@ const useContentStore = create<ContentState>()(
 
         // Ensure thread exists first
         if (!thread) {
-          thread = state.getOrCreateChatThread(path); // Create it if missing
+          thread = state.createChatThread(path); // Create it if missing
         }
 
         if (thread.branchId) {
