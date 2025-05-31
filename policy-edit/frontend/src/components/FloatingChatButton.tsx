@@ -16,7 +16,7 @@ const FloatingChatButton: React.FC<FloatingChatButtonProps> = ({
       onClick={onClick}
       variant="default"
       size="lg"
-      className={`fixed bottom-4 right-4 bg-blue-500 text-white rounded-full p-3 shadow-lg hover:bg-blue-600 transition-all duration-300 z-50 ${
+      className={`fixed bottom-4 right-4 bg-primary-500 text-white rounded-full p-3 shadow-lg hover:bg-primary-600 transition-all duration-300 z-50 ${
         isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
       aria-label="チャットを開く"

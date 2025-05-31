@@ -1,5 +1,5 @@
-import type { CSSColorVariables } from "../types/siteConfig";
-import { generateCSSColorVariables } from "./colorUtils";
+import type { CSSColorVariables, ColorSystemConfig, SiteConfig } from "../types/siteConfig";
+import { generateAccentPalette, generateCSSColorVariables, generatePrimaryPalette, generateSecondaryPalette } from "./colorUtils";
 
 /**
  * CSS変数をDOMに適用
@@ -53,4 +53,48 @@ export function initializeColorPalette(
 ): void {
   const colorScheme = generateCSSColorVariables(primaryColor, optionalColors);
   applyCSSVariables(colorScheme.cssVariables);
+}
+
+// 新規追加: siteConfigからCSS変数を自動生成
+export function generateCSSVariablesFromSiteConfig(colors: SiteConfig['colors']): Record<string, string> {
+  const variables: Record<string, string> = {};
+
+  // Primary (11段階)
+  for (const [key, value] of Object.entries(colors.primary)) {
+    variables[`--color-primary-${key}`] = value;
+  }
+
+  // Secondary (11段階)
+  for (const [key, value] of Object.entries(colors.secondary)) {
+    variables[`--color-secondary-${key}`] = value;
+  }
+
+  // Accent (4段階)
+  variables['--color-accent'] = colors.accent.default;
+  variables['--color-accent-light'] = colors.accent.light;
+  variables['--color-accent-super-light'] = colors.accent.superLight;
+  variables['--color-accent-dark'] = colors.accent.dark;
+
+  return variables;
+}
+
+// 新規追加: siteConfigベースの初期化
+export function initializeColorSystem(config: ColorSystemConfig): SiteConfig['colors'] {
+  const colors = {
+    primary: generatePrimaryPalette(config.primary),
+    secondary: generateSecondaryPalette(config.secondary),
+    accent: generateAccentPalette({
+      accent: config.accent,
+      accentLight: config.accentLight,
+      accentSuperLight: config.accentSuperLight,
+      accentDark: config.accentDark,
+      primaryColor: config.primary,
+    }),
+  };
+
+  // CSS変数を自動適用
+  const cssVariables = generateCSSVariablesFromSiteConfig(colors);
+  applyCSSVariables(cssVariables);
+
+  return colors;
 }

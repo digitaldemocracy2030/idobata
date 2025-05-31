@@ -413,13 +413,13 @@ const ChatPanel: React.FC = () => {
             disabled={isLoading}
             variant="default"
             size="sm"
-            className="bg-green-500 hover:bg-green-600"
+            className="bg-accent hover:bg-accent-dark"
           >
             {isLoading ? "接続中..." : "サーバーに接続"}
           </Button>
         )}
         {isConnected && (
-          <span className="text-sm text-green-600 font-medium">✓ 接続済み</span>
+          <span className="text-sm text-accent-dark font-medium">✓ 接続済み</span>
         )}
       </div>
       {/* Chat messages area */}
@@ -448,8 +448,8 @@ const ChatPanel: React.FC = () => {
                 className={`p-2 rounded-lg max-w-[80%] ${
                   // Removed whitespace-pre-wrap as MarkdownViewer handles formatting
                   message.sender === "user"
-                    ? "bg-blue-500 text-white chat-bubble-user" // Added chat-bubble-user class
-                    : "bg-gray-200 text-gray-800 chat-bubble-bot" // Added chat-bubble-bot class
+                    ? "bg-primary-500 text-white chat-bubble-user" // Added chat-bubble-user class
+                    : "bg-secondary-200 text-secondary-800 chat-bubble-bot" // Added chat-bubble-bot class
                 }`}
               >
                 {/* Render message content using MarkdownViewer */}

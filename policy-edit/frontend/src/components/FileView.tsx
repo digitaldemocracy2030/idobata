@@ -42,7 +42,7 @@ const FileView: React.FC<FileViewProps> = ({ data }) => {
             href={data.download_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 inline-block px-4 py-2 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
+            className="mt-4 inline-block px-4 py-2 bg-primary-500 text-white text-xs rounded hover:bg-primary-600"
           >
             ファイルをダウンロード
           </a>

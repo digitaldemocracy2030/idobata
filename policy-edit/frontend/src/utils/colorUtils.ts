@@ -1,7 +1,9 @@
 import chroma from "chroma-js";
 import type {
+  AccentPalette,
   CSSColorVariables,
   ColorPalette,
+  ColorSystemConfig,
   GeneratedColorScheme,
 } from "../types/siteConfig";
 
@@ -55,6 +57,46 @@ export function getFixedSecondaryPalette(): ColorPalette {
   };
 }
 
+// 新規追加: secondaryカラーの動的生成
+export function generateSecondaryPalette(baseColor?: string): ColorPalette {
+  if (baseColor) {
+    // カスタムsecondaryカラーから生成
+    return generatePrimaryPalette(baseColor);
+  }
+
+  // デフォルトのグレースケール
+  return getFixedSecondaryPalette();
+}
+
+// 新規追加: accentカラーの4段階生成
+export function generateAccentPalette(config: {
+  accent?: string;
+  accentLight?: string;
+  accentSuperLight?: string;
+  accentDark?: string;
+  primaryColor?: string;
+}): AccentPalette {
+  const { accent, accentLight, accentSuperLight, accentDark, primaryColor } = config;
+
+  let accentBase: string;
+  if (accent) {
+    accentBase = accent;
+  } else if (primaryColor) {
+    // primaryから補色系のaccentを自動生成
+    accentBase = generateComplementaryColor(primaryColor);
+  } else {
+    // デフォルトのaccent色
+    accentBase = "#30bca7";
+  }
+
+  return {
+    default: accent || accentBase,
+    light: accentLight || chroma(accentBase).brighten(0.5).hex(),
+    superLight: accentSuperLight || chroma(accentBase).brighten(1.2).hex(),
+    dark: accentDark || chroma(accentBase).darken(0.8).hex(),
+  };
+}
+
 export function getFixedAccentPalette(): ColorPalette {
   return {
     50: "#ecfdf5",
@@ -69,6 +111,13 @@ export function getFixedAccentPalette(): ColorPalette {
     900: "#064e3b",
     950: "#022c22",
   };
+}
+
+// 新規追加: 補色生成
+function generateComplementaryColor(baseColor: string): string {
+  const hsl = chroma(baseColor).hsl();
+  const complementaryHue = (hsl[0] + 180) % 360;
+  return chroma.hsl(complementaryHue, hsl[1], hsl[2]).hex();
 }
 
 /**
