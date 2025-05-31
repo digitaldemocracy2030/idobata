@@ -1,6 +1,7 @@
+import { Result } from "neverthrow";
 import { useCallback, useMemo, useState } from "react";
 import useContentStore from "../store/contentStore";
-import type { ChatMessage, ChatThread } from "../types/chat";
+import type { ChatError, ChatMessage, ChatThread } from "../types/chat";
 import { useChatMessages } from "./useChatMessages";
 import { useServerConnection } from "./useServerConnection";
 import { useUserManagement } from "./useUserManagement";
@@ -14,7 +15,7 @@ export interface UseChatControllerReturn {
     isConnected: boolean;
     isLoading: boolean;
     error: string | null;
-    connect: () => Promise<void>;
+    connect: () => Promise<Result<void, ChatError>>;
   };
 
   messageHandler: {
@@ -64,25 +65,24 @@ export function useChatController(): UseChatControllerReturn {
     return currentThread?.messages ?? [];
   }, [currentThread]);
 
-  const addBotMessageToCurrentThread = useCallback((text: string) => {
-    if (isChatEnabled && currentPath) {
-      addMessageToThread(currentPath, { text, sender: "bot" });
-    } else {
-      console.warn(
-        "アクティブなMDファイルがないときにボットメッセージを追加しようとしました。"
-      );
-    }
-  }, [isChatEnabled, currentPath, addMessageToThread]);
+  const addBotMessageToCurrentThread = useCallback(
+    (text: string) => {
+      if (isChatEnabled && currentPath) {
+        addMessageToThread(currentPath, { text, sender: "bot" });
+      } else {
+        console.warn(
+          "アクティブなMDファイルがないときにボットメッセージを追加しようとしました。"
+        );
+      }
+    },
+    [isChatEnabled, currentPath, addMessageToThread]
+  );
 
   const handleSendMessage = useCallback(async () => {
-    if (
-      inputValue.trim() === "" ||
-      !isChatEnabled ||
-      !currentPath ||
-      !currentThread
-    ) {
-      return;
-    }
+    if (inputValue.trim() === "") return;
+    if (!isChatEnabled) return;
+    if (!currentPath) return;
+    if (!currentThread) return;
 
     let userName = userManager.userName;
     if (!userName) {
@@ -92,10 +92,9 @@ export function useChatController(): UseChatControllerReturn {
     const userInput = inputValue;
     setInputValue("");
 
-    try {
-      await messageHandler.sendMessage(userInput, userName);
-    } catch (err) {
-      console.error("メッセージ送信エラー:", err);
+    const result = await messageHandler.sendMessage(userInput, userName);
+    if (result.isErr()) {
+      console.error("メッセージ送信エラー:", result.error);
     }
   }, [
     inputValue,
@@ -106,16 +105,19 @@ export function useChatController(): UseChatControllerReturn {
     messageHandler,
   ]);
 
-  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (
-      event.key === "Enter" &&
-      !event.shiftKey &&
-      !event.nativeEvent.isComposing
-    ) {
-      event.preventDefault();
-      handleSendMessage();
-    }
-  }, [handleSendMessage]);
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (
+        event.key === "Enter" &&
+        !event.shiftKey &&
+        !event.nativeEvent.isComposing
+      ) {
+        event.preventDefault();
+        handleSendMessage();
+      }
+    },
+    [handleSendMessage]
+  );
 
   return {
     isChatEnabled,

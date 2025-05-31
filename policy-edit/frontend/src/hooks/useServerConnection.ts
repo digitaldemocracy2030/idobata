@@ -1,13 +1,18 @@
+import { Result } from "neverthrow";
 import { useCallback, useEffect, useState } from "react";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/api";
+import {
+  checkConnectionStatus,
+  connectToServer,
+} from "../services/connectionService";
+import type { ChatError } from "../types/errors";
+import { formatErrorMessage } from "../utils/resultUtils";
 
 export interface UseServerConnectionReturn {
   isConnected: boolean;
   isLoading: boolean;
   error: string | null;
-  connect: () => Promise<void>;
-  checkStatus: () => Promise<boolean>;
+  connect: () => Promise<Result<void, ChatError>>;
+  checkStatus: () => Promise<Result<boolean, ChatError>>;
 }
 
 export function useServerConnection(): UseServerConnectionReturn {
@@ -15,69 +20,59 @@ export function useServerConnection(): UseServerConnectionReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const checkStatus = useCallback(async (): Promise<boolean> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/chat/status`);
-      const data = await response.json();
-      const status = data.initialized as boolean;
-      setIsConnected(status);
-      return status;
-    } catch (err) {
-      console.error("接続ステータスの確認に失敗しました:", err);
+  const checkStatus = useCallback(async (): Promise<
+    Result<boolean, ChatError>
+  > => {
+    const result = await checkConnectionStatus();
+
+    if (result.isErr()) {
       setIsConnected(false);
-      return false;
+      setError(formatErrorMessage(result.error));
+      return result;
     }
+
+    setIsConnected(result.value);
+    setError(null);
+    return result;
   }, []);
 
-  const connect = useCallback(async (): Promise<void> => {
+  const connect = useCallback(async (): Promise<Result<void, ChatError>> => {
     setIsLoading(true);
     setError(null);
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/chat/connect`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+    const result = await connectToServer();
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setIsConnected(true);
-      } else {
-        setError(data.error || "サーバーへの接続に失敗しました");
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "不明なエラー";
-      setError(errorMessage);
-    } finally {
+    if (result.isErr()) {
+      setError(formatErrorMessage(result.error));
       setIsLoading(false);
+      return result;
     }
+
+    setIsConnected(true);
+    setIsLoading(false);
+    return result;
   }, []);
 
   const initializeConnection = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
-    const initiallyConnected = await checkStatus();
+    const statusResult = await checkStatus();
+    if (statusResult.isErr()) {
+      setIsLoading(false);
+      return;
+    }
 
-    if (!initiallyConnected) {
+    if (!statusResult.value) {
       console.log("Not connected, attempting auto-connection...");
-      try {
-        await connect();
-        await checkStatus();
-      } catch (err) {
-        console.error("初期接続試行中にエラーが発生しました:", err);
-        const errorMessage = err instanceof Error ? err.message : "不明な初期化エラー";
-        setError(errorMessage);
-        await checkStatus();
+      const connectResult = await connect();
+      if (connectResult.isErr()) {
+        console.error("初期接続に失敗:", connectResult.error);
       }
     } else {
       console.log("マウント時に既に接続されています。");
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   }, [checkStatus, connect]);
 
   useEffect(() => {

@@ -1,14 +1,19 @@
+import { Result, err, ok } from "neverthrow";
 import { useCallback, useState } from "react";
 import type { GitHubFile } from "../lib/github";
 import { decodeBase64Content } from "../lib/github";
+import { sendChatMessage } from "../services/chatService";
 import useContentStore from "../store/contentStore";
-import type { OpenAIMessage } from "../types/chat";
+import type { ChatError } from "../types/chat";
+import { createStateError } from "../types/errors";
 import { prepareChatHistory } from "../utils/chatUtils";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/api";
+import { formatErrorMessage } from "../utils/resultUtils";
 
 export interface UseChatMessagesReturn {
-  sendMessage: (message: string, userName: string) => Promise<void>;
+  sendMessage: (
+    message: string,
+    userName: string
+  ) => Promise<Result<void, ChatError>>;
   isLoading: boolean;
   error: string | null;
 }
@@ -27,29 +32,33 @@ export function useChatMessages(): UseChatMessagesReturn {
     reloadCurrentContent,
   } = useContentStore();
 
-  const sendMessage = useCallback(async (userInput: string, userName: string) => {
-    if (!currentPath) {
-      throw new Error("現在のパスが設定されていません");
-    }
+  const sendMessage = useCallback(
+    async (
+      userInput: string,
+      userName: string
+    ): Promise<Result<void, ChatError>> => {
+      if (!currentPath) {
+        const error = createStateError("現在のパスが設定されていません");
+        setError(formatErrorMessage(error));
+        return err(error);
+      }
 
-    const currentThread = chatThreads[currentPath];
-    if (!currentThread) {
-      throw new Error("チャットスレッドが見つかりません");
-    }
+      const currentThread = chatThreads[currentPath];
+      if (!currentThread) {
+        const error = createStateError("チャットスレッドが見つかりません");
+        setError(formatErrorMessage(error));
+        return err(error);
+      }
 
-    const currentBranchId = ensureBranchIdForThread(currentPath);
+      const currentBranchId = ensureBranchIdForThread(currentPath);
 
-    addMessageToThread(currentPath, {
-      text: userInput,
-      sender: "user",
-    });
+      addMessageToThread(currentPath, {
+        text: userInput,
+        sender: "user",
+      });
 
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const historyForAPI: OpenAIMessage[] = prepareChatHistory(currentThread.messages);
-      historyForAPI.push({ role: "user", content: userInput });
+      setIsLoading(true);
+      setError(null);
 
       let fileContent: string | null = null;
       if (contentType === "file" && content && "content" in content) {
@@ -62,54 +71,49 @@ export function useChatMessages(): UseChatMessagesReturn {
 
       const payload = {
         message: userInput,
-        history: historyForAPI,
+        history: prepareChatHistory(currentThread.messages),
         branchId: currentBranchId,
         fileContent: fileContent,
         userName: userName,
         filePath: currentPath,
       };
 
-      const response = await fetch(`${API_BASE_URL}/chat`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const result = await sendChatMessage(payload);
 
-      const data = await response.json();
-
-      if (response.ok) {
-        addMessageToThread(currentPath, { text: data.response, sender: "bot" });
-        console.log("ボットの応答を受信しました。コンテンツを再読み込みしています...");
-        reloadCurrentContent();
-      } else {
-        const errorMsg = data.error || "応答の取得に失敗しました";
+      if (result.isErr()) {
+        const errorMsg = formatErrorMessage(result.error);
         setError(errorMsg);
         addMessageToThread(currentPath, {
           text: `エラー：${errorMsg}`,
           sender: "bot",
         });
+        setIsLoading(false);
+        return err(result.error);
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "不明なエラー";
-      setError(errorMessage);
+
       addMessageToThread(currentPath, {
-        text: `エラー：${errorMessage}`,
+        text: result.value,
         sender: "bot",
       });
-    } finally {
+
+      console.log(
+        "ボットの応答を受信しました。コンテンツを再読み込みしています..."
+      );
+      reloadCurrentContent();
       setIsLoading(false);
-    }
-  }, [
-    currentPath,
-    contentType,
-    content,
-    chatThreads,
-    addMessageToThread,
-    ensureBranchIdForThread,
-    reloadCurrentContent,
-  ]);
+
+      return ok(undefined);
+    },
+    [
+      currentPath,
+      contentType,
+      content,
+      chatThreads,
+      addMessageToThread,
+      ensureBranchIdForThread,
+      reloadCurrentContent,
+    ]
+  );
 
   return {
     sendMessage,

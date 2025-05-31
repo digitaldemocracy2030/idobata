@@ -25,3 +25,5 @@ export interface ConnectionStatus {
   isLoading: boolean;
   error: string | null;
 }
+
+export type { ChatError } from "./errors";
