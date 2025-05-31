@@ -1,7 +1,10 @@
 import { Result, err, ok } from "neverthrow";
 import { db } from "../db/index.js";
 import { interactionLogs } from "../db/schema.js";
-import { IdobataMcpService, IdobataMcpServiceError } from "../mcp/idobataMcpService.js";
+import {
+  IdobataMcpService,
+  IdobataMcpServiceError,
+} from "../mcp/idobataMcpService.js";
 import {
   DatabaseError,
   McpClientError,
@@ -84,11 +87,11 @@ export class ProcessChatMessageUsecase {
       request.userName,
       request.filePath
     );
-    
+
     if (result.isErr()) {
       return err(result.error);
     }
-    
+
     return ok(result.value);
   }
 

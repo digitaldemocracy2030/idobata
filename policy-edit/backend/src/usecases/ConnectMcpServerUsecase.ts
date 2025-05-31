@@ -51,14 +51,15 @@ export class ConnectMcpServerUsecase {
     serverPath: string
   ): Promise<Result<void, McpClientError>> {
     this.mcpClientRef.current = new McpClient();
-    const connectResult = await this.mcpClientRef.current.connectToServer(serverPath);
-    
+    const connectResult =
+      await this.mcpClientRef.current.connectToServer(serverPath);
+
     if (connectResult.isErr()) {
       logger.error("Failed to initialize MCP client:", connectResult.error);
       this.mcpClientRef.current = null;
       return err(connectResult.error);
     }
-    
+
     logger.info(`MCP client connected to server at ${serverPath}`);
     return ok(undefined);
   }
