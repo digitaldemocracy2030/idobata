@@ -6,8 +6,10 @@ export const getFormattedFileName = (path: string): string => {
   return fileName.endsWith(".md") ? fileName.slice(0, -3) : fileName;
 };
 
-export const prepareChatHistory = (messages: ChatMessage[]): OpenAIMessage[] => {
-  return messages.map(msg => ({
+export const prepareChatHistory = (
+  messages: ChatMessage[]
+): OpenAIMessage[] => {
+  return messages.map((msg) => ({
     role: msg.sender === "user" ? "user" : "assistant",
     content: msg.text,
   }));

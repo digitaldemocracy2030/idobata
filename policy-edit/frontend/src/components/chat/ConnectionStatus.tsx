@@ -14,9 +14,7 @@ function ConnectionStatus({
 }: ConnectionStatusProps): React.ReactElement {
   if (isConnected) {
     return (
-      <span className="text-sm text-accent-dark font-medium">
-        ✓ 接続済み
-      </span>
+      <span className="text-sm text-accent-dark font-medium">✓ 接続済み</span>
     );
   }
 

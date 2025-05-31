@@ -26,7 +26,9 @@ function ChatInput({
   };
 
   return (
-    <div className={`flex-shrink-0 flex ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}>
+    <div
+      className={`flex-shrink-0 flex ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+    >
       <Textarea
         value={value}
         onChange={handleInputChange}

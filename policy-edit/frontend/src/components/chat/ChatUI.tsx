@@ -1,6 +1,6 @@
 import type React from "react";
-import useContentStore from "../../store/contentStore";
 import type { UseChatControllerReturn } from "../../hooks/useChatController";
+import useContentStore from "../../store/contentStore";
 import ChatInput from "./ChatInput";
 import ConnectionStatus from "./ConnectionStatus";
 import MessageList from "./MessageList";
