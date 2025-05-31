@@ -2,7 +2,7 @@
 import React from "react";
 import { FaHome } from "react-icons/fa"; // Home icon
 import { Link } from "react-router-dom";
-import useContentStore from "../store/contentStore";
+import useContentStore from "../../store/contentStore";
 
 const Breadcrumbs: React.FC = () => {
   // Select individual state slices

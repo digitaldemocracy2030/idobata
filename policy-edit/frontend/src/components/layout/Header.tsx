@@ -1,7 +1,7 @@
-import { siteConfig } from "@/config/siteConfig";
-import { cn } from "@/lib/utils";
 import type React from "react";
 import { Link } from "react-router-dom";
+import { siteConfig } from "../../config/siteConfig";
+import { cn } from "../../lib/utils";
 
 interface HeaderProps {
   className?: string;
