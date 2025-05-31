@@ -26,8 +26,18 @@ const FileView: React.FC<FileViewProps> = ({ data }) => {
 
   if (isMarkdown) {
     // Decode the Base64 content
-    const decodedContent = decodeBase64Content(data.content);
-    return <MarkdownViewer content={decodedContent} />;
+    const decodeResult = decodeBase64Content(data.content);
+    if (decodeResult.isErr()) {
+      return (
+        <div className="p-4 border rounded bg-red-50 text-center">
+          <p className="font-semibold text-red-700">エラー</p>
+          <p className="mt-2 text-sm text-red-500">
+            ファイルの内容をデコードできませんでした: {decodeResult.error.message}
+          </p>
+        </div>
+      );
+    }
+    return <MarkdownViewer content={decodeResult.value} />;
   }
   // Display message for non-markdown files
   return (

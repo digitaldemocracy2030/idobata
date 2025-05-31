@@ -228,7 +228,13 @@ const ChatPanel: React.FC = () => {
 
     let fileContent: string | null = null;
     if (contentType === "file" && content && "content" in content) {
-      fileContent = decodeBase64Content((content as GitHubFile).content);
+      const decodeResult = decodeBase64Content((content as GitHubFile).content);
+      if (decodeResult.isOk()) {
+        fileContent = decodeResult.value;
+      } else {
+        console.error("Base64デコードに失敗しました:", decodeResult.error);
+        fileContent = null;
+      }
     }
 
     const request: ChatMessageRequest = {
@@ -362,7 +368,7 @@ const ChatPanel: React.FC = () => {
                 }`}
               >
                 {/* Render message content using MarkdownViewer */}
-                <MarkdownViewer content={message.text} />
+                <MarkdownViewer content={typeof message.text === 'string' ? message.text : String(message.text)} />
               </div>
             </div>
           ))
