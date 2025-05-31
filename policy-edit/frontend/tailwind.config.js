@@ -2,7 +2,25 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
+    fontFamily: {
+      sans: [
+        '"Inter"',
+        '"BIZ UDGothic"',
+        "system-ui",
+        "-apple-system",
+        "BlinkMacSystemFont",
+        "Segoe UI",
+        "Roboto",
+        "Helvetica Neue",
+        "Arial",
+        "sans-serif",
+      ],
+    },
     extend: {
+      fontFamily: {
+        biz: ['"BIZ UDGothic"', "sans-serif"],
+        inter: ['"Inter"', "sans-serif"],
+      },
       screens: {
         sm: "640px",
         md: "768px",

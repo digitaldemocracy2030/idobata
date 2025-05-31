@@ -1,4 +1,14 @@
+/* Import Inter and BIZ UDGothic fonts from Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=BIZ+UDGothic:wght@400;700&display=swap");
+
 @import "tailwindcss";
+
+/* Apply Inter for English and BIZ UDGothic for Japanese */
+@layer base {
+  html {
+    font-family: "Inter", "BIZ UDGothic", system-ui, sans-serif;
+  }
+}
 
 /* Custom color definitions for Tailwind CSS v4 */
 @theme {
@@ -43,6 +53,11 @@
 /* Enable syntax highlighting */
 @import "github-markdown-css/github-markdown-light.css";
 /* Import GitHub Markdown CSS (light theme) */
+
+/* Override github-markdown-css font family to use our custom fonts */
+.markdown-body {
+  font-family: "Inter", "BIZ UDGothic", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
 
 /* Mobile chat transitions */
 .chat-enter {

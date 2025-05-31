@@ -480,7 +480,7 @@ const ChatPanel: React.FC = () => {
           }
           disabled={isLoading || !isConnected || !isMdFileActive}
           rows={3}
-          className="resize-none rounded-r-none"
+          className="resize-none rounded-r-none focus-visible:ring-0 focus-visible:ring-offset-0"
         />
         <Button
           onClick={handleSendMessage}
@@ -491,7 +491,7 @@ const ChatPanel: React.FC = () => {
             inputValue.trim() === ""
           }
           variant="default"
-          className="rounded-l-none"
+          className="rounded-l-none bg-primary-500 hover:bg-primary-600 text-white h-auto"
         >
           {isLoading ? "..." : "送信"}
         </Button>
