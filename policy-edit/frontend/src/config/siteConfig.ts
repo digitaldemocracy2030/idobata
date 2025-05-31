@@ -7,7 +7,7 @@ import {
 
 const DEFAULT_SITE_NAME = "いどばた政策";
 const DEFAULT_LOGO_URL = "";
-const DEFAULT_PRIMARY_COLOR = "#D2E7FF";
+const DEFAULT_PRIMARY_COLOR = "#0086cc";
 
 const primaryColor = import.meta.env.VITE_PRIMARY_COLOR || DEFAULT_PRIMARY_COLOR;
 

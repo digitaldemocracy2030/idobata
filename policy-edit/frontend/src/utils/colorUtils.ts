@@ -1,23 +1,39 @@
 import chroma from "chroma-js";
 import type { ColorPalette } from "../types/siteConfig";
 
+/**
+ * 与えられたベースカラーから、Tailwind風のカラーパレット（50〜950）を生成する関数
+ * 明るい色から暗い色までをスムーズなグラデーションで出力
+ *
+ * @param baseColor - メインカラー（例: "#3b82f6"）
+ * @returns カラーパレットオブジェクト
+ */
 export function generatePrimaryPalette(baseColor: string): ColorPalette {
-  const base = chroma(baseColor);
+  // 明るい側から暗い側までの3点で色のスケールを定義
+  // chroma.scale() は 0〜1 の間で補間された色を返す
+  const scale = chroma
+    .scale([
+      chroma(baseColor).brighten(2.5), // 明るくした色（L側）
+      baseColor,                       // 基準色（中央）
+      chroma(baseColor).darken(2.5),   // 暗くした色（D側）
+    ])
+    .mode("lab"); // LAB色空間で補間（視覚的に自然なグラデーションになる）
+
+  // それぞれの段階で 0.0〜1.0 の位置から色を取得
   return {
-    50: base.brighten(2.5).hex(),
-    100: base.brighten(2).hex(),
-    200: base.brighten(1.5).hex(),
-    300: base.brighten(1).hex(),
-    400: base.brighten(0.5).hex(),
-    500: base.hex(),
-    600: base.darken(0.5).hex(),
-    700: base.darken(1).hex(),
-    800: base.darken(1.5).hex(),
-    900: base.darken(2).hex(),
-    950: base.darken(2.5).hex(),
+    50: scale(0.0).hex(),   // 最も明るい色
+    100: scale(0.1).hex(),
+    200: scale(0.2).hex(),
+    300: scale(0.3).hex(),
+    400: scale(0.4).hex(),
+    500: scale(0.5).hex(),  // ベースカラーに近い色
+    600: scale(0.6).hex(),
+    700: scale(0.7).hex(),
+    800: scale(0.8).hex(),
+    900: scale(0.9).hex(),
+    950: scale(1.0).hex(),  // 最も暗い色
   };
 }
-
 export function getFixedSecondaryPalette(): ColorPalette {
   return {
     50: "#f9fafb",
