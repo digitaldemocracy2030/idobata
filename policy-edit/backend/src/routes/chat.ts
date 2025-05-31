@@ -1,5 +1,6 @@
 import express from "express";
 import { McpClient } from "../mcp/client.js";
+import { IdobataMcpService, IdobataMcpServiceError } from "../mcp/idobataMcpService.js";
 import {
   DatabaseError,
   EnvironmentError,
@@ -14,7 +15,12 @@ const mcpClientRef = { current: null as McpClient | null };
 
 // POST /api/chat - Process a chat message
 router.post("/", async (req, res) => {
-  const usecase = new ProcessChatMessageUsecase(mcpClientRef.current);
+  if (!mcpClientRef.current) {
+    return res.status(500).json({ error: "MCP client is not initialized" });
+  }
+
+  const idobataMcpService = new IdobataMcpService(mcpClientRef.current);
+  const usecase = new ProcessChatMessageUsecase(idobataMcpService);
   const result = await usecase.execute(req.body);
 
   if (result.isErr()) {
@@ -22,7 +28,7 @@ router.post("/", async (req, res) => {
     if (error instanceof ValidationError) {
       return res.status(400).json({ error: error.message });
     }
-    if (error instanceof McpClientError) {
+    if (error instanceof IdobataMcpServiceError || error instanceof McpClientError) {
       return res.status(500).json({ error: error.message });
     }
     if (error instanceof DatabaseError) {
