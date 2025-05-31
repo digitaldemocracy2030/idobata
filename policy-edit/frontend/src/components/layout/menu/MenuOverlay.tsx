@@ -14,7 +14,7 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ isVisible, onClick }) => {
 
   return (
     <div
-      className={`fixed inset-0 bg-black transition-opacity duration-300 z-30 md:hidden ${
+      className={`fixed inset-0 bg-black transition-opacity duration-300 z-20 md:hidden ${
         isVisible
           ? "opacity-50 pointer-events-auto"
           : "opacity-0 pointer-events-none"
