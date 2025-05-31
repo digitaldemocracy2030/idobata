@@ -2,9 +2,8 @@ import { Result, err, ok } from "neverthrow";
 import type { HttpError } from "./errors";
 import {
   createGitHubError,
-  createNetworkError,
-  createUnknownError,
 } from "./errors";
+import { HttpClient } from "./httpClient";
 
 export interface GitHubDirectoryItem {
   name: string;
@@ -48,14 +47,14 @@ interface GitHubApiError {
 }
 
 export class GitHubClient {
-  private readonly baseUrl = "https://api.github.com";
-  private readonly defaultHeaders: Record<string, string>;
+  private httpClient: HttpClient;
 
   constructor(token?: string) {
-    this.defaultHeaders = {
+    const headers = {
       Accept: "application/vnd.github.v3+json",
       ...(token && { Authorization: `token ${token}` }),
     };
+    this.httpClient = new HttpClient("https://api.github.com", headers);
   }
 
   async fetchContent(
@@ -68,62 +67,45 @@ export class GitHubClient {
       return err(createGitHubError("Repository owner and name are required."));
     }
 
-    let apiUrl = `${this.baseUrl}/repos/${owner}/${repo}/contents/${path}`;
+    let endpoint = `/repos/${owner}/${repo}/contents/${path}`;
     if (ref) {
-      apiUrl += `?ref=${encodeURIComponent(ref)}`;
+      endpoint += `?ref=${encodeURIComponent(ref)}`;
     }
 
-    try {
-      const response = await fetch(apiUrl, {
-        headers: this.defaultHeaders,
-      });
+    const result = await this.httpClient.get<GitHubFile | GitHubDirectoryItem[]>(endpoint);
 
-      if (!response.ok) {
-        let errorMessage = `GitHub API error: ${response.status} ${response.statusText}`;
-        try {
-          const errorData: GitHubApiError = await response.json();
-          errorMessage += ` - ${errorData.message}`;
-          if (
-            response.status === 403 &&
-            errorData.message.includes("rate limit exceeded")
-          ) {
-            errorMessage += " (Rate limit exceeded)";
-          } else if (response.status === 404) {
-            errorMessage += " (Not Found)";
-          }
-        } catch {}
-        return err(createGitHubError(errorMessage, response.status));
+    return result.mapErr((error) => {
+      let errorMessage = `GitHub API error: ${error.message}`;
+      if (error.status === 403 && error.message.includes("rate limit exceeded")) {
+        errorMessage += " (Rate limit exceeded)";
+      } else if (error.status === 404) {
+        errorMessage += " (Not Found)";
       }
-
-      const data: GitHubFile | GitHubDirectoryItem[] = await response.json();
-      return ok(data);
-    } catch (error) {
-      if (error instanceof Error) {
-        return err(createNetworkError("Network request failed", error));
-      }
-      return err(
-        createUnknownError("An unknown error occurred during fetch.", error)
-      );
-    }
+      return createGitHubError(errorMessage, error.status);
+    });
   }
 
   decodeBase64Content(base64String: string): Result<string, HttpError> {
-    try {
-      const binaryString = atob(base64String);
-      const len = binaryString.length;
-      const bytes = new Uint8Array(len);
-      for (let i = 0; i < len; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-      return ok(new TextDecoder().decode(bytes));
-    } catch (error) {
-      if (
-        error instanceof DOMException &&
-        error.name === "InvalidCharacterError"
-      ) {
-        return err(createGitHubError("Invalid Base64 string"));
-      }
-      return err(createGitHubError("Error decoding content"));
+    return decodeBase64Content(base64String);
+  }
+}
+
+export function decodeBase64Content(base64String: string): Result<string, HttpError> {
+  try {
+    const binaryString = atob(base64String);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
     }
+    return ok(new TextDecoder().decode(bytes));
+  } catch (error) {
+    if (
+      error instanceof DOMException &&
+      error.name === "InvalidCharacterError"
+    ) {
+      return err(createGitHubError("Invalid Base64 string"));
+    }
+    return err(createGitHubError("Error decoding content"));
   }
 }
