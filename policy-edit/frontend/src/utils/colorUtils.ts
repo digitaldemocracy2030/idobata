@@ -3,7 +3,6 @@ import type {
   AccentPalette,
   CSSColorVariables,
   ColorPalette,
-  ColorSystemConfig,
   GeneratedColorScheme,
 } from "../types/siteConfig";
 

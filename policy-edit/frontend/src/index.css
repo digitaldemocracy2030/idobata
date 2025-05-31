@@ -4,6 +4,94 @@
 @import "highlight.js/styles/github.css";
 @import "github-markdown-css/github-markdown-light.css";
 
+@theme {
+  /* フォント設定 */
+  --font-family-sans: "Inter", "BIZ UDGothic", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* レスポンシブブレークポイント */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* Tailwindのデフォルト色を保持 */
+  --color-inherit: inherit;
+  --color-current: current;
+  --color-transparent: transparent;
+  --color-black: #000;
+  --color-white: #fff;
+
+  /* Gray colors */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-gray-950: #030712;
+
+  /* カスタムカラー - CSS変数を参照 */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-ring: hsl(var(--ring));
+
+  /* Primary colors (11段階) */
+  --color-primary-50: var(--color-primary-50);
+  --color-primary-100: var(--color-primary-100);
+  --color-primary-200: var(--color-primary-200);
+  --color-primary-300: var(--color-primary-300);
+  --color-primary-400: var(--color-primary-400);
+  --color-primary-500: var(--color-primary-500);
+  --color-primary-600: var(--color-primary-600);
+  --color-primary-700: var(--color-primary-700);
+  --color-primary-800: var(--color-primary-800);
+  --color-primary-900: var(--color-primary-900);
+  --color-primary-950: var(--color-primary-950);
+  --color-primary: var(--color-primary-500);
+
+  /* Secondary colors (11段階) */
+  --color-secondary-50: var(--color-secondary-50);
+  --color-secondary-100: var(--color-secondary-100);
+  --color-secondary-200: var(--color-secondary-200);
+  --color-secondary-300: var(--color-secondary-300);
+  --color-secondary-400: var(--color-secondary-400);
+  --color-secondary-500: var(--color-secondary-500);
+  --color-secondary-600: var(--color-secondary-600);
+  --color-secondary-700: var(--color-secondary-700);
+  --color-secondary-800: var(--color-secondary-800);
+  --color-secondary-900: var(--color-secondary-900);
+  --color-secondary-950: var(--color-secondary-950);
+  --color-secondary: var(--color-secondary-500);
+
+  /* Accent colors (4段階) */
+  --color-accent: var(--color-accent);
+  --color-accent-light: var(--color-accent-light);
+  --color-accent-super-light: var(--color-accent-super-light);
+  --color-accent-dark: var(--color-accent-dark);
+
+  /* 後方互換性のため */
+  --color-bg-sub: var(--color-secondary-50);
+}
+
+/*
+Safelist設定の代替 - 動的に使用されるクラス名:
+- border-accent-light, border-accent-dark, border-accent
+- bg-accent-light, bg-accent-dark, bg-accent
+- text-accent-light, text-accent-dark, text-accent
+- border-primary-500, border-primary-600
+- bg-primary-500, bg-primary-600
+- text-primary-500, text-primary-600
+- border-secondary-200, border-secondary-300
+- bg-secondary-200, bg-secondary-300
+- text-secondary-800, text-secondary-900
+*/
+
 /* Apply Inter for English and BIZ UDGothic for Japanese */
 @layer base {
   html {

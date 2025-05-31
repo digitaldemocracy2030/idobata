@@ -29,17 +29,10 @@ export function generateCSSVariables(): string {
       --color-secondary-900: ${colors.secondary[900]};
       --color-secondary-950: ${colors.secondary[950]};
 
-      --color-accent-50: ${colors.accent[50]};
-      --color-accent-100: ${colors.accent[100]};
-      --color-accent-200: ${colors.accent[200]};
-      --color-accent-300: ${colors.accent[300]};
-      --color-accent-400: ${colors.accent[400]};
-      --color-accent-500: ${colors.accent[500]};
-      --color-accent-600: ${colors.accent[600]};
-      --color-accent-700: ${colors.accent[700]};
-      --color-accent-800: ${colors.accent[800]};
-      --color-accent-900: ${colors.accent[900]};
-      --color-accent-950: ${colors.accent[950]};
+      --color-accent: ${colors.accent.default};
+      --color-accent-light: ${colors.accent.light};
+      --color-accent-super-light: ${colors.accent.superLight};
+      --color-accent-dark: ${colors.accent.dark};
     }
   `;
 }
