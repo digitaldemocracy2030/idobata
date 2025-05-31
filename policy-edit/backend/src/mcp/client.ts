@@ -40,7 +40,9 @@ export class McpClient {
     });
   }
 
-  async connectToServer(serverScriptPath: string): Promise<Result<void, McpClientError>> {
+  async connectToServer(
+    serverScriptPath: string
+  ): Promise<Result<void, McpClientError>> {
     if (this._initialized) {
       logger.warn("MCP client is already initialized.");
       return ok(undefined);
@@ -77,13 +79,15 @@ export class McpClient {
       "GITHUB_TARGET_OWNER",
       "GITHUB_TARGET_REPO",
     ];
-    
+
     for (const key of requiredEnvVars) {
       const value = process.env[key];
       if (typeof value !== "string" || value.trim() === "") {
-        return err(new McpClientError(
-          `Missing or invalid required environment variable: ${key}`
-        ));
+        return err(
+          new McpClientError(
+            `Missing or invalid required environment variable: ${key}`
+          )
+        );
       }
       transportEnv[key] = value;
     }
@@ -119,9 +123,11 @@ export class McpClient {
       logger.error("Failed to connect to MCP server:", e);
       this._initialized = false;
       this.transport = null;
-      return err(new McpClientError(
-        `Failed to connect to MCP server: ${e instanceof Error ? e.message : "Unknown error"}`
-      ));
+      return err(
+        new McpClientError(
+          `Failed to connect to MCP server: ${e instanceof Error ? e.message : "Unknown error"}`
+        )
+      );
     }
   }
 
@@ -132,7 +138,10 @@ export class McpClient {
     return ok(this._tools);
   }
 
-  async callTool(name: string, args: Record<string, unknown>): Promise<Result<unknown, McpClientError>> {
+  async callTool(
+    name: string,
+    args: Record<string, unknown>
+  ): Promise<Result<unknown, McpClientError>> {
     if (!this._initialized || !this.mcp) {
       return err(new McpClientError("MCP client is not connected"));
     }
@@ -144,9 +153,11 @@ export class McpClient {
       });
       return ok(result);
     } catch (error) {
-      return err(new McpClientError(
-        `Failed to call tool ${name}: ${error instanceof Error ? error.message : "Unknown error"}`
-      ));
+      return err(
+        new McpClientError(
+          `Failed to call tool ${name}: ${error instanceof Error ? error.message : "Unknown error"}`
+        )
+      );
     }
   }
 
@@ -162,9 +173,11 @@ export class McpClient {
         return ok(undefined);
       } catch (error) {
         logger.error("Error closing MCP client connection:", error);
-        return err(new McpClientError(
-          `Failed to cleanup MCP client: ${error instanceof Error ? error.message : "Unknown error"}`
-        ));
+        return err(
+          new McpClientError(
+            `Failed to cleanup MCP client: ${error instanceof Error ? error.message : "Unknown error"}`
+          )
+        );
       } finally {
         this._initialized = false;
         this.transport = null;

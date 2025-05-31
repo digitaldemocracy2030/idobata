@@ -1,6 +1,9 @@
 import express from "express";
 import { McpClient } from "../mcp/client.js";
-import { IdobataMcpService, IdobataMcpServiceError } from "../mcp/idobataMcpService.js";
+import {
+  IdobataMcpService,
+  IdobataMcpServiceError,
+} from "../mcp/idobataMcpService.js";
 import {
   DatabaseError,
   EnvironmentError,
@@ -28,7 +31,10 @@ router.post("/", async (req, res) => {
     if (error instanceof ValidationError) {
       return res.status(400).json({ error: error.message });
     }
-    if (error instanceof IdobataMcpServiceError || error instanceof McpClientError) {
+    if (
+      error instanceof IdobataMcpServiceError ||
+      error instanceof McpClientError
+    ) {
       return res.status(500).json({ error: error.message });
     }
     if (error instanceof DatabaseError) {

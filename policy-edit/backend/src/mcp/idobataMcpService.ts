@@ -135,7 +135,7 @@ export class IdobataMcpService {
           for (const toolCall of message.tool_calls) {
             const toolName = toolCall.function.name;
             let toolArgs = {};
-            
+
             try {
               toolArgs = JSON.parse(toolCall.function.arguments);
             } catch (parseError) {
@@ -153,7 +153,10 @@ export class IdobataMcpService {
 
             logger.debug(`Calling tool ${toolName} with args:`, toolArgs);
 
-            const toolResult = await this.mcpClient.callTool(toolName, toolArgs);
+            const toolResult = await this.mcpClient.callTool(
+              toolName,
+              toolArgs
+            );
             if (toolResult.isErr()) {
               logger.error(`Error calling tool ${toolName}:`, toolResult.error);
               messages.push({
@@ -184,15 +187,19 @@ export class IdobataMcpService {
       }
 
       if (finalText.length === 0 || finalText.every((t) => t.trim() === "")) {
-        return ok("I received the request but didn't generate a text response.");
+        return ok(
+          "I received the request but didn't generate a text response."
+        );
       }
 
       return ok(finalText.join("\n").trim());
     } catch (error) {
       logger.error("Error processing query:", error);
-      return err(new IdobataMcpServiceError(
-        `Failed to process query: ${error instanceof Error ? error.message : "Unknown error"}`
-      ));
+      return err(
+        new IdobataMcpServiceError(
+          `Failed to process query: ${error instanceof Error ? error.message : "Unknown error"}`
+        )
+      );
     }
   }
 }
