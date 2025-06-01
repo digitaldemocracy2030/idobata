@@ -48,6 +48,7 @@ export interface ColorSystemConfig {
 export interface SiteConfig {
   siteName: string;
   logoUrl: string;
+  faviconUrl: string;
   colors: {
     primary: ColorPalette;
     secondary: ColorPalette;

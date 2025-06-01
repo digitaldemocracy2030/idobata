@@ -3,6 +3,7 @@ import { initializeColorSystem } from "../utils/cssVariableManager";
 
 const DEFAULT_SITE_NAME = "いどばた政策";
 const DEFAULT_LOGO_URL = "";
+const DEFAULT_FAVICON_URL = "/vite.svg";
 const DEFAULT_PRIMARY_COLOR = "#1c74c8";
 
 console.log(import.meta.env.VITE_COLOR_PRIMARY);
@@ -21,5 +22,6 @@ const colors = initializeColorSystem(colorConfig);
 export const siteConfig: SiteConfig = {
   siteName: import.meta.env.VITE_SITE_NAME || DEFAULT_SITE_NAME,
   logoUrl: import.meta.env.VITE_SITE_LOGO_URL || DEFAULT_LOGO_URL,
+  faviconUrl: import.meta.env.VITE_FAVICON_URL || DEFAULT_FAVICON_URL,
   colors,
 };

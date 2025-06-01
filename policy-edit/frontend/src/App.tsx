@@ -19,6 +19,7 @@ function App() {
     <HelmetProvider>
       <Helmet>
         <title>{siteConfig.siteName}</title>
+        <link rel="icon" type="image/svg+xml" href={siteConfig.faviconUrl} />
         <meta property="og:title" content={siteConfig.siteName} />
         <meta name="twitter:title" content={siteConfig.siteName} />
       </Helmet>
