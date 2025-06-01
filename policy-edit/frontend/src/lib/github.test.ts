@@ -1,9 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  GitHubClient,
-  type GitHubDirectoryItem,
-  type GitHubFile,
-} from "./github";
+import { type GitHubDirectoryItem, type GitHubFile } from "./github";
+import { GitHubClient } from "./github/GitHubClient";
+import type { IGitHubClient } from "./github/IGitHubClient";
 
 // global.fetch をモック
 const mockFetch = vi.fn();
@@ -14,7 +12,7 @@ vi.spyOn(console, "log").mockImplementation(() => {});
 vi.spyOn(console, "error").mockImplementation(() => {});
 
 describe("GitHubClient", () => {
-  let client: GitHubClient;
+  let client: IGitHubClient;
 
   beforeEach(() => {
     mockFetch.mockClear();
