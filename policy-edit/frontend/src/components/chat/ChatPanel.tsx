@@ -370,8 +370,8 @@ const ChatPanel: React.FC = () => {
                 className={`p-2 rounded-lg max-w-[80%] ${
                   // Removed whitespace-pre-wrap as MarkdownViewer handles formatting
                   message.sender === "user"
-                    ? "bg-primary-500 text-white chat-bubble-user" // Added chat-bubble-user class
-                    : "bg-secondary-200 text-secondary-800 chat-bubble-bot" // Added chat-bubble-bot class
+                    ? "bg-accent text-white chat-bubble-user" // Added chat-bubble-user class
+                    : "bg-gray-100 text-secondary-800 chat-bubble-bot" // Added chat-bubble-bot class
                 }`}
               >
                 {/* Render message content using MarkdownViewer */}
@@ -419,7 +419,7 @@ const ChatPanel: React.FC = () => {
             inputValue.trim() === ""
           }
           variant="default"
-          className="rounded-l-none bg-primary-500 hover:bg-primary-600 text-white h-auto border-l-0"
+          className="rounded-l-none bg-accent hover:bg-accent-dark text-white h-auto border-l-0"
         >
           {isLoading ? "..." : "送信"}
         </Button>
