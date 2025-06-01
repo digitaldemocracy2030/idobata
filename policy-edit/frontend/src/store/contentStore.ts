@@ -1,10 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import {
-  type GitHubDirectoryItem,
-  type GitHubFile,
-  fetchGitHubContent,
-} from "../lib/github";
+import { gitHubClient } from "../lib/api";
+import { type GitHubDirectoryItem, type GitHubFile } from "../lib/github";
 
 // Define Message type (assuming structure from ChatPanel.tsx)
 interface Message {
@@ -36,7 +33,8 @@ interface ContentState {
   setRepoInfo: (owner: string, name: string) => void;
   fetchContent: (path: string, ref?: string) => Promise<void>; // Add optional ref parameter
   // Chat related actions
-  getOrCreateChatThread: (path: string) => ChatThread;
+  getChatThread: (path: string) => ChatThread | null;
+  createChatThread: (path: string) => ChatThread;
   addMessageToThread: (path: string, message: Omit<Message, "id">) => void; // Pass message content, ID is generated internally
   ensureBranchIdForThread: (path: string) => string; // Ensures branchId exists and returns it
   reloadCurrentContent: () => Promise<void>; // Action to reload content for the current path
@@ -65,136 +63,123 @@ const useContentStore = create<ContentState>()(
 
       fetchContent: async (path: string, ref?: string) => {
         console.log(`Fetching content for path: ${path}`);
-        // Only set loading, error, and path. Keep existing content/type during fetch.
         set({ isLoading: true, error: null, currentPath: path });
 
-        try {
-          const { repoOwner, repoName } = get(); // Get owner/name from state
-          if (!repoOwner || !repoName) {
-            throw new Error(
-              "Repository owner and name are not set in the store."
-            );
-          }
-          // Pass the ref to the API call if provided
-          const data = await fetchGitHubContent(repoOwner, repoName, path, ref);
+        const { repoOwner, repoName } = get();
+        if (!repoOwner || !repoName) {
+          const error = new Error(
+            "Repository owner and name are not set in the store."
+          );
+          set({
+            error,
+            content: null,
+            contentType: null,
+            isLoading: false,
+          });
+          return;
+        }
 
-          if (Array.isArray(data)) {
-            // Directory content
-            // Sort directory items: folders first, then files, alphabetically
-            const sortedData = [...data].sort((a, b) => {
-              if (a.type === b.type) {
-                return a.name.localeCompare(b.name); // Sort alphabetically if types are the same
-              }
-              return a.type === "dir" ? -1 : 1; // Put 'dir' type first
-            });
-            set({ content: sortedData, contentType: "dir", isLoading: false });
-          } else if (
-            typeof data === "object" &&
-            data !== null &&
-            data.type === "file"
-          ) {
-            // File content
-            set({ content: data, contentType: "file", isLoading: false });
-          } else {
-            // Should not happen with the current API client, but good practice
-            console.error("Unexpected API response format:", data);
-            throw new Error("Unexpected API response format");
-          }
-        } catch (fetchError) {
-          console.error("Error in fetchContent action:", fetchError);
-          const error =
-            fetchError instanceof Error
-              ? fetchError
-              : new Error("An unknown error occurred");
+        const result = await gitHubClient.fetchContent(
+          repoOwner,
+          repoName,
+          path,
+          ref
+        );
 
-          // Check if a ref was provided and the error is a 404 indicating the ref doesn't exist
+        if (result.isErr()) {
+          const error = new Error(result.error.message);
+
           if (
             ref &&
-            error.message.includes("404") &&
-            (error.message.includes("Not Found") ||
-              error.message.includes("No commit found for the ref"))
+            result.error.message.includes("404") &&
+            (result.error.message.includes("Not Found") ||
+              result.error.message.includes("No commit found for the ref"))
           ) {
             console.warn(
               `Ref '${ref}' not found for path '${path}'. Falling back to default branch.`
             );
-            // Try fetching again without the ref (default branch)
-            try {
-              const { repoOwner, repoName } = get();
-              if (!repoOwner || !repoName) {
-                throw new Error("Repository owner and name are not set.");
-              }
-              // Fetch without ref
-              const fallbackData = await fetchGitHubContent(
-                repoOwner,
-                repoName,
-                path
-              );
 
-              if (Array.isArray(fallbackData)) {
-                // Directory
-                const sortedData = [...fallbackData].sort((a, b) => {
-                  if (a.type === b.type) return a.name.localeCompare(b.name);
-                  return a.type === "dir" ? -1 : 1;
-                });
-                set({ content: sortedData, contentType: "dir", error: null }); // Clear previous error
-              } else if (
-                typeof fallbackData === "object" &&
-                fallbackData !== null &&
-                fallbackData.type === "file"
-              ) {
-                // File
-                set({
-                  content: fallbackData,
-                  contentType: "file",
-                  error: null,
-                }); // Clear previous error
-              } else {
-                throw new Error("Unexpected fallback API response format");
-              }
-            } catch (fallbackFetchError) {
-              console.error("Error during fallback fetch:", fallbackFetchError);
-              const finalError =
-                fallbackFetchError instanceof Error
-                  ? fallbackFetchError
-                  : new Error(
-                      "An unknown error occurred during fallback fetch"
-                    );
-              // On final fallback error, reset content/type
+            const fallbackResult = await gitHubClient.fetchContent(
+              repoOwner,
+              repoName,
+              path
+            );
+
+            if (fallbackResult.isErr()) {
+              const finalError = new Error(fallbackResult.error.message);
               set({
                 error: finalError,
                 content: null,
                 contentType: null,
                 isLoading: false,
               });
+              return;
             }
-          } else {
-            // If it wasn't a ref-related 404, or no ref was provided, set the original error
-            // On initial fetch error (not ref-related 404), reset content/type
+
+            const fallbackData = fallbackResult.value;
+            if (!Array.isArray(fallbackData)) {
+              set({
+                content: fallbackData,
+                contentType: "file",
+                error: null,
+                isLoading: false,
+              });
+              return;
+            }
+
+            const sortedData = [...fallbackData].sort((a, b) => {
+              if (a.type === b.type) return a.name.localeCompare(b.name);
+              return a.type === "dir" ? -1 : 1;
+            });
             set({
-              error: error,
+              content: sortedData,
+              contentType: "dir",
+              error: null,
+              isLoading: false,
+            });
+          } else {
+            set({
+              error,
               content: null,
               contentType: null,
               isLoading: false,
             });
           }
-        } finally {
-          set({ isLoading: false }); // Ensure loading is always set to false regardless of success, initial error, or fallback error
+          return;
         }
+
+        const data = result.value;
+        if (!Array.isArray(data)) {
+          set({ content: data, contentType: "file", isLoading: false });
+          return;
+        }
+
+        const sortedData = [...data].sort((a, b) => {
+          if (a.type === b.type) {
+            return a.name.localeCompare(b.name);
+          }
+          return a.type === "dir" ? -1 : 1;
+        });
+        set({ content: sortedData, contentType: "dir", isLoading: false });
       },
 
       // --- Chat Actions ---
-      getOrCreateChatThread: (path) => {
+      getChatThread: (path) => {
+        const state = get();
+        return state.chatThreads[path] || null;
+      },
+
+      createChatThread: (path) => {
         const state = get();
         if (!state.chatThreads[path]) {
-          // Create a new thread if it doesn't exist
+          const newThread = { messages: [], branchId: null, nextMessageId: 1 };
           set((prevState) => ({
             chatThreads: {
               ...prevState.chatThreads,
-              [path]: { messages: [], branchId: null, nextMessageId: 1 },
+              [path]: newThread,
             },
           }));
-          // Return the newly created structure
-          return { messages: [], branchId: null, nextMessageId: 1 };
+          return newThread;
         }
         return state.chatThreads[path];
       },
@@ -231,7 +216,7 @@ const useContentStore = create<ContentState>()(
 
         // Ensure thread exists first
         if (!thread) {
-          thread = state.getOrCreateChatThread(path); // Create it if missing
+          thread = state.createChatThread(path); // Create it if missing
         }
 
         if (thread.branchId) {
