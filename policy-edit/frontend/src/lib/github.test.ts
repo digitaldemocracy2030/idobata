@@ -1,8 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  type GitHubDirectoryItem,
-  type GitHubFile,
-} from "./github";
+import { type GitHubDirectoryItem, type GitHubFile } from "./github";
 import { GitHubClient } from "./github/GitHubClient";
 import type { IGitHubClient } from "./github/IGitHubClient";
 
