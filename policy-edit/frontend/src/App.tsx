@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { Helmet, HelmetProvider } from "@dr.pogodin/react-helmet";
 import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import ContentExplorer from "./components/page-specific/ContentExplorer";
@@ -15,33 +15,26 @@ function ContentExplorerWrapper() {
 }
 
 function App() {
-  useEffect(() => {
-    document.title = siteConfig.siteName;
-
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) {
-      ogTitle.setAttribute("content", siteConfig.siteName);
-    }
-
-    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
-    if (twitterTitle) {
-      twitterTitle.setAttribute("content", siteConfig.siteName);
-    }
-  }, []);
-
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          {/* Route for the repository root */}
-          <Route index element={<ContentExplorer initialPath="" />} />
-          {/* Route for paths within the repository */}
-          <Route path="view/*" element={<ContentExplorerWrapper />} />
-          {/* Catch-all route for any other paths (404) */}
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <HelmetProvider>
+      <Helmet>
+        <title>{siteConfig.siteName}</title>
+        <meta property="og:title" content={siteConfig.siteName} />
+        <meta name="twitter:title" content={siteConfig.siteName} />
+      </Helmet>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            {/* Route for the repository root */}
+            <Route index element={<ContentExplorer initialPath="" />} />
+            {/* Route for paths within the repository */}
+            <Route path="view/*" element={<ContentExplorerWrapper />} />
+            {/* Catch-all route for any other paths (404) */}
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }
 
