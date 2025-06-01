@@ -18,36 +18,36 @@ export const mockDirectoryData: GitHubDirectoryItem[] = [
     },
   },
   {
-    name: "snacktime-policy.md",
-    path: "snacktime-policy.md",
+    name: "おやつ時間基本方針.md",
+    path: "おやつ時間基本方針.md",
     sha: "def456",
     size: 512,
-    url: "https://api.github.com/repos/mock/repo/contents/snacktime-policy.md",
-    html_url: "https://github.com/mock/repo/blob/main/snacktime-policy.md",
+    url: "https://api.github.com/repos/mock/repo/contents/おやつ時間基本方針.md",
+    html_url: "https://github.com/mock/repo/blob/main/おやつ時間基本方針.md",
     git_url: "https://api.github.com/repos/mock/repo/git/blobs/def456",
     download_url:
-      "https://raw.githubusercontent.com/mock/repo/main/snacktime-policy.md",
+      "https://raw.githubusercontent.com/mock/repo/main/おやつ時間基本方針.md",
     type: "file",
     _links: {
-      self: "https://api.github.com/repos/mock/repo/contents/snacktime-policy.md",
+      self: "https://api.github.com/repos/mock/repo/contents/おやつ時間基本方針.md",
       git: "https://api.github.com/repos/mock/repo/git/blobs/def456",
-      html: "https://github.com/mock/repo/blob/main/snacktime-policy.md",
+      html: "https://github.com/mock/repo/blob/main/おやつ時間基本方針.md",
     },
   },
   {
-    name: "rest_guidelines",
-    path: "rest_guidelines",
+    name: "休憩についての方針",
+    path: "休憩についての方針",
     sha: "ghi789",
     size: 0,
-    url: "https://api.github.com/repos/mock/repo/contents/rest_guidelines",
-    html_url: "https://github.com/mock/repo/tree/main/rest_guidelines",
+    url: "https://api.github.com/repos/mock/repo/contents/休憩についての方針",
+    html_url: "https://github.com/mock/repo/tree/main/休憩についての方針",
     git_url: "https://api.github.com/repos/mock/repo/git/trees/ghi789",
     download_url: null,
     type: "dir",
     _links: {
-      self: "https://api.github.com/repos/mock/repo/contents/rest_guidelines",
+      self: "https://api.github.com/repos/mock/repo/contents/休憩についての方針",
       git: "https://api.github.com/repos/mock/repo/git/trees/ghi789",
-      html: "https://github.com/mock/repo/tree/main/rest_guidelines",
+      html: "https://github.com/mock/repo/tree/main/休憩についての方針",
     },
   },
 ];
@@ -66,7 +66,7 @@ export const mockFileContents: Record<string, GitHubFile> = {
     content: btoa(
       unescape(
         encodeURIComponent(
-          "# 🌸 ほのぼの区政策室\n\nここは架空の行政機関「ほのぼの区政策室」の公開ポリシーレポジトリです。\n\n## 🎯 目的\n日々の生活を、ほんのすこしやさしく、のんびりさせるためのルールや方針を策定・公開しています。\nどれもフィクションで、あくまで実験的・ユーモラスな方針です。\n\n## 🗂️ ファイル構成\n\n- `snacktime-policy.md`: 区全体向けのおやつ時間に関する方針\n- `rest_guidelines/naptime-recommendation.md`: お昼寝推奨に関する基本方針\n\n## 🙌 貢献方法\nPull Requestでの修正提案、Botとの対話を通じた改善提案を歓迎します。"
+          "# 🌸 ほのぼの区政策室\n\nここは架空の行政機関「ほのぼの区政策室」の公開ポリシーレポジトリです。\n\n## 🎯 目的\n日々の生活を、ほんのすこしやさしく、のんびりさせるためのルールや方針を策定・公開しています。\nどれもフィクションで、あくまで実験的・ユーモラスな方針です。\n\n## 📂 ファイル構成\n\n- `おやつ時間基本方針.md`: 区全体向けのおやつ時間に関する方針\n- `休憩についての方針/お昼寝に関する基本方針.md`: お昼寝推奨に関する基本方針\n\n## 🤝 貢献方法\nPull Requestでの修正提案、Botとの対話を通じた改善提案を歓迎します。"
         )
       )
     ),
@@ -77,16 +77,16 @@ export const mockFileContents: Record<string, GitHubFile> = {
       html: "https://github.com/mock/repo/blob/main/README.md",
     },
   },
-  "snacktime-policy.md": {
-    name: "snacktime-policy.md",
-    path: "snacktime-policy.md",
+  "おやつ時間基本方針.md": {
+    name: "おやつ時間基本方針.md",
+    path: "おやつ時間基本方針.md",
     sha: "def456",
     size: 512,
-    url: "https://api.github.com/repos/mock/repo/contents/snacktime-policy.md",
-    html_url: "https://github.com/mock/repo/blob/main/snacktime-policy.md",
+    url: "https://api.github.com/repos/mock/repo/contents/おやつ時間基本方針.md",
+    html_url: "https://github.com/mock/repo/blob/main/おやつ時間基本方針.md",
     git_url: "https://api.github.com/repos/mock/repo/git/blobs/def456",
     download_url:
-      "https://raw.githubusercontent.com/mock/repo/main/snacktime-policy.md",
+      "https://raw.githubusercontent.com/mock/repo/main/おやつ時間基本方針.md",
     type: "file",
     content: btoa(
       unescape(
@@ -97,22 +97,22 @@ export const mockFileContents: Record<string, GitHubFile> = {
     ),
     encoding: "base64",
     _links: {
-      self: "https://api.github.com/repos/mock/repo/contents/snacktime-policy.md",
+      self: "https://api.github.com/repos/mock/repo/contents/おやつ時間基本方針.md",
       git: "https://api.github.com/repos/mock/repo/git/blobs/def456",
-      html: "https://github.com/mock/repo/blob/main/snacktime-policy.md",
+      html: "https://github.com/mock/repo/blob/main/おやつ時間基本方針.md",
     },
   },
-  "rest_guidelines/naptime-recommendation.md": {
-    name: "naptime-recommendation.md",
-    path: "rest_guidelines/naptime-recommendation.md",
+  "休憩についての方針/お昼寝に関する基本方針.md": {
+    name: "お昼寝に関する基本方針.md",
+    path: "休憩についての方針/お昼寝に関する基本方針.md",
     sha: "jkl012",
     size: 768,
-    url: "https://api.github.com/repos/mock/repo/contents/rest_guidelines/naptime-recommendation.md",
+    url: "https://api.github.com/repos/mock/repo/contents/休憩についての方針/お昼寝に関する基本方針.md",
     html_url:
-      "https://github.com/mock/repo/blob/main/rest_guidelines/naptime-recommendation.md",
+      "https://github.com/mock/repo/blob/main/休憩についての方針/お昼寝に関する基本方針.md",
     git_url: "https://api.github.com/repos/mock/repo/git/blobs/jkl012",
     download_url:
-      "https://raw.githubusercontent.com/mock/repo/main/rest_guidelines/naptime-recommendation.md",
+      "https://raw.githubusercontent.com/mock/repo/main/休憩についての方針/お昼寝に関する基本方針.md",
     type: "file",
     content: btoa(
       unescape(
@@ -123,32 +123,32 @@ export const mockFileContents: Record<string, GitHubFile> = {
     ),
     encoding: "base64",
     _links: {
-      self: "https://api.github.com/repos/mock/repo/contents/rest_guidelines/naptime-recommendation.md",
+      self: "https://api.github.com/repos/mock/repo/contents/休憩についての方針/お昼寝に関する基本方針.md",
       git: "https://api.github.com/repos/mock/repo/git/blobs/jkl012",
-      html: "https://github.com/mock/repo/blob/main/rest_guidelines/naptime-recommendation.md",
+      html: "https://github.com/mock/repo/blob/main/休憩についての方針/お昼寝に関する基本方針.md",
     },
   },
 };
 
 export const mockDirectoryContents: Record<string, GitHubDirectoryItem[]> = {
   "": mockDirectoryData,
-  rest_guidelines: [
+  休憩についての方針: [
     {
-      name: "naptime-recommendation.md",
-      path: "rest_guidelines/naptime-recommendation.md",
+      name: "お昼寝に関する基本方針.md",
+      path: "休憩についての方針/お昼寝に関する基本方針.md",
       sha: "jkl012",
       size: 768,
-      url: "https://api.github.com/repos/mock/repo/contents/rest_guidelines/naptime-recommendation.md",
+      url: "https://api.github.com/repos/mock/repo/contents/休憩についての方針/お昼寝に関する基本方針.md",
       html_url:
-        "https://github.com/mock/repo/blob/main/rest_guidelines/naptime-recommendation.md",
+        "https://github.com/mock/repo/blob/main/休憩についての方針/お昼寝に関する基本方針.md",
       git_url: "https://api.github.com/repos/mock/repo/git/blobs/jkl012",
       download_url:
-        "https://raw.githubusercontent.com/mock/repo/main/rest_guidelines/naptime-recommendation.md",
+        "https://raw.githubusercontent.com/mock/repo/main/休憩についての方針/お昼寝に関する基本方針.md",
       type: "file",
       _links: {
-        self: "https://api.github.com/repos/mock/repo/contents/rest_guidelines/naptime-recommendation.md",
+        self: "https://api.github.com/repos/mock/repo/contents/休憩についての方針/お昼寝に関する基本方針.md",
         git: "https://api.github.com/repos/mock/repo/git/blobs/jkl012",
-        html: "https://github.com/mock/repo/blob/main/rest_guidelines/naptime-recommendation.md",
+        html: "https://github.com/mock/repo/blob/main/休憩についての方針/お昼寝に関する基本方針.md",
       },
     },
   ],

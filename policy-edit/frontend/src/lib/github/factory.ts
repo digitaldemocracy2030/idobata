@@ -3,6 +3,7 @@ import type { IGitHubClient } from "./IGitHubClient";
 import { MockGitHubClient } from "./MockGitHubClient";
 
 export function createGitHubClient(token?: string): IGitHubClient {
+  console.log("createGitHubClient!!!!!!!!!", import.meta.env);
   const useMock = import.meta.env.VITE_USE_MOCK_GITHUB_CLIENT === "true";
 
   if (useMock) {
