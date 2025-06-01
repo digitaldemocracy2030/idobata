@@ -89,10 +89,11 @@ export class GitHubClient {
 
         if (error.status === 403) {
           // Check if this is a rate limit error by looking at the error details
-          const isRateLimit = error.details &&
-            typeof error.details === 'object' &&
-            'message' in error.details &&
-            typeof error.details.message === 'string' &&
+          const isRateLimit =
+            error.details &&
+            typeof error.details === "object" &&
+            "message" in error.details &&
+            typeof error.details.message === "string" &&
             error.details.message.includes("rate limit exceeded");
 
           if (isRateLimit) {

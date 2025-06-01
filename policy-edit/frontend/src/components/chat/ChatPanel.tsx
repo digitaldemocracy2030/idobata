@@ -193,11 +193,7 @@ const ChatPanel: React.FC = () => {
   };
 
   const handleSendMessage = async () => {
-    if (
-      inputValue.trim() === "" ||
-      !isMdFileActive ||
-      !currentPath
-    ) {
+    if (inputValue.trim() === "" || !isMdFileActive || !currentPath) {
       return;
     }
 
@@ -231,12 +227,10 @@ const ChatPanel: React.FC = () => {
     setIsLoading(true);
     setError(null);
 
-    const historyForAPI: OpenAIMessage[] = thread.messages.map(
-      (msg) => ({
-        role: msg.sender === "user" ? "user" : "assistant",
-        content: msg.text,
-      })
-    );
+    const historyForAPI: OpenAIMessage[] = thread.messages.map((msg) => ({
+      role: msg.sender === "user" ? "user" : "assistant",
+      content: msg.text,
+    }));
     historyForAPI.push({ role: "user", content: userInput });
 
     let fileContent: string | null = null;
@@ -381,7 +375,13 @@ const ChatPanel: React.FC = () => {
                 }`}
               >
                 {/* Render message content using MarkdownViewer */}
-                <MarkdownViewer content={typeof message.text === 'string' ? message.text : String(message.text)} />
+                <MarkdownViewer
+                  content={
+                    typeof message.text === "string"
+                      ? message.text
+                      : String(message.text)
+                  }
+                />
               </div>
             </div>
           ))
