@@ -70,18 +70,56 @@ export class GitHubClient {
     >(endpoint);
 
     return result.mapErr((error) => {
-      let errorMessage = `GitHub API error: ${error.message}`;
-      if (
-        error.status === 403 &&
-        error.message.includes("rate limit exceeded")
-      ) {
-        errorMessage += " (Rate limit exceeded)";
+      // Handle network errors differently - don't add "GitHub API error:" prefix
+      if (error.type === "NETWORK_ERROR") {
+        return error;
+      }
+
+      // For HTTP errors, format the message properly
+      if (error.status) {
+        // Extract status text from the error message if it follows "HTTP {status}: {statusText}" format
+        const httpErrorMatch = error.message.match(/^HTTP (\d+): (.+)$/);
+        const statusText = httpErrorMatch ? httpErrorMatch[2] : error.message;
+
+        if (error.status === 404) {
+          // For 404, include the response message from GitHub API
+          const errorMessage = `GitHub API error: 404 Not Found - ${statusText} (Not Found)`;
+          return createGitHubError(errorMessage, error.status);
+        }
+
+        if (error.status === 403) {
+          // Check if this is a rate limit error by looking at the error details
+          const isRateLimit = error.details &&
+            typeof error.details === 'object' &&
+            'message' in error.details &&
+            typeof error.details.message === 'string' &&
+            error.details.message.includes("rate limit exceeded");
+
+          if (isRateLimit) {
+            // For rate limit errors, format with the API message
+            const details = error.details as { message: string };
+            const errorMessage = `GitHub API error: 403 Forbidden - ${details.message} (Rate limit exceeded)`;
+            return createGitHubError(errorMessage, error.status);
+          }
+
+          // For other 403 errors, use standard format
+          const errorMessage = `GitHub API error: 403 ${statusText}`;
+          return createGitHubError(errorMessage, error.status);
+        }
+
+        if (error.status === 500) {
+          // For 500 errors, format with status and message
+          const errorMessage = `GitHub API error: 500 Internal Server Error - ${statusText}`;
+          return createGitHubError(errorMessage, error.status);
+        }
+
+        // For other HTTP errors like 502, format as "GitHub API error: {status} {statusText}"
+        const errorMessage = `GitHub API error: ${error.status} ${statusText}`;
         return createGitHubError(errorMessage, error.status);
       }
-      if (error.status === 404) {
-        errorMessage += " (Not Found)";
-        return createGitHubError(errorMessage, error.status);
-      }
+
+      // Fallback for other errors
+      const errorMessage = `GitHub API error: ${error.message}`;
       return createGitHubError(errorMessage, error.status);
     });
   }
