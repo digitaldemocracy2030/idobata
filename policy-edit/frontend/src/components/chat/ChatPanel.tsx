@@ -343,11 +343,6 @@ const ChatPanel: React.FC = () => {
             {isLoading ? "接続中..." : "サーバーに接続"}
           </Button>
         )}
-        {isConnected && (
-          <span className="text-sm text-accent-dark font-medium">
-            ✓ 接続済み
-          </span>
-        )}
       </div>
       {/* Chat messages area */}
       <div
