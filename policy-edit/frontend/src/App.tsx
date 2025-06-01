@@ -1,7 +1,9 @@
+import { Helmet, HelmetProvider } from "@dr.pogodin/react-helmet";
 import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import ContentExplorer from "./components/page-specific/ContentExplorer";
-import NotFound from "./components/page-specific/NotFound"; // 404 page component
+import NotFound from "./components/page-specific/NotFound";
+import { siteConfig } from "./config/siteConfig";
 
 // Wrapper component to extract path from URL splat and pass it to ContentExplorer
 function ContentExplorerWrapper() {
@@ -13,24 +15,26 @@ function ContentExplorerWrapper() {
 }
 
 function App() {
-  // In later steps, we might initialize Zustand store here with env variables
-  // const repoOwner = import.meta.env.VITE_GITHUB_REPO_OWNER;
-  // const repoName = import.meta.env.VITE_GITHUB_REPO_NAME;
-  // console.log(`Repo: ${repoOwner}/${repoName}`);
-
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          {/* Route for the repository root */}
-          <Route index element={<ContentExplorer initialPath="" />} />
-          {/* Route for paths within the repository */}
-          <Route path="view/*" element={<ContentExplorerWrapper />} />
-          {/* Catch-all route for any other paths (404) */}
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <HelmetProvider>
+      <Helmet>
+        <title>{siteConfig.siteName}</title>
+        <meta property="og:title" content={siteConfig.siteName} />
+        <meta name="twitter:title" content={siteConfig.siteName} />
+      </Helmet>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            {/* Route for the repository root */}
+            <Route index element={<ContentExplorer initialPath="" />} />
+            {/* Route for paths within the repository */}
+            <Route path="view/*" element={<ContentExplorerWrapper />} />
+            {/* Catch-all route for any other paths (404) */}
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }
 
