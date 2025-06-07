@@ -1,0 +1,29 @@
+FROM node:20-slim
+
+WORKDIR /app
+
+# 依存関係をインストール
+COPY admin/package.json admin/package-lock.json ./
+RUN rm -rf node_modules package-lock.json && npm install --legacy-peer-deps
+
+# 必要な環境変数をビルド時に渡す
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+
+ARG VITE_ALLOW_DELETE_THEME
+ENV VITE_ALLOW_DELETE_THEME=$VITE_ALLOW_DELETE_THEME
+# アプリのソースをコピー
+COPY admin/ .
+
+# ビルド（Vite）
+RUN npm run build
+
+# 環境変数をセット（必要に応じて）
+ENV NODE_ENV=production
+ENV PORT=8080
+
+# ポートを公開
+EXPOSE 8080
+
+# Viteの本番プレビューサーバーで起動
+CMD ["npm", "run", "preview", "--", "--port", "8080", "--host"] 
