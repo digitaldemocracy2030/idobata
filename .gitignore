@@ -5,4 +5,7 @@ commandResult.txt
 */**/package-lock.json
 uploads/
 uploads/profile-images/
+cloud-run-admin-env.yaml
 cloud-run-backend-env.yaml
+cloud-run-frontend-env.yaml
+cloud-run-python-service-env.yaml

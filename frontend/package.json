@@ -31,6 +31,7 @@
   "devDependencies": {
     "@shadcn/ui": "^0.0.4",
     "@tailwindcss/typography": "^0.5.16",
+    "@types/node": "^22.15.30",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@types/uuid": "^10.0.0",
