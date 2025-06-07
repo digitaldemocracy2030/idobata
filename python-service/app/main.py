@@ -8,6 +8,9 @@ import numpy as np
 from sklearn.cluster import KMeans, AgglomerativeClustering
 from openai import OpenAI
 from dotenv import load_dotenv
+from google.cloud import storage
+import tempfile
+import shutil
 
 load_dotenv()
 
@@ -26,23 +29,49 @@ client = OpenAI()
 # If you need to explicitly pass the key:
 # client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+# Cloud Storage settings
+BUCKET_NAME = os.getenv("CHROMA_BUCKET_NAME", "idobata-chroma-data")
+CHROMA_DB_PATH = "/tmp/chroma"  # Use temporary directory for local storage
 
-CHROMA_DB_PATH = "/data/chroma"
+def sync_with_cloud_storage():
+    """Sync ChromaDB data with Cloud Storage"""
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(BUCKET_NAME)
+    
+    # Download from Cloud Storage if exists
+    if bucket.blob("chroma_data.zip").exists():
+        print("Downloading ChromaDB data from Cloud Storage...")
+        bucket.blob("chroma_data.zip").download_to_filename("/tmp/chroma_data.zip")
+        shutil.unpack_archive("/tmp/chroma_data.zip", CHROMA_DB_PATH)
+        print("ChromaDB data downloaded successfully")
+    else:
+        print("No existing ChromaDB data in Cloud Storage")
+
+def backup_to_cloud_storage():
+    """Backup ChromaDB data to Cloud Storage"""
+    if os.path.exists(CHROMA_DB_PATH):
+        print("Backing up ChromaDB data to Cloud Storage...")
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(BUCKET_NAME)
+        
+        # Create zip archive
+        shutil.make_archive("/tmp/chroma_data", 'zip', CHROMA_DB_PATH)
+        
+        # Upload to Cloud Storage
+        bucket.blob("chroma_data.zip").upload_from_filename("/tmp/chroma_data.zip")
+        print("ChromaDB data backed up successfully")
+
 print(f"DEBUG: Initializing ChromaDB with path: {CHROMA_DB_PATH}")
 
 try:
+    # Create temporary directory if it doesn't exist
+    os.makedirs(CHROMA_DB_PATH, exist_ok=True)
+    
+    # Sync with Cloud Storage
+    sync_with_cloud_storage()
+    
     chroma_client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
     print(f"DEBUG: ChromaDB client initialized successfully")
-    
-    # Check if directory exists and is writable
-    import os
-    if os.path.exists(CHROMA_DB_PATH):
-        print(f"DEBUG: ChromaDB path exists: {CHROMA_DB_PATH}")
-        print(f"DEBUG: Path is {'writable' if os.access(CHROMA_DB_PATH, os.W_OK) else 'not writable'}")
-        print(f"DEBUG: Directory contents: {os.listdir(CHROMA_DB_PATH)}")
-    else:
-        print(f"WARNING: ChromaDB path does not exist: {CHROMA_DB_PATH}")
-        print(f"DEBUG: Parent directory exists: {os.path.exists(os.path.dirname(CHROMA_DB_PATH))}")
     
     collection = chroma_client.get_or_create_collection(
         name="problems_solutions",
@@ -435,3 +464,8 @@ async def create_transient_embedding(request: TransientEmbeddingRequest):
         return TransientEmbeddingResponse(embedding=embeddings[0])
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating embedding: {str(e)}")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Backup ChromaDB data to Cloud Storage before shutdown"""
+    backup_to_cloud_storage()

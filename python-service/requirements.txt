@@ -5,3 +5,4 @@ chromadb
 scikit-learn
 numpy
 python-dotenv
+google-cloud-storage

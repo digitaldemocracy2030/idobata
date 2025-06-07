@@ -22,14 +22,15 @@ WORKDIR /app
 # Copy installed node_modules from the first stage
 COPY --from=backend-builder /app/node_modules ./node_modules
 
-# Copy backend source code∂
+# Copy backend source code
 COPY ./idea-discussion/backend ./idea-discussion/backend
 
 # Set environment variables
 ENV NODE_ENV=production
+ENV PORT=8080
 
 WORKDIR /app/idea-discussion/backend
-EXPOSE 3000
+EXPOSE 8080
 CMD ["npm", "start"]
 
 # Development stage for hot-reload
