@@ -31,10 +31,13 @@ client = OpenAI()
 
 # Cloud Storage settings
 BUCKET_NAME = os.getenv("CHROMA_BUCKET_NAME", "idobata-chroma-data")
-CHROMA_DB_PATH = "/tmp/chroma"  # Use temporary directory for local storage
+USE_CLOUD_STORAGE = os.getenv("USE_CLOUD_STORAGE", "false").lower() == "true"
 
 def sync_with_cloud_storage():
     """Sync ChromaDB data with Cloud Storage"""
+    if not USE_CLOUD_STORAGE:
+        return
+        
     storage_client = storage.Client()
     bucket = storage_client.bucket(BUCKET_NAME)
     
@@ -48,7 +51,6 @@ def sync_with_cloud_storage():
         print("No existing ChromaDB data in Cloud Storage")
 
 def backup_to_cloud_storage():
-    """Backup ChromaDB data to Cloud Storage"""
     if os.path.exists(CHROMA_DB_PATH):
         print("Backing up ChromaDB data to Cloud Storage...")
         storage_client = storage.Client()
@@ -61,18 +63,28 @@ def backup_to_cloud_storage():
         bucket.blob("chroma_data.zip").upload_from_filename("/tmp/chroma_data.zip")
         print("ChromaDB data backed up successfully")
 
+CHROMA_DB_PATH = "/data/chroma"
 print(f"DEBUG: Initializing ChromaDB with path: {CHROMA_DB_PATH}")
 
 try:
     # Create temporary directory if it doesn't exist
     os.makedirs(CHROMA_DB_PATH, exist_ok=True)
-    
-    # Sync with Cloud Storage
-    sync_with_cloud_storage()
-    
     chroma_client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
-    print(f"DEBUG: ChromaDB client initialized successfully")
+    print(f"DEBUG: ChromaDB client initialized successfully")   
+    # Check if directory exists and is writable
+    import os
+    if os.path.exists(CHROMA_DB_PATH):
+        print(f"DEBUG: ChromaDB path exists: {CHROMA_DB_PATH}")
+        print(f"DEBUG: Path is {'writable' if os.access(CHROMA_DB_PATH, os.W_OK) else 'not writable'}")
+        print(f"DEBUG: Directory contents: {os.listdir(CHROMA_DB_PATH)}")
+    else:
+        print(f"WARNING: ChromaDB path does not exist: {CHROMA_DB_PATH}")
+        print(f"DEBUG: Parent directory exists: {os.path.exists(os.path.dirname(CHROMA_DB_PATH))}")
     
+    # Sync with Cloud Storage only if enabled
+    if USE_CLOUD_STORAGE:
+        sync_with_cloud_storage()
+      
     collection = chroma_client.get_or_create_collection(
         name="problems_solutions",
         metadata={"hnsw:space": "cosine"}  # Use cosine similarity
@@ -467,5 +479,6 @@ async def create_transient_embedding(request: TransientEmbeddingRequest):
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    """Backup ChromaDB data to Cloud Storage before shutdown"""
-    backup_to_cloud_storage()
+    if USE_CLOUD_STORAGE:
+        """Backup ChromaDB data to Cloud Storage before shutdown"""
+        backup_to_cloud_storage()

@@ -162,6 +162,7 @@ services:
       - "8000:8000" # Expose port for debugging
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY} # Pass from host environment
+      - USE_CLOUD_STORAGE=false # ローカル開発ではCloud Storageを使用しない
     volumes:
       - ./python-service:/app # Mount source code for development
       - chroma_data:/data/chroma # ChromaDB data persistence
