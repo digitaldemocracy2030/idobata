@@ -34,10 +34,6 @@ BUCKET_NAME = os.getenv("CHROMA_BUCKET_NAME", "idobata-chroma-data")
 USE_CLOUD_STORAGE = os.getenv("USE_CLOUD_STORAGE", "false").lower() == "true"
 
 def sync_with_cloud_storage():
-    """Sync ChromaDB data with Cloud Storage"""
-    if not USE_CLOUD_STORAGE:
-        return
-        
     storage_client = storage.Client()
     bucket = storage_client.bucket(BUCKET_NAME)
     
