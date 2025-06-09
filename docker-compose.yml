@@ -32,6 +32,80 @@ services:
       - ALLOW_DELETE_THEME=${ALLOW_DELETE_THEME} # Pass theme deletion control
     # Use the CMD defined in the Dockerfile's development stage
     command: npm run dev
+
+  # --- policy-edit ---
+  policy-frontend:
+    container_name: policy-frontend-dev
+    image: node:20-alpine # Use a base image, Vite runs on host via volume mount
+    working_dir: /app
+    volumes:
+      - ./policy-edit/frontend:/app
+      # Add node_modules volume
+      - /app/node_modules
+    ports:
+      - "5174:5173" # Expose Vite dev server port (Host: 5174, Container: 5173)
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0" # Install deps if needed and run dev server
+    env_file:
+      - .env # Load environment variables from .env file
+    environment:
+      - NODE_ENV=development
+      - VITE_API_BASE_URL=${POLICY_FRONTEND_API_BASE_URL} # Use variable from .env
+      # Map GITHUB_TARGET_* from .env to VITE_GITHUB_* for the frontend
+      - VITE_GITHUB_REPO_OWNER=${GITHUB_TARGET_OWNER}
+      - VITE_GITHUB_REPO_NAME=${GITHUB_TARGET_REPO}
+      - VITE_POLICY_FRONTEND_ALLOWED_HOSTS=${VITE_POLICY_FRONTEND_ALLOWED_HOSTS}
+      # GitHub Mock Client Configuration
+      - VITE_USE_MOCK_GITHUB_CLIENT=${VITE_USE_MOCK_GITHUB_CLIENT}
+      # Site configuration
+      - VITE_SITE_NAME=${VITE_SITE_NAME}
+      - VITE_SITE_LOGO_URL=${VITE_SITE_LOGO_URL}
+      - VITE_PRIMARY_COLOR=${VITE_PRIMARY_COLOR}
+      # Color theme variables
+      - VITE_COLOR_BG_SUB=${VITE_COLOR_BG_SUB}
+      - VITE_COLOR_ACCENT=${VITE_COLOR_ACCENT}
+      - VITE_COLOR_ACCENT_LIGHT=${VITE_COLOR_ACCENT_LIGHT}
+      - VITE_COLOR_ACCENT_SUPER_LIGHT=${VITE_COLOR_ACCENT_SUPER_LIGHT}
+      - VITE_COLOR_ACCENT_DARK=${VITE_COLOR_ACCENT_DARK}
+      - VITE_COLOR_PRIMARY=${VITE_COLOR_PRIMARY}
+      - VITE_COLOR_SECONDARY=${VITE_COLOR_SECONDARY}
+
+  policy-backend:
+    container_name: policy-backend-dev
+    build:
+      context: . # Change context to the root directory
+      dockerfile: ./policy-edit/backend/Dockerfile # Specify Dockerfile path relative to new context
+      target: production # Build the production stage
+    ports:
+      - "3001:3001" # Expose backend API port
+    env_file:
+      - .env # Load environment variables from .env file
+    environment:
+      - NODE_ENV=development
+      # Ensure CORS allows the frontend origin (running on host port 5174)
+      - POLICY_CORS_ORIGIN=${POLICY_CORS_ORIGIN}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres-policy:5432/${POSTGRES_DB:-policy_db}
+    depends_on:
+      - postgres-policy
+    # Run the production start command
+    command: npm start
+
+  postgres-policy:
+    container_name: postgres-policy-dev
+    image: postgres:latest
+    ports:
+      - "5433:5432" # Expose to host port 5433 to avoid conflict if local 5432 is used
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-policy_db}
+    volumes:
+      - postgres_policy_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-policy_db}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # --- Unified Frontend ---
   frontend:
     container_name: frontend-dev
@@ -50,6 +124,7 @@ services:
       - NODE_ENV=development
       - VITE_API_BASE_URL=${IDEA_FRONTEND_API_BASE_URL} # 初期段階ではidea-discussionのAPIを使用
       - VITE_FRONTEND_ALLOWED_HOSTS=${VITE_FRONTEND_ALLOWED_HOSTS}
+
   # --- Database ---
   mongo:
     container_name: mongo-dev
@@ -58,6 +133,7 @@ services:
       - "27017:27017" # Expose MongoDB port to host (optional, for external tools)
     volumes:
       - mongo_data:/data/db # Persist data using a named volume
+
   # --- Admin Panel ---
   admin:
     container_name: admin-dev
@@ -76,6 +152,7 @@ services:
       - VITE_API_BASE_URL=${ADMIN_API_BASE_URL} # idea-discussionバックエンドを指す
       - VITE_ADMIN_FRONTEND_ALLOWED_HOSTS=${VITE_ADMIN_FRONTEND_ALLOWED_HOSTS}
       - VITE_ALLOW_DELETE_THEME=${ALLOW_DELETE_THEME}
+
   # --- Python Embedding Service ---
   python-service:
     container_name: idobata-python-service
@@ -89,8 +166,28 @@ services:
       - ./python-service:/app # Mount source code for development
       - chroma_data:/data/chroma # ChromaDB data persistence
 
+  nginx:
+    container_name: nginx-prod
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443" # Uncomment if you configure SSL in nginx.conf
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      # Uncomment the following lines if you set up SSL certificates
+      # - ./path/to/your/certs:/etc/nginx/certs:ro
+    depends_on:
+      - idea-backend
+      - policy-frontend
+      - policy-backend
+      - frontend
+      - admin
+      - python-service
+    restart: always
+
 volumes:
   mongo_data: # Define the named volume for MongoDB
   chroma_data: # Define the named volume for ChromaDB
+  postgres_policy_data:
     # Define the named volume for policy PostgreSQL
     # Named volume for idea_backend_node_modules removed as we're using the multi-stage build approach
