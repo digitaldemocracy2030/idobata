@@ -18,7 +18,7 @@ export default defineConfig({
   preview: {
     port: 8080,
     host: "0.0.0.0",
-    allowedHosts: process.env.VITE_FRONTEND_ALLOWED_HOSTS
+    allowedHosts: process.env.VITE_ADMIN_FRONTEND_ALLOWED_HOSTS
       ?.split(",")
       .map(h => h.trim().replace(/\/$/, "")) || [],
   },
