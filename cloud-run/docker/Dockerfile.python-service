@@ -1,0 +1,20 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Install necessary libraries
+COPY python-service/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY python-service/ .
+
+# Create directory for ChromaDB data
+RUN mkdir -p /data/chroma
+
+# Set environment variables
+ENV PORT=8080
+# Note: OPENAI_API_KEY will be set via Cloud Run environment variables
+
+# Start FastAPI server
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"] 
