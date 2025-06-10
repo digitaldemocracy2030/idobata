@@ -8,25 +8,28 @@ const HeroSection = () => {
       <div className="px-4">
         <div className="text-left">
           <h1 className="text-3xl text-foreground mb-2">
-            あなたの声から、
-            <br />
-            政策が動き出す
+            語り合う勇気が、政治を動かす
           </h1>
 
           {/* メインイメージ */}
-          <div className="relative w-full max-w-sm mx-auto mb-4 rounded-lg overflow-hidden">
-            <img
-              src="/images/MainImage.png"
-              alt="いどばたのメインイメージ"
-              className="w-full h-auto"
-            />
-          </div>
+          <div className="relative w-full max-w-sm mx-auto mb-4 rounded-lg overflow-hidden"></div>
 
           <p className="text-base text-muted-foreground">
-            社会をもっと良くするヒントは、あなたの実感にあります。
+            難しい話？ いいえ、あなたの声がスタート地点。
           </p>
           <p className="text-base text-muted-foreground mb-4">
-            今、全国で寄せられている声と、動き出した政策案をご覧ください。
+            　あなたの声が、これからの政治をつ・く・る。
+          </p>
+
+          <h1 className="text-3xl text-foreground mb-2">
+            そのモヤモヤ、言葉にしよう！
+          </h1>
+
+          <p className="text-base text-muted-foreground">
+            声を出せ。話せ。届け。
+          </p>
+          <p className="text-base text-muted-foreground mb-4">
+            立憲民主党 AI大規模熟議システム #対話アリーナ へようこそ！
           </p>
 
           <div className="flex justify-start">
