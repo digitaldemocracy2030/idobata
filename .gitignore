@@ -5,4 +5,4 @@ commandResult.txt
 */**/package-lock.json
 uploads/
 uploads/profile-images/
-cloud-run-env/env/
+cloud-run/env/*.yaml
