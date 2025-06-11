@@ -1,5 +1,5 @@
 import { Helmet, HelmetProvider } from "@dr.pogodin/react-helmet";
-import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
+import { Route, Routes, useParams } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import ContentExplorer from "./components/page-specific/ContentExplorer";
 import NotFound from "./components/page-specific/NotFound";
@@ -23,18 +23,16 @@ function App() {
         <meta property="og:title" content={siteConfig.siteName} />
         <meta name="twitter:title" content={siteConfig.siteName} />
       </Helmet>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            {/* Route for the repository root */}
-            <Route index element={<ContentExplorer initialPath="" />} />
-            {/* Route for paths within the repository */}
-            <Route path="view/*" element={<ContentExplorerWrapper />} />
-            {/* Catch-all route for any other paths (404) */}
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          {/* Route for the repository root */}
+          <Route index element={<ContentExplorer initialPath="" />} />
+          {/* Route for paths within the repository */}
+          <Route path="view/*" element={<ContentExplorerWrapper />} />
+          {/* Catch-all route for any other paths (404) */}
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
     </HelmetProvider>
   );
 }

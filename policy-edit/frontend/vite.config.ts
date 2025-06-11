@@ -15,4 +15,14 @@ export default defineConfig({
     allowedHosts:
       process.env.VITE_POLICY_FRONTEND_ALLOWED_HOSTS?.split(",") || [],
   },
+  build: {
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, "index.html"),
+      },
+    },
+  },
+  ssr: {
+    noExternal: ["react-router-dom"],
+  },
 });
