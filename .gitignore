@@ -5,5 +5,5 @@ commandResult.txt
 */**/package-lock.json
 uploads/
 uploads/profile-images/
-cloud-run-env/
 python-service/app/__pycache__/
+cloud-run/env/*.yaml

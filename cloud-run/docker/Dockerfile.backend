@@ -3,8 +3,8 @@ FROM node:20-alpine AS backend-builder
 WORKDIR /app
 
 # Copy root package files and relevant workspace package.json files
-COPY ../../package.json ../../package-lock.json ./
-COPY ./package.json ./idea-discussion/backend/
+COPY package.json package-lock.json ./
+COPY idea-discussion/backend/package.json ./idea-discussion/backend/
 
 # Install ALL dependencies (including dev) needed for build
 RUN npm install --workspace=idobata-idea-discussion-backend
