@@ -1,7 +1,7 @@
 import { Menu, User } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+// import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { Link, useMock } from "../../contexts/MockContext";
+import { Link } from "../../contexts/MockContext";
 import { useSiteConfig } from "../../contexts/SiteConfigContext";
 import { useThemes } from "../../hooks/useThemes";
 import { Button } from "../ui/button";
@@ -16,32 +16,32 @@ const Header = () => {
   const { themes, isLoading, error } = useThemes();
   const { siteConfig, loading } = useSiteConfig();
   const { user } = useAuth();
-  const { isMockMode } = useMock();
-  const navigate = useNavigate();
-  const location = useLocation();
+  // const { isMockMode } = useMock();
+  // const navigate = useNavigate();
+  // const location = useLocation();
 
-  const toggleMockMode = () => {
-    const currentParams = new URLSearchParams(location.search);
-    let targetPathname = location.pathname;
-    let targetSearch = "";
+  // const toggleMockMode = () => {
+  //   const currentParams = new URLSearchParams(location.search);
+  //   let targetPathname = location.pathname;
+  //   let targetSearch = "";
 
-    if (isMockMode) {
-      targetPathname = "/";
-      currentParams.delete("mock");
-      targetSearch = currentParams.toString();
-    } else {
-      currentParams.set("mock", "true");
-      targetSearch = currentParams.toString();
-    }
+  //   if (isMockMode) {
+  //     targetPathname = "/";
+  //     currentParams.delete("mock");
+  //     targetSearch = currentParams.toString();
+  //   } else {
+  //     currentParams.set("mock", "true");
+  //     targetSearch = currentParams.toString();
+  //   }
 
-    navigate(
-      {
-        pathname: targetPathname,
-        search: targetSearch,
-      },
-      { replace: true }
-    );
-  };
+  //   navigate(
+  //     {
+  //       pathname: targetPathname,
+  //       search: targetSearch,
+  //     },
+  //     { replace: true }
+  //   );
+  // };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b-2 border-primary-700 h-16 px-4 flex items-center">

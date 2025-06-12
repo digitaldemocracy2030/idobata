@@ -12,7 +12,9 @@ const HeroSection = () => {
             {/* タイトル（SPでは一番上） */}
             <h1 className="text-3xl text-foreground mb-2">
               語り合う勇気が、
-              <span className="inline md:hidden"><br /></span>
+              <span className="inline md:hidden">
+                <br />
+              </span>
               政治を動かす
             </h1>
             {/* SPではここで画像を表示 */}
@@ -26,9 +28,9 @@ const HeroSection = () => {
             {/* 残りのテキスト・ボタン */}
             <div className="flex flex-col justify-between flex-1">
               <div>
-              　<h4 className="text-xl text-foreground mb-2">AIがつなぐ</h4>
+                <h4 className="text-xl text-foreground mb-2">AIがつなぐ</h4>
                 <h2 className="text-xl text-foreground mb-2">
-                　　 りっけん対話アリーナ
+                  りっけん対話アリーナ
                 </h2>
                 <p className="text-base text-muted-foreground">
                   難しい話？ いいえ、あなたの声がスタート地点。
@@ -46,7 +48,7 @@ const HeroSection = () => {
                   立憲民主党 AI大規模熟議システム
                 </p>
                 <p className="text-base text-muted-foreground mb-4">
-                 #対話アリーナ へようこそ!!
+                  #対話アリーナ へようこそ!!
                 </p>
               </div>
               <div className="mt-8">
