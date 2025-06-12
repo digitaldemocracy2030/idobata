@@ -2,9 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import compression from "compression";
 import express from "express";
-import { createServer as createViteServer } from "vite";
 
-const isProduction = process.env.NODE_ENV === "production";
 const port = process.env.PORT || 3000;
 
 async function createServer() {
@@ -14,37 +12,20 @@ async function createServer() {
 
   let vite;
 
-  if (!isProduction) {
-    vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "custom",
-    });
-    app.use(vite.middlewares);
-  } else {
-    app.use(express.static(path.resolve("dist/client")));
-  }
+  app.use(express.static(path.resolve("dist/client")));
 
   app.use("*", async (req, res) => {
     try {
       const url = req.originalUrl;
 
-      let template;
-      let render;
-
-      if (!isProduction && vite) {
-        template = fs.readFileSync(path.resolve("index.html"), "utf-8");
-        template = await vite.transformIndexHtml(url, template);
-        render = (await vite.ssrLoadModule("/src/entry-server.tsx")).render;
-      } else {
-        template = fs.readFileSync(
-          path.resolve("dist/client/index.html"),
-          "utf-8"
-        );
-        const serverModule = await import(
-          path.resolve("dist/server/entry-server.js")
-        );
-        render = serverModule.render;
-      }
+      const template = fs.readFileSync(
+        path.resolve("dist/client/index.html"),
+        "utf-8"
+      );
+      const serverModule = await import(
+        `file://${path.resolve("dist/server/entry-server.js")}`
+      );
+      const render = serverModule.render;
 
       const { html, meta } = render(url);
 
@@ -74,15 +55,12 @@ async function createServer() {
 
       res.status(200).set({ "Content-Type": "text/html" }).end(finalHtml);
     } catch (e) {
-      if (!isProduction && vite) {
-        vite.ssrFixStacktrace(e);
-      }
       console.error(e.stack);
       res.status(500).end(e.stack);
     }
   });
 
-  return { app, vite };
+  return { app };
 }
 
 createServer().then(({ app }) =>
