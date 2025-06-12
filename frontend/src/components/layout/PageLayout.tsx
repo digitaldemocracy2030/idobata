@@ -9,7 +9,7 @@ interface PageLayoutProps {
 
 const PageLayout = ({ children }: PageLayoutProps) => {
   return (
-    <div className="min-h-screen flex flex-col pt-14">
+    <div className="min-h-screen flex flex-col pt-24">
       <Header />
       <Sidebar />
       <main className="flex-grow xl:ml-[260px] px-4 xl:px-8">{children}</main>

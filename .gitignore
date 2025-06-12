@@ -1,8 +1,10 @@
 .DS_Store
 .env
+.envrc
 node_modules/
 commandResult.txt
 */**/package-lock.json
 uploads/
 uploads/profile-images/
+python-service/app/__pycache__/
 cloud-run/env/*.yaml
