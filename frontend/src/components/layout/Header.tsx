@@ -109,7 +109,7 @@ const Header = () => {
                   </div>
                 )}
 
-                {process.env.NODE_ENV === "development" && (
+                {/* {process.env.NODE_ENV === "development" && (
                   <div className="flex mt-4 px-4">
                     <Button
                       variant="outline"
@@ -121,7 +121,7 @@ const Header = () => {
                         : "モックモードに入る（開発用）"}
                     </Button>
                   </div>
-                )}
+                )} */}
               </nav>
             </NavigationSheetContent>
           </NavigationSheet>
@@ -129,7 +129,7 @@ const Header = () => {
 
         {/* サイトタイトル（中央） */}
         <Link to="/top">
-          <h1 className="text-base font-semibold text-center">
+          <h1 className="text-2xl font-semibold text-center">
             {loading
               ? "..."
               : siteConfig?.title || "XX党 みんなの政策フォーラム"}
