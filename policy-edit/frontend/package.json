@@ -55,6 +55,7 @@
     "@types/react-dom": "^19.0.4",
     "@types/serve-static": "^1.15.7",
     "@vitejs/plugin-react": "^4.3.4",
+    "tsx": "^4.20.2",
     "typescript": "~5.7.2",
     "vite": "^6.2.0",
     "vitest": "^3.1.2"

@@ -23,9 +23,15 @@ async function createServer() {
         "utf-8"
       );
 
-      const { App } = await import("./src/App.jsx");
-      const { siteConfig } = await import("./src/config/siteConfig.js");
-      const { generatePageMeta } = await import("./src/utils/metaGenerator.js");
+      const { default: App } = await import(
+        `file://${path.resolve("src/App.tsx")}`
+      );
+      const { siteConfig } = await import(
+        `file://${path.resolve("src/config/siteConfig.ts")}`
+      );
+      const { generatePageMeta } = await import(
+        `file://${path.resolve("src/utils/metaGenerator.ts")}`
+      );
 
       const meta = generatePageMeta(url, siteConfig);
 
