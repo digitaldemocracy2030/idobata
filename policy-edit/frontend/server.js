@@ -2,6 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import compression from "compression";
 import express from "express";
+import React from "react";
+import { renderToString } from "react-dom/server";
+import { StaticRouter } from "react-router-dom";
 
 const port = process.env.PORT || 3000;
 
@@ -9,9 +12,6 @@ async function createServer() {
   const app = express();
 
   app.use(compression());
-
-  let vite;
-
   app.use(express.static(path.resolve("dist/client")));
 
   app.use("*", async (req, res) => {
@@ -22,12 +22,20 @@ async function createServer() {
         path.resolve("dist/client/index.html"),
         "utf-8"
       );
-      const serverModule = await import(
-        `file://${path.resolve("dist/server/entry-server.js")}`
-      );
-      const render = serverModule.render;
 
-      const { html, meta } = render(url);
+      const { App } = await import("./src/App.jsx");
+      const { siteConfig } = await import("./src/config/siteConfig.js");
+      const { generatePageMeta } = await import("./src/utils/metaGenerator.js");
+
+      const meta = generatePageMeta(url, siteConfig);
+
+      const html = renderToString(
+        React.createElement(
+          StaticRouter,
+          { location: url },
+          React.createElement(App)
+        )
+      );
 
       const finalHtml = template
         .replace("<!--ssr-outlet-->", html)
@@ -55,7 +63,7 @@ async function createServer() {
 
       res.status(200).set({ "Content-Type": "text/html" }).end(finalHtml);
     } catch (e) {
-      console.error(e.stack);
+      console.error("SSR Error:", e.stack);
       res.status(500).end(e.stack);
     }
   });

@@ -5,10 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:ssr": "npm run build && node server.js",
-    "build": "npm run build:client && npm run build:server",
+    "dev:ssr": "npm run build:client && node server.js",
+    "build": "npm run build:client",
     "build:client": "vite build --outDir dist/client",
-    "build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",
     "start": "node server.js",
     "preview": "npm run build && npm run start",
     "lint": "biome check .",
