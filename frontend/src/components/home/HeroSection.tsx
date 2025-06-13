@@ -4,15 +4,21 @@ import { Button } from "../ui/button";
 
 const HeroSection = () => {
   return (
-    <div className="relative bg-gradient-to-br from-blue-50 to-white py-12 lg:py-16">
+    <div className="relative bg-gradient-to-br from-blue-50 to-white py-10 lg:py-8">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex flex-col lg:flex-row items-center justify-between max-w-6xl mx-auto gap-8 lg:gap-12">
+        <div className="flex flex-col lg:flex-row items-center justify-between max-w-6xl mx-auto gap-8 lg:gap-6">
           {/* 左側コンテンツ */}
           <div className="flex-1 text-center lg:text-left">
             {/* メインタイトル */}
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-              語り合う勇気が、
-              <br className="hidden sm:block" />
+            <h1
+              className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4 leading-snug"
+              style={{
+                lineHeight: window.innerWidth < 640 ? "0.7" : undefined,
+              }}
+            >
+              <span className="block sm:inline">語り合う勇気が</span>
+              <span className="hidden sm:inline">、</span>
+              <br className="sm:hidden" />
               <span className="text-blue-600">政治を動かす</span>
             </h1>
             {/* モバイル用画像 */}
