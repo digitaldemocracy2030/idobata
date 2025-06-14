@@ -79,7 +79,7 @@ function updateTreeData(
 ): TreeNodeData[] {
   if (targetPath === "") {
     const mappedChildren: TreeNodeData[] = newChildren
-      .filter((item) => !item.name.startsWith('.'))
+      .filter((item) => !item.name.startsWith("."))
       .map((item) => ({
         name: item.name,
         path: item.path,
@@ -100,7 +100,7 @@ function updateTreeData(
   return treeData.map((node) => {
     if (node.path === targetPath && node.type === "dir") {
       const mappedChildren: TreeNodeData[] = newChildren
-        .filter((item) => !item.name.startsWith('.'))
+        .filter((item) => !item.name.startsWith("."))
         .map((item) => ({
           name: item.name,
           path: item.path,

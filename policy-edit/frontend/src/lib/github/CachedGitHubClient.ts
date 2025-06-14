@@ -46,12 +46,19 @@ export class CachedGitHubClient extends GitHubClient implements IGitHubClient {
     return result;
   }
 
-  private generateCacheKey(owner: string, repo: string, path: string, ref?: string): string {
+  private generateCacheKey(
+    owner: string,
+    repo: string,
+    path: string,
+    ref?: string
+  ): string {
     const basePath = `${owner}/${repo}/${path}`;
     return ref ? `${basePath}?ref=${ref}` : basePath;
   }
 
-  private getCachedEntry(key: string): CacheEntry<GitHubFile | GitHubDirectoryItem[]> | null {
+  private getCachedEntry(
+    key: string
+  ): CacheEntry<GitHubFile | GitHubDirectoryItem[]> | null {
     const entry = this.cache[key];
     if (!entry) return null;
 
@@ -65,12 +72,15 @@ export class CachedGitHubClient extends GitHubClient implements IGitHubClient {
     return entry;
   }
 
-  private setCacheEntry(key: string, data: GitHubFile | GitHubDirectoryItem[]): void {
+  private setCacheEntry(
+    key: string,
+    data: GitHubFile | GitHubDirectoryItem[]
+  ): void {
     const now = Date.now();
     this.cache[key] = {
       data,
       timestamp: now,
-      expiresAt: now + this.CACHE_DURATION
+      expiresAt: now + this.CACHE_DURATION,
     };
   }
 
@@ -109,7 +119,7 @@ export class CachedGitHubClient extends GitHubClient implements IGitHubClient {
     const now = Date.now();
     const totalEntries = Object.keys(this.cache).length;
     const expiredEntries = Object.values(this.cache).filter(
-      entry => now > entry.expiresAt
+      (entry) => now > entry.expiresAt
     ).length;
 
     return { totalEntries, expiredEntries };
