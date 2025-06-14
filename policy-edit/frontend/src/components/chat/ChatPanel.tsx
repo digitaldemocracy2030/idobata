@@ -109,12 +109,7 @@ const ChatPanel: React.FC = () => {
         return;
       }
 
-      if (connectedAfterAttempt) {
-        addMessageToThread(pathForMessage, {
-          text: "サーバーに自動接続しました。",
-          sender: "bot",
-        });
-      } else {
+      if (!connectedAfterAttempt) {
         addMessageToThread(pathForMessage, {
           text: `エラー：サーバーへの自動接続に失敗しました。${error || "接続試行に失敗しました。"}`.trim(),
           sender: "bot",
@@ -320,9 +315,7 @@ const ChatPanel: React.FC = () => {
                 return;
               }
 
-              if (connected) {
-                addBotMessageToCurrentThread("手動接続に成功しました。");
-              } else {
+              if (!connected) {
                 addBotMessageToCurrentThread(
                   `エラー：手動接続に失敗しました。${error || ""}`.trim()
                 );
@@ -337,11 +330,6 @@ const ChatPanel: React.FC = () => {
           >
             {isLoading ? "接続中..." : "サーバーに接続"}
           </Button>
-        )}
-        {isConnected && (
-          <span className="text-sm text-accent-dark font-medium">
-            ✓ 接続済み
-          </span>
         )}
       </div>
       {/* Chat messages area */}
