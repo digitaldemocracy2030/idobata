@@ -172,7 +172,9 @@ const useContentStore = create<ContentState>()(
       createChatThread: (path) => {
         const state = get();
         if (!state.chatThreads[path]) {
-          const welcomeMessage = import.meta.env.VITE_POLICY_CHAT_WELCOME_MESSAGE || "こんにちは！私はこのドキュメントについて、質問に答えたり、変更提案を一緒に取りまとめるのが得意なAIです。何か気になることはありますか？";
+          const welcomeMessage =
+            import.meta.env.VITE_POLICY_CHAT_WELCOME_MESSAGE ||
+            "こんにちは！私はこのドキュメントについて、質問に答えたり、変更提案を一緒に取りまとめるのが得意なAIです。何か気になることはありますか？";
 
           const welcomeMsg: Message = {
             id: 1,
@@ -183,7 +185,7 @@ const useContentStore = create<ContentState>()(
           const newThread = {
             messages: [welcomeMsg],
             branchId: null,
-            nextMessageId: 2
+            nextMessageId: 2,
           };
 
           set((prevState) => ({
@@ -222,7 +224,6 @@ const useContentStore = create<ContentState>()(
           };
         });
       },
-
 
       ensureBranchIdForThread: (path) => {
         const state = get();

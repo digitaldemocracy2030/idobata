@@ -70,7 +70,6 @@ const ChatPanel: React.FC = () => {
     }
   }, [isMdFileActive, currentPath, currentThread, createChatThread]);
 
-
   // Check backend connection status on component mount
   // Check connection status and attempt auto-connect on mount
   useEffect(() => {
