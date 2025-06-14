@@ -1,4 +1,4 @@
-import { GitHubClient } from "./GitHubClient";
+import { CachedGitHubClient } from "./CachedGitHubClient";
 import type { IGitHubClient } from "./IGitHubClient";
 import { MockGitHubClient } from "./MockGitHubClient";
 
@@ -9,5 +9,5 @@ export function createGitHubClient(token?: string): IGitHubClient {
     return new MockGitHubClient();
   }
 
-  return new GitHubClient(token);
+  return new CachedGitHubClient(token);
 }
