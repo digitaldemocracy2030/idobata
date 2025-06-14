@@ -13,18 +13,24 @@
   <meta property="og:locale" content="ja_JP" />
   <meta property="og:title" content="<%- siteName %>" />
   <meta property="og:description" content="<%- siteDescription %>" />
+  <% if (siteUrl) { %>
   <meta property="og:url" content="<%- siteUrl %>" />
+  <% } %>
+  <% if (siteImageUrl) { %>
   <meta property="og:image" content="<%- siteImageUrl %>" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="<%- siteName %>" />
+  <% } %>
 
   <!-- ——— X (Twitter) Card ——— -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="<%- siteName %>" />
   <meta name="twitter:description" content="<%- siteDescription %>" />
+  <% if (siteImageUrl) { %>
   <meta name="twitter:image" content="<%- siteImageUrl %>" />
   <meta name="twitter:image:alt" content="<%- siteName %>" />
+  <% } %>
 
   <!-- ——— Favicon ——— -->
   <link rel="icon" type="image/svg+xml" href="<%- faviconUrl %>" />

@@ -14,8 +14,8 @@ export default defineConfig({
         data: {
           siteName: process.env.VITE_SITE_NAME || "いどばた政策",
           siteDescription: process.env.VITE_SITE_DESCRIPTION || "市民が集まって対話し、政策を生み出すプラットフォーム",
-          siteUrl: process.env.VITE_SITE_URL || "https://delib.takahiroanno.com/",
-          siteImageUrl: process.env.VITE_SITE_IMAGE_URL || "https://delib.takahiroanno.com/idobata.png",
+          siteUrl: process.env.VITE_SITE_URL || "",
+          siteImageUrl: process.env.VITE_SITE_OG_IMAGE_URL || "",
           faviconUrl: process.env.VITE_FAVICON_URL || "/vite.svg"
         }
       }
