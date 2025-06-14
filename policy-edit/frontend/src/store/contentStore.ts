@@ -36,7 +36,6 @@ interface ContentState {
   getChatThread: (path: string) => ChatThread | null;
   createChatThread: (path: string) => ChatThread;
   addMessageToThread: (path: string, message: Omit<Message, "id">) => void; // Pass message content, ID is generated internally
-  insertWelcomeMessageToThread: (path: string) => void; // Insert welcome message at the beginning of thread
   ensureBranchIdForThread: (path: string) => string; // Ensures branchId exists and returns it
   reloadCurrentContent: () => Promise<void>; // Action to reload content for the current path
   // Internal actions (optional, kept for consistency)
@@ -173,7 +172,20 @@ const useContentStore = create<ContentState>()(
       createChatThread: (path) => {
         const state = get();
         if (!state.chatThreads[path]) {
-          const newThread = { messages: [], branchId: null, nextMessageId: 1 };
+          const welcomeMessage = import.meta.env.VITE_POLICY_CHAT_WELCOME_MESSAGE || "こんにちは！私はこのドキュメントについて、質問に答えたり、変更提案を一緒に取りまとめるのが得意なAIです。何か気になることはありますか？";
+
+          const welcomeMsg: Message = {
+            id: 1,
+            text: welcomeMessage,
+            sender: "bot",
+          };
+
+          const newThread = {
+            messages: [welcomeMsg],
+            branchId: null,
+            nextMessageId: 2
+          };
+
           set((prevState) => ({
             chatThreads: {
               ...prevState.chatThreads,
@@ -211,57 +223,6 @@ const useContentStore = create<ContentState>()(
         });
       },
 
-      insertWelcomeMessageToThread: (path) => {
-        const defaultMessage =
-          "こんにちは！私はこのドキュメントについて、質問に答えたり、変更提案を一緒に取りまとめるのが得意なAIです。何か気になることはありますか？";
-        const welcomeMessage =
-          import.meta.env.VITE_POLICY_CHAT_WELCOME_MESSAGE || defaultMessage;
-
-        set((state) => {
-          const thread = state.chatThreads[path];
-          if (!thread) {
-            console.warn(
-              `Attempted to insert welcome message to non-existent thread: ${path}`
-            );
-            return {}; // No change if thread doesn't exist
-          }
-
-          // Check if welcome message already exists
-          const hasWelcomeMessage = thread.messages.some(
-            (msg) =>
-              msg.sender === "bot" &&
-              msg.text.includes("こんにちは。私はこのドキュメントについて")
-          );
-
-          if (hasWelcomeMessage) {
-            return {}; // No change if welcome message already exists
-          }
-
-          // Create welcome message with ID 1
-          const welcomeMsg: Message = {
-            id: 1,
-            text: welcomeMessage,
-            sender: "bot",
-          };
-
-          // Re-number existing messages starting from 2
-          const renumberedMessages = thread.messages.map((msg, index) => ({
-            ...msg,
-            id: index + 2,
-          }));
-
-          return {
-            chatThreads: {
-              ...state.chatThreads,
-              [path]: {
-                ...thread,
-                messages: [welcomeMsg, ...renumberedMessages],
-                nextMessageId: renumberedMessages.length + 2,
-              },
-            },
-          };
-        });
-      },
 
       ensureBranchIdForThread: (path) => {
         const state = get();
