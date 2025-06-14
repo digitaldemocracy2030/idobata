@@ -20,6 +20,9 @@ idea-discussion-containers-build:
 policy-edit-containers-start:
 	docker compose up policy-frontend policy-backend
 
+policy-edit-containers-build:
+	docker compose up policy-frontend policy-backend --build
+
 policy-edit-frontend-lint:
 	cd policy-edit/frontend && npm run lint
 

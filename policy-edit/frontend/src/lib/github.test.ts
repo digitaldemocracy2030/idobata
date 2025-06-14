@@ -1,10 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  type GitHubDirectoryItem,
-  type GitHubFile,
-  decodeBase64Content,
-  fetchGitHubContent,
-} from "./github";
+import { type GitHubDirectoryItem, type GitHubFile } from "./github";
+import { GitHubClient } from "./github/GitHubClient";
+import type { IGitHubClient } from "./github/IGitHubClient";
 
 // global.fetch をモック
 const mockFetch = vi.fn();
@@ -14,19 +11,18 @@ global.fetch = mockFetch;
 vi.spyOn(console, "log").mockImplementation(() => {});
 vi.spyOn(console, "error").mockImplementation(() => {});
 
-describe("github", () => {
+describe("GitHubClient", () => {
+  let client: IGitHubClient;
+
   beforeEach(() => {
-    // 各テストの前にモックをリセット
     mockFetch.mockClear();
-    vi.clearAllMocks(); // consoleのモックもクリア
+    vi.clearAllMocks();
+    client = new GitHubClient();
   });
 
-  afterEach(() => {
-    // モックのリストアは不要 (global.fetch はテスト全体でモックしたまま)
-    // console のモックは beforeEach でクリアされる
-  });
+  afterEach(() => {});
 
-  describe("fetchGitHubContent", () => {
+  describe("fetchContent", () => {
     const owner = "test-owner";
     const repo = "test-repo";
     const path = "src/file.ts";
@@ -43,7 +39,7 @@ describe("github", () => {
         git_url: "test-git-url",
         download_url: "test-download-url",
         type: "file",
-        content: "Y29uc29sZS5sb2coImhlbGxvIik7", // console.log("hello");
+        content: "Y29uc29sZS5sb2coImhlbGxvIik7",
         encoding: "base64",
         _links: { self: "", git: "", html: "" },
       };
@@ -53,17 +49,17 @@ describe("github", () => {
         json: async () => mockFileData,
       });
 
-      const result = await fetchGitHubContent(owner, repo, path);
+      const result = await client.fetchContent(owner, repo, path);
 
       expect(mockFetch).toHaveBeenCalledOnce();
       expect(mockFetch).toHaveBeenCalledWith(
         `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
-        expect.any(Object) // headersなどを含むオブジェクト
+        expect.any(Object)
       );
-      expect(result).toEqual(mockFileData);
-      expect(console.log).toHaveBeenCalledWith(
-        expect.stringContaining("Fetching from GitHub API:")
-      );
+      expect(result.isOk()).toBe(true);
+      if (result.isOk()) {
+        expect(result.value).toEqual(mockFileData);
+      }
     });
 
     it("should fetch directory content successfully", async () => {
@@ -99,17 +95,17 @@ describe("github", () => {
         json: async () => mockDirData,
       });
 
-      const result = await fetchGitHubContent(owner, repo, "src");
+      const result = await client.fetchContent(owner, repo, "src");
 
       expect(mockFetch).toHaveBeenCalledOnce();
       expect(mockFetch).toHaveBeenCalledWith(
         `https://api.github.com/repos/${owner}/${repo}/contents/src`,
         expect.any(Object)
       );
-      expect(result).toEqual(mockDirData);
-      expect(console.log).toHaveBeenCalledWith(
-        expect.stringContaining("Fetching from GitHub API:")
-      );
+      expect(result.isOk()).toBe(true);
+      if (result.isOk()) {
+        expect(result.value).toEqual(mockDirData);
+      }
     });
 
     it("should include ref in the API URL if provided", async () => {
@@ -117,28 +113,35 @@ describe("github", () => {
         ok: true,
         status: 200,
         json: async () =>
-          ({ type: "file", content: "", encoding: "base64" }) as GitHubFile, // Minimal valid response
+          ({ type: "file", content: "", encoding: "base64" }) as GitHubFile,
       });
 
-      await fetchGitHubContent(owner, repo, path, ref);
+      const result = await client.fetchContent(owner, repo, path, ref);
 
       expect(mockFetch).toHaveBeenCalledOnce();
       expect(mockFetch).toHaveBeenCalledWith(
         `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${encodeURIComponent(ref)}`,
         expect.any(Object)
       );
-      expect(console.log).toHaveBeenCalledWith(
-        expect.stringContaining(`ref=${ref}`)
-      );
+      expect(result.isOk()).toBe(true);
     });
 
-    it("should throw an error if owner or repo is missing", async () => {
-      await expect(fetchGitHubContent("", repo, path)).rejects.toThrow(
-        "Repository owner and name are required."
-      );
-      await expect(fetchGitHubContent(owner, "", path)).rejects.toThrow(
-        "Repository owner and name are required."
-      );
+    it("should return error if owner or repo is missing", async () => {
+      const result1 = await client.fetchContent("", repo, path);
+      const result2 = await client.fetchContent(owner, "", path);
+
+      expect(result1.isErr()).toBe(true);
+      expect(result2.isErr()).toBe(true);
+      if (result1.isErr()) {
+        expect(result1.error.message).toBe(
+          "Repository owner and name are required."
+        );
+      }
+      if (result2.isErr()) {
+        expect(result2.error.message).toBe(
+          "Repository owner and name are required."
+        );
+      }
       expect(mockFetch).not.toHaveBeenCalled();
     });
 
@@ -154,14 +157,15 @@ describe("github", () => {
         json: async () => errorResponse,
       });
 
-      await expect(
-        fetchGitHubContent(owner, repo, "nonexistent/path")
-      ).rejects.toThrow(
-        "GitHub API error: 404 Not Found - Not Found (Not Found)"
-      );
-      expect(console.error).toHaveBeenCalledWith(
-        expect.stringContaining("404 Not Found")
-      );
+      const result = await client.fetchContent(owner, repo, "nonexistent/path");
+
+      expect(result.isErr()).toBe(true);
+      if (result.isErr()) {
+        expect(result.error.message).toBe(
+          "GitHub API error: 404 Not Found - Not Found (Not Found)"
+        );
+        expect(result.error.status).toBe(404);
+      }
     });
 
     it("should handle 403 Rate Limit Exceeded error", async () => {
@@ -176,15 +180,15 @@ describe("github", () => {
         json: async () => errorResponse,
       });
 
-      await expect(fetchGitHubContent(owner, repo, path)).rejects.toThrow(
-        /GitHub API error: 403 Forbidden - API rate limit exceeded.*\(Rate limit exceeded\)/
-      );
-      expect(console.error).toHaveBeenCalledWith(
-        expect.stringContaining("403 Forbidden")
-      );
-      expect(console.error).toHaveBeenCalledWith(
-        expect.stringContaining("Rate limit exceeded")
-      );
+      const result = await client.fetchContent(owner, repo, path);
+
+      expect(result.isErr()).toBe(true);
+      if (result.isErr()) {
+        expect(result.error.message).toMatch(
+          /GitHub API error: 403 Forbidden - API rate limit exceeded.*\(Rate limit exceeded\)/
+        );
+        expect(result.error.status).toBe(403);
+      }
     });
 
     it("should handle other API errors", async () => {
@@ -199,12 +203,15 @@ describe("github", () => {
         json: async () => errorResponse,
       });
 
-      await expect(fetchGitHubContent(owner, repo, path)).rejects.toThrow(
-        "GitHub API error: 500 Internal Server Error - Internal Server Error"
-      );
-      expect(console.error).toHaveBeenCalledWith(
-        expect.stringContaining("500 Internal Server Error")
-      );
+      const result = await client.fetchContent(owner, repo, path);
+
+      expect(result.isErr()).toBe(true);
+      if (result.isErr()) {
+        expect(result.error.message).toBe(
+          "GitHub API error: 500 Internal Server Error - Internal Server Error"
+        );
+        expect(result.error.status).toBe(500);
+      }
     });
 
     it("should handle API errors where response is not JSON", async () => {
@@ -214,58 +221,66 @@ describe("github", () => {
         statusText: "Bad Gateway",
         json: async () => {
           throw new Error("Invalid JSON");
-        }, // Simulate non-JSON response
+        },
       });
 
-      await expect(fetchGitHubContent(owner, repo, path)).rejects.toThrow(
-        "GitHub API error: 502 Bad Gateway" // Error message without details
-      );
-      expect(console.error).toHaveBeenCalledWith(
-        "GitHub API error: 502 Bad Gateway"
-      );
+      const result = await client.fetchContent(owner, repo, path);
+
+      expect(result.isErr()).toBe(true);
+      if (result.isErr()) {
+        expect(result.error.message).toBe("GitHub API error: 502 Bad Gateway");
+        expect(result.error.status).toBe(502);
+      }
     });
 
     it("should handle network errors during fetch", async () => {
       const networkError = new Error("Network request failed");
       mockFetch.mockRejectedValueOnce(networkError);
 
-      await expect(fetchGitHubContent(owner, repo, path)).rejects.toThrow(
-        networkError // Should re-throw the original network error
-      );
-      expect(console.error).toHaveBeenCalledWith(
-        "Error fetching GitHub content:",
-        networkError
-      );
+      const result = await client.fetchContent(owner, repo, path);
+
+      expect(result.isErr()).toBe(true);
+      if (result.isErr()) {
+        expect(result.error.message).toBe("Network request failed");
+        expect(result.error.type).toBe("NETWORK_ERROR");
+      }
     });
   });
 
   describe("decodeBase64Content", () => {
     it("should decode a valid Base64 string", () => {
-      const base64 = "SGVsbG8gV29ybGQh"; // "Hello World!"
+      const base64 = "SGVsbG8gV29ybGQh";
       const expected = "Hello World!";
-      expect(decodeBase64Content(base64)).toBe(expected);
+      const result = client.decodeBase64Content(base64);
+
+      expect(result.isOk()).toBe(true);
+      if (result.isOk()) {
+        expect(result.value).toBe(expected);
+      }
     });
 
     it("should handle UTF-8 characters correctly", () => {
       const base64 = "44GT44KT44Gr44Gh44Gv5LiW55WM";
       const expected = "こんにちは世界";
-      expect(decodeBase64Content(base64)).toBe(expected);
+      const result = client.decodeBase64Content(base64);
+
+      expect(result.isOk()).toBe(true);
+      if (result.isOk()) {
+        expect(result.value).toBe(expected);
+      }
     });
 
-    it("should return error message for invalid Base64 string", () => {
+    it("should return error for invalid Base64 string", () => {
       const invalidBase64 = "Invalid%%%";
-      const result = decodeBase64Content(invalidBase64);
-      expect(result).toMatch(
-        /Error: Invalid Base64 string|Error decoding content/
-      );
-      expect(console.error).toHaveBeenCalledWith(
-        expect.stringContaining("Error decoding Base64 content:"),
-        expect.any(Error)
-      );
+      const result = client.decodeBase64Content(invalidBase64);
+
+      expect(result.isErr()).toBe(true);
+      if (result.isErr()) {
+        expect(result.error.message).toBe("Invalid Base64 string");
+      }
     });
 
     it("should return generic error message for other decoding errors", () => {
-      // Simulate an unexpected error during TextDecoder.decode (hard to trigger directly)
       const mockDecode = vi.fn().mockImplementation(() => {
         throw new Error("Unexpected decode error");
       });
@@ -274,16 +289,14 @@ describe("github", () => {
         decode: mockDecode,
       })) as unknown as typeof TextDecoder;
 
-      const base64 = "SGVsbG8="; // "Hello"
-      const result = decodeBase64Content(base64);
+      const base64 = "SGVsbG8=";
+      const result = client.decodeBase64Content(base64);
 
-      expect(result).toBe("Error decoding content");
-      expect(console.error).toHaveBeenCalledWith(
-        expect.stringContaining("Error decoding Base64 content:"),
-        expect.any(Error)
-      );
+      expect(result.isErr()).toBe(true);
+      if (result.isErr()) {
+        expect(result.error.message).toBe("Error decoding content");
+      }
 
-      // Restore original TextDecoder
       global.TextDecoder = originalTextDecoder;
     });
   });

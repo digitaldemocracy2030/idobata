@@ -1,9 +1,11 @@
 import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { GitHubFile } from "../../lib/github"; // Import the type
-import { decodeBase64Content } from "../../lib/github"; // Import the decoder
-import useContentStore from "../../store/contentStore"; // Import the Zustand store
-import MarkdownViewer from "../ui/MarkdownViewer"; // Import the MarkdownViewer component
+import { chatApiClient } from "../../lib/api";
+import type { GitHubFile } from "../../lib/github";
+import { decodeBase64Content } from "../../lib/github";
+import useContentStore from "../../store/contentStore";
+import type { ChatMessageRequest, OpenAIMessage } from "../../types/api";
+import MarkdownViewer from "../ui/MarkdownViewer";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 
@@ -12,21 +14,6 @@ const getFormattedFileName = (path: string): string => {
   const fileName = path.split("/").pop() || "";
   return fileName.endsWith(".md") ? fileName.slice(0, -3) : fileName;
 };
-
-// Define the structure for OpenAI API messages
-interface OpenAIMessage {
-  role: "user" | "assistant" | "system" | "function";
-  content: string | null;
-  name?: string;
-  function_call?: {
-    name: string;
-    arguments: string;
-  };
-}
-
-// API base URL from environment variables
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/api";
 
 const ChatPanel: React.FC = () => {
   // Local state for input, loading, connection, and general errors
@@ -43,7 +30,8 @@ const ChatPanel: React.FC = () => {
     contentType, // Get the content type ('file' or 'dir')
     content, // Get the raw content object
     chatThreads,
-    getOrCreateChatThread,
+    getChatThread,
+    createChatThread,
     addMessageToThread,
     ensureBranchIdForThread,
     reloadCurrentContent, // Import the reload action
@@ -54,13 +42,13 @@ const ChatPanel: React.FC = () => {
     return contentType === "file" && currentPath.endsWith(".md");
   }, [contentType, currentPath]);
 
-  // Get the current chat thread and ensure branchId exists when an MD file is active
+  // Get the current chat thread when an MD file is active
   const currentThread = useMemo(() => {
     if (isMdFileActive) {
-      return getOrCreateChatThread(currentPath);
+      return getChatThread(currentPath);
     }
     return null; // Return null if no MD file is active
-  }, [isMdFileActive, currentPath, chatThreads, getOrCreateChatThread]); // chatThreads dependency is important
+  }, [isMdFileActive, currentPath, chatThreads, getChatThread]); // chatThreads dependency is important
 
   const currentBranchId = useMemo(() => {
     if (isMdFileActive && currentPath) {
@@ -75,86 +63,64 @@ const ChatPanel: React.FC = () => {
     return currentThread?.messages ?? [];
   }, [currentThread]);
 
+  // Create chat thread if MD file is active but thread doesn't exist
+  useEffect(() => {
+    if (isMdFileActive && currentPath && !currentThread) {
+      createChatThread(currentPath);
+    }
+  }, [isMdFileActive, currentPath, currentThread, createChatThread]);
+
   // Check backend connection status on component mount
   // Check connection status and attempt auto-connect on mount
   useEffect(() => {
     const initializeConnection = async () => {
-      setIsLoading(true); // Start loading indicator early
+      setIsLoading(true);
       setError(null);
-      const initiallyConnected = await checkConnectionStatus(); // Check initial status
 
-      if (!initiallyConnected) {
-        // If not connected, attempt to connect
-        console.log("Not connected, attempting auto-connection...");
-        try {
-          // connectToGithubContributionServer now primarily handles the API call and setting isConnected/error
-          await connectToGithubContributionServer();
-          // Check status *after* the attempt to confirm
-          const connectedAfterAttempt = await checkConnectionStatus();
+      const initiallyConnected = await checkConnectionStatus();
 
-          // Add appropriate message only if an MD file is active *at the time the connection resolves*
-          // Need to get the latest state values inside the async function
-          const currentStoreState = useContentStore.getState();
-          const isActiveMd =
-            currentStoreState.contentType === "file" &&
-            currentStoreState.currentPath.endsWith(".md");
-          const pathForMessage = currentStoreState.currentPath;
-
-          if (isActiveMd && pathForMessage) {
-            if (connectedAfterAttempt) {
-              addMessageToThread(pathForMessage, {
-                text: "サーバーに自動接続しました。",
-                sender: "bot",
-              });
-            } else {
-              // Use the error state which should have been set by connectToGithubContributionServer
-              const currentError = error; // Capture error state after connect attempt
-              addMessageToThread(pathForMessage, {
-                text: `エラー：サーバーへの自動接続に失敗しました。${currentError || "接続試行に失敗しました。"}`.trim(),
-                sender: "bot",
-              });
-            }
-          } else if (!connectedAfterAttempt) {
-            console.warn(
-              "自動接続に失敗しましたが、メッセージを表示するアクティブなMDファイルがありません。"
-            );
-          } else {
-            console.log(
-              "自動接続しましたが、メッセージを表示するアクティブなMDファイルがありません。"
-            );
-          }
-        } catch (err) {
-          // Catch errors during the connection *process* itself (e.g., network issues before API call)
-          // Errors from the API call itself are handled within connectToGithubContributionServer setting the 'error' state
-          console.error("初期接続試行中にエラーが発生しました:", err);
-          const errorMessage =
-            err instanceof Error ? err.message : "不明な初期化エラー";
-          setError(errorMessage); // Set error state
-          await checkConnectionStatus(); // Ensure isConnected reflects failure
-
-          // Add error message if MD file is active
-          const currentStoreState = useContentStore.getState();
-          const isActiveMd =
-            currentStoreState.contentType === "file" &&
-            currentStoreState.currentPath.endsWith(".md");
-          const pathForMessage = currentStoreState.currentPath;
-          if (isActiveMd && pathForMessage) {
-            addMessageToThread(pathForMessage, {
-              text: `エラー：初期化中に失敗しました。${errorMessage}`,
-              sender: "bot",
-            });
-          }
-        } finally {
-          setIsLoading(false); // Ensure loading is turned off
-        }
-      } else {
+      if (initiallyConnected) {
         console.log("マウント時に既に接続されています。");
-        setIsLoading(false); // Turn off loading if already connected
+        setIsLoading(false);
+        return;
       }
+
+      console.log("Not connected, attempting auto-connection...");
+      await connectToGithubContributionServer();
+      const connectedAfterAttempt = await checkConnectionStatus();
+
+      const currentStoreState = useContentStore.getState();
+      const isActiveMd =
+        currentStoreState.contentType === "file" &&
+        currentStoreState.currentPath.endsWith(".md");
+      const pathForMessage = currentStoreState.currentPath;
+
+      if (!isActiveMd || !pathForMessage) {
+        if (connectedAfterAttempt) {
+          console.log(
+            "自動接続しましたが、メッセージを表示するアクティブなMDファイルがありません。"
+          );
+        } else {
+          console.warn(
+            "自動接続に失敗しましたが、メッセージを表示するアクティブなMDファイルがありません。"
+          );
+        }
+        setIsLoading(false);
+        return;
+      }
+
+      if (!connectedAfterAttempt) {
+        addMessageToThread(pathForMessage, {
+          text: `エラー：サーバーへの自動接続に失敗しました。${error || "接続試行に失敗しました。"}`.trim(),
+          sender: "bot",
+        });
+      }
+
+      setIsLoading(false);
     };
 
     initializeConnection();
-  }, []); // Run only once on mount
+  }, []);
 
   // Get user name on mount
   useEffect(() => {
@@ -164,20 +130,18 @@ const ChatPanel: React.FC = () => {
     }
   }, []); // Run only once on mount
 
-  // Check if the backend is connected to an MCP server
-  // Check if the backend is connected and return the status
   const checkConnectionStatus = async (): Promise<boolean> => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/chat/status`);
-      const data = await response.json();
-      const status = data.initialized as boolean;
-      setIsConnected(status);
-      return status; // Return the connection status
-    } catch (err) {
-      console.error("接続ステータスの確認に失敗しました:", err);
+    const result = await chatApiClient.getStatus();
+
+    if (result.isErr()) {
+      console.error("接続ステータスの確認に失敗しました:", result.error);
       setIsConnected(false);
-      return false; // Return false on error
+      return false;
     }
+
+    const status = result.value.initialized;
+    setIsConnected(status);
+    return status;
   };
 
   // Scroll to bottom when messages update
@@ -188,51 +152,34 @@ const ChatPanel: React.FC = () => {
     }
   }, [messages]); // Depends on the derived messages state
 
-  // Connect to the weather MCP server
   const connectToGithubContributionServer = async () => {
     setIsLoading(true);
     setError(null);
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/chat/connect`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // No body needed, server path is now read from backend .env
-      });
+    const result = await chatApiClient.connect();
 
-      const data = await response.json();
-
-      // Don't add messages here directly, let the check after connection handle it
-      if (response.ok) {
-        setIsConnected(true);
-        // Message added in the .then block below
-      } else {
-        setError(data.error || "サーバーへの接続に失敗しました");
-        // Error message added in the .then block below
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "不明なエラー";
+    if (result.isErr()) {
+      const errorMessage =
+        result.error.message || "サーバーへの接続に失敗しました";
       setError(errorMessage);
-      // Add error message to the current thread if an MD file is active
-      // Error state is set, message will be added by the caller (useEffect or button handler) if needed
-    } finally {
+      setIsConnected(false);
       setIsLoading(false);
+      return;
     }
+
+    setIsConnected(true);
+    setIsLoading(false);
   };
 
-  // Add a bot message to the chat
-  // Helper to add a bot message to the *currently active* thread
   const addBotMessageToCurrentThread = (text: string) => {
-    if (isMdFileActive && currentPath) {
-      addMessageToThread(currentPath, { text, sender: "bot" });
-    } else {
+    if (!isMdFileActive || !currentPath) {
       console.warn(
         "アクティブなMDファイルがないときにボットメッセージを追加しようとしました。"
       );
-      // Optionally display a general status message elsewhere if needed
+      return;
     }
+
+    addMessageToThread(currentPath, { text, sender: "bot" });
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -241,112 +188,88 @@ const ChatPanel: React.FC = () => {
   };
 
   const handleSendMessage = async () => {
-    if (
-      inputValue.trim() === "" ||
-      !isMdFileActive ||
-      !currentPath ||
-      !currentThread
-    )
+    if (inputValue.trim() === "" || !isMdFileActive || !currentPath) {
       return;
+    }
+
+    // Ensure thread exists before sending message
+    let thread = currentThread;
+    if (!thread) {
+      thread = createChatThread(currentPath);
+    }
 
     if (!userName) {
       const name = prompt(
         "お名前を入力してください（あなたの提案の記名に使用されます）："
       );
-      if (name) {
-        setUserName(name);
-        localStorage.setItem("userName", name);
-      } else {
+      const finalName = name || "匿名ユーザー";
+      setUserName(finalName);
+      localStorage.setItem("userName", finalName);
+
+      if (!name) {
         console.warn("ユーザーが名前を提供しませんでした。");
-        setUserName("匿名ユーザー");
-        localStorage.setItem("userName", "匿名ユーザー");
       }
     }
 
+    const userInput = inputValue;
     const userMessageContent = {
-      text: inputValue,
-      sender: "user" as const, // Explicitly type sender
+      text: userInput,
+      sender: "user" as const,
     };
 
-    // Add user message to the store for the current thread
     addMessageToThread(currentPath, userMessageContent);
-
-    // Clear input and set loading state
-    const userInput = inputValue;
     setInputValue("");
     setIsLoading(true);
     setError(null);
 
-    // Prepare history for the API call
-    // Prepare history from the *current thread's* messages for the API call
-    const historyForAPI: OpenAIMessage[] = currentThread.messages.map(
-      (msg) => ({
-        role: msg.sender === "user" ? "user" : "assistant",
-        content: msg.text,
-      })
-    );
-    // Add the new user message to the history being sent
+    const historyForAPI: OpenAIMessage[] = thread.messages.map((msg) => ({
+      role: msg.sender === "user" ? "user" : "assistant",
+      content: msg.text,
+    }));
     historyForAPI.push({ role: "user", content: userInput });
 
-    // Prepare context: branchId and fileContent
     let fileContent: string | null = null;
     if (contentType === "file" && content && "content" in content) {
-      try {
-        fileContent = decodeBase64Content((content as GitHubFile).content);
-      } catch (e) {
-        console.error("ファイルコンテンツのデコードに失敗しました:", e);
-        // Optionally handle the error, e.g., send null or an error message
+      const decodeResult = decodeBase64Content((content as GitHubFile).content);
+      if (decodeResult.isErr()) {
+        console.error("Base64デコードに失敗しました:", decodeResult.error);
+        fileContent = null;
+      } else {
+        fileContent = decodeResult.value;
       }
     }
 
-    const payload = {
+    const request: ChatMessageRequest = {
       message: userInput,
       history: historyForAPI,
-      branchId: currentBranchId, // Add branchId
-      fileContent: fileContent, // Add decoded file content (or null)
-      userName: userName, // Add user name
-      filePath: currentPath, // Add file path
+      branchId: currentBranchId,
+      fileContent: fileContent,
+      userName: userName,
+      filePath: currentPath,
     };
 
-    try {
-      // Send message, history, and context to backend
-      const response = await fetch(`${API_BASE_URL}/chat`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload), // Send the updated payload
-      });
+    const result = await chatApiClient.sendMessage(request);
 
-      const data = await response.json();
-
-      if (response.ok) {
-        // Add bot response to the current thread in the store
-        // Add bot response to the current thread in the store
-        addMessageToThread(currentPath, { text: data.response, sender: "bot" });
-        // Reload the content after receiving the bot's response
-        console.log(
-          "ボットの応答を受信しました。コンテンツを再読み込みしています..."
-        );
-        reloadCurrentContent();
-      } else {
-        const errorMsg = data.error || "応答の取得に失敗しました";
-        setError(errorMsg);
-        addMessageToThread(currentPath, {
-          text: `エラー：${errorMsg}`,
-          sender: "bot",
-        });
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "不明なエラー";
+    if (result.isErr()) {
+      const errorMessage = result.error.message || "応答の取得に失敗しました";
       setError(errorMessage);
       addMessageToThread(currentPath, {
         text: `エラー：${errorMessage}`,
         sender: "bot",
       });
-    } finally {
       setIsLoading(false);
+      return;
     }
+
+    addMessageToThread(currentPath, {
+      text: result.value.response,
+      sender: "bot",
+    });
+    console.log(
+      "ボットの応答を受信しました。コンテンツを再読み込みしています..."
+    );
+    reloadCurrentContent();
+    setIsLoading(false);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -383,32 +306,22 @@ const ChatPanel: React.FC = () => {
             onClick={async () => {
               setIsLoading(true);
               setError(null);
-              try {
-                await connectToGithubContributionServer();
-                const connected = await checkConnectionStatus();
-                if (isMdFileActive && currentPath) {
-                  if (connected) {
-                    addBotMessageToCurrentThread("手動接続に成功しました。");
-                  } else {
-                    addBotMessageToCurrentThread(
-                      `エラー：手動接続に失敗しました。${error || ""}`.trim()
-                    );
-                  }
-                }
-              } catch (err) {
-                console.error("手動接続エラー:", err);
-                const errorMessage =
-                  err instanceof Error ? err.message : "不明なエラー";
-                setError(errorMessage);
-                await checkConnectionStatus();
-                if (isMdFileActive && currentPath) {
-                  addBotMessageToCurrentThread(
-                    `エラー：手動接続に失敗しました。${errorMessage}`
-                  );
-                }
-              } finally {
+
+              await connectToGithubContributionServer();
+              const connected = await checkConnectionStatus();
+
+              if (!isMdFileActive || !currentPath) {
                 setIsLoading(false);
+                return;
               }
+
+              if (!connected) {
+                addBotMessageToCurrentThread(
+                  `エラー：手動接続に失敗しました。${error || ""}`.trim()
+                );
+              }
+
+              setIsLoading(false);
             }}
             disabled={isLoading}
             variant="default"
@@ -417,11 +330,6 @@ const ChatPanel: React.FC = () => {
           >
             {isLoading ? "接続中..." : "サーバーに接続"}
           </Button>
-        )}
-        {isConnected && (
-          <span className="text-sm text-accent-dark font-medium">
-            ✓ 接続済み
-          </span>
         )}
       </div>
       {/* Chat messages area */}
@@ -450,12 +358,18 @@ const ChatPanel: React.FC = () => {
                 className={`p-2 rounded-lg max-w-[80%] ${
                   // Removed whitespace-pre-wrap as MarkdownViewer handles formatting
                   message.sender === "user"
-                    ? "bg-primary-500 text-white chat-bubble-user" // Added chat-bubble-user class
-                    : "bg-secondary-200 text-secondary-800 chat-bubble-bot" // Added chat-bubble-bot class
+                    ? "bg-accent text-white chat-bubble-user" // Added chat-bubble-user class
+                    : "bg-gray-100 text-secondary-800 chat-bubble-bot" // Added chat-bubble-bot class
                 }`}
               >
                 {/* Render message content using MarkdownViewer */}
-                <MarkdownViewer content={message.text} />
+                <MarkdownViewer
+                  content={
+                    typeof message.text === "string"
+                      ? message.text
+                      : String(message.text)
+                  }
+                />
               </div>
             </div>
           ))
@@ -493,7 +407,7 @@ const ChatPanel: React.FC = () => {
             inputValue.trim() === ""
           }
           variant="default"
-          className="rounded-l-none bg-primary-500 hover:bg-primary-600 text-white h-auto border-l-0"
+          className="rounded-l-none bg-accent hover:bg-accent-dark text-white h-auto border-l-0"
         >
           {isLoading ? "..." : "送信"}
         </Button>
