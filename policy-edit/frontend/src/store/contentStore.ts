@@ -212,7 +212,10 @@ const useContentStore = create<ContentState>()(
       },
 
       insertWelcomeMessageToThread: (path) => {
-        const welcomeMessage = "こんにちは。私はこのドキュメントについて、要約したり、変更提案を受け付けるAIです。何か気になることはありますか？";
+        const defaultMessage =
+          "こんにちは！私はこのドキュメントについて、質問に答えたり、変更提案を一緒に取りまとめるのが得意なAIです。何か気になることはありますか？";
+        const welcomeMessage =
+          import.meta.env.VITE_POLICY_CHAT_WELCOME_MESSAGE || defaultMessage;
 
         set((state) => {
           const thread = state.chatThreads[path];
@@ -224,8 +227,10 @@ const useContentStore = create<ContentState>()(
           }
 
           // Check if welcome message already exists
-          const hasWelcomeMessage = thread.messages.some(msg =>
-            msg.sender === "bot" && msg.text.includes("こんにちは。私はこのドキュメントについて")
+          const hasWelcomeMessage = thread.messages.some(
+            (msg) =>
+              msg.sender === "bot" &&
+              msg.text.includes("こんにちは。私はこのドキュメントについて")
           );
 
           if (hasWelcomeMessage) {

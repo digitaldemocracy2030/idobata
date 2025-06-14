@@ -76,7 +76,13 @@ const ChatPanel: React.FC = () => {
     if (isMdFileActive && currentPath && currentThread && isConnected) {
       insertWelcomeMessageToThread(currentPath);
     }
-  }, [isMdFileActive, currentPath, currentThread, isConnected, insertWelcomeMessageToThread]);
+  }, [
+    isMdFileActive,
+    currentPath,
+    currentThread,
+    isConnected,
+    insertWelcomeMessageToThread,
+  ]);
 
   // Check backend connection status on component mount
   // Check connection status and attempt auto-connect on mount
