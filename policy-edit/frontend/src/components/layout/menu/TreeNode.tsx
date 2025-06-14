@@ -1,8 +1,8 @@
 import { ChevronDown, ChevronRight, FileText, Folder } from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
-import useNavigatorStore from "../../../store/navigatorStore";
 import type { TreeNodeData } from "../../../features/navigation/types/navigation";
+import useNavigatorStore from "../../../store/navigatorStore";
 
 interface TreeNodeProps {
   node: TreeNodeData;

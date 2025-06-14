@@ -7,10 +7,7 @@ interface MenuPanelProps {
   children?: React.ReactNode;
 }
 
-const MenuPanel: React.FC<MenuPanelProps> = ({
-  isOpen,
-  isMobile,
-}) => {
+const MenuPanel: React.FC<MenuPanelProps> = ({ isOpen, isMobile }) => {
   return (
     <nav
       className={`
