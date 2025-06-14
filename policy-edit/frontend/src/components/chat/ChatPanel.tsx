@@ -33,6 +33,7 @@ const ChatPanel: React.FC = () => {
     getChatThread,
     createChatThread,
     addMessageToThread,
+    insertWelcomeMessageToThread,
     ensureBranchIdForThread,
     reloadCurrentContent, // Import the reload action
   } = useContentStore();
@@ -69,6 +70,13 @@ const ChatPanel: React.FC = () => {
       createChatThread(currentPath);
     }
   }, [isMdFileActive, currentPath, currentThread, createChatThread]);
+
+  // Insert welcome message when MD file is loaded and connected
+  useEffect(() => {
+    if (isMdFileActive && currentPath && currentThread && isConnected) {
+      insertWelcomeMessageToThread(currentPath);
+    }
+  }, [isMdFileActive, currentPath, currentThread, isConnected, insertWelcomeMessageToThread]);
 
   // Check backend connection status on component mount
   // Check connection status and attempt auto-connect on mount
@@ -110,10 +118,7 @@ const ChatPanel: React.FC = () => {
       }
 
       if (connectedAfterAttempt) {
-        addMessageToThread(pathForMessage, {
-          text: "サーバーに自動接続しました。",
-          sender: "bot",
-        });
+        insertWelcomeMessageToThread(pathForMessage);
       } else {
         addMessageToThread(pathForMessage, {
           text: `エラー：サーバーへの自動接続に失敗しました。${error || "接続試行に失敗しました。"}`.trim(),
@@ -321,7 +326,7 @@ const ChatPanel: React.FC = () => {
               }
 
               if (connected) {
-                addBotMessageToCurrentThread("手動接続に成功しました。");
+                insertWelcomeMessageToThread(currentPath);
               } else {
                 addBotMessageToCurrentThread(
                   `エラー：手動接続に失敗しました。${error || ""}`.trim()
@@ -337,11 +342,6 @@ const ChatPanel: React.FC = () => {
           >
             {isLoading ? "接続中..." : "サーバーに接続"}
           </Button>
-        )}
-        {isConnected && (
-          <span className="text-sm text-accent-dark font-medium">
-            ✓ 接続済み
-          </span>
         )}
       </div>
       {/* Chat messages area */}
