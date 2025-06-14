@@ -78,7 +78,7 @@ function updateTreeData(
   newChildren: GitHubDirectoryItem[]
 ): TreeNodeData[] {
   if (targetPath === "") {
-    return newChildren.map((item) => ({
+    const mappedChildren = newChildren.map((item) => ({
       name: item.name,
       path: item.path,
       type: item.type === "dir" ? "dir" : "file",
@@ -86,20 +86,36 @@ function updateTreeData(
       isExpanded: false,
       isLoaded: item.type === "file",
     }));
+
+    // ファイルを上に、フォルダーを下にソート
+    return mappedChildren.sort((a, b) => {
+      if (a.type === "file" && b.type === "dir") return -1;
+      if (a.type === "dir" && b.type === "file") return 1;
+      return a.name.localeCompare(b.name);
+    });
   }
 
   return treeData.map((node) => {
     if (node.path === targetPath && node.type === "dir") {
+      const mappedChildren = newChildren.map((item) => ({
+        name: item.name,
+        path: item.path,
+        type: item.type === "dir" ? "dir" : "file",
+        children: item.type === "dir" ? [] : undefined,
+        isExpanded: false,
+        isLoaded: item.type === "file",
+      }));
+
+      // ファイルを上に、フォルダーを下にソート
+      const sortedChildren = mappedChildren.sort((a, b) => {
+        if (a.type === "file" && b.type === "dir") return -1;
+        if (a.type === "dir" && b.type === "file") return 1;
+        return a.name.localeCompare(b.name);
+      });
+
       return {
         ...node,
-        children: newChildren.map((item) => ({
-          name: item.name,
-          path: item.path,
-          type: item.type === "dir" ? "dir" : "file",
-          children: item.type === "dir" ? [] : undefined,
-          isExpanded: false,
-          isLoaded: item.type === "file",
-        })),
+        children: sortedChildren,
         isLoaded: true,
       };
     }

@@ -11,12 +11,6 @@ function DirectoryNavigator() {
 
   return (
     <div className="w-full">
-      <div className="mb-3">
-        <h3 className="text-sm font-semibold text-gray-700 px-2">
-          ディレクトリ
-        </h3>
-      </div>
-
       <div className="max-h-96 overflow-y-auto">
         {treeData.length === 0 ? (
           <div className="px-2 py-4 text-sm text-gray-500 text-center">
