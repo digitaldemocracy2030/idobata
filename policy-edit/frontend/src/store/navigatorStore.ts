@@ -78,10 +78,10 @@ function updateTreeData(
   newChildren: GitHubDirectoryItem[]
 ): TreeNodeData[] {
   if (targetPath === "") {
-    const mappedChildren = newChildren.map((item) => ({
+    const mappedChildren: TreeNodeData[] = newChildren.map((item) => ({
       name: item.name,
       path: item.path,
-      type: item.type === "dir" ? "dir" : "file",
+      type: (item.type === "dir" ? "dir" : "file") as "file" | "dir",
       children: item.type === "dir" ? [] : undefined,
       isExpanded: false,
       isLoaded: item.type === "file",
@@ -97,10 +97,10 @@ function updateTreeData(
 
   return treeData.map((node) => {
     if (node.path === targetPath && node.type === "dir") {
-      const mappedChildren = newChildren.map((item) => ({
+      const mappedChildren: TreeNodeData[] = newChildren.map((item) => ({
         name: item.name,
         path: item.path,
-        type: item.type === "dir" ? "dir" : "file",
+        type: (item.type === "dir" ? "dir" : "file") as "file" | "dir",
         children: item.type === "dir" ? [] : undefined,
         isExpanded: false,
         isLoaded: item.type === "file",
