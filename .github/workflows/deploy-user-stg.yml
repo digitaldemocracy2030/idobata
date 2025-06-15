@@ -1,0 +1,61 @@
+name: Deploy User to Staging
+
+on:
+  push:
+    branches:
+      - cdp
+    paths:
+      - 'frontend/**'
+      - 'cloud-run/docker/Dockerfile.frontend'
+      - '.github/workflows/deploy-user-stg.yml'
+
+env:
+  PROJECT_ID: daikibo-jyukugi-cdp
+  REGION: asia-northeast1
+  REPOSITORY: stg-idobata-repo
+  SERVICE_NAME: user
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+        service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+
+    - name: Configure Docker
+      run: |
+        gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+    - name: Build and Push
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: cloud-run/docker/Dockerfile.frontend
+        platforms: linux/amd64
+        push: true
+        tags: |
+          ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE_NAME }}:latest
+          ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+        build-args: |
+          VITE_API_BASE_URL=https://stg.api.daikibo-jyukugi-cdp.jp
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Deploy Complete
+      run: |
+        echo "✅ Deployment complete!"
+        echo "🔗 Service URL: https://stg.daikibo-jyukugi-cdp.jp"
