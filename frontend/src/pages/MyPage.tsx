@@ -145,13 +145,13 @@ const MyPage: React.FC = () => {
             </div>
           )}
         </form>
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <p className="text-gray-600">ユーザーID（デバッグ用）:</p>
           <p className="font-mono bg-gray-100 p-2 rounded">{user.id}</p>
           <p className="text-sm text-gray-500 mt-1">
             ※ユーザーIDはリセットできません
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

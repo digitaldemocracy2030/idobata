@@ -1,11 +1,18 @@
 import csv
 import json
 import html
+import os
 import requests
-
-# ファイル名
+# 実際のファイル名に変更してください。
+# csvのヘッダーはcontent, sourceType,sourceUrl(任意)です。
 csv_file = "driving.csv"
-endpoint = "http://localhost:3000/api/import/generic"
+theme_id = "aaaaaaa"
+
+# 実際のthemeIdに変更してください。
+api_url = os.getenv("API_URL")
+if api_url is None:
+    raise ValueError("API_URL is not set")
+endpoint = f"{api_url}/api/themes/{theme_id}/import/generic"
 
 with open(csv_file, newline='', encoding='utf-8') as f:
     reader = csv.DictReader(f)
