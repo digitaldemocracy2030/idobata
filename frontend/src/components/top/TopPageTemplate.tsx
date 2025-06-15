@@ -38,7 +38,7 @@ const TopPageTemplate = ({ discussions, themes }: TopPageTemplateProps) => {
       <div className="flex flex-col gap-16  ">
         <HeroSection />
         <Section
-          title="人気の重要論点"
+          title="今まさにホットトピック"
           description="いま最も注目が集まっている論点はこちらです。中身を見てみましょう。"
           className="mb-6 bg-primary-weak rounded-3xl p-4 sm:p-8"
         >

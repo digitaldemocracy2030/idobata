@@ -8,3 +8,4 @@ uploads/
 uploads/profile-images/
 python-service/app/__pycache__/
 cloud-run/env/*.yaml
+idea-discussion/tmp/*.csv
