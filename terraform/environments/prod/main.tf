@@ -1,4 +1,4 @@
-# environments/stg/main.tf
+# environments/prod/main.tf
 provider "google" {
   project = var.project_id
   region  = var.region
@@ -11,7 +11,7 @@ provider "google-beta" {
 
 # ローカル変数
 locals {
-  env = "stg"
+  env = "prod"
   
   # 共通ラベル
   common_labels = {
@@ -170,7 +170,7 @@ module "api_service" {
   service_account = google_service_account.services["api"].email
   
   env_vars = {
-    NODE_ENV           = "development"  # stg環境なので
+    NODE_ENV           = "development"  # prod環境なので
     ENVIRONMENT        = local.env
     PYTHON_SERVICE_URL = "http://${local.services.python}"
     MONGODB_URI        = var.mongodb_uri

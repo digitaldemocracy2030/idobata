@@ -1,4 +1,4 @@
-# environments/stg/variables.tf
+# environments/prod/variables.tf
 
 variable "project_id" {
   description = "GCP Project ID"
