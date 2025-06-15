@@ -261,29 +261,30 @@ resource "google_cloud_run_service_iam_member" "python_invoker" {
 }
 
 # User サービスは常に公開
-resource "google_cloud_run_service_iam_member" "user_public_access" {
-  service  = module.user_service.service_name
-  location = var.region
-  role     = "roles/run.invoker"
-  member   = "allUsers"
-}
-
-# Admin サービスは特定ユーザーのみアクセス可能
-# resource "google_cloud_run_service_iam_member" "admin_access" {
-#   service  = module.admin_service.service_name
+# resource "google_cloud_run_service_iam_member" "user_public_access" {
+#   service  = module.user_service.service_name
 #   location = var.region
 #   role     = "roles/run.invoker"
-#   member = "user:foino74@gmail.com"
+#   member   = "allUsers"
 # }
 
 
-# Admin サービスを一時的に全ユーザーに追加
-resource "google_cloud_run_service_iam_member" "admin_public_access" {
-  service  = module.admin_service.service_name
-  location = var.region
-  role     = "roles/run.invoker"
-  member   = "allUsers"
-}
+# Admin サービスは常に公開
+# resource "google_cloud_run_service_iam_member" "admin_public_access" {
+#   service  = module.admin_service.service_name
+#   location = var.region
+#   role     = "roles/run.invoker"
+#   member   = "allUsers"
+# }
+
+# API サービスは常に公開
+# resource "google_cloud_run_service_iam_member" "api_public_access" {
+#   service  = module.api_service.service_name
+#   location = var.region
+#   role     = "roles/run.invoker"
+#   member   = "allUsers"
+# }
+
 
 # Identity-Aware Proxyの設定
 # resource "google_iap_web_iam_member" "admin_access" {
@@ -291,10 +292,27 @@ resource "google_cloud_run_service_iam_member" "admin_public_access" {
 #   member = "user:foino74@gmail.com"
 # }
 
-# API サービスへのアクセス許可も追加
+
+# User サービスは特定ユーザーのみアクセス可能
+resource "google_cloud_run_service_iam_member" "user_public_access" {
+  service  = module.user_service.service_name
+  location = var.region
+  role     = "roles/run.invoker"
+   member = "user:foino74@gmail.com"
+}
+
+# Admin サービスは特定ユーザーのみアクセス可能
+resource "google_cloud_run_service_iam_member" "admin_public_access" {
+  service  = module.admin_service.service_name
+  location = var.region
+  role     = "roles/run.invoker"
+   member = "user:foino74@gmail.com"
+}
+
+# API サービスは特定ユーザーのみアクセス可能
 resource "google_cloud_run_service_iam_member" "api_public_access" {
   service  = module.api_service.service_name
   location = var.region
   role     = "roles/run.invoker"
-  member   = "allUsers"
+   member = "user:foino74@gmail.com"
 }
