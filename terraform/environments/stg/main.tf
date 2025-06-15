@@ -27,6 +27,14 @@ locals {
     api    = "${local.env}-api-service"
     python = "${local.env}-python-service"
   }
+
+  service_account_emails = {
+    admin  = "${local.services.admin}-sa@${var.project_id}.iam.gserviceaccount.com"
+    user   = "${local.services.user}-sa@${var.project_id}.iam.gserviceaccount.com"
+    api    = "${local.services.api}-sa@${var.project_id}.iam.gserviceaccount.com"
+    python = "${local.services.python}-sa@${var.project_id}.iam.gserviceaccount.com"
+  }
+
 }
 
 # Artifact Registry（コンテナイメージ用）
@@ -139,7 +147,7 @@ module "user_service" {
 # ドメインマッピング - User
 resource "google_cloud_run_domain_mapping" "user" {
   location = var.region
-  name     = "${local.env}.user.daikibo-jyukugi-cdp.jp"
+  name     = "${local.env}.daikibo-jyukugi-cdp.jp"
 
   metadata {
     namespace = var.project_id
@@ -235,8 +243,8 @@ resource "google_storage_bucket_iam_member" "chromadb_access" {
 # IAM設定 - サービス間通信
 resource "google_cloud_run_service_iam_member" "api_invoker" {
   for_each = toset([
-    google_service_account.services["admin"].email,
-    google_service_account.services["user"].email
+    local.service_account_emails["admin"],
+    local.service_account_emails["user"]
   ])
   
   service  = module.api_service.service_name
