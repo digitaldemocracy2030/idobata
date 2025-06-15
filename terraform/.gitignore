@@ -1,0 +1,12 @@
+
+# Terraform
+**/.terraform/
+*.tfvars
+!*.tfvars.example
+*.tfstate
+*.tfstate.*
+
+
+environments/stg/.terraform.lock.hcl
+environments/stg/terraform.tfvars
+environments/stg/.terraform/
