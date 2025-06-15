@@ -269,10 +269,32 @@ resource "google_cloud_run_service_iam_member" "user_public_access" {
 }
 
 # Admin サービスは特定ユーザーのみアクセス可能
-resource "google_cloud_run_service_iam_member" "admin_access" {
+# resource "google_cloud_run_service_iam_member" "admin_access" {
+#   service  = module.admin_service.service_name
+#   location = var.region
+#   role     = "roles/run.invoker"
+#   member = "user:foino74@gmail.com"
+# }
+
+
+# Admin サービスを一時的に全ユーザーに追加
+resource "google_cloud_run_service_iam_member" "admin_public_access" {
   service  = module.admin_service.service_name
   location = var.region
   role     = "roles/run.invoker"
-  member = "user:foino74@gmail.com"
+  member   = "allUsers"
 }
 
+# Identity-Aware Proxyの設定
+# resource "google_iap_web_iam_member" "admin_access" {
+#   role   = "roles/iap.httpsResourceAccessor"
+#   member = "user:foino74@gmail.com"
+# }
+
+# API サービスへのアクセス許可も追加
+resource "google_cloud_run_service_iam_member" "api_public_access" {
+  service  = module.api_service.service_name
+  location = var.region
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
