@@ -11,7 +11,7 @@ function DirectoryNavigator() {
 
   return (
     <div className="w-full">
-      <div className="max-h-[calc(100vh-64px)] overflow-y-auto">
+      <div className="max-h-[calc(100vh-96px)] overflow-y-auto">
         {treeData.length === 0 ? (
           <div className="px-2 py-4 text-sm text-gray-500 text-center">
             読み込み中...

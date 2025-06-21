@@ -1,7 +1,6 @@
 import type { GitHubDirectoryItem, GitHubFile } from "./IGitHubClient";
 
-export const mockDirectoryData: GitHubDirectoryItem[] = [
-  {
+const item = {
     name: "README.md",
     path: "README.md",
     sha: "abc123",
@@ -16,7 +15,10 @@ export const mockDirectoryData: GitHubDirectoryItem[] = [
       git: "https://api.github.com/repos/mock/repo/git/blobs/abc123",
       html: "https://github.com/mock/repo/blob/main/README.md",
     },
-  },
+  } as GitHubDirectoryItem;
+
+export const mockDirectoryData: GitHubDirectoryItem[] = [
+  ...Array.from({ length: 30 }, () => item),
   {
     name: "おやつ時間基本方針.md",
     path: "おやつ時間基本方針.md",
