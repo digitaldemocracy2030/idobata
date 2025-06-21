@@ -1,7 +1,7 @@
 import type { GitHubDirectoryItem, GitHubFile } from "./IGitHubClient";
 
 export const mockDirectoryData: GitHubDirectoryItem[] = [
-{
+  {
     name: "README.md",
     path: "README.md",
     sha: "abc123",
