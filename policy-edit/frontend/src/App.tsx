@@ -1,5 +1,11 @@
 import { Helmet, HelmetProvider } from "@dr.pogodin/react-helmet";
-import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useParams,
+} from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import ContentExplorer from "./components/page-specific/ContentExplorer";
 import NotFound from "./components/page-specific/NotFound";
@@ -27,7 +33,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             {/* Route for the repository root */}
-            <Route index element={<ContentExplorer initialPath="" />} />
+            <Route index element={<Navigate to="/view/README.md" replace />} />
             {/* Route for paths within the repository */}
             <Route path="view/*" element={<ContentExplorerWrapper />} />
             {/* Catch-all route for any other paths (404) */}
