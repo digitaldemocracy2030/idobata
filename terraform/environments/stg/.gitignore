@@ -1,3 +1,0 @@
-terraform.tfvars
-*.tfvars
-!terraform.tfvars.example

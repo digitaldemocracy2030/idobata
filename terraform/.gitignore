@@ -1,12 +1,28 @@
-
-# Terraform
+# Terraform 作業ファイル（全環境共通）
 **/.terraform/
-*.tfvars
-!*.tfvars.example
-*.tfstate
-*.tfstate.*
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfplan
 
+# 秘密情報を含むファイル（全環境共通）
+**/.env
+**/.envrc
 
-environments/stg/.terraform.lock.hcl
-environments/stg/terraform.tfvars
-environments/stg/.terraform/
+# 個人用設定ファイル
+**/*local*.tfvars
+**/*secret*.tfvars
+
+# テンプレートファイルは含める
+!**/*.tfvars.example
+
+# IDE設定
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS関連
+.DS_Store
+Thumbs.db
+

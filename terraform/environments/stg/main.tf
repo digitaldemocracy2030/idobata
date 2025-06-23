@@ -173,14 +173,14 @@ module "api_service" {
     NODE_ENV           = "development"  # stg環境なので
     ENVIRONMENT        = local.env
     PYTHON_SERVICE_URL = "http://${local.services.python}"
-    MONGODB_URI        = var.mongodb_uri
+    IDEA_CORS_ORIGIN   = var.idea_cors_origin
+    JWT_EXPIRES_IN     = "1d"
     API_BASE_URL       = var.api_base_url
+    ALLOW_DELETE_THEME = var.allow_delete_theme
+    MONGODB_URI        = var.mongodb_uri
     PASSWORD_PEPPER    = var.password_pepper
     OPENROUTER_API_KEY = var.openrouter_api_key
-    IDEA_CORS_ORIGIN   = var.idea_cors_origin
     JWT_SECRET         = var.jwt_secret
-    JWT_EXPIRES_IN     = "1d"
-    ALLOW_DELETE_THEME = var.allow_delete_theme
   }
   
   min_instances = var.api_min_instances
@@ -219,8 +219,8 @@ module "python_service" {
     ENVIRONMENT     = local.env
     CHROMA_BUCKET_NAME = google_storage_bucket.chromadb.name
     USE_CLOUD_STORAGE  = "true"
-    API_URL           = "http://${local.services.api}" # terraform.tfvars で設定
-    OPENAI_API_KEY    = var.openai_api_key  # 環境変数として直接設定  }
+    API_URL           = "http://${local.services.api}"
+    OPENAI_API_KEY    = var.openai_api_key
   }
   
   # Python サービスは メモリとCPUを多めに

@@ -152,7 +152,7 @@ variable "jwt_secret" {
 variable "allow_delete_theme" {
   description = "Allow delete theme"
   type        = string
-  default     = ""
+  default     = "false"
 }
 
 variable "admin_frontend_allowed_hosts" {
