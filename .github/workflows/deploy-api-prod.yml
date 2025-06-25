@@ -8,12 +8,12 @@ on:
       - 'backend/**'
       - 'cloud-run/docker/Dockerfile.api'
       - '.github/workflows/deploy/api/prod.yml'
-      - '.github/workflows/deploy/_reusable/deploy-api.yml'
+      - '.github/workflows/_reusable/deploy-api.yml'
 
 
 jobs:
   deploy:
-    uses: ./.github/workflows/deploy/_reusable/deploy-api.yml
+    uses: ./.github/workflows/_reusable/deploy-api.yml
     with:
       repository: prod-idobata-repo
       service_url: https://api.daikibo-jyukugi-cdp.jp
