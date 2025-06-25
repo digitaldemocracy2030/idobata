@@ -2,7 +2,7 @@
 vite_frontend_allowed_hosts = "stg.daikibo-jyukugi-cdp.jp"
 
 # Admin サービス用
-admin_frontend_allowed_hosts = "stg.admin.daikibo-jyukugi-cdp.jp"
+vite_admin_frontend_allowed_hosts = "stg.admin.daikibo-jyukugi-cdp.jp"
 
 # API サービス用
 api_base_url       = "https://stg.api.daikibo-jyukugi-cdp.jp"

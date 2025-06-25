@@ -1,22 +1,22 @@
-name: Deploy User to Production
+name: Deploy User to Development
 
 on:
   push:
     branches:
-      - cdp
+      - 'feature/*'
     paths:
       - 'frontend/**'
       - 'cloud-run/docker/Dockerfile.user'
-      - '.github/workflows/deploy/user/prod.yml'
+      - '.github/workflows/deploy/user/dev.yml'
       - '.github/workflows/deploy/_reusable/deploy-user.yml'
 
 jobs:
   deploy:
     uses: ./.github/workflows/deploy/_reusable/deploy-user.yml
     with:
-      repository: prod-idobata-repo
-      api_base_url: https://api.daikibo-jyukugi-cdp.jp
-      service_url: https://daikibo-jyukugi-cdp.jp  
+      repository: dev-idobata-repo
+      api_base_url: https://dev.api.daikibo-jyukugi-cdp.jp
+      service_url: https://dev.daikibo-jyukugi-cdp.jp  
     secrets:
       WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}
       WIF_SERVICE_ACCOUNT: ${{ secrets.WIF_SERVICE_ACCOUNT }}

@@ -1,0 +1,12 @@
+api_base_url                 = "https://yourdomain.com""
+idea_cors_origin             = "https://yourdomain.com"
+vite_frontend_allowed_hosts  = "https://yourdomain.com"
+admin_frontend_allowed_hosts = "https://yourdomain.com"
+allow_delete_theme           =  "true" or "false"
+
+# Sensitive values - DO NOT COMMIT REAL VALUES
+mongodb_uri        = "mongodb+srv://user:pass@cluster.mongodb.net/dbname"
+openai_api_key     = "sk-xxxxxxxxxxxxxxxx"
+password_pepper    = "your-pepper-value-here"
+openrouter_api_key = "your-openrouter-key-here"
+jwt_secret         = "your-jwt-secret-here"
