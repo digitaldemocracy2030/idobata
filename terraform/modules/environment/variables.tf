@@ -1,5 +1,3 @@
-# terraform/modules/environment/variables.tf
-
 # 基本設定
 variable "project_id" {
   description = "Google Cloud Project ID"
@@ -33,6 +31,12 @@ variable "enable_domain_mapping" {
   description = "Enable domain mapping for services"
   type        = bool
   default     = true
+}
+
+variable "create_artifact_registry" {
+  description = "Whether to create artifact registry repository"
+  type        = bool
+  default     = false  # 既存がある場合はfalse、新規作成時はtrue
 }
 
 # Public access settings
