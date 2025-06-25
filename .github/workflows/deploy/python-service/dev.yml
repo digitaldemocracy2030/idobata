@@ -1,0 +1,20 @@
+name: Deploy Python Service to Development
+
+on:
+  push:
+    branches:
+      - 'feature/*'
+    paths:
+      - 'python-service/**'
+      - 'cloud-run/docker/Dockerfile.python-service'
+      - '.github/workflows/deploy/python-service/dev.yml'
+      - '.github/workflows/deploy/_reusable/deploy-python-service.yml'
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy/_reusable/deploy-python-service.yml
+    with:
+      repository: dev-idobata-repo
+    secrets:
+      WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}
+      WIF_SERVICE_ACCOUNT: ${{ secrets.WIF_SERVICE_ACCOUNT }}
