@@ -9,6 +9,6 @@ vite_admin_frontend_allowed_hosts = "dev.admin.daikibo-jyukugi-cdp.jp"
 
 # API サービス用
 api_base_url       = "https://dev.api.daikibo-jyukugi-cdp.jp"
-idea_cors_origin   = "https://dev.daikibo-jyukugi-cdp.jp"
+idea_cors_origin   = "https://dev.daikibo-jyukugi-cdp.jp,https://dev.admin.daikibo-jyukugi-cdp.jp" # 現状は,で区切る前後にスペースを含むと認識されない。
 allow_delete_theme = "true"
 
