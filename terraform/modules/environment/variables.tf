@@ -25,7 +25,7 @@ variable "environment" {
 variable "team_name" {
   description = "Team name for labeling"
   type        = string
-  default     = "platform"
+  default     = "cdp"
 }
 
 # Domain mapping
