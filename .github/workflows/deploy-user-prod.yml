@@ -8,11 +8,11 @@ on:
       - 'frontend/**'
       - 'cloud-run/docker/Dockerfile.user'
       - '.github/workflows/deploy-user-prod.yml'
-      - '.github/workflows/_reusable/deploy-user.yml'
+      - '.github/workflows/reusable-deploy-user.yml'
 
 jobs:
   deploy:
-    uses: ./.github/workflows/_reusable/deploy-user.yml
+    uses: ./.github/workflows/reusable-deploy-user.yml
     with:
       repository: prod-idobata-repo
       api_base_url: https://api.daikibo-jyukugi-cdp.jp

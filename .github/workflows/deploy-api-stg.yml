@@ -8,12 +8,12 @@ on:
       - 'backend/**'
       - 'cloud-run/docker/Dockerfile.api'
       - '.github/workflows/deploy-api-stg.yml'
-      - '.github/workflows/_reusable/deploy-api.yml'
+      - '.github/workflows/reusable-deploy-api.yml'
 
 
 jobs:
   deploy:
-    uses: ./.github/workflows/_reusable/deploy-api.yml
+    uses: ./.github/workflows/reusable-deploy-api.yml
     with:
       repository: stg-idobata-repo
       service_url: https://stg.api.daikibo-jyukugi-cdp.jp

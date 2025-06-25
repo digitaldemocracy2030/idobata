@@ -8,11 +8,11 @@ on:
       - 'python-service/**'
       - 'cloud-run/docker/Dockerfile.python-service'
       - '.github/workflows/deploy-python-service-prod.yml'
-      - '.github/workflows/_reusable/deploy-python-service.yml'
+      - '.github/workflows/reusable-deploy-python-service.yml'
 
 jobs:
   deploy:
-    uses: ./.github/workflows/_reusable/deploy-python-service.yml
+    uses: ./.github/workflows/reusable-deploy-python-service.yml
     with:
       repository: prod-idobata-repo
     secrets:
