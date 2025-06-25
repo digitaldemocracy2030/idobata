@@ -1,19 +1,19 @@
-name: Deploy Admin to Staging
+name: Deploy Python Service to Staging
 
 on:
   push:
     branches:
       - cdp
     paths:
-      - 'admin/**'
-      - 'cloud-run/docker/Dockerfile.admin'
-      - '.github/workflows/deploy-admin-prod.yml'
+      - 'python-service/**'
+      - 'cloud-run/docker/Dockerfile.python-service'
+      - '.github/workflows/deploy/python-service/prod.yml'
 
 env:
   PROJECT_ID: daikibo-jyukugi-cdp
   REGION: asia-northeast1
   REPOSITORY: prod-idobata-repo
-  SERVICE_NAME: admin
+  SERVICE_NAME: python-service
 
 jobs:
   deploy:
@@ -21,7 +21,7 @@ jobs:
     
     permissions:
       contents: read
-      id-token: write  # Workload Identity 用
+      id-token: write
 
     steps:
     - name: Checkout
@@ -36,7 +36,6 @@ jobs:
         workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
         service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
 
-
     - name: Configure Docker
       run: |
         gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
@@ -45,19 +44,16 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: cloud-run/docker/Dockerfile.admin
+        file: cloud-run/docker/Dockerfile.python-service
         platforms: linux/amd64
         push: true
         tags: |
           ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE_NAME }}:latest
           ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
-        build-args: |
-          VITE_API_BASE_URL=https://api.daikibo-jyukugi-cdp.jp
-          VITE_ALLOW_DELETE_THEME=true
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
     - name: Deploy Complete
       run: |
         echo "✅ Deployment complete!"
-        echo "🔗 Service URL: https://admin.daikibo-jyukugi-cdp.jp"
+        echo "🔗 Python Service deployed successfully"

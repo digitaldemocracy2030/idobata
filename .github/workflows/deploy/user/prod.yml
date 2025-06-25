@@ -1,19 +1,19 @@
-name: Deploy Python Service to Staging
+name: Deploy User to Staging
 
 on:
   push:
     branches:
       - cdp
     paths:
-      - 'python/**'
-      - 'cloud-run/docker/Dockerfile.python'
-      - '.github/workflows/deploy-python-prod.yml'
+      - 'frontend/**'
+      - 'cloud-run/docker/Dockerfile.user'
+      - '.github/workflows/deploy/user/prod.yml'
 
 env:
   PROJECT_ID: daikibo-jyukugi-cdp
   REGION: asia-northeast1
   REPOSITORY: prod-idobata-repo
-  SERVICE_NAME: python-service
+  SERVICE_NAME: user
 
 jobs:
   deploy:
@@ -44,16 +44,18 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: cloud-run/docker/Dockerfile.python-service
+        file: cloud-run/docker/Dockerfile.frontend
         platforms: linux/amd64
         push: true
         tags: |
           ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE_NAME }}:latest
           ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+        build-args: |
+          VITE_API_BASE_URL=https://api.daikibo-jyukugi-cdp.jp
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
     - name: Deploy Complete
       run: |
         echo "✅ Deployment complete!"
-        echo "🔗 Python Service deployed successfully"
+        echo "🔗 Service URL: https://daikibo-jyukugi-cdp.jp"
