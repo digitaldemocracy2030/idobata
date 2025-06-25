@@ -26,7 +26,6 @@ export interface TopPageTemplateProps {
 }
 
 const TopPageTemplate = ({ discussions, themes }: TopPageTemplateProps) => {
-  console.log("TopPageTemplate");
   const { defaultThemeId } = useTheme();
   const breadcrumbItems = [{ label: "TOP", href: "/" }];
 
