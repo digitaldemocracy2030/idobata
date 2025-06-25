@@ -1,14 +1,22 @@
 name: Deploy User to Development
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - 'feature/*'
+    paths:
+      - 'frontend/**'
+      - 'cloud-run/docker/Dockerfile.user'
+      - '.github/workflows/deploy-user-dev.yml'
+      - '.github/workflows/reusable-deploy-user.yml'
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Test
-        run: echo "Hello World"
+  deploy:
+    uses: ./.github/workflows/reusable-deploy-user.yml
+    with:
+      repository: dev-idobata-repo
+      api_base_url: https://dev.api.daikibo-jyukugi-cdp.jp
+      service_url: https://dev.daikibo-jyukugi-cdp.jp  
+    secrets:
+      WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}
+      WIF_SERVICE_ACCOUNT: ${{ secrets.WIF_SERVICE_ACCOUNT }}
