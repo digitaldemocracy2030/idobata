@@ -7,12 +7,12 @@ on:
     paths:
       - 'frontend/**'
       - 'cloud-run/docker/Dockerfile.user'
-      - '.github/workflows/deploy/user/stg.yml'
-      - '.github/workflows/deploy/_reusable/deploy-user.yml'
+      - '.github/workflows/deploy-user-stg.yml'
+      - '.github/workflows/reusable-deploy-user.yml'
 
 jobs:
   deploy:
-    uses: ./.github/workflows/deploy/_reusable/deploy-user.yml
+    uses: ./.github/workflows/reusable-deploy-user.yml
     with:
       repository: stg-idobata-repo
       api_base_url: https://stg.api.daikibo-jyukugi-cdp.jp
