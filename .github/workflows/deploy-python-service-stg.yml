@@ -7,7 +7,7 @@ on:
     paths:
       - 'python-service/**'
       - 'cloud-run/docker/Dockerfile.python-service'
-      - '.github/workflows/deploy/python-service/stg.yml'
+      - '.github/workflows/deploy-python-service-stg.yml'
       - '.github/workflows/_reusable/deploy-python-service.yml'
 
 jobs:

@@ -7,7 +7,7 @@ on:
     paths:
       - 'backend/**'
       - 'cloud-run/docker/Dockerfile.api'
-      - '.github/workflows/deploy/api/prod.yml'
+      - '.github/workflows/deploy-api-prod.yml'
       - '.github/workflows/_reusable/deploy-api.yml'
 
 

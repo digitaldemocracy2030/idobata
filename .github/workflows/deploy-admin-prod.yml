@@ -7,7 +7,7 @@ on:
     paths:
       - 'admin/**'
       - 'cloud-run/docker/Dockerfile.admin'
-      - '.github/workflows/deploy/admin/prod.yml'
+      - '.github/workflows/deploy-admin-prod.yml'
       - '.github/workflows/_reusable/deploy-admin.yml'
 
 jobs:
