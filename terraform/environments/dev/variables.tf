@@ -1,3 +1,7 @@
+variable "node_env" {
+  type = string
+}
+
 variable "mongodb_uri" {
   type = string
   sensitive = true

@@ -34,7 +34,7 @@ variable "allow_delete_theme" {
 }
 
 
-variable "admin_frontend_allowed_hosts" {
+variable "vite_admin_frontend_allowed_hosts" {
   type = string
 }
 

@@ -24,7 +24,7 @@ module "environment" {
 
   # Environment variables per service
   admin_env_vars = {
-    VITE_ADMIN_FRONTEND_ALLOWED_HOSTS = var.admin_frontend_allowed_hosts
+    VITE_ADMIN_FRONTEND_ALLOWED_HOSTS = var.vite_admin_frontend_allowed_hosts
   }
   
   user_env_vars = {
