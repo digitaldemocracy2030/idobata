@@ -1,4 +1,4 @@
-name: Deploy User to Staging
+name: Deploy User to Production
 
 on:
   push:
@@ -8,54 +8,15 @@ on:
       - 'frontend/**'
       - 'cloud-run/docker/Dockerfile.user'
       - '.github/workflows/deploy/user/prod.yml'
-
-env:
-  PROJECT_ID: daikibo-jyukugi-cdp
-  REGION: asia-northeast1
-  REPOSITORY: prod-idobata-repo
-  SERVICE_NAME: user
+      - '.github/workflows/deploy/_reusable/deploy-user.yml'
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-    
-    permissions:
-      contents: read
-      id-token: write
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Setup Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v2
-      with:
-        workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
-        service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
-
-    - name: Configure Docker
-      run: |
-        gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
-
-    - name: Build and Push
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: cloud-run/docker/Dockerfile.frontend
-        platforms: linux/amd64
-        push: true
-        tags: |
-          ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE_NAME }}:latest
-          ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
-        build-args: |
-          VITE_API_BASE_URL=https://api.daikibo-jyukugi-cdp.jp
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-
-    - name: Deploy Complete
-      run: |
-        echo "✅ Deployment complete!"
-        echo "🔗 Service URL: https://daikibo-jyukugi-cdp.jp"
+    uses: ./.github/workflows/deploy/_reusable/deploy-user.yml
+    with:
+      repository: prod-idobata-repo
+      api_base_url: https://api.daikibo-jyukugi-cdp.jp
+      service_url: https://daikibo-jyukugi-cdp.jp  # 元ファイルに合わせる
+    secrets:
+      WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}
+      WIF_SERVICE_ACCOUNT: ${{ secrets.WIF_SERVICE_ACCOUNT }}

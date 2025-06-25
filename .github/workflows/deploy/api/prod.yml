@@ -1,4 +1,4 @@
-name: Deploy API to Staging
+name: Deploy API to Production
 
 on:
   push:
@@ -8,52 +8,16 @@ on:
       - 'backend/**'
       - 'cloud-run/docker/Dockerfile.api'
       - '.github/workflows/deploy/api/prod.yml'
+      - '.github/workflows/deploy/_reusable/deploy-api.yml'
 
-env:
-  PROJECT_ID: daikibo-jyukugi-cdp
-  REGION: asia-northeast1
-  REPOSITORY: prod-idobata-repo
-  SERVICE_NAME: api
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-    
-    permissions:
-      contents: read
-      id-token: write
+    uses: ./.github/workflows/deploy/_reusable/deploy-api.yml
+    with:
+      repository: prod-idobata-repo
+      service_url: https://api.daikibo-jyukugi-cdp.jp
+    secrets:
+      WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}
+      WIF_SERVICE_ACCOUNT: ${{ secrets.WIF_SERVICE_ACCOUNT }}
 
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Setup Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v2
-      with:
-        workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
-        service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
-
-    - name: Configure Docker
-      run: |
-        gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
-
-    - name: Build and Push
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: cloud-run/docker/Dockerfile.api
-        platforms: linux/amd64
-        push: true
-        tags: |
-          ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE_NAME }}:latest
-          ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-
-    - name: Deploy Complete
-      run: |
-        echo "✅ Deployment complete!"
-        echo "🔗 Service URL: https://api.daikibo-jyukugi-cdp.jp"
