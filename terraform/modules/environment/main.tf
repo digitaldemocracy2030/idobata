@@ -1,4 +1,3 @@
-# terraform/modules/environment/main.tf
 # Provider設定
 provider "google" {
   project = var.project_id
@@ -43,12 +42,16 @@ locals {
     user  = local.is_prod ? "daikibo-jyukugi-cdp.jp" : "${var.environment}.daikibo-jyukugi-cdp.jp"
     api   = local.is_prod ? "api.daikibo-jyukugi-cdp.jp" : "${var.environment}.api.daikibo-jyukugi-cdp.jp"
   }
+  # Artifact Registryのリポジトリ名
+  repository_id = "${var.environment}-idobata-repo"
 }
 
-# Artifact Registry（コンテナイメージ用）
+# Artifact Registry（コンテナイメージ用）- 既存がない場合のみ作成
 resource "google_artifact_registry_repository" "containers" {
+  count = var.create_artifact_registry ? 1 : 0
+
   location      = var.region
-  repository_id = "${var.environment}-idobata-repo"
+  repository_id = local.repository_id
   description   = "Container images for ${var.environment} environment"
   format        = "DOCKER"
   
@@ -94,7 +97,7 @@ module "admin_service" {
   
   service_name = local.services.admin
   location     = var.region
-  image        = "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.containers.repository_id}/admin:${var.admin_image_tag}"
+  image        = "${var.region}-docker.pkg.dev/${var.project_id}/${local.repository_id}/admin:${var.admin_image_tag}"
   
   service_account = google_service_account.services["admin"].email
   
@@ -130,7 +133,7 @@ module "user_service" {
   
   service_name = local.services.user
   location     = var.region
-  image        = "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.containers.repository_id}/user:${var.user_image_tag}"
+  image        = "${var.region}-docker.pkg.dev/${var.project_id}/${local.repository_id}/user:${var.user_image_tag}"
   
   service_account = google_service_account.services["user"].email
   
@@ -166,7 +169,7 @@ module "api_service" {
   
   service_name = local.services.api
   location     = var.region
-  image        = "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.containers.repository_id}/api:${var.api_image_tag}"
+  image        = "${var.region}-docker.pkg.dev/${var.project_id}/${local.repository_id}/api:${var.api_image_tag}"
   
   service_account = google_service_account.services["api"].email
   
@@ -203,7 +206,7 @@ module "python_service" {
   
   service_name = local.services.python
   location     = var.region
-  image        = "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.containers.repository_id}/python-service:${var.python_image_tag}"
+  image        = "${var.region}-docker.pkg.dev/${var.project_id}/${local.repository_id}/python-service:${var.python_image_tag}"
   
   service_account = google_service_account.services["python"].email
   
@@ -275,4 +278,3 @@ resource "google_cloud_run_service_iam_member" "public_access" {
 #   role     = "roles/run.invoker"
 #   member = "user:foino74@gmail.com"
 # }
-

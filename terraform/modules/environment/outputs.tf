@@ -1,11 +1,13 @@
-# terraform/modules/environment/outputs.tf
-
 output "artifact_registry_repository" {
-  description = "Artifact Registry repository details"
-  value = {
-    id   = google_artifact_registry_repository.containers.id
-    name = google_artifact_registry_repository.containers.name
-    location = google_artifact_registry_repository.containers.location
+  description = "Artifact Registry repository information"
+  value = var.create_artifact_registry ? {
+    id       = google_artifact_registry_repository.containers[0].id
+    name     = google_artifact_registry_repository.containers[0].name
+    location = google_artifact_registry_repository.containers[0].location
+  } : {
+    id       = "${var.project_id}/locations/${var.region}/repositories/${var.environment}-idobata-repo"
+    name     = "${var.environment}-idobata-repo"
+    location = var.region
   }
 }
 
