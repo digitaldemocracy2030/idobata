@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'feature/*'
+      - 'cdp'
     paths:
       - 'python-service/**'
       - 'cloud-run/docker/Dockerfile.python-service'

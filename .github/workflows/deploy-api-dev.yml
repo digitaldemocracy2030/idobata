@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'feature/*'
+      - 'cdp'
     paths:
       - 'backend/**'
       - 'cloud-run/docker/Dockerfile.api'
