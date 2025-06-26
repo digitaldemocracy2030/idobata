@@ -18,6 +18,7 @@ jobs:
       repository: dev-idobata-repo
       api_base_url: https://dev.api.daikibo-jyukugi-cdp.jp
       service_url: https://dev.admin.daikibo-jyukugi-cdp.jp
+      service_name: dev-admin-service
       allow_delete_theme: true
     secrets:
       WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}

@@ -17,6 +17,7 @@ jobs:
       repository: prod-idobata-repo
       api_base_url: https://api.daikibo-jyukugi-cdp.jp
       service_url: https://daikibo-jyukugi-cdp.jp  
+      service_name: prod-user-service
     secrets:
       WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}
       WIF_SERVICE_ACCOUNT: ${{ secrets.WIF_SERVICE_ACCOUNT }}

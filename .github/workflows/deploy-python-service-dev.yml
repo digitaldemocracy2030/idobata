@@ -16,6 +16,7 @@ jobs:
     uses: ./.github/workflows/reusable-deploy-python-service.yml
     with:
       repository: dev-idobata-repo
+      service_name: dev-python-service
     secrets:
       WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}
       WIF_SERVICE_ACCOUNT: ${{ secrets.WIF_SERVICE_ACCOUNT }}

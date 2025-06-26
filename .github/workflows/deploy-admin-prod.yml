@@ -17,6 +17,7 @@ jobs:
       repository: prod-idobata-repo
       api_base_url: https://api.daikibo-jyukugi-cdp.jp
       service_url: https://admin.daikibo-jyukugi-cdp.jp
+      service_name: prod-admin-service
       allow_delete_theme: true
     secrets:
       WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}

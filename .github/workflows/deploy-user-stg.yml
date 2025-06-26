@@ -17,6 +17,7 @@ jobs:
       repository: stg-idobata-repo
       api_base_url: https://stg.api.daikibo-jyukugi-cdp.jp
       service_url: https://stg.daikibo-jyukugi-cdp.jp
+      service_name: stg-user-service
     secrets:
       WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}
       WIF_SERVICE_ACCOUNT: ${{ secrets.WIF_SERVICE_ACCOUNT }}
