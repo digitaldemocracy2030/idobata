@@ -33,7 +33,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: process.env.IDEA_CORS_ORIGIN
-      ? process.env.IDEA_CORS_ORIGIN.split(",")
+      ? process.env.IDEA_CORS_ORIGIN.split(",").map((url) => url.trim())
       : ["http://localhost:5173", "http://localhost:5175"],
     methods: ["GET", "POST"],
     credentials: true,
