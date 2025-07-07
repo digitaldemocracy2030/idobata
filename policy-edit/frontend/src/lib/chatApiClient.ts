@@ -6,7 +6,12 @@ import type {
   ChatStatusResponse,
 } from "../types/api";
 import type { HttpError } from "./errors";
-import { createValidationError } from "./errors";
+import {
+  createNetworkError,
+  createServerError,
+  createUnknownError,
+  createValidationError,
+} from "./errors";
 import { HttpClient } from "./httpClient";
 
 export class ChatApiClient {
@@ -33,6 +38,112 @@ export class ChatApiClient {
     }
 
     return this.httpClient.post<ChatMessageResponse>("/chat", request);
+  }
+
+  async sendMessageStream(
+    request: ChatMessageRequest,
+    onChunk: (chunk: string) => void,
+    onComplete: () => void,
+    onError: (error: HttpError) => void
+  ): Promise<void> {
+    const validationResult = this.validateChatMessageRequest(request);
+    if (validationResult.isErr()) {
+      onError(validationResult.error);
+      return;
+    }
+
+    const url = `${this.httpClient.baseURL}/chat/stream`;
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "text/event-stream",
+        },
+        body: JSON.stringify(request),
+      });
+
+      if (!response.ok) {
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: response.statusText }));
+        onError(
+          createServerError(
+            errorData.error ||
+              `HTTP ${response.status}: ${response.statusText}`,
+            response.status,
+            errorData
+          )
+        );
+        return;
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        onError(
+          createNetworkError(
+            "Failed to get response reader",
+            new Error("No reader available")
+          )
+        );
+        return;
+      }
+
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            break;
+          }
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || "";
+
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              const data = line.slice(6);
+              if (data.trim()) {
+                try {
+                  const parsed = JSON.parse(data);
+
+                  if (parsed.chunk) {
+                    onChunk(parsed.chunk);
+                  } else if (parsed.complete) {
+                    onComplete();
+                    return;
+                  } else if (parsed.error) {
+                    onError(
+                      createServerError(parsed.error, 500, {
+                        type: parsed.type,
+                      })
+                    );
+                    return;
+                  }
+                } catch (parseError) {
+                  console.warn("Failed to parse SSE data:", data);
+                }
+              }
+            }
+          }
+        }
+
+        onComplete();
+      } finally {
+        reader.releaseLock();
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        onError(createNetworkError("Streaming request failed", error));
+      } else {
+        onError(createUnknownError("Unknown streaming error occurred", error));
+      }
+    }
   }
 
   private validateChatMessageRequest(

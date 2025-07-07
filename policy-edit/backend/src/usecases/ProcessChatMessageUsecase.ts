@@ -42,6 +42,36 @@ export class ProcessChatMessageUsecase {
     return ok({ response: mcpResult.value });
   }
 
+  async executeStream(
+    request: ChatMessageRequest,
+    onChunk: (chunk: string) => void
+  ): Promise<
+    Result<
+      void,
+      ValidationError | IdobataMcpServiceError | McpClientError | DatabaseError
+    >
+  > {
+    const validationResult = this.validateInput(request);
+    if (validationResult.isErr()) {
+      return err(validationResult.error);
+    }
+
+    const mcpResult = await this.processMcpQueryStream(request, onChunk);
+    if (mcpResult.isErr()) {
+      return err(mcpResult.error);
+    }
+
+    const logResult = await this.logInteraction(
+      request,
+      "Streaming response completed"
+    );
+    if (logResult.isErr()) {
+      logger.error("Failed to log interaction:", logResult.error);
+    }
+
+    return ok(undefined);
+  }
+
   private validateInput(
     request: ChatMessageRequest
   ): Result<ChatMessageRequest, ValidationError> {
@@ -93,6 +123,27 @@ export class ProcessChatMessageUsecase {
     }
 
     return ok(result.value);
+  }
+
+  private async processMcpQueryStream(
+    request: ChatMessageRequest,
+    onChunk: (chunk: string) => void
+  ): Promise<Result<void, IdobataMcpServiceError | McpClientError>> {
+    const result = await this.idobataMcpService.processQueryStream(
+      request.message,
+      onChunk,
+      request.history || [],
+      request.branchId,
+      request.fileContent,
+      request.userName,
+      request.filePath
+    );
+
+    if (result.isErr()) {
+      return err(result.error);
+    }
+
+    return ok(undefined);
   }
 
   private async logInteraction(

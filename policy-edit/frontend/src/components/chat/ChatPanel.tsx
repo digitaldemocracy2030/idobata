@@ -22,6 +22,8 @@ const ChatPanel: React.FC = () => {
   const [isConnected, setIsConnected] = useState(false); // MCP connection status
   const [error, setError] = useState<string | null>(null); // General error display
   const [userName, setUserName] = useState<string | null>(null); // State for user's name
+  const [streamingMessage, setStreamingMessage] = useState<string>("");
+  const [isStreaming, setIsStreaming] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   // Get state and actions from Zustand store
@@ -220,6 +222,8 @@ const ChatPanel: React.FC = () => {
     addMessageToThread(currentPath, userMessageContent);
     setInputValue("");
     setIsLoading(true);
+    setIsStreaming(true);
+    setStreamingMessage("");
     setError(null);
 
     const historyForAPI: OpenAIMessage[] = thread.messages.map((msg) => ({
@@ -248,28 +252,39 @@ const ChatPanel: React.FC = () => {
       filePath: currentPath,
     };
 
-    const result = await chatApiClient.sendMessage(request);
+    let accumulatedMessage = "";
 
-    if (result.isErr()) {
-      const errorMessage = result.error.message || "応答の取得に失敗しました";
-      setError(errorMessage);
-      addMessageToThread(currentPath, {
-        text: `エラー：${errorMessage}`,
-        sender: "bot",
-      });
-      setIsLoading(false);
-      return;
-    }
-
-    addMessageToThread(currentPath, {
-      text: result.value.response,
-      sender: "bot",
-    });
-    console.log(
-      "ボットの応答を受信しました。コンテンツを再読み込みしています..."
+    await chatApiClient.sendMessageStream(
+      request,
+      (chunk) => {
+        accumulatedMessage += chunk;
+        setStreamingMessage(accumulatedMessage);
+      },
+      () => {
+        addMessageToThread(currentPath, {
+          text: accumulatedMessage,
+          sender: "bot",
+        });
+        setStreamingMessage("");
+        setIsStreaming(false);
+        setIsLoading(false);
+        console.log(
+          "ボットの応答を受信しました。コンテンツを再読み込みしています..."
+        );
+        reloadCurrentContent();
+      },
+      (error) => {
+        const errorMessage = error.message || "応答の取得に失敗しました";
+        setError(errorMessage);
+        addMessageToThread(currentPath, {
+          text: `エラー：${errorMessage}`,
+          sender: "bot",
+        });
+        setStreamingMessage("");
+        setIsStreaming(false);
+        setIsLoading(false);
+      }
     );
-    reloadCurrentContent();
-    setIsLoading(false);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -348,36 +363,47 @@ const ChatPanel: React.FC = () => {
               : "チャットを開始するにはサーバーに接続してください。"}
           </div>
         ) : (
-          // Render messages from the current thread
-          messages.map((message) => (
-            <div
-              key={`${currentPath}-${message.id}`} // Use path in key for potential stability if IDs reset
-              className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
-            >
+          <>
+            {/* Render messages from the current thread */}
+            {messages.map((message) => (
               <div
-                className={`p-2 rounded-lg max-w-[80%] ${
-                  // Removed whitespace-pre-wrap as MarkdownViewer handles formatting
-                  message.sender === "user"
-                    ? "bg-accent text-white chat-bubble-user" // Added chat-bubble-user class
-                    : "bg-gray-100 text-secondary-800 chat-bubble-bot" // Added chat-bubble-bot class
-                }`}
+                key={`${currentPath}-${message.id}`} // Use path in key for potential stability if IDs reset
+                className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
               >
-                {/* Render message content using MarkdownViewer */}
-                <MarkdownViewer
-                  content={
-                    typeof message.text === "string"
-                      ? message.text
-                      : String(message.text)
-                  }
-                />
+                <div
+                  className={`p-2 rounded-lg max-w-[80%] ${
+                    // Removed whitespace-pre-wrap as MarkdownViewer handles formatting
+                    message.sender === "user"
+                      ? "bg-accent text-white chat-bubble-user" // Added chat-bubble-user class
+                      : "bg-gray-100 text-secondary-800 chat-bubble-bot" // Added chat-bubble-bot class
+                  }`}
+                >
+                  {/* Render message content using MarkdownViewer */}
+                  <MarkdownViewer
+                    content={
+                      typeof message.text === "string"
+                        ? message.text
+                        : String(message.text)
+                    }
+                  />
+                </div>
               </div>
-            </div>
-          ))
+            ))}
+            {/* Show streaming message */}
+            {isStreaming && streamingMessage && (
+              <div className="flex justify-start">
+                <div className="p-2 rounded-lg max-w-[80%] bg-gray-100 text-secondary-800 chat-bubble-bot">
+                  <MarkdownViewer content={streamingMessage} />
+                  <span className="inline-block animate-pulse ml-1">▋</span>
+                </div>
+              </div>
+            )}
+          </>
         )}
-        {/* Show loading indicator only when an MD file is active and loading */}
-        {isMdFileActive && isLoading && (
+        {/* Show loading indicator only when an MD file is active and loading but not streaming */}
+        {isMdFileActive && isLoading && !isStreaming && (
           <div className="text-center py-2">
-            <span className="inline-block animate-pulse">考え中...</span>
+            <span className="inline-block animate-pulse">接続中...</span>
           </div>
         )}
       </div>
