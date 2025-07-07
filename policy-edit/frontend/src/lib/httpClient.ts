@@ -16,6 +16,10 @@ export class HttpClient {
   private baseUrl: string;
   private defaultHeaders: Record<string, string>;
 
+  get baseURL(): string {
+    return this.baseUrl;
+  }
+
   constructor(
     baseUrl: string,
     defaultHeaders: Record<string, string> = {
