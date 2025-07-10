@@ -1,5 +1,6 @@
 // src/components/FileView.tsx
 import type React from "react";
+import { formatUserErrorMessage } from "../../lib/errorUtils";
 import { decodeBase64Content } from "../../lib/github"; // Base64デコード関数をインポート
 import MarkdownViewer from "../ui/MarkdownViewer"; // Import the actual component
 
@@ -50,12 +51,13 @@ const FileView: React.FC<FileViewProps> = ({ data }) => {
   // Decode the Base64 content
   const decodeResult = decodeBase64Content(data.content);
   if (decodeResult.isErr()) {
+    const errorMessage = formatUserErrorMessage(
+      `ファイルの内容をデコードできませんでした: ${decodeResult.error.message}`
+    );
     return (
       <div className="p-4 border rounded bg-red-50 text-center">
         <p className="font-semibold text-red-700">エラー</p>
-        <p className="mt-2 text-sm text-red-500">
-          ファイルの内容をデコードできませんでした: {decodeResult.error.message}
-        </p>
+        <p className="mt-2 text-sm text-red-500">{errorMessage}</p>
       </div>
     );
   }
