@@ -1,6 +1,7 @@
 import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { chatApiClient } from "../../lib/api";
+import { formatUserErrorMessage } from "../../lib/errorUtils";
 import type { GitHubFile } from "../../lib/github";
 import { decodeBase64Content } from "../../lib/github";
 import useContentStore from "../../store/contentStore";
@@ -111,7 +112,7 @@ const ChatPanel: React.FC = () => {
 
       if (!connectedAfterAttempt) {
         addMessageToThread(pathForMessage, {
-          text: `エラー：サーバーへの自動接続に失敗しました。${error || "接続試行に失敗しました。"}`.trim(),
+          text: formatUserErrorMessage(error || "接続試行に失敗しました。"),
           sender: "bot",
         });
       }
@@ -159,8 +160,9 @@ const ChatPanel: React.FC = () => {
     const result = await chatApiClient.connect();
 
     if (result.isErr()) {
-      const errorMessage =
+      const originalError =
         result.error.message || "サーバーへの接続に失敗しました";
+      const errorMessage = formatUserErrorMessage(originalError);
       setError(errorMessage);
       setIsConnected(false);
       setIsLoading(false);
@@ -251,10 +253,11 @@ const ChatPanel: React.FC = () => {
     const result = await chatApiClient.sendMessage(request);
 
     if (result.isErr()) {
-      const errorMessage = result.error.message || "応答の取得に失敗しました";
+      const originalError = result.error.message || "応答の取得に失敗しました";
+      const errorMessage = formatUserErrorMessage(originalError);
       setError(errorMessage);
       addMessageToThread(currentPath, {
-        text: `エラー：${errorMessage}`,
+        text: errorMessage,
         sender: "bot",
       });
       setIsLoading(false);
@@ -317,7 +320,7 @@ const ChatPanel: React.FC = () => {
 
               if (!connected) {
                 addBotMessageToCurrentThread(
-                  `エラー：手動接続に失敗しました。${error || ""}`.trim()
+                  formatUserErrorMessage(error || "手動接続に失敗しました。")
                 );
               }
 
