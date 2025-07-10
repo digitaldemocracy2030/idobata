@@ -93,7 +93,9 @@ const Header = () => {
 
                 {themes.length > 0 && !isLoading && !error && (
                   <div className="py-2">
-                    <h3 className="text-lg text-gray-500 px-4">テーマ一覧</h3>
+                    <h3 className="text-lg text-gray-500 px-4">
+                      議論をお願いしているテーマ一覧
+                    </h3>
 
                     <div className="flex flex-col mt-2">
                       {themes.map((theme) => (

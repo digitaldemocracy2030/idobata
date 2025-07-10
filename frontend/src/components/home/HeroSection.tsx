@@ -40,10 +40,10 @@ const HeroSection = () => {
               <h2 className="text-2xl lg:text-3xl font-semibold text-gray-800 mb-4">
                 りっけん対話アリーナ
               </h2>
-              <p className="text-lg text-gray-600 mb-2 leading-relaxed">
+              <p className="text-xl text-gray-600 mb-2 leading-relaxed">
                 難しい話？ いいえ、あなたの声がスタート地点。
               </p>
-              <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+              <p className="text-xl text-gray-600 mb-6 leading-relaxed">
                 あなたの声が、これからの政治を
                 <span className="font-semibold text-blue-600">つ・く・る</span>
                 。

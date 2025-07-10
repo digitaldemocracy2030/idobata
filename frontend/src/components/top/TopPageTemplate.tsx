@@ -62,7 +62,7 @@ const TopPageTemplate = ({ discussions, themes }: TopPageTemplateProps) => {
         </Section>
 
         <Section
-          title="意見募集中テーマ"
+          title="議論をお願いしているテーマ"
           description="Xで募集した、大きなテーマがこちらです。ご意見をお聞かせ下さい！"
           className="mb-6 bg-primary-weak rounded-3xl p-4 sm:p-8"
         >
