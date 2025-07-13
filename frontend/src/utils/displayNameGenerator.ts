@@ -1,5 +1,5 @@
 export const generateRandomDisplayName = (): string => {
-  const birdNames = [
+  const nameOptions = [
     "ウグイス",
     "メジロ",
     "ツバメ",
@@ -12,10 +12,10 @@ export const generateRandomDisplayName = (): string => {
     "ヤマガラ",
   ];
 
-  const randomBird = birdNames[Math.floor(Math.random() * birdNames.length)];
+  const randomName = nameOptions[Math.floor(Math.random() * nameOptions.length)];
   const randomNumber = Math.floor(Math.random() * 100000)
     .toString()
     .padStart(5, "0");
 
-  return `${randomBird}${randomNumber}`;
+  return `${randomName}${randomNumber}`;
 };

@@ -1,9 +1,9 @@
 /**
- * Generate a random display name using bird names and numbers
+ * Generate a random display name using predefined names and numbers
  * @returns {string} Random display name (e.g., "ウグイス12345")
  */
 export const generateRandomDisplayName = () => {
-  const birdNames = [
+  const nameOptions = [
     "ウグイス",
     "メジロ",
     "ツバメ",
@@ -16,10 +16,10 @@ export const generateRandomDisplayName = () => {
     "ヤマガラ",
   ];
 
-  const randomBird = birdNames[Math.floor(Math.random() * birdNames.length)];
+  const randomName = nameOptions[Math.floor(Math.random() * nameOptions.length)];
   const randomNumber = Math.floor(Math.random() * 100000)
     .toString()
     .padStart(5, "0");
 
-  return `${randomBird}${randomNumber}`;
+  return `${randomName}${randomNumber}`;
 };
