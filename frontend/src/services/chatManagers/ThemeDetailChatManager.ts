@@ -243,7 +243,8 @@ export class ThemeDetailChatManager {
     this.saveThreadIdToStorage();
 
     if (!messages || messages.length === 0) {
-      console.log("No chat history found");
+      console.log("No chat history found, sending conversation start signal");
+      await this.sendMessageToBackend("");
       return;
     }
 
