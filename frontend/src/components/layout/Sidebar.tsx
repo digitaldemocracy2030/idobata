@@ -14,6 +14,12 @@ const Sidebar = () => {
           TOP
         </Link>
         <Link
+          to="/manual"
+          className="text-base py-1 px-2 hover:bg-primary-50 rounded-md"
+        >
+          使い方
+        </Link>
+        <Link
           to="/about"
           className="text-base py-1 px-2 hover:bg-primary-50 rounded-md"
         >

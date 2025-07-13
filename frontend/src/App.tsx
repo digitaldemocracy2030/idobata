@@ -8,6 +8,7 @@ import About from "./pages/About";
 import CommentsPage from "./pages/CommentsPage";
 import DataPage from "./pages/DataPage";
 import MainPage from "./pages/MainPage";
+import Manual from "./pages/Manual";
 import MyPage from "./pages/MyPage";
 import QuestionDetail from "./pages/QuestionDetail";
 import ThemeDetail from "./pages/ThemeDetail";
@@ -54,6 +55,14 @@ export const router = createBrowserRouter([
         element: (
           <PageLayout>
             <About />
+          </PageLayout>
+        ),
+      },
+      {
+        path: "manual",
+        element: (
+          <PageLayout>
+            <Manual />
           </PageLayout>
         ),
       },
