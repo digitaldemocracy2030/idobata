@@ -1,14 +1,22 @@
 import type React from "react";
+import {
+  type PageContext,
+  generateChangeTopicMessage,
+} from "../../../utils/chatMessages";
 import { Button } from "../../ui/button";
 
 interface ChatHeaderProps {
   onSendMessage?: (message: string) => void;
+  pageContext?: PageContext;
 }
 
-export const ChatHeader: React.FC<ChatHeaderProps> = ({ onSendMessage }) => {
+export const ChatHeader: React.FC<ChatHeaderProps> = ({
+  onSendMessage,
+  pageContext,
+}) => {
   const handleChangeTopicClick = () => {
     if (onSendMessage) {
-      onSendMessage("話題を変えましょう");
+      onSendMessage(generateChangeTopicMessage(pageContext));
     }
   };
 

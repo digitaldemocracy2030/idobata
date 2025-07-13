@@ -1,6 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useMediaQuery } from "../../../hooks/useMediaQuery";
 import { type MessageType } from "../../../types";
+import { type PageContext } from "../../../utils/chatMessages";
 import { FloatingChatButton } from "../mobile/FloatingChatButton";
 import { ChatProvider, useChat } from "./ChatProvider";
 import { ChatSheet } from "./ChatSheet";
@@ -11,6 +12,7 @@ interface FloatingChatProps {
   onOpen?: () => void;
   disabled?: boolean;
   disabledMessage?: string;
+  pageContext?: PageContext;
 }
 
 export interface FloatingChatRef {
@@ -29,6 +31,7 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
       onOpen,
       disabled = false,
       disabledMessage = "このテーマではコメントが無効化されています",
+      pageContext,
     },
     ref
   ) => {
@@ -114,6 +117,7 @@ const FloatingChatInner = forwardRef<FloatingChatRef, FloatingChatProps>(
               isDesktop={isDesktop}
               disabled={disabled}
               disabledMessage={disabledMessage}
+              pageContext={pageContext}
             />
           )}
         </div>

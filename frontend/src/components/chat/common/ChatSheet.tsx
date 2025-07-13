@@ -2,6 +2,7 @@ import { Loader2, Send } from "lucide-react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { useDraggable } from "../../../hooks/useDraggable";
+import { type PageContext } from "../../../utils/chatMessages";
 import { Button } from "../../ui/button";
 import {
   ChatSheet as BaseChatSheet,
@@ -19,6 +20,7 @@ interface ChatSheetProps {
   isDesktop?: boolean;
   disabled?: boolean;
   disabledMessage?: string;
+  pageContext?: PageContext;
 }
 
 export const ChatSheet: React.FC<ChatSheetProps> = ({
@@ -28,6 +30,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
   isDesktop = false,
   disabled = false,
   disabledMessage = "このテーマではコメントが無効化されています",
+  pageContext,
 }) => {
   const { messages, addMessage } = useChat();
   const [inputValue, setInputValue] = useState("");
@@ -99,7 +102,10 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
   if (isDesktop) {
     return (
       <div className="flex flex-col h-full">
-        <DesktopChatHeader onSendMessage={onSendMessage} />
+        <DesktopChatHeader
+          onSendMessage={onSendMessage}
+          pageContext={pageContext}
+        />
         <div className="flex-grow overflow-auto h-[calc(100%-120px)]">
           <ExtendedChatHistory messages={messages} />
         </div>
@@ -154,6 +160,7 @@ export const ChatSheet: React.FC<ChatSheetProps> = ({
         <MobileChatHeader
           onDragStart={handleDragStart}
           onSendMessage={onSendMessage}
+          pageContext={pageContext}
         />
         <div className="flex-grow overflow-auto h-[calc(100%-120px)]">
           <ExtendedChatHistory messages={messages} />

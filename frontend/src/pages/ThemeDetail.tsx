@@ -9,6 +9,7 @@ import { ThemeDetailChatManager } from "../services/chatManagers/ThemeDetailChat
 import type { NewExtractionEvent } from "../services/socket/socketClient";
 import type { Message } from "../types";
 import { SystemMessage, SystemNotification } from "../types";
+import { type PageContext } from "../utils/chatMessages";
 
 const ThemeDetail = () => {
   const { themeId } = useParams<{ themeId: string }>();
@@ -196,6 +197,11 @@ const ThemeDetail = () => {
             })) ?? [],
         };
 
+    const pageContext: PageContext = {
+      type: "theme",
+      title: templateProps.theme.title,
+    };
+
     return (
       <>
         <div className="md:mr-[50%]">
@@ -204,6 +210,7 @@ const ThemeDetail = () => {
             onSendMessage={handleSendMessage}
             disabled={isCommentDisabled}
             ref={floatingChatRef}
+            pageContext={pageContext}
           />
         </div>
       </>

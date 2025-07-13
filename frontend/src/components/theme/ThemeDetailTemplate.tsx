@@ -7,6 +7,7 @@ import {
 } from "react";
 import { apiClient } from "../../services/api/apiClient";
 import { MessageType } from "../../types";
+import { type PageContext } from "../../utils/chatMessages";
 import { FloatingChat, type FloatingChatRef } from "../chat";
 import BreadcrumbView from "../common/BreadcrumbView";
 import SectionHeading from "../common/SectionHeading";
@@ -38,6 +39,7 @@ interface ThemeDetailTemplateProps {
   }[];
   disabled?: boolean;
   onSendMessage?: (message: string) => void;
+  pageContext?: PageContext;
 }
 
 const ThemeDetailTemplate = forwardRef<
@@ -45,7 +47,15 @@ const ThemeDetailTemplate = forwardRef<
   ThemeDetailTemplateProps
 >(
   (
-    { theme, keyQuestions, issues, solutions, disabled = false, onSendMessage },
+    {
+      theme,
+      keyQuestions,
+      issues,
+      solutions,
+      disabled = false,
+      onSendMessage,
+      pageContext,
+    },
     ref
   ) => {
     const [activeTab, setActiveTab] = useState<"issues" | "solutions">(
@@ -203,6 +213,7 @@ const ThemeDetailTemplate = forwardRef<
           ref={chatRef}
           onSendMessage={handleSendMessageInternal}
           disabled={disabled}
+          pageContext={pageContext}
         />
       </div>
     );

@@ -388,6 +388,10 @@ const QuestionDetail = () => {
           ref={chatRef}
           onSendMessage={handleSendMessage}
           disabled={isCommentDisabled}
+          pageContext={{
+            type: "question",
+            title: questionData.tagLine || questionData.question,
+          }}
         />
       </>
     );

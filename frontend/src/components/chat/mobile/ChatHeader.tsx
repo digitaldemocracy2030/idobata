@@ -1,16 +1,22 @@
 import { X } from "lucide-react";
 import type React from "react";
+import {
+  type PageContext,
+  generateChangeTopicMessage,
+} from "../../../utils/chatMessages";
 import { Button } from "../../ui/button";
 import { SheetClose } from "../../ui/sheet";
 
 interface ChatHeaderProps {
   onDragStart: (clientY: number) => void;
   onSendMessage?: (message: string) => void;
+  pageContext?: PageContext;
 }
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({
   onDragStart,
   onSendMessage,
+  pageContext,
 }) => {
   const handleMouseDown = (e: React.MouseEvent) => {
     onDragStart(e.clientY);
@@ -24,7 +30,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 
   const handleChangeTopicClick = () => {
     if (onSendMessage) {
-      onSendMessage("話題を変えましょう");
+      onSendMessage(generateChangeTopicMessage(pageContext));
     }
   };
 
