@@ -84,13 +84,18 @@ export class ThemeDetailChatManager {
     }
   }
 
-  private async sendMessageToBackend(userMessage: string): Promise<void> {
+  private async sendMessageToBackend(
+    userMessage: string,
+    threadId?: string,
+    isConversationStart?: boolean
+  ): Promise<void> {
     try {
       const result = await apiClient.sendMessage(
         this.userId,
         userMessage,
         this.themeId,
-        this.threadId
+        threadId || this.threadId,
+        isConversationStart
       );
 
       if (result.isOk()) {
@@ -244,7 +249,7 @@ export class ThemeDetailChatManager {
 
     if (!messages || messages.length === 0) {
       console.log("No chat history found, sending conversation start signal");
-      await this.sendMessageToBackend("");
+      await this.sendMessageToBackend("こんにちは！", undefined, true);
       return;
     }
 

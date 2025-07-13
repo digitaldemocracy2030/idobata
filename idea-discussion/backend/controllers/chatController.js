@@ -16,12 +16,20 @@ const handleNewMessageByTheme = async (req, res) => {
   }
 
   try {
-    let { userId, message, threadId, questionId, context } = req.body;
+    let {
+      userId,
+      message,
+      threadId,
+      questionId,
+      context,
+      isConversationStart,
+    } = req.body;
 
-    // Validate input and check for conversation start signal
-    const isConversationStart = !message || message.trim() === "";
+    // Handle conversation start signal
     if (isConversationStart) {
       message = "（会話スタート）";
+    } else if (!message || message.trim() === "") {
+      return res.status(400).json({ error: "Message content is required." });
     }
 
     // Generate a temporary userId if not provided
