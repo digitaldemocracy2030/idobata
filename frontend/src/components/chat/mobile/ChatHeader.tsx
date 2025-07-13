@@ -24,7 +24,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 
   const handleChangeTopicClick = () => {
     if (onSendMessage) {
-      onSendMessage("話題を変えましょう");
+      onSendMessage("このテーマに関して別の話題を話しましょう");
     }
   };
 
