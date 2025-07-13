@@ -16,7 +16,8 @@ export const generateRandomDisplayName = () => {
     "ヤマガラ",
   ];
 
-  const randomName = nameOptions[Math.floor(Math.random() * nameOptions.length)];
+  const randomName =
+    nameOptions[Math.floor(Math.random() * nameOptions.length)];
   const randomNumber = Math.floor(Math.random() * 100000)
     .toString()
     .padStart(5, "0");
