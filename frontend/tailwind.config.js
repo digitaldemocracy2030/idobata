@@ -68,10 +68,10 @@ module.exports = {
   theme: {
     fontFamily: {
       sans: [
-        'BIZ UDPGothic',
-        'Hiragino Kaku Gothic ProN',
-        'Meiryo',
-        'sans-serif',
+        "BIZ UDPGothic",
+        "Hiragino Kaku Gothic ProN",
+        "Meiryo",
+        "sans-serif",
       ],
     },
     extend: {
@@ -81,24 +81,51 @@ module.exports = {
       },
       fontSize: {
         // heading
-        '3xl-bold': ['36px', { lineHeight: '1.62', fontWeight: '700', letterSpacing: '0.025em' }],
-        '2xl-bold': ['30px', { lineHeight: '1.62', fontWeight: '700', letterSpacing: '0.025em' }],
-        'xl-bold': ['24px', { lineHeight: '1.62', fontWeight: '700', letterSpacing: '0.025em' }],
+        "3xl-bold": [
+          "36px",
+          { lineHeight: "1.62", fontWeight: "700", letterSpacing: "0.025em" },
+        ],
+        "2xl-bold": [
+          "30px",
+          { lineHeight: "1.62", fontWeight: "700", letterSpacing: "0.025em" },
+        ],
+        "xl-bold": [
+          "24px",
+          { lineHeight: "1.62", fontWeight: "700", letterSpacing: "0.025em" },
+        ],
         // body
-        'lg': ['20px', { lineHeight: '2', fontWeight: '400', letterSpacing: '0.025em' }],
-        'lg-bold': ['20px', { lineHeight: '2', fontWeight: '700', letterSpacing: '0.025em' }],
-        'md': ['16px', { lineHeight: '2', fontWeight: '400', letterSpacing: '0.025em' }],
-        'md-bold': ['16px', { lineHeight: '2', fontWeight: '700', letterSpacing: '0.025em' }],
-        'sm': ['12px', { lineHeight: '2', fontWeight: '400', letterSpacing: '0.025em' }],
-        'sm-bold': ['12px', { lineHeight: '2', fontWeight: '700', letterSpacing: '0.025em' }],
+        lg: [
+          "20px",
+          { lineHeight: "2", fontWeight: "400", letterSpacing: "0.025em" },
+        ],
+        "lg-bold": [
+          "20px",
+          { lineHeight: "2", fontWeight: "700", letterSpacing: "0.025em" },
+        ],
+        md: [
+          "16px",
+          { lineHeight: "2", fontWeight: "400", letterSpacing: "0.025em" },
+        ],
+        "md-bold": [
+          "16px",
+          { lineHeight: "2", fontWeight: "700", letterSpacing: "0.025em" },
+        ],
+        sm: [
+          "12px",
+          { lineHeight: "2", fontWeight: "400", letterSpacing: "0.025em" },
+        ],
+        "sm-bold": [
+          "12px",
+          { lineHeight: "2", fontWeight: "700", letterSpacing: "0.025em" },
+        ],
       },
       letterSpacing: {
-        wide: '0.025em',
+        wide: "0.025em",
       },
       lineHeight: {
-        heading: '1.62',
-        body: '2',
-        compact: '1.375',
+        heading: "1.62",
+        body: "2",
+        compact: "1.375",
       },
       /**
        * ===== カラーシステムの使用ルール =====
