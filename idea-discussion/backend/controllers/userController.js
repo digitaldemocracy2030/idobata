@@ -3,6 +3,20 @@ import User from "../models/User.js";
 import { createStorageService } from "../services/storage/storageServiceFactory.js";
 import { generateRandomDisplayName } from "../utils/displayNameGenerator.js";
 
+const PROFILE_IMAGES = [
+  "/images/profile-1.png",
+  "/images/profile-2.png", 
+  "/images/profile-3.png",
+  "/images/profile-4.png",
+  "/images/profile-5.png",
+  "/images/profile-6.png"
+];
+
+const generateRandomProfileImage = () => {
+  const randomIndex = Math.floor(Math.random() * PROFILE_IMAGES.length);
+  return PROFILE_IMAGES[randomIndex];
+};
+
 const storageService = createStorageService("local", {
   baseUrl: process.env.API_BASE_URL || "http://localhost:3000",
 });
@@ -20,10 +34,11 @@ const getUser = async (userId) => {
     if (user) return user;
 
     const defaultDisplayName = generateRandomDisplayName();
+    const defaultProfileImage = generateRandomProfileImage();
     user = new User({
       userId,
       displayName: defaultDisplayName,
-      profileImagePath: null,
+      profileImagePath: defaultProfileImage,
     });
     await user.save();
     return user;
@@ -33,10 +48,11 @@ const getUser = async (userId) => {
 
   if (!inMemoryUsers.has(userId)) {
     const defaultDisplayName = generateRandomDisplayName();
+    const defaultProfileImage = generateRandomProfileImage();
     inMemoryUsers.set(userId, {
       userId,
       displayName: defaultDisplayName,
-      profileImagePath: null,
+      profileImagePath: defaultProfileImage,
     });
   }
 
