@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { apiClient } from "../services/api/apiClient";
-import { generateRandomDisplayName } from "../utils/displayNameGenerator";
 
 interface User {
   id: string;
@@ -41,12 +40,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const initializeUser = async () => {
       let userId = localStorage.getItem("idobataUserId");
-      let isNewUser = false;
 
       if (!userId) {
         userId = uuidv4();
         localStorage.setItem("idobataUserId", userId);
-        isNewUser = true;
       }
 
       const result = await apiClient.getUserInfo(userId);
@@ -65,33 +62,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       const data = result.value;
 
-      if (isNewUser && !data.displayName) {
-        const defaultDisplayName = generateRandomDisplayName();
-        const updateResult = await apiClient.updateUserDisplayName(
-          userId,
-          defaultDisplayName
-        );
-
-        if (updateResult.isOk()) {
-          setUser({
-            id: userId,
-            displayName: defaultDisplayName,
-            profileImageUrl: data.profileImagePath,
-          });
-        } else {
-          setUser({
-            id: userId,
-            displayName: data.displayName,
-            profileImageUrl: data.profileImagePath,
-          });
-        }
-      } else {
-        setUser({
-          id: userId,
-          displayName: data.displayName,
-          profileImageUrl: data.profileImagePath,
-        });
-      }
+      setUser({
+        id: userId,
+        displayName: data.displayName,
+        profileImageUrl: data.profileImagePath,
+      });
 
       setError(null);
       setLoading(false);

@@ -16,8 +16,17 @@ const inMemoryUsers = new Map();
  */
 const getUser = async (userId) => {
   try {
-    const user = await User.findOne({ userId });
+    let user = await User.findOne({ userId });
     if (user) return user;
+
+    const defaultDisplayName = generateRandomDisplayName();
+    user = new User({
+      userId,
+      displayName: defaultDisplayName,
+      profileImagePath: null,
+    });
+    await user.save();
+    return user;
   } catch (error) {
     console.warn("MongoDB not available, using in-memory store");
   }
