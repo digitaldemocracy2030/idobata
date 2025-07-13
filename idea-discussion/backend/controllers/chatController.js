@@ -18,8 +18,9 @@ const handleNewMessageByTheme = async (req, res) => {
   try {
     let { userId, message, threadId, questionId, context } = req.body;
 
-    // Validate input
-    if (!message || message.trim() === "") {
+    // Validate input and check for conversation start signal
+    const isConversationStart = !message || message.trim() === "";
+    if (isConversationStart) {
       message = "（会話スタート）";
     }
 
@@ -68,12 +69,14 @@ const handleNewMessageByTheme = async (req, res) => {
       });
     }
 
-    // Add user message to the thread
-    chatThread.messages.push({
-      role: "user",
-      content: message,
-      timestamp: new Date(),
-    });
+    // Add user message to the thread (skip saving conversation start signal)
+    if (!isConversationStart) {
+      chatThread.messages.push({
+        role: "user",
+        content: message,
+        timestamp: new Date(),
+      });
+    }
 
     // --- Fetch Reference Opinions (Sharp Questions and related Problems/Solutions) ---
     let referenceOpinions = "";
