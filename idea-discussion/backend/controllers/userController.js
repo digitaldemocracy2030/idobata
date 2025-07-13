@@ -1,6 +1,7 @@
 import path from "node:path";
 import User from "../models/User.js";
 import { createStorageService } from "../services/storage/storageServiceFactory.js";
+import { generateRandomDisplayName } from "../utils/displayNameGenerator.js";
 
 const storageService = createStorageService("local", {
   baseUrl: process.env.API_BASE_URL || "http://localhost:3000",
@@ -22,9 +23,10 @@ const getUser = async (userId) => {
   }
 
   if (!inMemoryUsers.has(userId)) {
+    const defaultDisplayName = generateRandomDisplayName();
     inMemoryUsers.set(userId, {
       userId,
-      displayName: null,
+      displayName: defaultDisplayName,
       profileImagePath: null,
     });
   }
