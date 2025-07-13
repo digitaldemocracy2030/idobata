@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.11",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.503.0",
     "neverthrow": "^8.2.0",
