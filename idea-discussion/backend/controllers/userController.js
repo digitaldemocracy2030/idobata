@@ -5,11 +5,11 @@ import { generateRandomDisplayName } from "../utils/displayNameGenerator.js";
 
 const PROFILE_IMAGES = [
   "/images/profile-1.png",
-  "/images/profile-2.png", 
+  "/images/profile-2.png",
   "/images/profile-3.png",
   "/images/profile-4.png",
   "/images/profile-5.png",
-  "/images/profile-6.png"
+  "/images/profile-6.png",
 ];
 
 const generateRandomProfileImage = () => {
