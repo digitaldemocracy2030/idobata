@@ -7,11 +7,139 @@ import Theme from "../models/Theme.js"; // Import Theme model for custom prompts
 import { callLLM } from "../services/llmService.js"; // Import the LLM service
 import { processExtraction } from "../workers/extractionWorker.js"; // Import the extraction worker function
 
-const generateAndAddGreeting = async (chatThread, themeId) => {
+const generateAIResponseContent = async (
+  themeId,
+  chatThread,
+  includeReferenceOpinions = true,
+  isGreeting = false
+) => {
+  // --- Fetch Reference Opinions (only if requested) ---
+  let referenceOpinions = "";
+  if (includeReferenceOpinions) {
+    try {
+      const themeQuestions = await SharpQuestion.find({ themeId }).lean();
+
+      if (themeQuestions.length > 0) {
+        referenceOpinions +=
+          "参考情報として、システム内で議論されている主要な「問い」と、それに関連する意見の一部を紹介します:\n\n";
+
+        for (const question of themeQuestions) {
+          referenceOpinions += `問い: ${question.questionText}\n`;
+
+          // Find up to 10 random related problems with relevance > 0.8
+          const problemLinks = await QuestionLink.aggregate([
+            {
+              $match: {
+                questionId: question._id,
+                linkedItemType: "problem",
+                linkType: "prompts_question",
+                relevanceScore: { $gte: 0.8 },
+              },
+            },
+            { $sample: { size: 10 } },
+            {
+              $lookup: {
+                from: "problems",
+                localField: "linkedItemId",
+                foreignField: "_id",
+                as: "linkedProblem",
+              },
+            },
+            {
+              $unwind: {
+                path: "$linkedProblem",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          ]);
+
+          if (
+            problemLinks.length > 0 &&
+            problemLinks.some((link) => link.linkedProblem)
+          ) {
+            referenceOpinions += "  関連性の高い課題:\n";
+            for (const link of problemLinks) {
+              if (link.linkedProblem) {
+                const problem = link.linkedProblem;
+                if (problem.themeId && problem.themeId.toString() === themeId) {
+                  const statement =
+                    problem.statement ||
+                    problem.combinedStatement ||
+                    problem.statementA ||
+                    problem.statementB ||
+                    "N/A";
+                  referenceOpinions += `    - ${statement}\n`;
+                }
+              }
+            }
+          } else {
+            referenceOpinions += "  関連性の高い課題: (ありません)\n";
+          }
+
+          // Find up to 10 random related solutions with relevance > 0.8
+          const solutionLinks = await QuestionLink.aggregate([
+            {
+              $match: {
+                questionId: question._id,
+                linkedItemType: "solution",
+                linkType: "answers_question",
+                relevanceScore: { $gte: 0.8 },
+              },
+            },
+            { $sample: { size: 10 } },
+            {
+              $lookup: {
+                from: "solutions",
+                localField: "linkedItemId",
+                foreignField: "_id",
+                as: "linkedSolution",
+              },
+            },
+            {
+              $unwind: {
+                path: "$linkedSolution",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+          ]);
+
+          if (
+            solutionLinks.length > 0 &&
+            solutionLinks.some((link) => link.linkedSolution)
+          ) {
+            referenceOpinions +=
+              "  関連性の高い解決策 (最大10件, 関連度 >80%):\n";
+            for (const link of solutionLinks) {
+              if (link.linkedSolution) {
+                const solution = link.linkedSolution;
+                if (
+                  solution.themeId &&
+                  solution.themeId.toString() === themeId
+                ) {
+                  referenceOpinions += `    - ${solution.statement || "N/A"}\n`;
+                }
+              }
+            }
+          } else {
+            referenceOpinions += "  関連性の高い解決策: (ありません)\n";
+          }
+          referenceOpinions += "\n";
+        }
+        referenceOpinions +=
+          "---\nこれらの「問い」や関連意見も踏まえ、ユーザーとの対話を深めてください。\n";
+      }
+    } catch (dbError) {
+      console.error(
+        `Error fetching reference opinions for theme ${themeId}:`,
+        dbError
+      );
+    }
+  }
+
+  // --- Get theme and determine system prompt ---
+  let systemPrompt = "";
   try {
     const theme = await Theme.findById(themeId);
-    let systemPrompt = "";
-
     if (theme?.customPrompt) {
       systemPrompt = theme.customPrompt;
     } else {
@@ -24,16 +152,68 @@ const generateAndAddGreeting = async (chatThread, themeId) => {
 解決策の表現は、具体的な行動や機能、そしてそれがもたらす価値を明確に記述する必要があります。実現可能性や費用対効果といった制約条件も考慮し、曖昧な表現や抽象的な概念を避けることが重要です。解決策は、課題に対する具体的な応答として提示され、その効果やリスク、そして実装に必要なステップを明確にすべき。
 4.  **心理的安全性の確保:** ユーザーのペースを尊重し、急かさないこと。論理的な詰め寄りや過度な質問攻めを避けること。ユーザーが答えられない質問には固執せず、別の角度からアプローチすること。完璧な回答を求めず、ユーザーの部分的な意見も尊重すること。対話は協力的な探索であり、試験や審査ではないことを意識すること。
 5.  **話題の誘導:** ユーザーの発言が曖昧で、特に話したいトピックが明確でない場合、参考情報として提示された既存の問いのどれかをピックアップしてそれについて議論することを優しく提案してください。（問いを一字一句読み上げるのではなく、文脈や相手に合わせて言い換えて分かりやすく伝える）
-
-これから新しい対話を始めます。テーマ「${theme?.title || "テーマ"}」について、親しみやすい挨拶をして対話を開始してください。`;
+`;
     }
 
-    // Generate greeting using LLM with empty conversation history
-    const llmMessages = [{ role: "system", content: systemPrompt }];
-    const greetingContent = await callLLM(llmMessages);
+    if (isGreeting) {
+      systemPrompt += `\nこれから新しい対話を始めます。テーマ「${theme?.title || "テーマ"}」について、親しみやすい挨拶をして対話を開始してください。`;
+    }
+  } catch (error) {
+    console.error(`Error fetching theme ${themeId} for prompt:`, error);
+    systemPrompt = `あなたは、ユーザーが抱える課題やその解決策についての考えを深めるための、対話型アシスタントです。以下の点を意識して応答してください。
+
+1.  **思考の深掘り:** ユーザーの発言から、具体的な課題や解決策のアイデアを引き出すことを目指します。曖昧な点や背景が不明な場合は、「いつ」「どこで」「誰が」「何を」「なぜ」「どのように」といった質問（5W1H）を自然な会話の中で投げかけ、具体的な情報を引き出してください。
+2.  **簡潔な応答:** あなたの応答は、最大でも4文以内にまとめてください。
+3.  **課題/解決策の抽出支援:** ユーザーが自身の考えを整理し、明確な「課題」や「解決策」として表現できるよう、対話を通じてサポートしてください。
+課題の表現は、主語を明確にし、具体的な状況と影響を記述することで、問題の本質を捉えやすくする必要があります。現状と理想の状態を明確に記述し、そのギャップを課題として定義する。解決策の先走りや抽象的な表現を避け、「誰が」「何を」「なぜ」という構造で課題を定義することで、問題の範囲を明確にし、多様な視点からの議論を促します。感情的な表現や主観的な解釈を排し、客観的な事実に基づいて課題を記述することが重要です。
+解決策の表現は、具体的な行動や機能、そしてそれがもたらす価値を明確に記述する必要があります。実現可能性や費用対効果といった制約条件も考慮し、曖昧な表現や抽象的な概念を避けることが重要です。解決策は、課題に対する具体的な応答として提示され、その効果やリスク、そして実装に必要なステップを明確にすべき。
+4.  **心理的安全性の確保:** ユーザーのペースを尊重し、急かさないこと。論理的な詰め寄りや過度な質問攻めを避けること。ユーザーが答えられない質問には固執せず、別の角度からアプローチすること。完璧な回答を求めず、ユーザーの部分的な意見も尊重すること。対話は協力的な探索であり、試験や審査ではないことを意識すること。
+5.  **話題の誘導:** ユーザーの発言が曖昧で、特に話したいトピックが明確でない場合、参考情報として提示された既存の問いのどれかをピックアップしてそれについて議論することを優しく提案してください。（問いを一字一句読み上げるのではなく、文脈や相手に合わせて言い換えて分かりやすく伝える）
+`;
+    if (isGreeting) {
+      systemPrompt +=
+        "\nこれから新しい対話を始めます。親しみやすい挨拶をして対話を開始してください。";
+    }
+  }
+
+  const llmMessages = [];
+  llmMessages.push({ role: "system", content: systemPrompt });
+
+  if (includeReferenceOpinions && referenceOpinions) {
+    llmMessages.push({ role: "system", content: referenceOpinions });
+  }
+
+  // Add conversation history (empty for greetings)
+  if (!isGreeting && chatThread.messages.length > 0) {
+    llmMessages.push(
+      ...chatThread.messages.map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      }))
+    );
+  }
+
+  // Call the LLM service
+  const aiResponseContent = await callLLM(llmMessages);
+
+  if (!aiResponseContent) {
+    console.error("LLM did not return a response.");
+    return null;
+  }
+
+  return aiResponseContent;
+};
+
+const generateAndAddGreeting = async (chatThread, themeId) => {
+  try {
+    const greetingContent = await generateAIResponseContent(
+      themeId,
+      chatThread,
+      false,
+      true
+    );
 
     if (greetingContent) {
-      // Add AI greeting to the thread
       chatThread.messages.push({
         role: "assistant",
         content: greetingContent,
@@ -43,7 +223,6 @@ const generateAndAddGreeting = async (chatThread, themeId) => {
     }
   } catch (error) {
     console.error(`Error generating greeting for theme ${themeId}:`, error);
-    // Continue without greeting if generation fails
   }
 };
 
@@ -118,184 +297,13 @@ const handleNewMessageByTheme = async (req, res) => {
       timestamp: new Date(),
     });
 
-    // --- Fetch Reference Opinions (Sharp Questions and related Problems/Solutions) ---
-    let referenceOpinions = "";
-    try {
-      const themeQuestions = await SharpQuestion.find({ themeId }).lean();
-
-      if (themeQuestions.length > 0) {
-        referenceOpinions +=
-          "参考情報として、システム内で議論されている主要な「問い」と、それに関連する意見の一部を紹介します:\n\n";
-
-        for (const question of themeQuestions) {
-          referenceOpinions += `問い: ${question.questionText}\n`;
-
-          // Find up to 10 random related problems with relevance > 0.8
-          const problemLinks = await QuestionLink.aggregate([
-            {
-              $match: {
-                questionId: question._id,
-                linkedItemType: "problem",
-                linkType: "prompts_question",
-                relevanceScore: { $gte: 0.8 },
-              },
-            },
-            { $sample: { size: 10 } },
-            {
-              $lookup: {
-                from: "problems",
-                localField: "linkedItemId",
-                foreignField: "_id",
-                as: "linkedProblem",
-              },
-            },
-            {
-              $unwind: {
-                path: "$linkedProblem",
-                preserveNullAndEmptyArrays: true,
-              },
-            },
-          ]);
-
-          if (
-            problemLinks.length > 0 &&
-            problemLinks.some((link) => link.linkedProblem)
-          ) {
-            referenceOpinions += "  関連性の高い課題:\n";
-            for (const link of problemLinks) {
-              if (link.linkedProblem) {
-                const problem = link.linkedProblem;
-                if (problem.themeId && problem.themeId.toString() === themeId) {
-                  const statement =
-                    problem.statement ||
-                    problem.combinedStatement ||
-                    problem.statementA ||
-                    problem.statementB ||
-                    "N/A";
-                  referenceOpinions += `    - ${statement})\n`;
-                }
-              }
-            }
-          } else {
-            referenceOpinions += "  関連性の高い課題: (ありません)\n";
-          }
-
-          // Find up to 10 random related solutions with relevance > 0.8
-          const solutionLinks = await QuestionLink.aggregate([
-            {
-              $match: {
-                questionId: question._id,
-                linkedItemType: "solution",
-                linkType: "answers_question",
-                relevanceScore: { $gte: 0.8 },
-              },
-            },
-            { $sample: { size: 10 } },
-            {
-              $lookup: {
-                from: "solutions",
-                localField: "linkedItemId",
-                foreignField: "_id",
-                as: "linkedSolution",
-              },
-            },
-            {
-              $unwind: {
-                path: "$linkedSolution",
-                preserveNullAndEmptyArrays: true,
-              },
-            },
-          ]);
-
-          if (
-            solutionLinks.length > 0 &&
-            solutionLinks.some((link) => link.linkedSolution)
-          ) {
-            referenceOpinions +=
-              "  関連性の高い解決策 (最大10件, 関連度 >80%):\n";
-            for (const link of solutionLinks) {
-              if (link.linkedSolution) {
-                const solution = link.linkedSolution;
-                if (
-                  solution.themeId &&
-                  solution.themeId.toString() === themeId
-                ) {
-                  referenceOpinions += `    - ${solution.statement || "N/A"})\n`;
-                }
-              }
-            }
-          } else {
-            referenceOpinions += "  関連性の高い解決策: (ありません)\n";
-          }
-          referenceOpinions += "\n"; // Add space between questions
-        }
-        referenceOpinions +=
-          "---\nこれらの「問い」や関連意見も踏まえ、ユーザーとの対話を深めてください。\n";
-      }
-    } catch (dbError) {
-      console.error(
-        `Error fetching reference opinions for theme ${themeId}:`,
-        dbError
-      );
-      // Continue without reference opinions if DB fetch fails
-    }
-    // --- End Fetch Reference Opinions ---
-
-    // --- Call LLM for AI Response ---
-    // Prepare messages for the LLM (ensure correct format)
-    const llmMessages = [];
-
-    // --- Get theme and determine system prompt ---
-    let systemPrompt = "";
-    try {
-      const theme = await Theme.findById(themeId);
-      if (theme?.customPrompt) {
-        systemPrompt = theme.customPrompt;
-      } else {
-        // --- Use default system prompt ---
-        systemPrompt = `あなたは、ユーザーが抱える課題やその解決策についての考えを深めるための、対話型アシスタントです。以下の点を意識して応答してください。
-
-1.  **思考の深掘り:** ユーザーの発言から、具体的な課題や解決策のアイデアを引き出すことを目指します。曖昧な点や背景が不明な場合は、「いつ」「どこで」「誰が」「何を」「なぜ」「どのように」といった質問（5W1H）を自然な会話の中で投げかけ、具体的な情報を引き出してください。
-2.  **簡潔な応答:** あなたの応答は、最大でも4文以内にまとめてください。
-3.  **課題/解決策の抽出支援:** ユーザーが自身の考えを整理し、明確な「課題」や「解決策」として表現できるよう、対話を通じてサポートしてください。
-課題の表現は、主語を明確にし、具体的な状況と影響を記述することで、問題の本質を捉えやすくする必要があります。現状と理想の状態を明確に記述し、そのギャップを課題として定義する。解決策の先走りや抽象的な表現を避け、「誰が」「何を」「なぜ」という構造で課題を定義することで、問題の範囲を明確にし、多様な視点からの議論を促します。感情的な表現や主観的な解釈を排し、客観的な事実に基づいて課題を記述することが重要です。
-解決策の表現は、具体的な行動や機能、そしてそれがもたらす価値を明確に記述する必要があります。実現可能性や費用対効果といった制約条件も考慮し、曖昧な表現や抽象的な概念を避けることが重要です。解決策は、課題に対する具体的な応答として提示され、その効果やリスク、そして実装に必要なステップを明確にすべき。
-4.  **心理的安全性の確保:** ユーザーのペースを尊重し、急かさないこと。論理的な詰め寄りや過度な質問攻めを避けること。ユーザーが答えられない質問には固執せず、別の角度からアプローチすること。完璧な回答を求めず、ユーザーの部分的な意見も尊重すること。対話は協力的な探索であり、試験や審査ではないことを意識すること。
-5.  **話題の誘導:** ユーザーの発言が曖昧で、特に話したいトピックが明確でない場合、参考情報として提示された既存の問いのどれかをピックアップしてそれについて議論することを優しく提案してください。（問いを一字一句読み上げるのではなく、文脈や相手に合わせて言い換えて分かりやすく伝える）
-`;
-      }
-    } catch (error) {
-      console.error(`Error fetching theme ${themeId} for prompt:`, error);
-      systemPrompt = `あなたは、ユーザーが抱える課題やその解決策についての考えを深めるための、対話型アシスタントです。以下の点を意識して応答してください。
-
-1.  **思考の深掘り:** ユーザーの発言から、具体的な課題や解決策のアイデアを引き出すことを目指します。曖昧な点や背景が不明な場合は、「いつ」「どこで」「誰が」「何を」「なぜ」「どのように」といった質問（5W1H）を自然な会話の中で投げかけ、具体的な情報を引き出してください。
-2.  **簡潔な応答:** あなたの応答は、最大でも4文以内にまとめてください。
-3.  **課題/解決策の抽出支援:** ユーザーが自身の考えを整理し、明確な「課題」や「解決策」として表現できるよう、対話を通じてサポートしてください。
-課題の表現は、主語を明確にし、具体的な状況と影響を記述することで、問題の本質を捉えやすくする必要があります。現状と理想の状態を明確に記述し、そのギャップを課題として定義する。解決策の先走りや抽象的な表現を避け、「誰が」「何を」「なぜ」という構造で課題を定義することで、問題の範囲を明確にし、多様な視点からの議論を促します。感情的な表現や主観的な解釈を排し、客観的な事実に基づいて課題を記述することが重要です。
-解決策の表現は、具体的な行動や機能、そしてそれがもたらす価値を明確に記述する必要があります。実現可能性や費用対効果といった制約条件も考慮し、曖昧な表現や抽象的な概念を避けることが重要です。解決策は、課題に対する具体的な応答として提示され、その効果やリスク、そして実装に必要なステップを明確にすべき。
-4.  **心理的安全性の確保:** ユーザーのペースを尊重し、急かさないこと。論理的な詰め寄りや過度な質問攻めを避けること。ユーザーが答えられない質問には固執せず、別の角度からアプローチすること。完璧な回答を求めず、ユーザーの部分的な意見も尊重すること。対話は協力的な探索であり、試験や審査ではないことを意識すること。
-5.  **話題の誘導:** ユーザーの発言が曖昧で、特に話したいトピックが明確でない場合、参考情報として提示された既存の問いのどれかをピックアップしてそれについて議論することを優しく提案してください。（問いを一字一句読み上げるのではなく、文脈や相手に合わせて言い換えて分かりやすく伝える）
-`;
-    }
-
-    llmMessages.push({ role: "system", content: systemPrompt });
-    // --- End core system prompt ---
-
-    // Add the reference opinions as a system message
-    if (referenceOpinions) {
-      llmMessages.push({ role: "system", content: referenceOpinions });
-    }
-
-    // Add actual chat history
-    llmMessages.push(
-      ...chatThread.messages.map((msg) => ({
-        role: msg.role,
-        content: msg.content,
-      }))
+    // Generate AI response using shared logic
+    const aiResponseContent = await generateAIResponseContent(
+      themeId,
+      chatThread,
+      true,
+      false
     );
-
-    // Call the LLM service
-    const aiResponseContent = await callLLM(llmMessages);
 
     if (!aiResponseContent) {
       console.error("LLM did not return a response.");
@@ -310,7 +318,6 @@ const handleNewMessageByTheme = async (req, res) => {
       content: aiResponseContent,
       timestamp: new Date(),
     });
-    // --- End LLM Call ---
 
     // Save the updated thread
     await chatThread.save();
