@@ -27,6 +27,7 @@ export class ThemeDetailChatManager {
   private unsubscribeNewExtraction?: () => void;
   private unsubscribeExtractionUpdate?: () => void;
   private userId: string;
+  private hasShownNotification = false;
 
   constructor(options: ThemeDetailChatManagerOptions) {
     this.themeId = options.themeId;
@@ -40,16 +41,18 @@ export class ThemeDetailChatManager {
         this.subscribeToExtraction();
       }
     });
-
-    this.showThemeNotification();
   }
 
   private showThemeNotification(): void {
+    if (this.hasShownNotification) return;
+
     const notification = new SystemNotification(
       `「${this.themeName}」がチャット対象になりました。`
     );
     this.messages.push(notification);
     this.onNewMessage?.(notification);
+
+    this.hasShownNotification = true;
   }
 
   async addMessage(content: string, type: MessageType): Promise<void> {
