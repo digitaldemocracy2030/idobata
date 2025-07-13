@@ -172,7 +172,22 @@ const useContentStore = create<ContentState>()(
       createChatThread: (path) => {
         const state = get();
         if (!state.chatThreads[path]) {
-          const newThread = { messages: [], branchId: null, nextMessageId: 1 };
+          const welcomeMessage =
+            import.meta.env.VITE_POLICY_CHAT_WELCOME_MESSAGE ||
+            "こんにちは！私はこのドキュメントについて、質問に答えたり、変更提案を一緒に取りまとめるのが得意なAIです。何か気になることはありますか？";
+
+          const welcomeMsg: Message = {
+            id: 1,
+            text: welcomeMessage,
+            sender: "bot",
+          };
+
+          const newThread = {
+            messages: [welcomeMsg],
+            branchId: null,
+            nextMessageId: 2,
+          };
+
           set((prevState) => ({
             chatThreads: {
               ...prevState.chatThreads,
