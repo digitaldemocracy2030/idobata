@@ -56,19 +56,26 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       helperText,
       errorText,
       options,
+      id,
       ...props
     },
     ref
   ) => {
+    // idが未指定の場合は自動生成
+    const selectId = id || React.useId();
     return (
       <div className="flex flex-col gap-1 w-full">
         {label && (
-          <label className="flex items-center gap-1 font-bold text-base">
+          <label
+            htmlFor={selectId}
+            className="flex items-center gap-1 font-bold text-base"
+          >
             {label}
             {requiredMark && <span className="text-destructive">*</span>}
           </label>
         )}
         <select
+          id={selectId}
           className={cn(selectVariants({ size, error, disabled, className }))}
           ref={ref}
           disabled={disabled}
