@@ -570,11 +570,26 @@ const getThreadByUserAndTheme = async (req, res) => {
 
       await newChatThread.save();
 
+      console.log(
+        `Processing automatic greeting for new thread ${newChatThread._id}`
+      );
+      const greetingProcessed = await processAutomaticMessage(
+        newChatThread,
+        "（スレッド開始）",
+        themeId
+      );
+
+      if (!greetingProcessed) {
+        console.warn(
+          `Failed to process automatic greeting for thread ${newChatThread._id}`
+        );
+      }
+
       return res.status(200).json({
         threadId: newChatThread._id,
         userId: userId,
         themeId: themeId,
-        messages: [],
+        messages: newChatThread.messages || [],
       });
     }
 
@@ -595,9 +610,107 @@ const getThreadByUserAndTheme = async (req, res) => {
   }
 };
 
+const processAutomaticMessage = async (chatThread, message, themeId) => {
+  try {
+    chatThread.messages.push({
+      role: "user",
+      content: message,
+      timestamp: new Date(),
+    });
+
+    const llmMessages = [];
+
+    let systemPrompt = "";
+    try {
+      const theme = await Theme.findById(themeId);
+      if (theme?.customPrompt) {
+        systemPrompt = theme.customPrompt;
+      } else {
+        systemPrompt = `あなたは、ユーザーが抱える課題やその解決策についての考えを深めるための、対話型アシスタントです。以下の点を意識して応答してください。
+
+1.  **思考の深掘り:** ユーザーの発言から、具体的な課題や解決策のアイデアを引き出すことを目指します。曖昧な点や背景が不明な場合は、「いつ」「どこで」「誰が」「何を」「なぜ」「どのように」といった質問（5W1H）を自然な会話の中で投げかけ、具体的な情報を引き出してください。
+2.  **簡潔な応答:** あなたの応答は、最大でも4文以内にまとめてください。
+3.  **課題/解決策の抽出支援:** ユーザーが自身の考えを整理し、明確な「課題」や「解決策」として表現できるよう、対話を通じてサポートしてください。
+課題の表現は、主語を明確にし、具体的な状況と影響を記述することで、問題の本質を捉えやすくする必要があります。現状と理想の状態を明確に記述し、そのギャップを課題として定義する。解決策の先走りや抽象的な表現を避け、「誰が」「何を」「なぜ」という構造で課題を定義することで、問題の範囲を明確にし、多様な視点からの議論を促します。感情的な表現や主観的な解釈を排し、客観的な事実に基づいて課題を記述することが重要です。
+解決策の表現は、具体的な行動や機能、そしてそれがもたらす価値を明確に記述する必要があります。実現可能性や費用対効果といった制約条件も考慮し、曖昧な表現や抽象的な概念を避けることが重要です。解決策は、課題に対する具体的な応答として提示され、その効果やリスク、そして実装に必要なステップを明確にすべき。
+4.  **心理的安全性の確保:** ユーザーのペースを尊重し、急かさないこと。論理的な詰め寄りや過度な質問攻めを避けること。ユーザーが答えられない質問には固執せず、別の角度からアプローチすること。完璧な回答を求めず、ユーザーの部分的な意見も尊重すること。対話は協力的な探索であり、試験や審査ではないことを意識すること。
+5.  **話題の誘導:** ユーザーの発言が曖昧で、特に話したいトピックが明確でない場合、参考情報として提示された既存の問いのどれかをピックアップしてそれについて議論することを優しく提案してください。（問いを一字一句読み上げるのではなく、文脈や相手に合わせて言い換えて分かりやすく伝える）
+`;
+      }
+    } catch (error) {
+      console.error(`Error fetching theme ${themeId} for prompt:`, error);
+      systemPrompt = `あなたは、ユーザーが抱える課題やその解決策についての考えを深めるための、対話型アシスタントです。以下の点を意識して応答してください。
+
+1.  **思考の深掘り:** ユーザーの発言から、具体的な課題や解決策のアイデアを引き出すことを目指します。曖昧な点や背景が不明な場合は、「いつ」「どこで」「誰が」「何を」「なぜ」「どのように」といった質問（5W1H）を自然な会話の中で投げかけ、具体的な情報を引き出してください。
+2.  **簡潔な応答:** あなたの応答は、最大でも4文以内にまとめてください。
+3.  **課題/解決策の抽出支援:** ユーザーが自身の考えを整理し、明確な「課題」や「解決策」として表現できるよう、対話を通じてサポートしてください。
+課題の表現は、主語を明確にし、具体的な状況と影響を記述することで、問題の本質を捉えやすくする必要があります。現状と理想の状態を明確に記述し、そのギャップを課題として定義する。解決策の先走りや抽象的な表現を避け、「誰が」「何を」「なぜ」という構造で課題を定義することで、問題の範囲を明確にし、多様な視点からの議論を促します。感情的な表現や主観的な解釈を排し、客観的な事実に基づいて課題を記述することが重要です。
+解決策の表現は、具体的な行動や機能、そしてそれがもたらす価値を明確に記述する必要があります。実現可能性や費用対効果といった制約条件も考慮し、曖昧な表現や抽象的な概念を避けることが重要です。解決策は、課題に対する具体的な応答として提示され、その効果やリスク、そして実装に必要なステップを明確にすべき。
+4.  **心理的安全性の確保:** ユーザーのペースを尊重し、急かさないこと。論理的な詰め寄りや過度な質問攻めを避けること。ユーザーが答えられない質問には固執せず、別の角度からアプローチすること。完璧な回答を求めず、ユーザーの部分的な意見も尊重すること。対話は協力的な探索であり、試験や審査ではないことを意識すること。
+5.  **話題の誘導:** ユーザーの発言が曖昧で、特に話したいトピックが明確でない場合、参考情報として提示された既存の問いのどれかをピックアップしてそれについて議論することを優しく提案してください。（問いを一字一句読み上げるのではなく、文脈や相手に合わせて言い換えて分かりやすく伝える）
+`;
+    }
+
+    llmMessages.push({ role: "system", content: systemPrompt });
+
+    llmMessages.push(
+      ...chatThread.messages.map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      }))
+    );
+
+    const aiResponseContent = await callLLM(llmMessages);
+
+    if (!aiResponseContent) {
+      console.error("LLM did not return a response for automatic greeting.");
+      return false;
+    }
+
+    chatThread.messages.push({
+      role: "assistant",
+      content: aiResponseContent,
+      timestamp: new Date(),
+    });
+
+    await chatThread.save();
+    console.log(
+      `Saved automatic greeting for thread ${chatThread._id} in theme: ${themeId}`
+    );
+
+    setTimeout(() => {
+      const job = {
+        data: {
+          sourceType: "chat",
+          sourceOriginId: chatThread._id.toString(),
+          content: null,
+          metadata: {},
+          themeId: themeId,
+        },
+      };
+
+      processExtraction(job).catch((err) => {
+        console.error(
+          `[Async Extraction Call] Error for automatic greeting thread ${chatThread._id} in theme ${themeId}:`,
+          err
+        );
+      });
+    }, 0);
+
+    return true;
+  } catch (error) {
+    console.error(
+      `Error processing automatic greeting for theme ${themeId}:`,
+      error
+    );
+    return false;
+  }
+};
+
 export {
   getThreadExtractionsByTheme,
   getThreadMessagesByTheme,
   handleNewMessageByTheme,
   getThreadByUserAndTheme,
+  processAutomaticMessage,
 };
