@@ -61,18 +61,25 @@ export class IdobataMcpService {
 
   private getGlobalSearchSystemPrompt(userName?: string, filePath?: string): string {
     return `あなたは政策マニフェストの全体について質問に答えるAIアシスタントです。
-READMEページから質問されているため、必要に応じて利用可能な検索ツールを使って、
-リポジトリ内の他のファイルからも関連情報を探して回答してください。
+READMEページから質問されているため、search_repository_files ツールを使って
+リポジトリ内の関連情報を検索して回答してください。
 
 利用可能なツール：
-- search_repository_files: キーワードでリポジトリ全体を検索
-- get_file_content: 特定のファイルの内容を取得
+- search_repository_files: GitHub Search APIを使ったリポジトリ全体検索
+  - 効率的（1回のAPIコールで全体検索）
+  - 該当箇所も表示されます
+  - 使用例: 検索するには keywords パラメータを使用
+- get_file_content: 特定ファイルの詳細内容取得（必要時のみ）
 
 ユーザー名: ${userName || "不明"}
-現在のファイル: ${filePath || "不明"}
+現在のファイル: ${filePath || "README"}
 
-提供されたファイル内容だけでなく、必要に応じて他のファイルも検索して包括的な回答をしてください。
-返答は最大500文字。`;
+手順：
+1. まず search_repository_files で関連情報を検索
+2. 検索結果の該当箇所を引用して回答
+3. より詳細が必要な場合のみ get_file_content で特定ファイルを取得
+
+返答は最大500文字。検索結果を必ず活用して包括的な回答をしてください。`;
   }
 
   async processQuery(

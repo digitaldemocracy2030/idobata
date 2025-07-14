@@ -5,8 +5,8 @@ import { getAuthenticatedOctokit } from "../github/client.js";
 import logger from "../logger.js";
 
 export const searchFilesSchema = z.object({
-  keywords: z.string().min(1),
-  limit: z.number().min(1).max(20).optional().default(10),
+  keywords: z.string().min(1, "Search keywords are required"),
+  limit: z.number().min(1).max(30).optional().default(10),
 });
 
 export type SearchFilesInput = z.infer<typeof searchFilesSchema>;
@@ -30,7 +30,10 @@ export async function handleSearchFiles(
     const searchQuery = `${keywords} repo:${owner}/${repo} extension:md`;
     const { data: searchResult } = await octokit.rest.search.code({
       q: searchQuery,
-      per_page: limit,
+      per_page: Math.min(limit, 30), // GitHub Search API has a max of 100 per page, but we limit to 30
+      sort: 'indexed',
+      order: 'desc',
+      text_match: true, // Enable text matches to show relevant snippets
     });
 
     if (searchResult.items.length === 0) {
@@ -44,27 +47,40 @@ export async function handleSearchFiles(
       };
     }
 
-    // 検索結果をフォーマット
+    // 検索結果をフォーマット（text_matchesを含む）
     const results = searchResult.items.map((item) => ({
-      name: item.name,
+      filename: item.name,
       path: item.path,
       score: item.score,
-      html_url: item.html_url,
+      matches: item.text_matches?.map(match => ({
+        fragment: match.fragment,
+        property: match.property
+      })) || []
     }));
 
+    // 結果を見やすくフォーマット
     const formattedResults = results
-      .map((result) => 
-        `**${result.name}** (${result.path})\n` +
-        `Score: ${result.score}\n` +
-        `URL: ${result.html_url}`
-      )
-      .join('\n\n');
+      .map((result) => {
+        let text = `**${result.filename}** (${result.path})\n`;
+        text += `Score: ${result.score}\n`;
+        
+        // 該当箇所を表示
+        if (result.matches.length > 0) {
+          text += `該当箇所:\n`;
+          result.matches.forEach(match => {
+            text += `\`\`\`\n${match.fragment}\n\`\`\`\n`;
+          });
+        }
+        
+        return text;
+      })
+      .join('\n---\n\n');
 
     return {
       content: [
         {
           type: "text",
-          text: `Found ${results.length} files containing "${keywords}":\n\n${formattedResults}`,
+          text: `検索結果 (${searchResult.total_count}件中${searchResult.items.length}件表示):\n\n${formattedResults}`,
         },
       ],
     };
@@ -80,6 +96,19 @@ export async function handleSearchFiles(
       errorMessage = error.message;
       if ("status" in error && typeof error.status === "number") {
         status = ` (Status: ${error.status})`;
+        
+        // Rate limit specific handling
+        if (error.status === 403 && errorMessage.includes('rate limit')) {
+          return {
+            isError: true,
+            content: [
+              {
+                type: "text",
+                text: "検索APIのレート制限に達しました。しばらく待ってから再度お試しください。"
+              }
+            ]
+          };
+        }
       }
     } else if (typeof error === "string") {
       errorMessage = error;

@@ -59,7 +59,7 @@ const searchFilesAnnotations = {
 
 server.tool(
   "search_repository_files",
-  "Search for content across all files in the repository using keywords",
+  "Search for content across all files in the repository using GitHub Search API. Returns matching files with relevant text snippets. More efficient than individual file fetching (1 API call vs many).",
   searchFilesSchema.shape,
   searchFilesAnnotations,
   handleSearchFiles
