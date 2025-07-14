@@ -43,24 +43,8 @@ const openai = new OpenAI({
 export class IdobataMcpService {
   constructor(private mcpClient: McpClient) {}
 
-  async processQuery(
-    query: string,
-    history: OpenAI.Chat.ChatCompletionMessageParam[] = [],
-    branchId?: string,
-    fileContent?: string,
-    userName?: string,
-    filePath?: string
-  ): Promise<Result<string, IdobataMcpServiceError | McpClientError>> {
-    if (!this.mcpClient.initialized) {
-      return err(new IdobataMcpServiceError("MCP client is not connected"));
-    }
-
-    const tools = this.mcpClient.tools;
-
-    const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
-      {
-        role: "system",
-        content: `あなたは、ユーザーが政策案の改善提案を作成するのを支援するAIアシスタントです。「現在のファイル内容」として提供された政策文書について、ユーザー（名前：${userName || "不明"}）が改善提案を練り上げるのを手伝うことがあなたの目標です。
+  private getSingleFileSystemPrompt(userName?: string, filePath?: string): string {
+    return `あなたは、ユーザーが政策案の改善提案を作成するのを支援するAIアシスタントです。「現在のファイル内容」として提供された政策文書について、ユーザー（名前：${userName || "不明"}）が改善提案を練り上げるのを手伝うことがあなたの目標です。
 
 政策案は共有オンラインワークスペース（GitHub）で保管・管理されています。あなたのタスクは、改善の可能性についてユーザーと議論し、ファイル内容を変更し、他の人によるレビューのために準備することです。
 
@@ -72,7 +56,48 @@ export class IdobataMcpService {
 4.  **リンクの共有:** ツールを使ってプルリクエストを更新した後に、提案された変更へのウェブリンク（プルリクエストリンク）をユーザーに提供してください。
 
 注意点：ユーザーは「Git」、「コミット」、「ブランチ」、「プルリクエスト」のような技術用語に詳しくありません。プロセスやあなたが取る行動を説明する際には、シンプルで日常的な言葉を使用してください。提供された政策文書の内容改善にのみ集中しましょう。
-返答は最大500文字。`,
+返答は最大500文字。`;
+  }
+
+  private getGlobalSearchSystemPrompt(userName?: string, filePath?: string): string {
+    return `あなたは政策マニフェストの全体について質問に答えるAIアシスタントです。
+READMEページから質問されているため、必要に応じて利用可能な検索ツールを使って、
+リポジトリ内の他のファイルからも関連情報を探して回答してください。
+
+利用可能なツール：
+- search_repository_files: キーワードでリポジトリ全体を検索
+- get_file_content: 特定のファイルの内容を取得
+
+ユーザー名: ${userName || "不明"}
+現在のファイル: ${filePath || "不明"}
+
+提供されたファイル内容だけでなく、必要に応じて他のファイルも検索して包括的な回答をしてください。
+返答は最大500文字。`;
+  }
+
+  async processQuery(
+    query: string,
+    history: OpenAI.Chat.ChatCompletionMessageParam[] = [],
+    branchId?: string,
+    fileContent?: string,
+    userName?: string,
+    filePath?: string,
+    searchAllFiles?: boolean
+  ): Promise<Result<string, IdobataMcpServiceError | McpClientError>> {
+    if (!this.mcpClient.initialized) {
+      return err(new IdobataMcpServiceError("MCP client is not connected"));
+    }
+
+    const tools = this.mcpClient.tools;
+
+    const systemPrompt = searchAllFiles
+      ? this.getGlobalSearchSystemPrompt(userName, filePath)
+      : this.getSingleFileSystemPrompt(userName, filePath);
+
+    const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
+      {
+        role: "system",
+        content: systemPrompt,
       },
       ...history,
     ];

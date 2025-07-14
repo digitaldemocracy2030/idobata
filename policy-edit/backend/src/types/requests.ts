@@ -7,6 +7,7 @@ export interface ChatMessageRequest {
   fileContent?: string;
   userName?: string;
   filePath?: string;
+  searchAllFiles?: boolean;
 }
 
 export interface ChatMessageResponse {
