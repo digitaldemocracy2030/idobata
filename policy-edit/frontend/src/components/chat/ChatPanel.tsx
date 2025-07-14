@@ -42,6 +42,13 @@ const ChatPanel: React.FC = () => {
     return contentType === "file" && currentPath.endsWith(".md");
   }, [contentType, currentPath]);
 
+  // Determine if this is a README file for global search
+  const searchAllFiles = useMemo(() => {
+    if (!isMdFileActive) return false;
+    const fileName = currentPath.toLowerCase().split('/').pop() || '';
+    return fileName === 'readme.md' || fileName.startsWith('readme');
+  }, [isMdFileActive, currentPath]);
+
   // Get the current chat thread when an MD file is active
   const currentThread = useMemo(() => {
     if (isMdFileActive) {
@@ -246,6 +253,7 @@ const ChatPanel: React.FC = () => {
       fileContent: fileContent,
       userName: userName,
       filePath: currentPath,
+      searchAllFiles: searchAllFiles,
     };
 
     const result = await chatApiClient.sendMessage(request);
@@ -391,7 +399,9 @@ const ChatPanel: React.FC = () => {
           onKeyDown={handleKeyDown}
           placeholder={
             isMdFileActive
-              ? "メッセージを入力してください（Shift+Enterで改行）..."
+              ? searchAllFiles
+                ? "政策マニフェスト全体について質問してください（Shift+Enterで改行）..."
+                : "現在のファイルについて質問してください（Shift+Enterで改行）..."
               : "MDファイルを選択"
           }
           disabled={isLoading || !isConnected || !isMdFileActive}
