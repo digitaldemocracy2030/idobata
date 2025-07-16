@@ -219,7 +219,8 @@ export class ApiClient {
     userId: string,
     message: string,
     themeId: string,
-    threadId?: string
+    threadId?: string,
+    isConversationStart?: boolean
   ): Promise<
     HttpResult<{ response: string; threadId: string; userId: string }>
   > {
@@ -232,6 +233,7 @@ export class ApiClient {
         userId,
         message,
         threadId,
+        isConversationStart,
       })
     );
   }
@@ -241,7 +243,8 @@ export class ApiClient {
     message: string,
     themeId: string,
     questionId: string,
-    threadId?: string
+    threadId?: string,
+    isConversationStart?: boolean
   ): Promise<
     HttpResult<{ response: string; threadId: string; userId: string }>
   > {
@@ -256,6 +259,7 @@ export class ApiClient {
         threadId,
         questionId, // Pass questionId as part of the request body
         context: "question", // Add context to indicate this is a question-specific message
+        isConversationStart,
       })
     );
   }

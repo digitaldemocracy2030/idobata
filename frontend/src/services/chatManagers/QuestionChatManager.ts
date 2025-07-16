@@ -90,7 +90,11 @@ export class QuestionChatManager {
     }
   }
 
-  private async sendMessageToBackend(userMessage: string): Promise<void> {
+  private async sendMessageToBackend(
+    userMessage: string,
+    threadId?: string,
+    isConversationStart?: boolean
+  ): Promise<void> {
     try {
       const questionThreadUserId = `${this.userId}_question_${this.questionId}`;
       const result = await apiClient.sendQuestionMessage(
@@ -98,7 +102,8 @@ export class QuestionChatManager {
         userMessage,
         this.themeId,
         this.questionId,
-        this.threadId
+        threadId || this.threadId,
+        isConversationStart
       );
 
       if (result.isOk()) {
@@ -266,8 +271,9 @@ export class QuestionChatManager {
       this.saveThreadIdToStorage();
 
       if (!messages || messages.length === 0) {
-        console.log("No chat history found");
+        console.log("No chat history found, sending conversation start signal");
         this.showQuestionNotification();
+        await this.sendMessageToBackend("こんにちは！", undefined, true);
         return;
       }
 

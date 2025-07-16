@@ -16,10 +16,19 @@ const handleNewMessageByTheme = async (req, res) => {
   }
 
   try {
-    let { userId, message, threadId, questionId, context } = req.body;
+    let {
+      userId,
+      message,
+      threadId,
+      questionId,
+      context,
+      isConversationStart,
+    } = req.body;
 
-    // Validate input
-    if (!message) {
+    // Handle conversation start signal
+    if (isConversationStart) {
+      message = "（会話スタート）";
+    } else if (!message || message.trim() === "") {
       return res.status(400).json({ error: "Message content is required." });
     }
 
@@ -68,12 +77,14 @@ const handleNewMessageByTheme = async (req, res) => {
       });
     }
 
-    // Add user message to the thread
-    chatThread.messages.push({
-      role: "user",
-      content: message,
-      timestamp: new Date(),
-    });
+    // Add user message to the thread (skip saving conversation start signal)
+    if (!isConversationStart) {
+      chatThread.messages.push({
+        role: "user",
+        content: message,
+        timestamp: new Date(),
+      });
+    }
 
     // --- Fetch Reference Opinions (Sharp Questions and related Problems/Solutions) ---
     let referenceOpinions = "";
