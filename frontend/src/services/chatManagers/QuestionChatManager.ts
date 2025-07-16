@@ -273,8 +273,6 @@ export class QuestionChatManager {
 
       this.clearMessages();
 
-      this.showQuestionNotification();
-
       for (const msg of messages as Array<{ role: string; content: string }>) {
         const { role, content } = msg;
 
