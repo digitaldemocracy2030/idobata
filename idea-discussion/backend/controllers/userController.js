@@ -1,6 +1,7 @@
 import path from "node:path";
 import User from "../models/User.js";
 import { createStorageService } from "../services/storage/storageServiceFactory.js";
+import { generateRandomDisplayName } from "../utils/displayNameGenerator.js";
 
 const storageService = createStorageService("local", {
   baseUrl: process.env.API_BASE_URL || "http://localhost:3000",
@@ -15,16 +16,26 @@ const inMemoryUsers = new Map();
  */
 const getUser = async (userId) => {
   try {
-    const user = await User.findOne({ userId });
+    let user = await User.findOne({ userId });
     if (user) return user;
+
+    const defaultDisplayName = generateRandomDisplayName();
+    user = new User({
+      userId,
+      displayName: defaultDisplayName,
+      profileImagePath: null,
+    });
+    await user.save();
+    return user;
   } catch (error) {
     console.warn("MongoDB not available, using in-memory store");
   }
 
   if (!inMemoryUsers.has(userId)) {
+    const defaultDisplayName = generateRandomDisplayName();
     inMemoryUsers.set(userId, {
       userId,
-      displayName: null,
+      displayName: defaultDisplayName,
       profileImagePath: null,
     });
   }

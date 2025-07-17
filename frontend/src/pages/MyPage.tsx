@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SectionHeading from "../components/common/SectionHeading";
 import { Button } from "../components/ui/button";
 import { useAuth } from "../contexts/AuthContext";
@@ -8,6 +8,10 @@ const MyPage: React.FC = () => {
     useAuth();
   const [newDisplayName, setNewDisplayName] = useState(user.displayName || "");
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    setNewDisplayName(user.displayName || "");
+  }, [user.displayName]);
   const [isUploading, setIsUploading] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);

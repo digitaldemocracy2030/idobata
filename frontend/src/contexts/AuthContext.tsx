@@ -61,11 +61,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       const data = result.value;
+
       setUser({
         id: userId,
         displayName: data.displayName,
         profileImageUrl: data.profileImagePath,
       });
+
       setError(null);
       setLoading(false);
     };
