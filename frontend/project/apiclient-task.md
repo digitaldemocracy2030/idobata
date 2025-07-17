@@ -609,7 +609,7 @@ function DataList() {
       const apiError = result.error;
       console.error('Failed to fetch questions:', apiError);
 
-      let errorMessage = '問いの読み込みに失敗しました。';
+      let errorMessage = '重要論点の読み込みに失敗しました。';
       if (apiError.type === ApiErrorType.NETWORK_ERROR) {
         errorMessage = 'ネットワーク接続を確認してください。';
       }
@@ -731,14 +731,14 @@ function DataList() {
       // エラーケース - 早期リターン
       const apiError = result.error;
       console.error('Failed to generate questions:', apiError);
-      setError('問いの生成に失敗しました。');
+      setError('重要論点の生成に失敗しました。');
       setIsGeneratingQuestions(false);
       return;
     }
 
     // 成功ケース - ネストなし
     setSuccessMessage(
-      'シャープな問いの生成を開始しました。しばらくすると問いリストに表示されます。'
+      '重要論点の生成を開始しました。しばらくすると重要論点リストに表示されます。'
     );
 
     // Fetch questions after a delay to allow time for generation
