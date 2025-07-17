@@ -63,6 +63,12 @@ const Header = () => {
                   TOP
                 </NavigationRouterLink>
                 <NavigationRouterLink
+                  to="/manual"
+                  className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
+                >
+                  使い方
+                </NavigationRouterLink>
+                <NavigationRouterLink
                   to="/about"
                   className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
                 >
@@ -110,6 +116,12 @@ const Header = () => {
                     </div>
                   </div>
                 )}
+                <NavigationRouterLink
+                  to="/terms"
+                  className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
+                >
+                  利用規約
+                </NavigationRouterLink>
 
                 {/* {process.env.NODE_ENV === "development" && (
                   <div className="flex mt-4 px-4">

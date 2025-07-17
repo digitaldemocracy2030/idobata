@@ -9,6 +9,8 @@ import CommentsPage from "./pages/CommentsPage";
 import DataPage from "./pages/DataPage";
 import MainPage from "./pages/MainPage";
 import Manual from "./pages/Manual";
+import Terms from "./pages/Terms";
+
 import MyPage from "./pages/MyPage";
 import QuestionDetail from "./pages/QuestionDetail";
 import ThemeDetail from "./pages/ThemeDetail";
@@ -95,6 +97,14 @@ export const router = createBrowserRouter([
         element: (
           <PageLayout>
             <CommentsPage />
+          </PageLayout>
+        ),
+      },
+      {
+        path: "terms",
+        element: (
+          <PageLayout>
+            <Terms />
           </PageLayout>
         ),
       },

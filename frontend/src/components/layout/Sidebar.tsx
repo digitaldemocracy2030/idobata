@@ -63,6 +63,12 @@ const Sidebar = () => {
             </div>
           </div>
         )}
+        <Link
+          to="/terms"
+          className="text-base py-1 px-2 hover:bg-primary-50 rounded-md"
+        >
+          利用規約
+        </Link>
 
         {process.env.NODE_ENV === "development" && (
           <div className="flex mt-4 px-4">
