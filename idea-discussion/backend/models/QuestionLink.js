@@ -28,7 +28,7 @@ const questionLinkSchema = new mongoose.Schema(
       enum: ["Problem", "Solution"], // 実際のモデル名
     },
     linkType: {
-      // 関連の種類 (課題が問いを提起 / 解決策が問いに回答)
+      // 関連の種類 (課題が重要論点を提起 / 解決策が重要論点に回答)
       type: String,
       required: true,
       enum: ["prompts_question", "answers_question"],

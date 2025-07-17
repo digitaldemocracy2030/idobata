@@ -87,8 +87,8 @@ const handleNewMessageByTheme = async (req, res) => {
         const question = await SharpQuestion.findById(questionId).lean();
         if (question) {
           referenceOpinions +=
-            "現在の議論対象となっている「問い」について:\n\n";
-          referenceOpinions += `問い: ${question.questionText}\n`;
+            "現在の議論対象となっている「重要論点」について:\n\n";
+          referenceOpinions += `重要論点: ${question.questionText}\n`;
           if (question.tagLine) {
             referenceOpinions += `概要: ${question.tagLine}\n`;
           }
@@ -125,7 +125,8 @@ const handleNewMessageByTheme = async (req, res) => {
             problemLinks.length > 0 &&
             problemLinks.some((link) => link.linkedProblem)
           ) {
-            referenceOpinions += "この問いに関連性の高い課題 (関連度 >=80%):\n";
+            referenceOpinions +=
+              "この重要論点に関連性の高い課題 (関連度 >=80%):\n";
             for (const link of problemLinks) {
               if (link.linkedProblem) {
                 const problem = link.linkedProblem;
@@ -144,7 +145,8 @@ const handleNewMessageByTheme = async (req, res) => {
               }
             }
           } else {
-            referenceOpinions += "この問いに関連性の高い課題: (ありません)\n";
+            referenceOpinions +=
+              "この重要論点に関連性の高い課題: (ありません)\n";
           }
 
           const solutionLinks = await QuestionLink.aggregate([
@@ -179,7 +181,7 @@ const handleNewMessageByTheme = async (req, res) => {
             solutionLinks.some((link) => link.linkedSolution)
           ) {
             referenceOpinions +=
-              "この問いに関連性の高い解決策 (関連度 >=80%):\n";
+              "この重要論点に関連性の高い解決策 (関連度 >=80%):\n";
             for (const link of solutionLinks) {
               if (link.linkedSolution) {
                 const solution = link.linkedSolution;
@@ -195,11 +197,12 @@ const handleNewMessageByTheme = async (req, res) => {
               }
             }
           } else {
-            referenceOpinions += "この問いに関連性の高い解決策: (ありません)\n";
+            referenceOpinions +=
+              "この重要論点に関連性の高い解決策: (ありません)\n";
           }
 
           referenceOpinions +=
-            "\n---\nこの特定の「問い」と関連する課題・解決策を踏まえ、ユーザーとの対話を深めてください。\n";
+            "\n---\nこの特定の「重要論点」と関連する課題・解決策を踏まえ、ユーザーとの対話を深めてください。\n";
         }
       } catch (dbError) {
         console.error(
@@ -214,10 +217,10 @@ const handleNewMessageByTheme = async (req, res) => {
 
         if (themeQuestions.length > 0) {
           referenceOpinions +=
-            "参考情報として、システム内で議論されている主要な「問い」と、それに関連する意見の一部を紹介します:\n\n";
+            "参考情報として、システム内で議論されている主要な「重要論点」と、それに関連する意見の一部を紹介します:\n\n";
 
           for (const question of themeQuestions) {
-            referenceOpinions += `問い: ${question.questionText}\n`;
+            referenceOpinions += `重要論点: ${question.questionText}\n`;
 
             // Find up to 10 random related problems with relevance > 0.8
             const problemLinks = await QuestionLink.aggregate([
@@ -322,7 +325,7 @@ const handleNewMessageByTheme = async (req, res) => {
             referenceOpinions += "\n"; // Add space between questions
           }
           referenceOpinions +=
-            "---\nこれらの「問い」や関連意見も踏まえ、ユーザーとの対話を深めてください。\n";
+            "---\nこれらの「重要論点」や関連意見も踏まえ、ユーザーとの対話を深めてください。\n";
         }
       } catch (dbError) {
         console.error(
@@ -354,7 +357,7 @@ const handleNewMessageByTheme = async (req, res) => {
 課題の表現は、主語を明確にし、具体的な状況と影響を記述することで、問題の本質を捉えやすくする必要があります。現状と理想の状態を明確に記述し、そのギャップを課題として定義する。解決策の先走りや抽象的な表現を避け、「誰が」「何を」「なぜ」という構造で課題を定義することで、問題の範囲を明確にし、多様な視点からの議論を促します。感情的な表現や主観的な解釈を排し、客観的な事実に基づいて課題を記述することが重要です。
 解決策の表現は、具体的な行動や機能、そしてそれがもたらす価値を明確に記述する必要があります。実現可能性や費用対効果といった制約条件も考慮し、曖昧な表現や抽象的な概念を避けることが重要です。解決策は、課題に対する具体的な応答として提示され、その効果やリスク、そして実装に必要なステップを明確にすべき。
 4.  **心理的安全性の確保:** ユーザーのペースを尊重し、急かさないこと。論理的な詰め寄りや過度な質問攻めを避けること。ユーザーが答えられない質問には固執せず、別の角度からアプローチすること。完璧な回答を求めず、ユーザーの部分的な意見も尊重すること。対話は協力的な探索であり、試験や審査ではないことを意識すること。
-5.  **話題の誘導:** ユーザーの発言が曖昧で、特に話したいトピックが明確でない場合、参考情報として提示された既存の問いのどれかをピックアップしてそれについて議論することを優しく提案してください。（問いを一字一句読み上げるのではなく、文脈や相手に合わせて言い換えて分かりやすく伝える）
+5.  **話題の誘導:** ユーザーの発言が曖昧で、特に話したいトピックが明確でない場合、参考情報として提示された既存の重要論点のどれかをピックアップしてそれについて議論することを優しく提案してください。（重要論点を一字一句読み上げるのではなく、文脈や相手に合わせて言い換えて分かりやすく伝える）
 `;
       }
     } catch (error) {
@@ -367,7 +370,7 @@ const handleNewMessageByTheme = async (req, res) => {
 課題の表現は、主語を明確にし、具体的な状況と影響を記述することで、問題の本質を捉えやすくする必要があります。現状と理想の状態を明確に記述し、そのギャップを課題として定義する。解決策の先走りや抽象的な表現を避け、「誰が」「何を」「なぜ」という構造で課題を定義することで、問題の範囲を明確にし、多様な視点からの議論を促します。感情的な表現や主観的な解釈を排し、客観的な事実に基づいて課題を記述することが重要です。
 解決策の表現は、具体的な行動や機能、そしてそれがもたらす価値を明確に記述する必要があります。実現可能性や費用対効果といった制約条件も考慮し、曖昧な表現や抽象的な概念を避けることが重要です。解決策は、課題に対する具体的な応答として提示され、その効果やリスク、そして実装に必要なステップを明確にすべき。
 4.  **心理的安全性の確保:** ユーザーのペースを尊重し、急かさないこと。論理的な詰め寄りや過度な質問攻めを避けること。ユーザーが答えられない質問には固執せず、別の角度からアプローチすること。完璧な回答を求めず、ユーザーの部分的な意見も尊重すること。対話は協力的な探索であり、試験や審査ではないことを意識すること。
-5.  **話題の誘導:** ユーザーの発言が曖昧で、特に話したいトピックが明確でない場合、参考情報として提示された既存の問いのどれかをピックアップしてそれについて議論することを優しく提案してください。（問いを一字一句読み上げるのではなく、文脈や相手に合わせて言い換えて分かりやすく伝える）
+5.  **話題の誘導:** ユーザーの発言が曖昧で、特に話したいトピックが明確でない場合、参考情報として提示された既存の重要論点のどれかをピックアップしてそれについて議論することを優しく提案してください。（重要論点を一字一句読み上げるのではなく、文脈や相手に合わせて言い換えて分かりやすく伝える）
 `;
     }
 

@@ -49,7 +49,7 @@ function AdminPanel() {
     if (result.isErr()) {
       const apiError = result.error;
       console.error("Failed to fetch questions:", apiError);
-      setError("問いの読み込みに失敗しました。");
+      setError("重要論点の読み込みに失敗しました。");
       setIsLoadingQuestions(false);
       return;
     }
@@ -175,13 +175,13 @@ function AdminPanel() {
     if (result.isErr()) {
       const apiError = result.error;
       console.error("Failed to generate questions:", apiError);
-      setError("問いの生成に失敗しました。");
+      setError("重要論点の生成に失敗しました。");
       setIsGeneratingQuestions(false);
       return;
     }
 
     setSuccessMessage(
-      "シャープな問いの生成を開始しました。しばらくすると問いリストに表示されます。"
+      "重要論点の生成を開始しました。しばらくすると重要論点リストに表示されます。"
     );
 
     // Fetch questions after a delay to allow time for generation
@@ -264,10 +264,10 @@ function AdminPanel() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h3 className="text-lg font-semibold text-primary-dark mb-1">
-              シャープな問い生成
+              重要論点生成
             </h3>
             <p className="text-sm text-neutral-600">
-              課題データから新しいシャープな問いを生成します
+              課題データから新しい重要論点を生成します
             </p>
           </div>
           <button
@@ -302,7 +302,7 @@ function AdminPanel() {
                 生成中...
               </span>
             ) : (
-              "シャープな問い生成"
+              "重要論点生成"
             )}
           </button>
         </div>
@@ -321,7 +321,7 @@ function AdminPanel() {
               }`}
               type="button"
             >
-              シャープな問い
+              重要論点
             </button>
           </li>
           <li className="mr-2">
@@ -385,7 +385,7 @@ function AdminPanel() {
         {activeTab === "questions" && (
           <div>
             <h3 className="text-lg font-semibold mb-4 text-primary-dark">
-              シャープな問い一覧 ({questions.length})
+              重要論点一覧 ({questions.length})
             </h3>
             {isLoadingQuestions ? (
               <div className="flex items-center justify-center p-8">
@@ -404,7 +404,7 @@ function AdminPanel() {
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider"
                       >
-                        問い
+                        重要論点
                       </th>
                       <th
                         scope="col"
@@ -430,9 +430,9 @@ function AdminPanel() {
               </div>
             ) : (
               <div className="p-6 text-center text-neutral-500 text-sm border border-dashed border-neutral-300 rounded-lg">
-                <p>まだ問いが生成されていません</p>
+                <p>まだ重要論点が生成されていません</p>
                 <p className="mt-2 text-xs">
-                  上部の「シャープな問い生成」ボタンから生成できます
+                  上部の「重要論点生成」ボタンから生成できます
                 </p>
               </div>
             )}
@@ -623,7 +623,7 @@ function AdminPanel() {
               <div className="p-6 text-center text-neutral-500 text-sm border border-dashed border-neutral-300 rounded-lg">
                 <p>まだ政策ドラフトが生成されていません</p>
                 <p className="mt-2 text-xs">
-                  可視化エリアで問いを選択し、政策ドラフト生成ボタンを使用してください
+                  可視化エリアで重要論点を選択し、政策ドラフト生成ボタンを使用してください
                 </p>
               </div>
             )}
@@ -680,7 +680,7 @@ function AdminPanel() {
               <div className="p-6 text-center text-neutral-500 text-sm border border-dashed border-success/30 rounded-lg">
                 <p>まだダイジェストが生成されていません</p>
                 <p className="mt-2 text-xs">
-                  可視化エリアで問いを選択し、ダイジェスト生成ボタンを使用してください
+                  可視化エリアで重要論点を選択し、ダイジェスト生成ボタンを使用してください
                 </p>
               </div>
             )}

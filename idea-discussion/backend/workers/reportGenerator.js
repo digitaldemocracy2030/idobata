@@ -60,7 +60,7 @@ async function generateReportExample(questionId) {
     const messages = [
       {
         role: "system",
-        content: `問い「${question.questionText}」について、市民からの意見を通じて特定された問題点とその潜在的な解決策を含むレポートを作成してください。
+        content: `重要論点「${question.questionText}」について、市民からの意見を通じて特定された問題点とその潜在的な解決策を含むレポートを作成してください。
 
 レポートは、以下の形式で出力してください：
 

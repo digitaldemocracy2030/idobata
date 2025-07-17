@@ -77,7 +77,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
 
     if (result.isErr()) {
       console.error("Failed to fetch questions:", result.error);
-      setQuestionsError("シャープな問いの読み込みに失敗しました。");
+      setQuestionsError("重要論点の読み込みに失敗しました。");
       setIsLoadingQuestions(false);
       return;
     }
@@ -97,13 +97,13 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
 
     if (result.isErr()) {
       console.error("Failed to generate questions:", result.error);
-      setQuestionsError("シャープな問いの生成に失敗しました。");
+      setQuestionsError("重要論点の生成に失敗しました。");
       setIsGeneratingQuestions(false);
       return;
     }
 
     setSuccessMessage(
-      "シャープな問いの生成を開始しました。しばらくすると問いリストに表示されます。"
+      "重要論点の生成を開始しました。しばらくすると重要論点リストに表示されます。"
     );
 
     setTimeout(() => {
@@ -133,7 +133,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
     }
 
     setSuccessMessage(
-      "ビジュアルレポートの生成を開始しました。しばらくすると問いの詳細画面で確認できます。"
+      "ビジュアルレポートの生成を開始しました。しばらくすると重要論点の詳細画面で確認できます。"
     );
 
     setIsGeneratingVisualReport(false);
@@ -432,7 +432,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
       {isEdit && theme?._id && (
         <div className="mt-8">
           <h2 className="text-xl font-semibold mb-4">
-            このテーマに紐づくシャープな問い
+            このテーマに紐づく重要論点
           </h2>
 
           {questionsError && (
@@ -486,10 +486,10 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h3 className="text-lg font-semibold text-primary-dark mb-1">
-                  シャープな問い生成
+                  重要論点生成
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  課題データから新しいシャープな問いを生成します
+                  課題データから新しい重要論点を生成します
                 </p>
               </div>
               <button
@@ -537,7 +537,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
           {/* Questions List */}
           <div className="bg-background p-4 rounded-lg border border-border shadow-sm">
             <h3 className="text-lg font-semibold mb-4 text-primary-dark">
-              シャープな問い一覧 ({questions.length})
+              重要論点一覧 ({questions.length})
             </h3>
             {isLoadingQuestions ? (
               <div className="flex items-center justify-center p-8">
@@ -562,7 +562,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
                       >
-                        問い
+                        重要論点
                       </th>
                       <th
                         scope="col"
@@ -791,7 +791,7 @@ const ThemeForm: FC<ThemeFormProps> = ({ theme, isEdit = false }) => {
               </div>
             ) : (
               <div className="p-6 text-center text-muted-foreground text-sm border border-dashed border-border rounded-lg">
-                <p>まだ問いが生成されていません</p>
+                <p>まだ重要論点が生成されていません</p>
                 <p className="mt-2 text-xs">
                   上部の「生成する」ボタンから生成できます
                 </p>

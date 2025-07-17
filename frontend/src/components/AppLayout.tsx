@@ -309,7 +309,7 @@ function AppLayout() {
               to="/legacy/"
               className="px-3 py-1 rounded-md text-sm transition-colors duration-200 text-neutral-600 hover:text-primary hover:bg-neutral-100"
             >
-              シャープな問いとインサイト
+              重要論点とインサイト
             </Link>
             <Link
               to="/"
