@@ -153,7 +153,7 @@ export class IdobataMcpService {
               messages.push({
                 tool_call_id: toolCall.id,
                 role: "tool",
-                content: `Error: Invalid JSON format in arguments. Please provide valid JSON. Error: ${parseError instanceof Error ? parseError.message : "Unknown parsing error"}`,
+                content: `Error: Invalid arguments format. ${parseError instanceof Error ? parseError.message : "Unknown parsing error"}`,
               });
               continue;
             }
@@ -167,24 +167,11 @@ export class IdobataMcpService {
             );
             if (toolResult.isErr()) {
               logger.error(`Error calling tool ${toolName}:`, toolResult.error);
-
-              if (
-                toolResult.error.message.includes("validation") ||
-                toolResult.error.message.includes("required") ||
-                toolResult.error.message.includes("Expected")
-              ) {
-                messages.push({
-                  tool_call_id: toolCall.id,
-                  role: "tool",
-                  content: `Schema validation error: ${toolResult.error.message}. Please correct the arguments and try again with the proper format.`,
-                });
-              } else {
-                messages.push({
-                  tool_call_id: toolCall.id,
-                  role: "tool",
-                  content: `Error executing tool: ${toolResult.error.message}`,
-                });
-              }
+              messages.push({
+                tool_call_id: toolCall.id,
+                role: "tool",
+                content: `Error executing tool: ${toolResult.error.message}`,
+              });
             } else {
               const result = toolResult.value as { content?: unknown };
               messages.push({
@@ -192,146 +179,6 @@ export class IdobataMcpService {
                 role: "tool",
                 content: JSON.stringify(result.content || result),
               });
-            }
-          }
-
-          const hasSchemaErrors = messages.some(
-            (msg) =>
-              msg.role === "tool" &&
-              typeof msg.content === "string" &&
-              msg.content.includes("Schema validation error")
-          );
-
-          if (hasSchemaErrors) {
-            logger.info(
-              "Schema validation errors detected, requesting corrected arguments from OpenAI"
-            );
-
-            messages.push({
-              role: "user",
-              content:
-                "Please review the schema validation errors above and provide corrected tool calls with the proper argument format.",
-            });
-
-            const retryResponse = await openai.chat.completions.create({
-              model: "google/gemini-2.5-pro-preview-03-25",
-              messages: messages,
-              max_tokens: 50000,
-              tools: convertMcpToolsToOpenAI([
-                {
-                  name: "upsert_file_and_commit",
-                  description: "Create or update a file and commit the changes",
-                  input_schema: {
-                    type: "object",
-                    properties: {
-                      filePath: {
-                        type: "string",
-                        description: "Path to the file",
-                      },
-                      branchName: {
-                        type: "string",
-                        description: "Branch name",
-                      },
-                      content: { type: "string", description: "File content" },
-                      commitMessage: {
-                        type: "string",
-                        description: "Commit message",
-                      },
-                    },
-                    required: [
-                      "filePath",
-                      "branchName",
-                      "content",
-                      "commitMessage",
-                    ],
-                  },
-                },
-                {
-                  name: "update_pr",
-                  description: "Update or create a pull request",
-                  input_schema: {
-                    type: "object",
-                    properties: {
-                      branchName: {
-                        type: "string",
-                        description: "Branch name",
-                      },
-                      title: { type: "string", description: "PR title" },
-                      body: { type: "string", description: "PR body" },
-                    },
-                    required: ["branchName", "title"],
-                  },
-                },
-              ]),
-              tool_choice: "auto",
-            });
-
-            if (retryResponse.choices && retryResponse.choices.length > 0) {
-              const retryMessage = retryResponse.choices[0].message;
-
-              if (
-                retryMessage.tool_calls &&
-                retryMessage.tool_calls.length > 0
-              ) {
-                logger.info(
-                  "Processing retry tool calls with corrected arguments"
-                );
-
-                messages.push({
-                  role: "assistant",
-                  content: retryMessage.content,
-                  tool_calls: retryMessage.tool_calls,
-                });
-
-                for (const toolCall of retryMessage.tool_calls) {
-                  const toolName = toolCall.function.name;
-                  let toolArgs = {};
-
-                  try {
-                    toolArgs = JSON.parse(toolCall.function.arguments);
-                  } catch (parseError) {
-                    logger.error(
-                      `Retry: Failed to parse arguments for tool ${toolName}:`,
-                      parseError
-                    );
-                    messages.push({
-                      tool_call_id: toolCall.id,
-                      role: "tool",
-                      content: `Error: Still invalid JSON format after retry. ${parseError instanceof Error ? parseError.message : "Unknown parsing error"}`,
-                    });
-                    continue;
-                  }
-
-                  const toolResult = await this.executeTool(
-                    toolName,
-                    toolArgs,
-                    toolCall.id
-                  );
-
-                  if (toolResult.isErr()) {
-                    logger.error(
-                      `Retry: Error calling tool ${toolName}:`,
-                      toolResult.error
-                    );
-                    messages.push({
-                      tool_call_id: toolCall.id,
-                      role: "tool",
-                      content: `Error executing tool after retry: ${toolResult.error.message}`,
-                    });
-                  } else {
-                    const result = toolResult.value as { content?: unknown };
-                    messages.push({
-                      tool_call_id: toolCall.id,
-                      role: "tool",
-                      content: JSON.stringify(result.content || result),
-                    });
-                  }
-                }
-              }
-
-              if (retryMessage.content) {
-                finalText.push(retryMessage.content);
-              }
             }
           }
 
