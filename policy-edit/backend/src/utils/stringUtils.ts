@@ -1,0 +1,11 @@
+export function trimTrailingContentSeparators(content: string): string {
+  if (!content) return content;
+
+  let trimmed = content.trimEnd();
+
+  while (trimmed.endsWith("---")) {
+    trimmed = trimmed.slice(0, -3).trimEnd();
+  }
+
+  return trimmed;
+}
