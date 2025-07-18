@@ -160,7 +160,7 @@ export class IdobataMcpService {
 
             logger.debug(`Calling tool ${toolName} with args:`, toolArgs);
 
-            const toolResult = await this.executeToolDirectly(
+            const toolResult = await this.executeTool(
               toolName,
               toolArgs,
               toolCall.id
@@ -211,7 +211,7 @@ export class IdobataMcpService {
     }
   }
 
-  private async executeToolDirectly(
+  private async executeTool(
     toolName: string,
     toolArgs: unknown,
     toolCallId: string
@@ -221,9 +221,9 @@ export class IdobataMcpService {
 
       switch (toolName) {
         case "upsert_file_and_commit":
-          return await this.handleUpsertFileDirect(octokit, toolArgs);
+          return await this.handleUpsertFile(octokit, toolArgs);
         case "update_pr":
-          return await this.handleUpdatePrDirect(octokit, toolArgs);
+          return await this.handleUpdatePr(octokit, toolArgs);
         default:
           return err(new IdobataMcpServiceError(`Unknown tool: ${toolName}`));
       }
@@ -238,7 +238,7 @@ export class IdobataMcpService {
     }
   }
 
-  private async handleUpsertFileDirect(
+  private async handleUpsertFile(
     octokit: Awaited<ReturnType<typeof getAuthenticatedOctokit>>,
     args: unknown
   ): Promise<Result<{ content: unknown }, IdobataMcpServiceError>> {
@@ -355,7 +355,7 @@ export class IdobataMcpService {
     }
   }
 
-  private async handleUpdatePrDirect(
+  private async handleUpdatePr(
     octokit: Awaited<ReturnType<typeof getAuthenticatedOctokit>>,
     args: unknown
   ): Promise<Result<{ content: unknown }, IdobataMcpServiceError>> {
