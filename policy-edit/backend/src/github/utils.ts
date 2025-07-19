@@ -1,6 +1,10 @@
 import type { Octokit } from "@octokit/rest";
-import config from "../config.js";
-import logger from "../logger.js";
+import {
+  GITHUB_BASE_BRANCH,
+  GITHUB_TARGET_OWNER,
+  GITHUB_TARGET_REPO,
+} from "../config.js";
+import { logger } from "../utils/logger.js";
 import { trimTrailingContentSeparators } from "../utils/stringUtils.js";
 
 /**
@@ -13,9 +17,12 @@ export async function ensureBranchExists(
   octokit: Octokit,
   branchName: string
 ): Promise<void> {
-  const owner = config.GITHUB_TARGET_OWNER;
-  const repo = config.GITHUB_TARGET_REPO;
-  const baseBranch = config.GITHUB_BASE_BRANCH;
+  if (!GITHUB_TARGET_OWNER || !GITHUB_TARGET_REPO || !GITHUB_BASE_BRANCH) {
+    throw new Error("GitHub configuration environment variables are required");
+  }
+  const owner = GITHUB_TARGET_OWNER;
+  const repo = GITHUB_TARGET_REPO;
+  const baseBranch = GITHUB_BASE_BRANCH;
   const head = `${owner}:${branchName}`;
 
   logger.info(`Ensuring branch ${branchName} exists...`);
@@ -34,7 +41,7 @@ export async function ensureBranchExists(
       logger.info(`Branch ${branchName} does not exist. Creating...`);
       // ブランチが存在しない場合は作成に進む
     } else {
-      logger.error({ error }, `Failed to check branch ${branchName}`);
+      logger.error(`Failed to check branch ${branchName}`, error);
       throw error; // その他のエラーは再スロー
     }
   }
@@ -60,7 +67,7 @@ export async function ensureBranchExists(
       logger.info(`Branch ${branchName} created from ${baseBranch}.`);
       branchExists = true; // 作成成功
     } catch (error) {
-      logger.error({ error }, `Failed to create branch ${branchName}`);
+      logger.error(`Failed to create branch ${branchName}`, error);
       throw error;
     }
   }
@@ -84,9 +91,12 @@ export async function findOrCreateDraftPr(
   title: string,
   body: string
 ): Promise<{ number: number; html_url: string }> {
-  const owner = config.GITHUB_TARGET_OWNER;
-  const repo = config.GITHUB_TARGET_REPO;
-  const baseBranch = config.GITHUB_BASE_BRANCH;
+  if (!GITHUB_TARGET_OWNER || !GITHUB_TARGET_REPO || !GITHUB_BASE_BRANCH) {
+    throw new Error("GitHub configuration environment variables are required");
+  }
+  const owner = GITHUB_TARGET_OWNER;
+  const repo = GITHUB_TARGET_REPO;
+  const baseBranch = GITHUB_BASE_BRANCH;
   const head = `${owner}:${branchName}`;
 
   logger.info(`Finding or creating draft PR for branch ${branchName}...`);
@@ -131,10 +141,7 @@ export async function findOrCreateDraftPr(
     );
     return { number: newPr.number, html_url: newPr.html_url };
   } catch (error) {
-    logger.error(
-      { error },
-      `Failed to find or create PR for branch ${branchName}`
-    );
+    logger.error(`Failed to find or create PR for branch ${branchName}`, error);
     throw error;
   }
 }

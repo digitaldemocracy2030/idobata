@@ -1,6 +1,13 @@
 import { Result, err, ok } from "neverthrow";
 import OpenAI from "openai";
-import { OPENROUTER_API_KEY } from "../config.js";
+import { z } from "zod";
+import {
+  GITHUB_TARGET_OWNER,
+  GITHUB_TARGET_REPO,
+  OPENROUTER_API_KEY,
+} from "../config.js";
+import { getAuthenticatedOctokit } from "../github/client.js";
+import { ensureBranchExists, findOrCreateDraftPr } from "../github/utils.js";
 import { McpClientError } from "../types/errors.js";
 import { logger } from "../utils/logger.js";
 import { McpClient } from "./client.js";
@@ -153,9 +160,10 @@ export class IdobataMcpService {
 
             logger.debug(`Calling tool ${toolName} with args:`, toolArgs);
 
-            const toolResult = await this.mcpClient.callTool(
+            const toolResult = await this.executeTool(
               toolName,
-              toolArgs
+              toolArgs,
+              toolCall.id
             );
             if (toolResult.isErr()) {
               logger.error(`Error calling tool ${toolName}:`, toolResult.error);
@@ -198,6 +206,224 @@ export class IdobataMcpService {
       return err(
         new IdobataMcpServiceError(
           `Failed to process query: ${error instanceof Error ? error.message : "Unknown error"}`
+        )
+      );
+    }
+  }
+
+  private async executeTool(
+    toolName: string,
+    toolArgs: unknown,
+    toolCallId: string
+  ): Promise<Result<{ content: unknown }, IdobataMcpServiceError>> {
+    try {
+      const octokit = await getAuthenticatedOctokit();
+
+      switch (toolName) {
+        case "upsert_file_and_commit":
+          return await this.handleUpsertFile(octokit, toolArgs);
+        case "update_pr":
+          return await this.handleUpdatePr(octokit, toolArgs);
+        default:
+          return err(new IdobataMcpServiceError(`Unknown tool: ${toolName}`));
+      }
+    } catch (error) {
+      if (error && typeof error === "object" && "issues" in error) {
+        const zodError = error as {
+          issues: Array<{ path: string[]; message: string }>;
+        };
+        const validationErrors = zodError.issues
+          .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+          .join(", ");
+
+        return err(
+          new IdobataMcpServiceError(
+            `Schema validation failed: ${validationErrors}`
+          )
+        );
+      }
+
+      return err(
+        new IdobataMcpServiceError(
+          `Tool execution failed: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`
+        )
+      );
+    }
+  }
+
+  private async handleUpsertFile(
+    octokit: Awaited<ReturnType<typeof getAuthenticatedOctokit>>,
+    args: unknown
+  ): Promise<Result<{ content: unknown }, IdobataMcpServiceError>> {
+    try {
+      const upsertFileSchema = z.object({
+        filePath: z.string().min(1, "filePath is required"),
+        branchName: z.string().min(1, "branchName is required"),
+        content: z.string(),
+        commitMessage: z.string().min(1, "commitMessage is required"),
+      });
+
+      const validatedArgs = upsertFileSchema.parse(args);
+      const { filePath, branchName, content, commitMessage } = validatedArgs;
+
+      if (!filePath.endsWith(".md")) {
+        return err(
+          new IdobataMcpServiceError("Only Markdown files (.md) are supported")
+        );
+      }
+
+      if (filePath.includes("..")) {
+        return err(
+          new IdobataMcpServiceError(
+            "File path cannot contain '..' for security reasons"
+          )
+        );
+      }
+
+      await ensureBranchExists(octokit, branchName);
+
+      if (!GITHUB_TARGET_OWNER || !GITHUB_TARGET_REPO) {
+        throw new Error(
+          "GitHub configuration environment variables are required"
+        );
+      }
+      const owner = GITHUB_TARGET_OWNER;
+      const repo = GITHUB_TARGET_REPO;
+
+      let existingFile: unknown = null;
+      try {
+        const { data } = await octokit.rest.repos.getContent({
+          owner,
+          repo,
+          path: filePath,
+          ref: branchName,
+        });
+        existingFile = data;
+        logger.info(`File ${filePath} exists in branch ${branchName}.`);
+      } catch (error: unknown) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "status" in error &&
+          error.status === 404
+        ) {
+          logger.info(
+            `File ${filePath} does not exist in branch ${branchName}. Creating new file.`
+          );
+        } else {
+          logger.error(
+            `Error checking file existence: ${error instanceof Error ? error.message : "Unknown error"}`
+          );
+          throw error;
+        }
+      }
+
+      const fileContent = Buffer.from(content, "utf8").toString("base64");
+
+      if (
+        existingFile &&
+        typeof existingFile === "object" &&
+        existingFile !== null &&
+        "sha" in existingFile
+      ) {
+        await octokit.rest.repos.createOrUpdateFileContents({
+          owner,
+          repo,
+          path: filePath,
+          message: commitMessage,
+          content: fileContent,
+          branch: branchName,
+          sha: (existingFile as { sha: string }).sha,
+        });
+        logger.info(`Updated file ${filePath} in branch ${branchName}.`);
+      } else {
+        await octokit.rest.repos.createOrUpdateFileContents({
+          owner,
+          repo,
+          path: filePath,
+          message: commitMessage,
+          content: fileContent,
+          branch: branchName,
+        });
+        logger.info(`Created file ${filePath} in branch ${branchName}.`);
+      }
+
+      return ok({
+        content: [
+          {
+            type: "text",
+            text: `Successfully committed changes to ${filePath} in branch ${branchName}`,
+          },
+        ],
+      });
+    } catch (error) {
+      logger.error("Error in handleUpsertFile:", error);
+      return err(
+        new IdobataMcpServiceError(
+          `Failed to upsert file: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`
+        )
+      );
+    }
+  }
+
+  private async handleUpdatePr(
+    octokit: Awaited<ReturnType<typeof getAuthenticatedOctokit>>,
+    args: unknown
+  ): Promise<Result<{ content: unknown }, IdobataMcpServiceError>> {
+    try {
+      const updatePrSchema = z.object({
+        branchName: z.string().min(1, "branchName is required"),
+        title: z.string().min(1, "title is required"),
+        body: z.string().optional().default(""),
+      });
+
+      const validatedArgs = updatePrSchema.parse(args);
+      const { branchName, title, body } = validatedArgs;
+
+      const prInfo = await findOrCreateDraftPr(
+        octokit,
+        branchName,
+        title,
+        body
+      );
+
+      if (!GITHUB_TARGET_OWNER || !GITHUB_TARGET_REPO) {
+        throw new Error(
+          "GitHub configuration environment variables are required"
+        );
+      }
+      const owner = GITHUB_TARGET_OWNER;
+      const repo = GITHUB_TARGET_REPO;
+
+      await octokit.rest.pulls.update({
+        owner,
+        repo,
+        pull_number: prInfo.number,
+        title,
+        body,
+      });
+
+      logger.info(`Updated PR #${prInfo.number} with title: ${title}`);
+
+      return ok({
+        content: [
+          {
+            type: "text",
+            text: `Successfully updated PR #${prInfo.number}: ${title}\nURL: ${prInfo.html_url}`,
+          },
+        ],
+      });
+    } catch (error) {
+      logger.error("Error in handleUpdatePr:", error);
+      return err(
+        new IdobataMcpServiceError(
+          `Failed to update PR: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`
         )
       );
     }
