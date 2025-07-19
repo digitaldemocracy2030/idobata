@@ -1,3 +1,8 @@
+/**
+ * ファイルコンテンツからトレーリングの空白行と区切り（---）を削除する
+ * @param content トリムする対象のコンテンツ
+ * @returns トリムされたコンテンツ
+ */
 export function trimTrailingContentSeparators(content: string): string {
   if (!content) return content;
 
