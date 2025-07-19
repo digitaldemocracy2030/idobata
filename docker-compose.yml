@@ -72,6 +72,7 @@ services:
       - VITE_COLOR_ACCENT_DARK=${VITE_COLOR_ACCENT_DARK}
       - VITE_COLOR_PRIMARY=${VITE_COLOR_PRIMARY}
       - VITE_COLOR_SECONDARY=${VITE_COLOR_SECONDARY}
+      - VITE_DISABLE_CHAT=${VITE_DISABLE_CHAT}
 
   policy-backend:
     container_name: policy-backend-dev

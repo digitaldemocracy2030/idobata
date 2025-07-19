@@ -16,6 +16,7 @@ interface ImportMetaEnv {
     readonly VITE_COLOR_ACCENT_DARK: string
     readonly VITE_COLOR_PRIMARY: string
     readonly VITE_COLOR_SECONDARY: string
+    readonly VITE_DISABLE_CHAT?: string
     // more env variables...
 }
 
