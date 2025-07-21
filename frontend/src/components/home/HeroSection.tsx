@@ -60,9 +60,7 @@ const HeroSection = () => {
             </div>
             {/* フッター情報 */}
             <div className="text-center lg:text-left mb-8">
-              <p className="text-sm text-gray-500 mb-1">
-                立憲民主党 AI大規模熟議システム
-              </p>
+              <p className="text-sm text-gray-500 mb-1">りっけん対話アリーナ</p>
               <p className="text-lg font-medium text-blue-600">
                 #対話アリーナ へようこそ!!
               </p>
