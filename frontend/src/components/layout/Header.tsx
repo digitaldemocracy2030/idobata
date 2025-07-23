@@ -35,7 +35,7 @@ const Header: React.FC = () => {
 
   return (
     <header className="w-full border-b-2 border-[#2D80FF] bg-white">
-      <div className="flex items-center justify-between px-6 py-4 md:py-3">
+      <div className="flex items-center justify-between px-6 py-5 md:px-10 md:py-4">
         {/* 左側：タイトル・ロゴエリア */}
         <div className="flex flex-col md:flex-row md:items-end gap-1 md:gap-3">
           <span className="font-bold text-lg md:text-xl tracking-wider text-[#27272A] leading-none">
@@ -80,8 +80,8 @@ const Header: React.FC = () => {
         <div className="md:hidden">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="w-7 h-7" />
+              <Button variant="ghost" size="icon" className="w-8 h-8">
+                <Menu className="w-[21.33px] h-4 stroke-[2.67]" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-64 p-0">
