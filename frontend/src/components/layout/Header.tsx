@@ -1,5 +1,5 @@
 import React from "react";
-import { Menu, Home, Handshake, BookOpen, UserRound } from "lucide-react";
+import { Menu, Home, HeartHandshake, BookOpen, UserRound } from "lucide-react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Link, useLocation } from "react-router-dom";
@@ -15,7 +15,7 @@ const NAV_ITEMS = [
   },
   {
     label: "はじめに",
-    icon: Handshake,
+    icon: HeartHandshake,
     to: "/about",
   },
   {
@@ -61,17 +61,17 @@ const Header: React.FC = () => {
         </div>
 
         {/* PCナビゲーション */}
-        <nav className="hidden md:flex gap-8">
+        <nav className="hidden md:flex gap-3">
           {NAV_ITEMS.map(({ label, icon: Icon, to }) => (
             <Link
               key={label}
               to={to}
-              className={`flex flex-col items-center gap-1 group ${
-                location.pathname === to ? "text-[#2D80FF]" : "text-[#27272A]"
+              className={`flex flex-col items-center gap-1 group w-[58px] ${
+                location.pathname === to ? "text-[#27272A]" : "text-[#27272A]"
               }`}
             >
-              <Icon className="w-5 h-5 group-hover:text-[#2D80FF] transition-colors" />
-              <span className="text-xs font-bold tracking-wider">{label}</span>
+              <Icon className="w-5 h-5 text-[#60A5FA] group-hover:text-[#60A5FA] transition-colors stroke-[1.67]" />
+              <span className="text-[10px] font-bold tracking-wider text-[#27272A]">{label}</span>
             </Link>
           ))}
         </nav>
