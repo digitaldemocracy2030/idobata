@@ -1,157 +1,105 @@
-import { Menu, User } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import { Link, useMock } from "../../contexts/MockContext";
-import { useSiteConfig } from "../../contexts/SiteConfigContext";
-import { useThemes } from "../../hooks/useThemes";
+import React from "react";
+import { Menu, Home, Handshake, BookOpen, UserRound } from "lucide-react";
 import { Button } from "../ui/button";
-import {
-  NavigationRouterLink,
-  NavigationSheet,
-  NavigationSheetContent,
-  NavigationSheetTrigger,
-} from "../ui/navigation/menu-sheet";
+import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import { Link, useLocation } from "react-router-dom";
 
-const Header = () => {
-  const { themes, isLoading, error } = useThemes();
-  const { siteConfig, loading } = useSiteConfig();
-  const { user } = useAuth();
-  const { isMockMode } = useMock();
-  const navigate = useNavigate();
+// ロゴ画像のパス
+const LOGO_PATH = "/images/MainImage.png";
+
+const NAV_ITEMS = [
+  {
+    label: "トップ",
+    icon: Home,
+    to: "/top",
+  },
+  {
+    label: "はじめに",
+    icon: Handshake,
+    to: "/about",
+  },
+  {
+    label: "使いかた",
+    icon: BookOpen,
+    to: "/howto",
+  },
+  {
+    label: "マイページ",
+    icon: UserRound,
+    to: "/mypage",
+  },
+];
+
+const Header: React.FC = () => {
   const location = useLocation();
 
-  const toggleMockMode = () => {
-    const currentParams = new URLSearchParams(location.search);
-    let targetPathname = location.pathname;
-    let targetSearch = "";
-
-    if (isMockMode) {
-      targetPathname = "/";
-      currentParams.delete("mock");
-      targetSearch = currentParams.toString();
-    } else {
-      currentParams.set("mock", "true");
-      targetSearch = currentParams.toString();
-    }
-
-    navigate(
-      {
-        pathname: targetPathname,
-        search: targetSearch,
-      },
-      { replace: true }
-    );
-  };
-
   return (
-    <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b-2 border-primary-700 h-16 px-4 flex items-center">
-      <div className="flex justify-between items-center w-full">
-        {/* ハンバーガーメニュー（左） - md:以上で非表示 */}
-        <div className="md:hidden">
-          <NavigationSheet>
-            <NavigationSheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
-              </Button>
-            </NavigationSheetTrigger>
-            <NavigationSheetContent className="w-72">
-              <nav className="flex flex-col gap-4 mt-8">
-                <NavigationRouterLink
-                  to="/"
-                  className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
-                >
-                  TOP
-                </NavigationRouterLink>
-                <NavigationRouterLink
-                  to="/about"
-                  className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
-                >
-                  このサイトについて
-                </NavigationRouterLink>
-                <NavigationRouterLink
-                  to="/mypage"
-                  className="text-lg py-2 px-4 hover:bg-primary-50 rounded-md"
-                >
-                  マイページ
-                </NavigationRouterLink>
-
-                {isLoading && (
-                  <div className="px-4 py-2 text-sm text-gray-500">
-                    読み込み中...
-                  </div>
-                )}
-
-                {error && (
-                  <div className="px-4 py-2 text-sm text-red-500">{error}</div>
-                )}
-
-                {!isLoading && !error && themes.length === 0 && (
-                  <div className="px-4 py-2 text-sm text-gray-500">
-                    テーマがありません
-                  </div>
-                )}
-
-                {themes.length > 0 && !isLoading && !error && (
-                  <div className="py-2">
-                    <h3 className="text-lg text-gray-500 px-4">テーマ一覧</h3>
-
-                    <div className="flex flex-col mt-2">
-                      {themes.map((theme) => (
-                        <NavigationRouterLink
-                          key={theme._id}
-                          to={`/themes/${theme._id}`}
-                          className="text-base py-2 hover:bg-primary-50 rounded-md ml-8"
-                        >
-                          {theme.title}
-                        </NavigationRouterLink>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {process.env.NODE_ENV === "development" && (
-                  <div className="flex mt-4 px-4">
-                    <Button
-                      variant="outline"
-                      onClick={toggleMockMode}
-                      className="text-xs"
-                    >
-                      {isMockMode
-                        ? "モックモードを解除しトップへ"
-                        : "モックモードに入る（開発用）"}
-                    </Button>
-                  </div>
-                )}
-              </nav>
-            </NavigationSheetContent>
-          </NavigationSheet>
+    <header className="w-full border-b-2 border-[#2D80FF] bg-white">
+      <div className="flex items-center justify-between px-6 py-4 md:py-3">
+        {/* 左側：タイトル・ロゴエリア */}
+        <div className="flex flex-col md:flex-row md:items-end gap-1 md:gap-3">
+          <span className="font-bold text-lg md:text-xl tracking-wider text-[#27272A] leading-none">
+            りっけん対話アリーナ
+          </span>
+          <div className="flex items-end gap-1">
+            <span className="text-[8px] font-bold text-[#94B9F9] leading-4 tracking-wider md:mb-1">
+              powered by
+            </span>
+            <div className="flex items-center gap-1">
+              <span className="inline-block w-4 h-4 relative">
+                <img
+                  src={LOGO_PATH}
+                  alt="いどばたビジョンロゴ"
+                  className="w-full h-full object-contain"
+                />
+              </span>
+              <span className="text-[10px] font-bold text-[#94B9F9] tracking-wider">
+                いどばたビジョン
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* サイトタイトル（中央） */}
-        <Link to="/top">
-          <h1 className="text-base font-semibold text-center">
-            {loading
-              ? "..."
-              : siteConfig?.title || "XX党 みんなの政策フォーラム"}
-          </h1>
-        </Link>
+        {/* PCナビゲーション */}
+        <nav className="hidden md:flex gap-8">
+          {NAV_ITEMS.map(({ label, icon: Icon, to }) => (
+            <Link
+              key={label}
+              to={to}
+              className={`flex flex-col items-center gap-1 group ${
+                location.pathname === to ? "text-[#2D80FF]" : "text-[#27272A]"
+              }`}
+            >
+              <Icon className="w-5 h-5 group-hover:text-[#2D80FF] transition-colors" />
+              <span className="text-xs font-bold tracking-wider">{label}</span>
+            </Link>
+          ))}
+        </nav>
 
-        {/* マイページアイコン（右） */}
-        <Link to="/mypage">
-          <Button variant="ghost" size="icon" className="relative">
-            {user.profileImageUrl ? (
-              <img
-                src={user.profileImageUrl}
-                alt="プロフィール画像"
-                className="rounded-full w-6 h-6 object-cover"
-              />
-            ) : (
-              <div className="rounded-full border-2 border-black flex items-center justify-center w-6 h-6">
-                <User className="h-6 w-6" />
-              </div>
-            )}
-          </Button>
-        </Link>
+        {/* スマホ：ハンバーガーメニュー */}
+        <div className="md:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="w-7 h-7" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-64 p-0">
+              <nav className="flex flex-col gap-6 mt-8 px-6">
+                {NAV_ITEMS.map(({ label, icon: Icon, to }) => (
+                  <Link
+                    key={label}
+                    to={to}
+                    className="flex items-center gap-3 text-base font-bold tracking-wider text-[#27272A] hover:text-[#2D80FF] transition-colors"
+                  >
+                    <Icon className="w-6 h-6" />
+                    {label}
+                  </Link>
+                ))}
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </header>
   );
