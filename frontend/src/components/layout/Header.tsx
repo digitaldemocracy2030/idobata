@@ -101,15 +101,15 @@ const Header: React.FC = () => {
                 variant="ghost"
                 className="w-8 h-8 p-0 hover:bg-transparent group"
               >
-                <Menu className="w-8 h-8 stroke-[1.8] text-[#2D80FF] transition-transform duration-300 group-hover:rotate-90 group-hover:scale-110" />
+                <Menu className="w-8 h-8 stroke-[1.8] text-[#2D80FF]" />
               </Button>
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="fixed inset-y-0 right-0 h-full w-[262.5px] p-6 bg-white z-50 shadow-none transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right"
+              className="fixed inset-y-0 right-0 h-full w-[262.5px] p-6 bg-white z-50 shadow-none"
             >
               <SheetClose className="absolute right-6 top-6 rounded-sm opacity-100 hover:opacity-70 focus:outline-none disabled:pointer-events-none group">
-                <X className="h-8 w-8 text-[#2D80FF] stroke-[1.8] transition-transform duration-300 group-hover:rotate-90 group-hover:scale-110" />
+                <X className="h-8 w-8 text-[#2D80FF] stroke-[1.8]" />
                 <span className="sr-only">Close</span>
               </SheetClose>
               <nav className="flex flex-col gap-6 mt-[80px]">
