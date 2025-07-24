@@ -77,11 +77,14 @@ const Header: React.FC = () => {
         </nav>
 
         {/* スマホ：ハンバーガーメニュー */}
-        <div className="md:hidden">
+        <div className="md:hidden flex items-center">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="w-8 h-8">
-                <Menu className="w-[21.33px] h-4 stroke-[2.67]" />
+              <Button
+                variant="ghost"
+                className="w-8 h-8 p-0 hover:bg-transparent"
+              >
+                <Menu className="w-8 h-8 stroke-2 text-[#2D80FF]" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-64 p-0">
