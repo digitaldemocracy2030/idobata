@@ -1,9 +1,16 @@
-import { BookOpen, HeartHandshake, Home, Menu, UserRound } from "lucide-react";
+import {
+  BookOpen,
+  HeartHandshake,
+  Home,
+  Menu,
+  UserRound,
+  X,
+} from "lucide-react";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSiteConfig } from "../../contexts/SiteConfigContext";
 import { Button } from "../ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from "../ui/sheet";
 
 // ロゴ画像のパス
 const LOGO_PATH = "/images/idobata-logo.svg";
@@ -36,7 +43,7 @@ const Header: React.FC = () => {
   const { siteConfig, loading } = useSiteConfig();
 
   return (
-    <header className="w-full border-b-2 border-[#2D80FF] bg-white">
+    <header className="w-full border-b-2 border-[#EEEEEE] bg-white">
       <div className="flex items-center justify-between px-6 py-5 md:px-10 md:py-4">
         {/* 左側：タイトル・ロゴエリア */}
         <div className="flex flex-col md:flex-row md:items-end gap-1 md:gap-3">
@@ -88,19 +95,23 @@ const Header: React.FC = () => {
                 variant="ghost"
                 className="w-8 h-8 p-0 hover:bg-transparent"
               >
-                <Menu className="w-8 h-8 stroke-2 text-[#2D80FF]" />
+                <Menu className="w-8 h-8 stroke-[1.8] text-[#2D80FF]" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-64 p-0">
-              <nav className="flex flex-col gap-6 mt-8 px-6">
+            <SheetContent side="right" className="w-64 p-6">
+              <SheetClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-neutral-100">
+                <X className="h-8 w-8 text-[#2D80FF] stroke-[1.8]" />
+                <span className="sr-only">Close</span>
+              </SheetClose>
+              <nav className="flex flex-col gap-6 mt-[80px]">
                 {NAV_ITEMS.map(({ label, icon: Icon, to }) => (
                   <Link
                     key={label}
                     to={to}
-                    className="flex items-center gap-3 text-base font-bold tracking-wider text-[#27272A] hover:text-[#2D80FF] transition-colors"
+                    className="flex items-center gap-3 font-bold tracking-[0.025em] text-[#27272A] hover:text-[#60A5FA] transition-colors"
                   >
-                    <Icon className="w-6 h-6" />
-                    {label}
+                    <Icon className="w-8 h-8 text-[#60A5FA] stroke-[1.8]" />
+                    <span className="text-base leading-[2em]">{label}</span>
                   </Link>
                 ))}
               </nav>
