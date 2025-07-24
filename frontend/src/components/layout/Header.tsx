@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Link, useLocation } from "react-router-dom";
 
 // ロゴ画像のパス
-const LOGO_PATH = "/images/MainImage.png";
+const LOGO_PATH = "/images/idobata-logo.svg";
 
 const NAV_ITEMS = [
   {
@@ -41,11 +41,11 @@ const Header: React.FC = () => {
           <span className="font-bold text-lg md:text-xl tracking-wider text-[#27272A] leading-none">
             りっけん対話アリーナ
           </span>
-          <div className="flex items-end gap-1">
-            <span className="text-[8px] font-bold text-[#94B9F9] leading-4 tracking-wider md:mb-1">
+          <div className="flex items-center gap-1">
+            <span className="text-[8px] font-bold text-[#94B9F9] leading-[2em] tracking-[0.0375em]">
               powered by
             </span>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0.5">
               <span className="inline-block w-4 h-4 relative">
                 <img
                   src={LOGO_PATH}
@@ -53,7 +53,7 @@ const Header: React.FC = () => {
                   className="w-full h-full object-contain"
                 />
               </span>
-              <span className="text-[10px] font-bold text-[#94B9F9] tracking-wider">
+              <span className="text-[10px] font-bold text-[#94B9F9] leading-[1em] tracking-[0.03em]">
                 いどばたビジョン
               </span>
             </div>
