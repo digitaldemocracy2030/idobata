@@ -10,7 +10,13 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSiteConfig } from "../../contexts/SiteConfigContext";
 import { Button } from "../ui/button";
-import { Sheet, SheetClose, SheetContent, SheetTrigger } from "../ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetOverlay,
+  SheetTrigger,
+} from "../ui/sheet";
 
 // ロゴ画像のパス
 const LOGO_PATH = "/images/idobata-logo.svg";
@@ -93,14 +99,17 @@ const Header: React.FC = () => {
             <SheetTrigger asChild>
               <Button
                 variant="ghost"
-                className="w-8 h-8 p-0 hover:bg-transparent"
+                className="w-8 h-8 p-0 hover:bg-transparent group"
               >
-                <Menu className="w-8 h-8 stroke-[1.8] text-[#2D80FF]" />
+                <Menu className="w-8 h-8 stroke-[1.8] text-[#2D80FF] transition-transform duration-300 group-hover:rotate-90 group-hover:scale-110" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-64 p-6">
-              <SheetClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-neutral-100">
-                <X className="h-8 w-8 text-[#2D80FF] stroke-[1.8]" />
+            <SheetContent
+              side="right"
+              className="fixed inset-y-0 right-0 h-full w-[262.5px] p-6 bg-white z-50 shadow-none transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right"
+            >
+              <SheetClose className="absolute right-6 top-6 rounded-sm opacity-100 hover:opacity-70 focus:outline-none disabled:pointer-events-none group">
+                <X className="h-8 w-8 text-[#2D80FF] stroke-[1.8] transition-transform duration-300 group-hover:rotate-90 group-hover:scale-110" />
                 <span className="sr-only">Close</span>
               </SheetClose>
               <nav className="flex flex-col gap-6 mt-[80px]">
