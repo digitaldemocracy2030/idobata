@@ -46,7 +46,7 @@ function VisualizationArea() {
       if (result.isErr()) {
         const apiError = result.error;
         console.error("Failed to fetch questions:", apiError);
-        setError("問いの読み込みに失敗しました。");
+        setError("重要論点の読み込みに失敗しました。");
         setIsLoadingQuestions(false);
         return;
       }
@@ -89,10 +89,10 @@ function VisualizationArea() {
         console.error("Failed to fetch question details:", apiError);
 
         if (apiError.statusCode === 404) {
-          setError("問いの詳細が見つかりません。");
+          setError("重要論点の詳細が見つかりません。");
         } else {
           setError(
-            `問い (${selectedQuestionId}) の詳細読み込みに失敗しました。`
+            `重要論点 (${selectedQuestionId}) の詳細読み込みに失敗しました。`
           );
         }
 
@@ -134,7 +134,7 @@ function VisualizationArea() {
         const apiError = result.error;
         console.error("Failed to fetch policy drafts:", apiError);
         setError(
-          `問い (${selectedQuestionId}) の政策ドラフト読み込みに失敗しました。`
+          `重要論点 (${selectedQuestionId}) の政策ドラフト読み込みに失敗しました。`
         );
         setPolicyDrafts([]);
         setIsLoadingDrafts(false);
@@ -175,7 +175,7 @@ function VisualizationArea() {
         const apiError = result.error;
         console.error("Failed to fetch digest drafts:", apiError);
         setError(
-          `問い (${selectedQuestionId}) のダイジェスト読み込みに失敗しました。`
+          `重要論点 (${selectedQuestionId}) のダイジェスト読み込みに失敗しました。`
         );
         setDigestDrafts([]);
         setIsLoadingDigestDrafts(false);
@@ -312,7 +312,7 @@ function VisualizationArea() {
   return (
     <div className="p-6 animate-fade-in min-h-full minimal-pattern">
       <h2 className="text-2xl font-semibold mb-6 text-primary border-b border-neutral-200 pb-2">
-        シャープな問いとインサイト
+        重要論点とインサイト
       </h2>
 
       {error && (
@@ -341,7 +341,7 @@ function VisualizationArea() {
         <div className="lg:col-span-1">
           <div className="bg-white p-4 h-full border border-neutral-200 rounded-lg shadow-sm">
             <h3 className="text-lg font-medium mb-4 text-primary-dark border-b border-neutral-200 pb-2">
-              問いを選択
+              重要論点を選択
             </h3>
             {isLoadingQuestions ? (
               <div className="flex items-center justify-center p-8">
@@ -371,7 +371,7 @@ function VisualizationArea() {
               </ul>
             ) : (
               <div className="p-6 text-center text-neutral-500 text-base border border-dashed border-neutral-300 rounded-lg">
-                <p>まだ問いが生成されていません</p>
+                <p>まだ重要論点が生成されていません</p>
                 <p className="mt-2 text-xs">
                   管理パネルから生成してみてください
                 </p>
@@ -423,7 +423,7 @@ function VisualizationArea() {
                         </ul>
                       ) : (
                         <p className="text-base text-neutral-500 p-3 bg-white rounded-lg border border-neutral-200">
-                          この問いにはまだ課題がリンクされていません
+                          この重要論点にはまだ課題がリンクされていません
                         </p>
                       )}
                     </div>
@@ -454,7 +454,7 @@ function VisualizationArea() {
                         </ul>
                       ) : (
                         <p className="text-base text-neutral-500 p-3 bg-white rounded-lg border border-neutral-200">
-                          この問いにはまだ解決策がリンクされていません
+                          この重要論点にはまだ解決策がリンクされていません
                         </p>
                       )}
                     </div>
@@ -469,7 +469,7 @@ function VisualizationArea() {
                         政策ドラフト生成
                       </h4>
                       <p className="text-base text-neutral-600">
-                        この問いに関連する課題と解決策から政策ドラフトを生成します
+                        この重要論点に関連する課題と解決策から政策ドラフトを生成します
                       </p>
                     </div>
                     <button
@@ -523,7 +523,7 @@ function VisualizationArea() {
                         一般向けダイジェスト生成
                       </h4>
                       <p className="text-base text-neutral-600">
-                        この問いと政策ドラフトから一般向けの読みやすいダイジェストを生成します
+                        この重要論点と政策ドラフトから一般向けの読みやすいダイジェストを生成します
                       </p>
                     </div>
                     <button
@@ -616,7 +616,7 @@ function VisualizationArea() {
                   ) : (
                     <div className="p-6 text-center text-neutral-500 text-base border border-dashed border-neutral-300 rounded-lg">
                       <p>
-                        この問いに対する政策ドラフトはまだ生成されていません
+                        この重要論点に対する政策ドラフトはまだ生成されていません
                       </p>
                       <p className="mt-2 text-xs">
                         上のボタンから生成を開始できます
@@ -668,7 +668,7 @@ function VisualizationArea() {
                   ) : (
                     <div className="p-6 text-center text-neutral-500 text-base border border-dashed border-success/30 rounded-lg">
                       <p>
-                        この問いに対するダイジェストはまだ生成されていません
+                        この重要論点に対するダイジェストはまだ生成されていません
                       </p>
                       <p className="mt-2 text-xs">
                         上のボタンから生成を開始できます
@@ -684,9 +684,9 @@ function VisualizationArea() {
               </div>
             ) : selectedQuestionId && !isLoadingDetails ? (
               <div className="p-6 text-center text-red-600 text-base border border-dashed border-red-300 rounded-lg">
-                <p>選択された問いの詳細を読み込めませんでした</p>
+                <p>選択された重要論点の詳細を読み込めませんでした</p>
                 <p className="mt-2 text-xs">
-                  別の問いを選択するか、ページを更新してみてください
+                  別の重要論点を選択するか、ページを更新してみてください
                 </p>
               </div>
             ) : (
@@ -707,10 +707,10 @@ function VisualizationArea() {
                   />
                 </svg>
                 <p className="text-lg font-medium mb-2">
-                  問いを選択してください
+                  重要論点を選択してください
                 </p>
                 <p className="text-base">
-                  リストから問いを選択すると、詳細と政策オプションが表示されます
+                  リストから重要論点を選択すると、詳細と政策オプションが表示されます
                 </p>
               </div>
             )}

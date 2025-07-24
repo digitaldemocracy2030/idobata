@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const sharpQuestionSchema = new mongoose.Schema(
   {
     questionText: {
-      // "How might we..." 形式の問い
+      // "How might we..." 形式の重要論点
       type: String,
       required: true,
     },
@@ -17,7 +17,7 @@ const sharpQuestionSchema = new mongoose.Schema(
     },
     sourceProblemIds: [
       {
-        // (任意) この問いの生成に使用された `problems` のIDリスト
+        // (任意) この重要論点の生成に使用された `problems` のIDリスト
         type: mongoose.Schema.Types.ObjectId,
         ref: "Problem",
       },
