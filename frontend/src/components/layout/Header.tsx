@@ -10,13 +10,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSiteConfig } from "../../contexts/SiteConfigContext";
 import { Button } from "../ui/button";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetOverlay,
-  SheetTrigger,
-} from "../ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from "../ui/sheet";
 
 // ロゴ画像のパス
 const LOGO_PATH = "/images/idobata-logo.svg";

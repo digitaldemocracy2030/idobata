@@ -296,7 +296,7 @@
   color: rgb(var(--color-neutral-900));
   border-left-width: 0.25rem;
   border-left-color: rgb(var(--color-neutral-200));
-  quotes: "\201C""\201D""\2018""\2019";
+  quotes: "\201C" "\201D" "\2018" "\2019";
   margin-top: 1.6em;
   margin-bottom: 1.6em;
   padding-left: 1em;
@@ -543,7 +543,7 @@
   color: rgb(var(--color-neutral-900));
   border-left-width: 0.25rem;
   border-left-color: rgb(var(--color-neutral-200));
-  quotes: "\201C""\201D""\2018""\2019";
+  quotes: "\201C" "\201D" "\2018" "\2019";
   margin-top: 1.6em;
   margin-bottom: 1.6em;
   padding-left: 1em;
