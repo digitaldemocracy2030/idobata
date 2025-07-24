@@ -24,7 +24,13 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 
   const handleChangeTopicClick = () => {
     if (onSendMessage) {
-      onSendMessage("話題を変えましょう");
+      onSendMessage("このテーマに関して別の話題を話しましょう");
+    }
+  };
+
+  const handleEndConversationClick = () => {
+    if (onSendMessage) {
+      onSendMessage("会話を終了");
     }
   };
 
@@ -45,6 +51,16 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           className="text-sm bg-blue-100 text-blue-800 border border-blue-300 hover:bg-blue-200"
         >
           話題を変える
+        </Button>
+      </div>
+      <div className="absolute left-1/2 transform -translate-x-1/2 top-6">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleEndConversationClick}
+          className="text-sm bg-red-100 text-red-800 border border-red-300 hover:bg-red-200"
+        >
+          会話を終了
         </Button>
       </div>
       <div className="absolute right-4 top-6">
