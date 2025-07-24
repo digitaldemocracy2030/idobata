@@ -3,6 +3,7 @@ import { Menu, Home, HeartHandshake, BookOpen, UserRound } from "lucide-react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Link, useLocation } from "react-router-dom";
+import { useSiteConfig } from "../../contexts/SiteConfigContext";
 
 // ロゴ画像のパス
 const LOGO_PATH = "/images/idobata-logo.svg";
@@ -32,6 +33,7 @@ const NAV_ITEMS = [
 
 const Header: React.FC = () => {
   const location = useLocation();
+  const { siteConfig, loading } = useSiteConfig();
 
   return (
     <header className="w-full border-b-2 border-[#2D80FF] bg-white">
@@ -39,7 +41,7 @@ const Header: React.FC = () => {
         {/* 左側：タイトル・ロゴエリア */}
         <div className="flex flex-col md:flex-row md:items-end gap-1 md:gap-3">
           <span className="font-bold text-lg md:text-xl tracking-wider text-[#27272A] leading-none">
-            りっけん対話アリーナ
+            {loading ? "..." : siteConfig?.title || "りっけん対話アリーナ"}
           </span>
           <div className="flex items-center gap-1">
             <span className="text-[8px] font-bold text-[#94B9F9] leading-[2em] tracking-[0.0375em]">
