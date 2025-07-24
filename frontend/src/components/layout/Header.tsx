@@ -106,7 +106,7 @@ const Header: React.FC = () => {
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="fixed inset-y-0 right-0 h-full w-[262.5px] p-6 bg-white z-50 shadow-none"
+              className="fixed inset-y-0 right-0 h-full w-[262.5px] p-6 bg-white z-50 shadow-none data-[state=open]:animate-[slideInFromRight_300ms_ease-out_forwards] data-[state=closed]:animate-[slideOutToRight_300ms_ease-out_forwards]"
             >
               <SheetClose className="absolute right-6 top-6 rounded-sm opacity-100 hover:opacity-70 focus:outline-none disabled:pointer-events-none group">
                 <X className="h-8 w-8 text-[#2D80FF] stroke-[1.8]" />

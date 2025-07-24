@@ -80,6 +80,26 @@
   }
 }
 
+/* 純粋な横方向のスライドアニメーション - 右からスライドイン */
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* 純粋な横方向のスライドアニメーション - 右へスライドアウト */
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
 @keyframes float {
   0% {
     transform: translateY(0px);
@@ -276,7 +296,7 @@
   color: rgb(var(--color-neutral-900));
   border-left-width: 0.25rem;
   border-left-color: rgb(var(--color-neutral-200));
-  quotes: "\201C" "\201D" "\2018" "\2019";
+  quotes: "\201C""\201D""\2018""\2019";
   margin-top: 1.6em;
   margin-bottom: 1.6em;
   padding-left: 1em;
@@ -523,7 +543,7 @@
   color: rgb(var(--color-neutral-900));
   border-left-width: 0.25rem;
   border-left-color: rgb(var(--color-neutral-200));
-  quotes: "\201C" "\201D" "\2018" "\2019";
+  quotes: "\201C""\201D""\2018""\2019";
   margin-top: 1.6em;
   margin-bottom: 1.6em;
   padding-left: 1em;
