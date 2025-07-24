@@ -1,9 +1,9 @@
+import { BookOpen, HeartHandshake, Home, Menu, UserRound } from "lucide-react";
 import React from "react";
-import { Menu, Home, HeartHandshake, BookOpen, UserRound } from "lucide-react";
-import { Button } from "../ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Link, useLocation } from "react-router-dom";
 import { useSiteConfig } from "../../contexts/SiteConfigContext";
+import { Button } from "../ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 
 // ロゴ画像のパス
 const LOGO_PATH = "/images/idobata-logo.svg";
@@ -73,7 +73,9 @@ const Header: React.FC = () => {
               }`}
             >
               <Icon className="w-5 h-5 text-[#60A5FA] group-hover:text-[#60A5FA] transition-colors stroke-[1.67]" />
-              <span className="text-[10px] font-bold tracking-wider text-[#27272A]">{label}</span>
+              <span className="text-[10px] font-bold tracking-wider text-[#27272A]">
+                {label}
+              </span>
             </Link>
           ))}
         </nav>
