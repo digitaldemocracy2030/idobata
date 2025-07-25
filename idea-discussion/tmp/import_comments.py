@@ -8,7 +8,7 @@ csv_file = "driving.csv"
 # 実際のテーマIDに変更してください
 theme_id = "xxxxxxxxxxx"
 # 実際のエンドポイントに変更してください
-endpoint = "http://localhost:3000/api/themes/{themeId}/import/generic"
+endpoint = f"http://localhost:3000/api/themes/{theme_id}/import/generic"
 
 with open(csv_file, newline='', encoding='utf-8') as f:
     reader = csv.DictReader(f)
