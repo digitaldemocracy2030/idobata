@@ -7,6 +7,8 @@ import {
   UserMessage,
 } from "../../../types";
 import { StreamingText } from "./StreamingText";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface ExtendedChatHistoryProps {
   messages: Message[];
@@ -56,11 +58,13 @@ function ExtendedChatHistory({ messages }: ExtendedChatHistoryProps) {
               })}
             >
               <div className="text-sm whitespace-pre-wrap">
-                {msg.isStreaming ? (
-                  <StreamingText content={msg.content} />
-                ) : (
-                  msg.content
-                )}
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {msg.isStreaming ? (
+                    <StreamingText content={msg.content} />
+                  ) : (
+                      msg.content
+                    )}
+                </ReactMarkdown>
               </div>
             </div>
             {/* タイムスタンプは表示しない */}
