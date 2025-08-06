@@ -8,11 +8,11 @@ module "environment" {
   admin_max_instances = 3    # 管理者数人程度なので少なめ
 
   # 一般ユーザーがアクセス、トラフィック多め
-  user_min_instances  = 1    # 常時利用可能に
+  user_min_instances  = 0    # 開発時のみ起動（コスト削減）
   user_max_instances  = 3   # ユーザー数に応じて多め
 
   # Admin, User両方から利用される重要な部分
-  api_min_instances   = 1    # 常時稼働必須
+  api_min_instances   = 0    # 開発時のみ起動（コスト削減）
   api_max_instances   = 3   # バックエンド処理で重要
 
   # Pythonサービス  AI処理、計  算集約的だが使用頻度は限定的
