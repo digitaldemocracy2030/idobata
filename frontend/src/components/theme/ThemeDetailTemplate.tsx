@@ -1,11 +1,13 @@
 import {
   forwardRef,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useRef,
   useState,
 } from "react";
 import { apiClient } from "../../services/api/apiClient";
+import type { NewExtractionEvent } from "../../services/socket/socketClient";
 import { MessageType } from "../../types";
 import { FloatingChat, type FloatingChatRef } from "../chat";
 import BreadcrumbView from "../common/BreadcrumbView";
@@ -38,6 +40,7 @@ interface ThemeDetailTemplateProps {
   }[];
   disabled?: boolean;
   onSendMessage?: (message: string) => void;
+  onNewExtraction?: (handler: (extraction: NewExtractionEvent) => void) => void;
 }
 
 const ThemeDetailTemplate = forwardRef<
@@ -45,7 +48,15 @@ const ThemeDetailTemplate = forwardRef<
   ThemeDetailTemplateProps
 >(
   (
-    { theme, keyQuestions, issues, solutions, disabled = false, onSendMessage },
+    {
+      theme,
+      keyQuestions,
+      issues,
+      solutions,
+      disabled = false,
+      onSendMessage,
+      onNewExtraction,
+    },
     ref
   ) => {
     const [activeTab, setActiveTab] = useState<"issues" | "solutions">(
@@ -56,6 +67,8 @@ const ThemeDetailTemplate = forwardRef<
     const [userId, setUserId] = useState<string>(
       localStorage.getItem("userId") || crypto.randomUUID()
     );
+    const [localIssues, setLocalIssues] = useState(issues);
+    const [localSolutions, setLocalSolutions] = useState(solutions);
 
     useImperativeHandle(ref, () => ({
       addMessage: (content: string, type: MessageType) => {
@@ -127,6 +140,39 @@ const ThemeDetailTemplate = forwardRef<
       }
     }, [userId]);
 
+    useEffect(() => {
+      setLocalIssues(issues);
+    }, [issues]);
+
+    useEffect(() => {
+      setLocalSolutions(solutions);
+    }, [solutions]);
+
+    const handleNewExtraction = useCallback(
+      (extraction: NewExtractionEvent) => {
+        const { type, data } = extraction;
+
+        if (type === "problem") {
+          setLocalIssues((prev) => [
+            ...prev,
+            { id: data._id, text: data.statement },
+          ]);
+        } else if (type === "solution") {
+          setLocalSolutions((prev) => [
+            ...prev,
+            { id: data._id, text: data.statement },
+          ]);
+        }
+      },
+      []
+    );
+
+    useEffect(() => {
+      if (onNewExtraction) {
+        onNewExtraction(handleNewExtraction);
+      }
+    }, [onNewExtraction, handleNewExtraction]);
+
     return (
       <div className="container mx-auto px-4 py-8">
         <BreadcrumbView items={breadcrumbItems} />
@@ -169,7 +215,7 @@ const ThemeDetailTemplate = forwardRef<
               onClick={() => setActiveTab("issues")}
               type="button"
             >
-              課題点 ({issues.length})
+              課題点 ({localIssues.length})
             </button>
             <button
               className={`flex-1 py-2 px-4 text-base font-bold ${
@@ -180,16 +226,16 @@ const ThemeDetailTemplate = forwardRef<
               onClick={() => setActiveTab("solutions")}
               type="button"
             >
-              解決策 ({solutions.length})
+              解決策 ({localSolutions.length})
             </button>
           </div>
 
           <div className="space-y-3">
             {activeTab === "issues"
-              ? issues.map((issue) => (
+              ? localIssues.map((issue) => (
                   <CommentCard key={issue.id} text={issue.text} type="issue" />
                 ))
-              : solutions.map((solution) => (
+              : localSolutions.map((solution) => (
                   <CommentCard
                     key={solution.id}
                     text={solution.text}

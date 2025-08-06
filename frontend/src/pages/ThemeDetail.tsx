@@ -106,7 +106,7 @@ const ThemeDetail = () => {
         themeName,
         userId: user.id,
         onNewMessage: handleNewMessage,
-        onNewExtraction: handleNewExtraction,
+        onNewExtraction: handleChatManagerExtraction,
       });
 
       setChatManager(manager);
@@ -130,8 +130,22 @@ const ThemeDetail = () => {
     }
   };
 
-  const handleNewExtraction = (extraction: NewExtractionEvent) => {
+  const [extractionHandler, setExtractionHandler] = useState<
+    ((extraction: NewExtractionEvent) => void) | null
+  >(null);
+
+  const handleChatManagerExtraction = (extraction: NewExtractionEvent) => {
     console.log("New extraction received:", extraction);
+
+    if (extractionHandler) {
+      extractionHandler(extraction);
+    }
+  };
+
+  const handleSetExtractionHandler = (
+    handler: (extraction: NewExtractionEvent) => void
+  ) => {
+    setExtractionHandler(() => handler);
   };
 
   const handleSendMessage = async (message: string) => {
@@ -203,6 +217,7 @@ const ThemeDetail = () => {
             {...templateProps}
             onSendMessage={handleSendMessage}
             disabled={isCommentDisabled}
+            onNewExtraction={handleSetExtractionHandler}
             ref={floatingChatRef}
           />
         </div>
