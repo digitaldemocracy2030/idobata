@@ -38,9 +38,10 @@ locals {
 
   # 環境別のドメイン設定
   domains = {
-    admin = local.is_prod ? "admin.daikibo-jyukugi-cdp.jp" : "${var.environment}.admin.daikibo-jyukugi-cdp.jp"
-    user  = local.is_prod ? "daikibo-jyukugi-cdp.jp" : "${var.environment}.daikibo-jyukugi-cdp.jp"
-    api   = local.is_prod ? "api.daikibo-jyukugi-cdp.jp" : "${var.environment}.api.daikibo-jyukugi-cdp.jp"
+    admin  = local.is_prod ? "admin.daikibo-jyukugi-cdp.jp" : "${var.environment}.admin.daikibo-jyukugi-cdp.jp"
+    user   = local.is_prod ? "daikibo-jyukugi-cdp.jp" : "${var.environment}.daikibo-jyukugi-cdp.jp"
+    api    = local.is_prod ? "api.daikibo-jyukugi-cdp.jp" : "${var.environment}.api.daikibo-jyukugi-cdp.jp"
+    python = local.is_prod ? "python-service.daikibo-jyukugi-cdp.jp" : "${var.environment}.python-service.daikibo-jyukugi-cdp.jp"
   }
   # Artifact Registryのリポジトリ名
   repository_id = "${var.environment}-idobata-repo"
@@ -176,7 +177,7 @@ module "api_service" {
   env_vars = merge(var.api_env_vars, {
     NODE_ENV           = local.is_prod ? "production" : "development"
     ENVIRONMENT        = var.environment
-    PYTHON_SERVICE_URL = "http://${local.services.python}"
+    PYTHON_SERVICE_URL = "https://${local.domains.python}"
   })
   
   min_instances = var.api_min_instances
@@ -225,6 +226,21 @@ module "python_service" {
   max_instances = var.python_max_instances
   
   labels = local.common_labels
+}
+
+# ドメインマッピング - Python
+resource "google_cloud_run_domain_mapping" "python" {
+  count    = var.enable_domain_mapping ? 1 : 0
+  location = var.region
+  name     = local.domains.python
+
+  metadata {
+    namespace = var.project_id
+  }
+
+  spec {
+    route_name = module.python_service.service_name
+  }
 }
 
 # IAM設定 - Storage アクセス
