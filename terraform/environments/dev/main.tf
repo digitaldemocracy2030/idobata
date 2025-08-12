@@ -47,8 +47,8 @@ module "environment" {
     OPENAI_API_KEY = var.openai_api_key
   }
   
-  # Public access (all services are public in prod)
-  public_services = toset(["admin", "user", "api"])
+  # Public access (all services are public)
+  public_services = toset(["admin", "user", "api", "python"])
   
   # Domain mapping enabled
   enable_domain_mapping = true
