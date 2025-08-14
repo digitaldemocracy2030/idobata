@@ -215,45 +215,45 @@
 > **引き継ぎ事項:**
 > *   バックエンドのチャットAPI (`backend/controllers/chatController.js`) が、AI応答生成時にDBからランダムな課題/解決策を取得し、参考情報としてLLMに渡すように修正されました。
 > *   動作確認として、チャット中にAIが他の意見（例: 「他の方からは〇〇という課題も出ていますが、どう思いますか？」）に言及する応答をするか確認してください。フロントエンドとバックエンドの開発サーバーが起動している必要があります。DBに課題/解決策データが存在しない場合は、この機能は動作しません。
-> *   次のステップ (Step 12) は、バックエンドでシャープな問いを生成する機能 (`backend/workers/questionGenerator.js` と関連API) を実装することです。
+> *   次のステップ (Step 12) は、バックエンドで重要論点を生成する機能 (`backend/workers/questionGenerator.js` と関連API) を実装することです。
 
 
-**Step 12: バックエンド - シャープな問い 生成**
+**Step 12: バックエンド - 重要論点 生成**
 
 1.  `backend/workers/questionGenerator.js` を作成。`generateSharpQuestions()` 関数を定義。
     *   `Problem` モデルから `combinedStatement` を全て取得。
     *   `llmService.callLLM` を適切なプロンプト（課題リスト、HMW形式指示、JSON出力指示）で呼び出す。
-    *   返ってきたJSONから問いのリストを取得。
-    *   各問いを `SharpQuestion` モデルを使ってDBに保存 (`insertOne` や `insertMany`)。重複チェックは必要に応じて行う。
+    *   返ってきたJSONから重要論点のリストを取得。
+    *   各重要論点を `SharpQuestion` モデルを使ってDBに保存 (`insertOne` や `insertMany`)。重複チェックは必要に応じて行う。
 2.  手動トリガー用API `POST /api/admin/generate-questions` を作成 (`backend/routes/adminRoutes.js`, `backend/controllers/adminController.js`)。このAPIが `generateSharpQuestions()` を呼び出す。
-3.  **動作確認:** Postman等で `POST /api/admin/generate-questions` を実行。`sharp_questions` コレクションに問いが生成されることを確認。LLMの応答形式が不安定ならプロンプト調整。
+3.  **動作確認:** Postman等で `POST /api/admin/generate-questions` を実行。`sharp_questions` コレクションに重要論点が生成されることを確認。LLMの応答形式が不安定ならプロンプト調整。
 
 > **[完了] Step 12 は完了しました。**
 > **引き継ぎ事項:**
-> *   バックエンドにシャープな問いを生成するワーカー (`backend/workers/questionGenerator.js`) と、それを手動でトリガーするAPI (`POST /api/admin/generate-questions`) を実装しました。
-> *   **動作確認:** バックエンドサーバー (`npm run dev` in `backend`) を起動し、Postman等で `POST http://localhost:<ポート>/api/admin/generate-questions` を実行してください。コンソールログ (`[QuestionGenerator] ...`) が表示され、MongoDBの `sharp_questions` コレクションに問いが生成されることを確認してください。DBの `problems` コレクションにデータがないと問いは生成されません。LLMの応答によっては空の結果になることもあります。
+> *   バックエンドに重要論点を生成するワーカー (`backend/workers/questionGenerator.js`) と、それを手動でトリガーするAPI (`POST /api/admin/generate-questions`) を実装しました。
+> *   **動作確認:** バックエンドサーバー (`npm run dev` in `backend`) を起動し、Postman等で `POST http://localhost:<ポート>/api/admin/generate-questions` を実行してください。コンソールログ (`[QuestionGenerator] ...`) が表示され、MongoDBの `sharp_questions` コレクションに重要論点が生成されることを確認してください。DBの `problems` コレクションにデータがないと重要論点は生成されません。LLMの応答によっては空の結果になることもあります。
 > *   **注意:** `questionGenerator.js` 内で `// TODO: Trigger linking process here` となっている箇所で、次の Step 13 で実装するリンキング処理を呼び出す必要があります。
-> *   次のステップ (Step 13) は、バックエンドで課題/解決策と問いを関連付けるリンキング処理 (`backend/workers/linkingWorker.js`) を実装することです。
+> *   次のステップ (Step 13) は、バックエンドで課題/解決策と重要論点を関連付けるリンキング処理 (`backend/workers/linkingWorker.js`) を実装することです。
 
 **Step 13: バックエンド - リンキング処理**
 
 1.  `backend/workers/linkingWorker.js` を作成。`linkItemToQuestions(itemId, itemType)` 関数を定義。
     *   `itemType` に応じて `Problem` または `Solution` から対象アイテムを取得。
     *   `SharpQuestion` を全て取得。
-    *   各 `SharpQuestion` について、`llmService.callLLM` を適切なプロンプト（問い、課題/解決策、判定指示、JSON出力指示）で呼び出す。
+    *   各 `SharpQuestion` について、`llmService.callLLM` を適切なプロンプト（重要論点、課題/解決策、判定指示、JSON出力指示）で呼び出す。
     *   応答JSONをパースし、関連性があれば `QuestionLink` モデルを使ってDBにリンク情報 (`questionId`, `linkedItemId`, `linkedItemType`, `linkType` など) を保存 (`findOneAndUpdate` で `upsert: true` を使うと便利)。
 2.  課題/解決策が追加/更新された際 (`extractionWorker.js` のDB保存後) に `linkItemToQuestions` を呼び出す処理を追加。（非同期）
-3.  問いが生成された際 (`questionGenerator.js` のDB保存後) に、全ての課題/解決策に対して `linkItemToQuestions` を呼び出す処理を追加。（非同期、負荷に注意）
+3.  重要論点が生成された際 (`questionGenerator.js` のDB保存後) に、全ての課題/解決策に対して `linkItemToQuestions` を呼び出す処理を追加。（非同期、負荷に注意）
     *   **代替:** Change Streamsを `problems`, `solutions`, `sharp_questions` コレクションに対して設定し、変更を検知して `linkingWorker` を起動する。
-4.  **動作確認:** 課題/解決策の追加・更新、または問いの生成後、少し待ってから `question_links` コレクションに関連データが生成されていることを確認。
+4.  **動作確認:** 課題/解決策の追加・更新、または重要論点の生成後、少し待ってから `question_links` コレクションに関連データが生成されていることを確認。
 
 > **[完了] Step 13 は完了しました。**
 > **引き継ぎ事項:**
-> *   バックエンドに課題/解決策と問いを関連付けるリンキング処理 (`backend/workers/linkingWorker.js`) を実装しました。
-> *   `extractionWorker.js` と `questionGenerator.js` は、それぞれ新しい課題/解決策または問いが保存された後に、非同期で `linkingWorker.js` の関数 (`linkItemToQuestions` または `linkQuestionToAllItems`) を呼び出すように修正されました。
-> *   **動作確認:** チャットで会話を進めて課題/解決策が抽出された後、または `POST /api/admin/generate-questions` を実行して問いが生成された後、しばらく待ってから MongoDB の `question_links` コレクションに関連データが生成・更新されることを確認してください。コンソールログ (`[LinkingWorker] ...`) も確認してください。LLMの応答によってはリンクが生成されない場合もあります。
+> *   バックエンドに課題/解決策と重要論点を関連付けるリンキング処理 (`backend/workers/linkingWorker.js`) を実装しました。
+> *   `extractionWorker.js` と `questionGenerator.js` は、それぞれ新しい課題/解決策または重要論点が保存された後に、非同期で `linkingWorker.js` の関数 (`linkItemToQuestions` または `linkQuestionToAllItems`) を呼び出すように修正されました。
+> *   **動作確認:** チャットで会話を進めて課題/解決策が抽出された後、または `POST /api/admin/generate-questions` を実行して重要論点が生成された後、しばらく待ってから MongoDB の `question_links` コレクションに関連データが生成・更新されることを確認してください。コンソールログ (`[LinkingWorker] ...`) も確認してください。LLMの応答によってはリンクが生成されない場合もあります。
 > *   **注意:** 現在の非同期呼び出しは簡易的な `setTimeout` を使用しています。負荷やエラーハンドリングを考慮すると、本番環境では `bullmq` や Change Streams などのより堅牢な仕組みへの移行を検討してください。
-> *   次のステップ (Step 14) は、フロントエンドで問いとそれに関連する課題/解決策を表示する可視化エリアを実装することです。
+> *   次のステップ (Step 14) は、フロントエンドで重要論点とそれに関連する課題/解決策を表示する可視化エリアを実装することです。
 
 
 **Step 14: フロントエンド - 可視化エリアの実装**
@@ -264,17 +264,17 @@
         *   指定IDの `SharpQuestion` を取得。
         *   `QuestionLink` を使って、その `questionId` に紐づく `problems` と `solutions` のIDリストを取得。
         *   取得したIDリストを使って、実際の `Problem` と `Solution` のデータを取得 (`populate` または別途クエリ）。
-        *   問いの情報、関連する課題リスト、関連する解決策リストをまとめて返す。
+        *   重要論点の情報、関連する課題リスト、関連する解決策リストをまとめて返す。
 2.  フロントエンドの画面上部コンポーネント (`VisualizationArea.jsx`) を実装。
-    *   まず `/api/questions` を呼び出し、問いのリストを表示（例: タブ、アコーディオン、カードリスト）。
-    *   ユーザーが特定の問いを選択したら、`/api/questions/:questionId/details` を呼び出す。
-    *   取得した詳細データ（問い、関連課題、関連解決策）を分かりやすく表示（例: 問いの下に課題カードと解決策カードを並べる）。
-3.  **動作確認:** フロントエンドで問いを選択すると、それに関連付けられた課題と解決策が表示されることを確認。表示形式は適宜調整。
+    *   まず `/api/questions` を呼び出し、重要論点のリストを表示（例: タブ、アコーディオン、カードリスト）。
+    *   ユーザーが特定の重要論点を選択したら、`/api/questions/:questionId/details` を呼び出す。
+    *   取得した詳細データ（重要論点、関連課題、関連解決策）を分かりやすく表示（例: 重要論点の下に課題カードと解決策カードを並べる）。
+3.  **動作確認:** フロントエンドで重要論点を選択すると、それに関連付けられた課題と解決策が表示されることを確認。表示形式は適宜調整。
 > **[完了] Step 14 は完了しました。**
 > **引き継ぎ事項:**
-> *   バックエンドに問い一覧 (`GET /api/questions`) と問い詳細 (`GET /api/questions/:questionId/details`) を取得するAPIを実装し、`server.js` に登録しました。
-> *   フロントエンドに `VisualizationArea.jsx` コンポーネントを作成し、`App.jsx` に組み込みました。このエリアでは、APIから取得した問い一覧を表示し、問いを選択すると関連する課題と解決策が表示されます。
-> *   **動作確認:** フロントエンド (`npm run dev` in `frontend`) とバックエンド (`npm run dev` in `backend`) を起動し、画面上部の可視化エリアに問いが表示されるか、問いを選択すると詳細が表示されるかを確認してください。DBに問い (`sharp_questions`) とリンク (`question_links`) のデータが存在する必要があります。
+> *   バックエンドに重要論点一覧 (`GET /api/questions`) と重要論点詳細 (`GET /api/questions/:questionId/details`) を取得するAPIを実装し、`server.js` に登録しました。
+> *   フロントエンドに `VisualizationArea.jsx` コンポーネントを作成し、`App.jsx` に組み込みました。このエリアでは、APIから取得した重要論点一覧を表示し、重要論点を選択すると関連する課題と解決策が表示されます。
+> *   **動作確認:** フロントエンド (`npm run dev` in `frontend`) とバックエンド (`npm run dev` in `backend`) を起動し、画面上部の可視化エリアに重要論点が表示されるか、重要論点を選択すると詳細が表示されるかを確認してください。DBに重要論点 (`sharp_questions`) とリンク (`question_links`) のデータが存在する必要があります。
 > *   次のステップ (Step 15) は、バックエンドで政策ドラフトを生成する機能 (`backend/workers/policyGenerator.js` と関連API) を実装することです。
 
 **Step 15: バックエンド - 政策ドラフト生成**
@@ -282,14 +282,14 @@
 1.  `backend/workers/policyGenerator.js` を作成。`generatePolicyDraft(questionId)` 関数を定義。
     *   `questionId` に紐づく `SharpQuestion` を取得。
     *   `QuestionLink` を使って関連する `Problem` と `Solution` のステートメントを取得。
-    *   `llmService.callLLM` を適切なプロンプト（問い、課題リスト、解決策リスト、政策生成指示、JSON出力指示）で呼び出す。
+    *   `llmService.callLLM` を適切なプロンプト（重要論点、課題リスト、解決策リスト、政策生成指示、JSON出力指示）で呼び出す。
     *   応答JSONからタイトルと本文を取得し、`PolicyDraft` モデルを使ってDBに保存。
 2.  トリガー用API `POST /api/questions/:questionId/generate-policy` を作成 (`questionController.js`)。このAPIが `generatePolicyDraft(questionId)` を非同期で呼び出す。
-3.  **動作確認:** Postman等で適当な問いIDを指定して `POST /api/questions/:questionId/generate-policy` を実行。`policy_drafts` コレクションにドラフトが生成されることを確認。
+3.  **動作確認:** Postman等で適当な重要論点IDを指定して `POST /api/questions/:questionId/generate-policy` を実行。`policy_drafts` コレクションにドラフトが生成されることを確認。
 > **[完了] Step 15 は完了しました。**
 > **引き継ぎ事項:**
 > *   バックエンドに政策ドラフトを生成するワーカー (`backend/workers/policyGenerator.js`) と、それをトリガーするAPI (`POST /api/questions/:questionId/generate-policy`) を実装しました。
-> *   **動作確認:** バックエンドサーバー (`npm run dev` in `backend`) を起動し、Postman等で有効な問いID (`sharp_questions` コレクションから取得) を使って `POST http://localhost:<ポート>/api/questions/:questionId/generate-policy` を実行してください。コンソールログ (`[PolicyGenerator] ...`) が表示され、MongoDBの `policy_drafts` コレクションにドラフトが生成されることを確認してください。関連する問い、課題、解決策がDBに存在する必要があります。
+> *   **動作確認:** バックエンドサーバー (`npm run dev` in `backend`) を起動し、Postman等で有効な重要論点ID (`sharp_questions` コレクションから取得) を使って `POST http://localhost:<ポート>/api/questions/:questionId/generate-policy` を実行してください。コンソールログ (`[PolicyGenerator] ...`) が表示され、MongoDBの `policy_drafts` コレクションにドラフトが生成されることを確認してください。関連する重要論点、課題、解決策がDBに存在する必要があります。
 > *   **注意:** 現在の非同期呼び出しは簡易的な `setTimeout` を使用しています。本番環境では `bullmq` などの堅牢なキューシステムへの移行を検討してください。
 > *   次のステップ (Step 16) は、フロントエンドで政策ドラフト表示と生成トリガーを実装することです。
 
@@ -297,14 +297,14 @@
 
 1.  バックエンドに `GET /api/policy-drafts` エンドポイントを作成 (`backend/routes/policyRoutes.js`, `backend/controllers/policyController.js`)。必要に応じて `questionId` でフィルタリングできるようにする。
 2.  フロントエンドの可視化エリア (`VisualizationArea.jsx`) または別ページに、政策ドラフトを表示する機能を追加。
-    *   `/api/policy-drafts` を呼び出してドラフト一覧（または特定の問いに関連するもの）を表示。
-3.  各「シャープな問い」の表示部分に「政策ドラフト生成」ボタンを追加。クリックすると `POST /api/questions/:questionId/generate-policy` を呼び出す。
-4.  **動作確認:** フロントエンドで問いを選び、生成ボタンを押すと、しばらくして（非同期処理完了後）その問いに対応する政策ドラフトが表示されることを確認。
+    *   `/api/policy-drafts` を呼び出してドラフト一覧（または特定の重要論点に関連するもの）を表示。
+3.  各「重要論点」の表示部分に「政策ドラフト生成」ボタンを追加。クリックすると `POST /api/questions/:questionId/generate-policy` を呼び出す。
+4.  **動作確認:** フロントエンドで重要論点を選び、生成ボタンを押すと、しばらくして（非同期処理完了後）その重要論点に対応する政策ドラフトが表示されることを確認。
 > **[完了] Step 16 は完了しました。**
 > **引き継ぎ事項:**
 > *   バックエンドに政策ドラフト取得API (`GET /api/policy-drafts`) を実装し、`server.js` に登録しました。
-> *   フロントエンドの `VisualizationArea.jsx` を修正し、選択された問いに関連する政策ドラフトを表示する機能と、「政策ドラフト生成」ボタンを追加しました。
-> *   **動作確認:** フロントエンド (`npm run dev` in `frontend`) とバックエンド (`npm run dev` in `backend`) を起動し、問いを選択して「政策ドラフト生成」ボタンをクリックしてください。しばらくすると（デフォルト10秒後）、生成されたドラフトが（存在すれば）表示エリアに現れることを確認してください。DBに問い、関連する課題/解決策が存在する必要があります。
+> *   フロントエンドの `VisualizationArea.jsx` を修正し、選択された重要論点に関連する政策ドラフトを表示する機能と、「政策ドラフト生成」ボタンを追加しました。
+> *   **動作確認:** フロントエンド (`npm run dev` in `frontend`) とバックエンド (`npm run dev` in `backend`) を起動し、重要論点を選択して「政策ドラフト生成」ボタンをクリックしてください。しばらくすると（デフォルト10秒後）、生成されたドラフトが（存在すれば）表示エリアに現れることを確認してください。DBに重要論点、関連する課題/解決策が存在する必要があります。
 > *   **注意:** ドラフト表示は現在、生成トリガー後10秒の遅延を経て自動更新されます。よりリアルタイムな更新が必要な場合は、WebSocketやServer-Sent Events (SSE) の導入を検討してください。
 > *   次のステップ (Step 17) は、バックエンドで課題/解決策データを一括インポートする機能 (`POST /api/import/...`) を実装することです。
 
@@ -327,25 +327,25 @@ Step 18: 管理パネル (Admin Panel) の実装
 
 フロントエンドに管理パネル用のコンポーネント (frontend/src/components/AdminPanel.jsx) を作成。
 シンプルなUI（カード形式）で、以下の機能を提供:
-シャープな問い生成ボタン (POST /api/admin/generate-questions を呼び出す)
-問い一覧の表示と管理 (GET /api/questions を使用)
+重要論点生成ボタン (POST /api/admin/generate-questions を呼び出す)
+重要論点一覧の表示と管理 (GET /api/questions を使用)
 課題/解決策の一覧表示と管理 (GET /api/problems, GET /api/solutions を実装・使用)
 政策ドラフト一覧の表示 (GET /api/policy-drafts を使用)
 バックエンドに必要な追加APIを実装:
 GET /api/problems と GET /api/solutions エンドポイントを作成 (backend/routes/adminRoutes.js に追加)
-必要に応じて、問い/課題/解決策の削除や編集用APIも実装
+必要に応じて、重要論点/課題/解決策の削除や編集用APIも実装
 管理パネルへのアクセス制御 (オプション):
 簡易的なパスワード保護や、特定のURLパスでのみアクセス可能にする
 本番環境では、より堅牢な認証システムの導入を検討
 App.jsx に管理パネルへのリンクやボタンを追加 (例: 画面右上の歯車アイコン)
-動作確認: 管理パネルにアクセスし、シャープな問い生成ボタンをクリックして問いが生成されるか、各種データの一覧が正しく表示されるかを確認。
+動作確認: 管理パネルにアクセスし、重要論点生成ボタンをクリックして重要論点が生成されるか、各種データの一覧が正しく表示されるかを確認。
 
 **Step 19: 全体調整とテスト**
 
 1.  一通りの機能をユーザー視点で操作し、動作を確認。
 2.  UI/UXの微調整（Tailwindのクラス調整など）。
 3.  コンソールに出力されるエラーや警告を確認し、修正。
-4.  特に非同期処理の連携（抽出→リンキング、問い生成→リンキング、インポート→リンキング、政策生成）が意図通り機能するか確認。
+4.  特に非同期処理の連携（抽出→リンキング、重要論点生成→リンキング、インポート→リンキング、政策生成）が意図通り機能するか確認。
 5.  簡単な README ファイルを作成し、セットアップ方法や起動方法を記述。
 
 ---
