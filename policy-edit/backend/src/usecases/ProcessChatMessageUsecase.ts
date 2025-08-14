@@ -69,6 +69,10 @@ export class ProcessChatMessageUsecase {
       return err(new ValidationError("filePath must be a string if provided"));
     }
 
+    if (request.searchAllFiles && typeof request.searchAllFiles !== "boolean") {
+      return err(new ValidationError("searchAllFiles must be a boolean if provided"));
+    }
+
     if (request.history && !Array.isArray(request.history)) {
       return err(new ValidationError("History must be an array of messages"));
     }
@@ -85,7 +89,8 @@ export class ProcessChatMessageUsecase {
       request.branchId,
       request.fileContent,
       request.userName,
-      request.filePath
+      request.filePath,
+      request.searchAllFiles
     );
 
     if (result.isErr()) {
