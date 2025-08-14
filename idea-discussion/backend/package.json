@@ -34,11 +34,9 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.5",
-    "@types/mongoose": "^5.11.97",
     "@types/node": "^20.11.5",
     "nodemon": "^3.1.9",
     "socket.io-client": "^4.8.1",
