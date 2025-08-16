@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { apiClient } from "../services/api/apiClient";
+import { userIdManager } from "../utils/userIdManager";
 
 interface User {
   id: string;
@@ -39,12 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const initializeUser = async () => {
-      let userId = localStorage.getItem("idobataUserId");
-
-      if (!userId) {
-        userId = uuidv4();
-        localStorage.setItem("idobataUserId", userId);
-      }
+      const userId = userIdManager.getUserId();
 
       const result = await apiClient.getUserInfo(userId);
 

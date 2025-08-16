@@ -7,6 +7,7 @@ import {
 } from "react";
 import { apiClient } from "../../services/api/apiClient";
 import { MessageType } from "../../types";
+import { userIdManager } from "../../utils/userIdManager";
 import { FloatingChat, type FloatingChatRef } from "../chat";
 import BreadcrumbView from "../common/BreadcrumbView";
 import SectionHeading from "../common/SectionHeading";
@@ -54,8 +55,8 @@ const ThemeDetailTemplate = forwardRef<
     );
     const chatRef = useRef<FloatingChatRef>(null);
     const [threadId, setThreadId] = useState<string | null>(null);
-    const [userId, setUserId] = useState<string>(
-      localStorage.getItem("userId") || crypto.randomUUID()
+    const [userId, setUserId] = useState<string>(() =>
+      userIdManager.getUserId()
     );
 
     useImperativeHandle(ref, () => ({
@@ -112,7 +113,7 @@ const ThemeDetailTemplate = forwardRef<
 
       if (responseData.userId && responseData.userId !== userId) {
         setUserId(responseData.userId);
-        localStorage.setItem("userId", responseData.userId);
+        userIdManager.setUserId(responseData.userId);
       }
     };
 
@@ -122,8 +123,8 @@ const ThemeDetailTemplate = forwardRef<
     ];
 
     useEffect(() => {
-      if (!localStorage.getItem("userId")) {
-        localStorage.setItem("userId", userId);
+      if (!userIdManager.getUserId()) {
+        userIdManager.setUserId(userId);
       }
     }, [userId]);
 
