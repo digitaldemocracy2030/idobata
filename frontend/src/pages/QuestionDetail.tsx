@@ -21,6 +21,7 @@ const QuestionDetail = () => {
   const { themeId, qId } = useParams<{ themeId: string; qId: string }>();
   const { user } = useAuth();
   const chatRef = useRef<FloatingChatRef>(null);
+  const [isOpinionsExpanded, setIsOpinionsExpanded] = useState(false);
   const [chatManager, setChatManager] = useState<QuestionChatManager | null>(
     null
   );
@@ -175,56 +176,83 @@ const QuestionDetail = () => {
               </div>
             </div>
 
-            <div className="bg-gray-100 rounded-xl p-3 relative">
-              <div className="flex flex-col md:flex-row md:flex-wrap gap-4 pt-3">
-                {(() => {
-                  // 課題と対策を統合して新しい順に並べる
-                  const allOpinions = [
-                    ...opinions.issues.map((issue, index) => ({
-                      id: issue.id,
-                      text: issue.text,
-                      type: "課題" as const,
-                      relevance: issue.relevance,
-                      userName: `ユーザー${index + 1}`,
-                      userIconColor: ["red", "blue", "yellow", "green"][
-                        index % 4
-                      ] as "red" | "blue" | "yellow" | "green",
-                    })),
-                    ...opinions.solutions.map((solution, index) => ({
-                      id: solution.id,
-                      text: solution.text,
-                      type: "対策" as const,
-                      relevance: solution.relevance,
-                      userName: `ユーザー${index + opinions.issues.length + 1}`,
-                      userIconColor: ["red", "blue", "yellow", "green"][
-                        (index + opinions.issues.length) % 4
-                      ] as "red" | "blue" | "yellow" | "green",
-                    })),
-                  ];
+            {(() => {
+              // 課題と対策を統合して新しい順に並べる
+              const allOpinions = [
+                ...opinions.issues.map((issue, index) => ({
+                  id: issue.id,
+                  text: issue.text,
+                  type: "課題" as const,
+                  relevance: issue.relevance,
+                  userName: `ユーザー${index + 1}`,
+                  userIconColor: ["red", "blue", "yellow", "green"][
+                    index % 4
+                  ] as "red" | "blue" | "yellow" | "green",
+                })),
+                ...opinions.solutions.map((solution, index) => ({
+                  id: solution.id,
+                  text: solution.text,
+                  type: "対策" as const,
+                  relevance: solution.relevance,
+                  userName: `ユーザー${index + opinions.issues.length + 1}`,
+                  userIconColor: ["red", "blue", "yellow", "green"][
+                    (index + opinions.issues.length) % 4
+                  ] as "red" | "blue" | "yellow" | "green",
+                })),
+              ];
 
-                  // 関連度の高い順にソートして最初の4つを取得
-                  const topOpinions = allOpinions
-                    .sort((a, b) => b.relevance - a.relevance)
-                    .slice(0, 4);
+              // 関連度の高い順にソートして表示数を決定
+              const displayedOpinions = allOpinions
+                .sort((a, b) => b.relevance - a.relevance)
+                .slice(0, isOpinionsExpanded ? allOpinions.length : 4);
 
-                  return topOpinions.map((opinion) => (
-                    <OtherOpinionCard
-                      key={opinion.id}
-                      text={opinion.text}
-                      userName={opinion.userName}
-                      type={opinion.type}
-                      userIconColor={opinion.userIconColor}
-                    />
-                  ));
-                })()}
-              </div>
+              return (
+                <>
+                  <div
+                    className={`bg-gray-100 rounded-xl p-3 relative ${isOpinionsExpanded ? "" : "max-h-[200px] overflow-hidden"}`}
+                  >
+                    <div className="flex flex-col md:flex-row md:flex-wrap gap-4 pt-3">
+                      {displayedOpinions.map((opinion) => (
+                        <OtherOpinionCard
+                          key={opinion.id}
+                          text={opinion.text}
+                          userName={opinion.userName}
+                          type={opinion.type}
+                          userIconColor={opinion.userIconColor}
+                        />
+                      ))}
+                    </div>
 
-              {/* グラデーションオーバーレイ */}
-              <div className="absolute bottom-0 left-0 w-full h-[100px] bg-gradient-to-t from-gray-50 to-transparent pointer-events-none" />
+                    {/* グラデーションオーバーレイ - 展開時は非表示 */}
+                    {!isOpinionsExpanded && allOpinions.length > 4 && (
+                      <div className="absolute bottom-0 left-0 w-full h-[100px] bg-gradient-to-t from-gray-50 to-transparent pointer-events-none" />
+                    )}
 
-              {/* スクロールバー */}
-              <div className="absolute top-1 right-0 w-2.5 h-[106px] bg-black/16 rounded-full" />
-            </div>
+                    {/* スクロールバー - 展開時は非表示 */}
+                    {!isOpinionsExpanded && allOpinions.length > 4 && (
+                      <div className="absolute top-1 right-0 w-2.5 h-[106px] bg-black/16 rounded-full" />
+                    )}
+                  </div>
+
+                  {/* 展開/折りたたみボタン - コンテナの外に配置 */}
+                  {allOpinions.length > 4 && (
+                    <div className="flex justify-center mt-4">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setIsOpinionsExpanded(!isOpinionsExpanded)
+                        }
+                        className="px-6 py-3 text-base font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+                      >
+                        {isOpinionsExpanded
+                          ? "折りたたむ"
+                          : `もっと見る (${allOpinions.length - 4}件)`}
+                      </button>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </div>
 
           {/* 生成されたレポートセクション */}
