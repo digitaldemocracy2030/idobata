@@ -12,6 +12,7 @@ interface AuthContextType {
   user: User;
   setDisplayName: (name: string) => Promise<boolean>;
   uploadProfileImage: (file: File) => Promise<boolean>;
+  setProfileImagePath: (path: string) => boolean;
   loading: boolean;
   error: string | null;
 }
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthContextType>({
   user: { id: "", displayName: null, profileImageUrl: null },
   setDisplayName: async () => false,
   uploadProfileImage: async () => false,
+  setProfileImagePath: () => false,
   loading: true,
   error: null,
 });
@@ -62,10 +64,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       const data = result.value;
 
+      // Prefer locally selected avatar if present
+      const localAvatarPath = localStorage.getItem("idobataProfileImagePath");
+
       setUser({
         id: userId,
         displayName: data.displayName,
-        profileImageUrl: data.profileImagePath,
+        profileImageUrl: localAvatarPath || data.profileImagePath,
       });
 
       setError(null);
@@ -101,9 +106,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return true;
   };
 
+  const setProfileImagePath = (path: string): boolean => {
+    try {
+      localStorage.setItem("idobataProfileImagePath", path);
+      setUser((prev) => ({ ...prev, profileImageUrl: path }));
+      setError(null);
+      return true;
+    } catch (e) {
+      console.error("Failed to set profile image path:", e);
+      setError("プロフィール画像の保存に失敗しました");
+      return false;
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, setDisplayName, uploadProfileImage, loading, error }}
+      value={{ user, setDisplayName, uploadProfileImage, setProfileImagePath, loading, error }}
     >
       {children}
     </AuthContext.Provider>
