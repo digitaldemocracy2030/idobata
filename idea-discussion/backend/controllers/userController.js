@@ -7,6 +7,23 @@ const storageService = createStorageService("local", {
   baseUrl: process.env.API_BASE_URL || "http://localhost:3000",
 });
 
+// Default avatars served statically by the frontend (Vite public/ directory)
+// Place six images under: frontend/public/images/avatars/
+// Example names: avatar1.png ... avatar6.png (extensions can vary)
+const DEFAULT_AVATARS = [
+  "/images/avatars/avatar1.png",
+  "/images/avatars/avatar2.png",
+  "/images/avatars/avatar3.png",
+  "/images/avatars/avatar4.png",
+  "/images/avatars/avatar5.png",
+  "/images/avatars/avatar6.png",
+];
+
+function pickRandomDefaultAvatar() {
+  const idx = Math.floor(Math.random() * DEFAULT_AVATARS.length);
+  return DEFAULT_AVATARS[idx];
+}
+
 const inMemoryUsers = new Map();
 
 /**
@@ -23,7 +40,8 @@ export const getUser = async (userId) => {
     user = new User({
       userId,
       displayName: defaultDisplayName,
-      profileImagePath: null,
+      // Store a frontend-served static path for default avatars
+      profileImagePath: pickRandomDefaultAvatar(),
     });
     await user.save();
     return user;
@@ -36,7 +54,7 @@ export const getUser = async (userId) => {
     inMemoryUsers.set(userId, {
       userId,
       displayName: defaultDisplayName,
-      profileImagePath: null,
+      profileImagePath: pickRandomDefaultAvatar(),
     });
   }
 
@@ -70,11 +88,24 @@ export const getUserInfo = async (req, res) => {
     const { userId } = req.params;
     const user = await getUser(userId);
 
+    // Resolve profile image URL correctly for both uploaded files and static frontend assets
+    const resolveProfileImageUrl = (value) => {
+      if (!value) return null;
+      // Already a full URL
+      if (typeof value === "string" && (value.startsWith("http://") || value.startsWith("https://"))) {
+        return value;
+      }
+      // Static asset served by frontend (e.g., /images/avatars/xxx.png)
+      if (typeof value === "string" && value.startsWith("/images/")) {
+        return value;
+      }
+      // Fallback to uploaded-file URL (served by backend /uploads)
+      return storageService.getFileUrl(value);
+    };
+
     return res.status(200).json({
       displayName: user.displayName,
-      profileImagePath: user.profileImagePath
-        ? storageService.getFileUrl(user.profileImagePath)
-        : null,
+      profileImagePath: resolveProfileImageUrl(user.profileImagePath),
     });
   } catch (error) {
     console.error("Error getting user info:", error);
@@ -139,7 +170,13 @@ export const uploadProfileImage = async (req, res) => {
 
     const user = await getUser(userId);
 
-    if (user.profileImagePath) {
+    // Only delete previous file if it was an uploaded file managed by this server
+    const uploadsDir = path.join(process.cwd(), "uploads/profile-images");
+    if (
+      user.profileImagePath &&
+      typeof user.profileImagePath === "string" &&
+      user.profileImagePath.startsWith(uploadsDir)
+    ) {
       await storageService.deleteFile(user.profileImagePath);
     }
 
