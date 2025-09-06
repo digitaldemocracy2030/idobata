@@ -155,20 +155,20 @@ graph TD
 
 **2.5. `sharp_questions`**
 
-生成された「シャープな問い」を格納します。
+生成された「重要論点」を格納します。
 
 ```typescript
 {
   "_id": ObjectId, // ユニークID
-  "questionText": String, // "How might we..." 形式の問い
-  "sourceProblemIds": [ObjectId], // (任意) この問いの生成に使用された `problems` のIDリスト
+  "questionText": String, // "How might we..." 形式の重要論点
+  "sourceProblemIds": [ObjectId], // (任意) この重要論点の生成に使用された `problems` のIDリスト
   "createdAt": Date
 }
 ```
 
 **2.6. `question_links`**
 
-「シャープな問い」と「課題」「解決策」の関連性を格納します。
+「重要論点」と「課題」「解決策」の関連性を格納します。
 
 ```typescript
 {
@@ -176,7 +176,7 @@ graph TD
   "questionId": ObjectId, // 関連する `sharp_questions` のID
   "linkedItemId": ObjectId, // 関連する `problems` または `solutions` のID
   "linkedItemType": "problem" | "solution", // 関連アイテムの種類
-  "linkType": "prompts_question" | "answers_question", // 関連の種類 (課題が問いを提起 / 解決策が問いに回答)
+  "linkType": "prompts_question" | "answers_question", // 関連の種類 (課題が重要論点を提起 / 解決策が重要論点に回答)
   "relevanceScore": Number, // (任意) LLMによる関連度スコア (例: 0.0 ~ 1.0)
   "rationale": String, // (任意) LLMによる関連性の根拠説明
   "createdAt": Date
@@ -277,8 +277,8 @@ graph TD
     *   モバイルファースト、ミニマルで洗練されたデザイン。
     *   画面下部にフローティングするチャットコンポーネント。
     *   チャットコンポーネント内または付近に、現在のスレッドから抽出された課題/解決策をリアルタイム表示するエリア（控えめ）。
-    *   画面上部（背景）に「シャープな問い」を中心とした可視化エリア。
-        *   各「問い」を選択すると、関連する「課題」と「解決策」が関連度（relevanceScore）の高い順にソートされて表示される。
+    *   画面上部（背景）に「重要論点」を中心とした可視化エリア。
+        *   各「重要論点」を選択すると、関連する「課題」と「解決策」が関連度（relevanceScore）の高い順にソートされて表示される。
         *   各課題・解決策には関連度（relevanceScore）がパーセンテージで表示される。
         *   可視化方法例: カード形式、ノードグラフ、リスト表示などを組み合わせる。
 *   **機能:**
@@ -286,7 +286,7 @@ graph TD
     *   チャットメッセージの送受信。
     *   可視化データの取得と表示（API経由）。
     *   スレッド固有の抽出情報のリアルタイム更新（WebSocket or ポーリング）。
-    *   （将来的に）政策ドラフトの表示、特定シャープな問いに対する政策生成トリガーボタン。
+    *   （将来的に）政策ドラフトの表示、特定重要論点に対する政策生成トリガーボタン。
 
 **3.2. バックエンド (Node.js + Express)**
 
@@ -294,9 +294,9 @@ graph TD
     *   `POST /api/chat/messages`: 新しいユーザーメッセージを受け取り、AI応答を返し、抽出プロセスを非同期で開始。
     *   `GET /api/chat/threads/:threadId/extractions`: 特定スレッドから抽出された課題/解決策を取得。
     *   `POST /api/import/generic`: 外部データ（ツイート等）を受け取り、DBに保存し、抽出プロセスを非同期で開始。
-    *   `GET /api/questions`: シャープな問いの一覧を取得。
-    *   `GET /api/questions/:questionId/details`: 特定の問いに関連する課題/解決策を取得（可視化用データ）。関連する課題と解決策は relevanceScore の降順（高い順）でソートされる。
-    *   `POST /api/questions/:questionId/generate-policy`: 特定の問いに対する政策ドラフト生成を非同期で開始。
+    *   `GET /api/questions`: 重要論点の一覧を取得。
+    *   `GET /api/questions/:questionId/details`: 特定の重要論点に関連する課題/解決策を取得（可視化用データ）。関連する課題と解決策は relevanceScore の降順（高い順）でソートされる。
+    *   `POST /api/questions/:questionId/generate-policy`: 特定の重要論点に対する政策ドラフト生成を非同期で開始。
     *   `GET /api/policy-drafts`: 生成された政策ドラフト一覧を取得。
 *   **主要ロジック:**
     *   **チャットハンドリング:**
@@ -336,28 +336,28 @@ graph TD
         5.  DB (`problems`, `solutions`) に新規追加 or 更新。
             *   `sourceType` に応じて、`chat_threads` または `imported_items` の関連IDリストとステータスを更新。
         6.  **トリガー:** 新規追加/更新された課題/解決策のIDをリンキングキュー (LinkingQueue) に追加。
-    *   **シャープな問い 生成プロセス (定期的 or トリガー式ワーカー: QuestionGenWorker):**
+    *   **重要論点 生成プロセス (定期的 or トリガー式ワーカー: QuestionGenWorker):**
         1.  (例: 1日1回 or 新規課題が一定数蓄積したら) 起動。
         2.  DBから全ての（または最近の） `problems` の `combinedStatement` を取得。
-        3.  LLMに課題リストを渡し、「How might we...?」形式のシャープな問いの生成を依頼。
+        3.  LLMに課題リストを渡し、「How might we...?」形式の重要論点の生成を依頼。
             *   **プロンプト要件:**
                 *   入力: 課題リスト (`combinedStatement` の配列)
-                *   指示: Design ThinkingのHMWの精神（共通理解、行動指向）に基づき、課題群の根底にあるテーマを捉えた問いを生成。類似課題は一つの問いにまとめることを推奨。簡潔かつシャープに。
+                *   指示: Design ThinkingのHMWの精神（共通理解、行動指向）に基づき、課題群の根底にあるテーマを捉えた重要論点を生成。類似課題は一つの重要論点にまとめることを推奨。簡潔かつシャープに。
                 *   出力形式: JSONを要求。例: `{ "questions": ["How might we ...?", "How might we ...?"] }`
         4.  LLM応答(JSON)をパース。
-        5.  新しい問いを `sharp_questions` に保存。
-        6.  **トリガー:** 生成された新しい問いのIDをリンキングキュー (LinkingQueue) に追加。
-    *   **問いと課題/解決策のリンキングプロセス (非同期ワーカー: LinkingWorker):**
-        1.  キューからジョブを取得（対象アイテムID: 課題/解決策 or 問い）。
+        5.  新しい重要論点を `sharp_questions` に保存。
+        6.  **トリガー:** 生成された新しい重要論点のIDをリンキングキュー (LinkingQueue) に追加。
+    *   **重要論点と課題/解決策のリンキングプロセス (非同期ワーカー: LinkingWorker):**
+        1.  キューからジョブを取得（対象アイテムID: 課題/解決策 or 重要論点）。
         2.  **ケース1: 新しい課題/解決策が追加/更新された場合:**
             *   全ての `sharp_questions` を取得。
-            *   各「問い」に対して、LLMに「この課題はこの問いを提起するか？」or「この解決策はこの問いに答えるか？」を判定させるリクエストを送信。
+            *   各「重要論点」に対して、LLMに「この課題はこの重要論点を提起するか？」or「この解決策はこの重要論点に答えるか？」を判定させるリクエストを送信。
             *   **プロンプト要件:**
                 *   入力: `sharp_questions.questionText`, `problems.combinedStatement` または `solutions.statement`
                 *   指示: 問題提起(prompts_question)か、解決策提案(answers_question)かを判定。関連性があるか(boolean)、理由(rationale、任意)、関連度スコア(任意)を返す。
-                *   出力形式: JSONを要求。例: `{ "is_relevant": true, "link_type": "prompts_question", "rationale": "この課題は問いの中心的な困難を示しているため。", "relevanceScore": 0.85 }`
+                *   出力形式: JSONを要求。例: `{ "is_relevant": true, "link_type": "prompts_question", "rationale": "この課題は重要論点の中心的な困難を示しているため。", "relevanceScore": 0.85 }`
             *   関連性があると判定された場合、`question_links` にレコードを作成/更新。
-        3.  **ケース2: 新しいシャープな問いが追加された場合:**
+        3.  **ケース2: 新しい重要論点が追加された場合:**
             *   全ての `problems` と `solutions` を取得。
             *   各「課題」「解決策」に対して、LLMに上記と同様の判定リクエストを送信。
             *   関連性があると判定された場合、`question_links` にレコードを作成。
@@ -365,7 +365,7 @@ graph TD
     *   **政策ドラフト生成プロセス (オンデマンドワーカー: PolicyGenWorker):**
         1.  API経由でトリガー (`POST /api/questions/:questionId/generate-policy`)。キュー経由でワーカーに渡す。
         2.  指定された `questionId` に紐づく `sharp_questions` と、`question_links` を介して関連する全ての `problems` (`combinedStatement`) と `solutions` (`statement`) をDBから取得。
-        3.  LLMに問い、課題リスト、解決策リストを渡し、政策ドラフトの生成を依頼。
+        3.  LLMに重要論点、課題リスト、解決策リストを渡し、政策ドラフトの生成を依頼。
             *   **プロンプト要件:**
                 *   入力: `questionText`, `problemStatements` (配列), `solutionStatements` (配列)
                 *   指示: これらを参考に、現実的で具体的な政策提言を作成。課題を明確にし、解決策を構造化。全ての入力要素を拾う必要はなく、良い政策提言作成を優先。不足情報は適切に補完して良い。タイトルと本文を生成。
