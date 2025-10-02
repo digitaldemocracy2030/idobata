@@ -2,6 +2,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { handleUpdatePr, updatePrSchema } from "./handlers/updatePr.js"; // インポート追加
 // import { z } from 'zod'; // Zod is imported in handlers now
 import { handleUpsertFile, upsertFileSchema } from "./handlers/upsertFile.js"; // インポート追加
+import { handleSearchFiles, searchFilesSchema } from "./handlers/searchFiles.js";
+import { handleGetFileContent, getFileContentSchema } from "./handlers/getFileContent.js";
 import logger from "./logger.js";
 
 // サーバーインスタンスを作成
@@ -44,6 +46,40 @@ server.tool(
   updatePrSchema.shape, // Pass the Zod schema shape
   updatePrAnnotations,
   handleUpdatePr // Pass the handler function
+);
+
+// search_repository_files ツールを登録
+const searchFilesAnnotations = {
+  title: "Search Repository Files",
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: false,
+};
+
+server.tool(
+  "search_repository_files",
+  "Search for content across all files in the repository using GitHub Search API. Returns matching files with relevant text snippets. More efficient than individual file fetching (1 API call vs many).",
+  searchFilesSchema.shape,
+  searchFilesAnnotations,
+  handleSearchFiles
+);
+
+// get_file_content ツールを登録
+const getFileContentAnnotations = {
+  title: "Get File Content",
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: false,
+};
+
+server.tool(
+  "get_file_content",
+  "Get the content of a specific file from the repository",
+  getFileContentSchema.shape,
+  getFileContentAnnotations,
+  handleGetFileContent
 );
 
 export default server;
