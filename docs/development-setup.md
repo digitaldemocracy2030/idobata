@@ -103,6 +103,8 @@ docker-compose up --build -d policy-frontend policy-backend
 
 - **Idea Discussion フロントエンド:** [http://localhost:5173](http://localhost:5173)
 - **Policy Edit フロントエンド:** [http://localhost:5174](http://localhost:5174)
+- **Policy Edit 管理者ページ:** [http://localhost:5175/](http://localhost:5175/)
+  - 管理者作成の設定が必要です。[../admin/README.md](../admin/README.md)
 
 ## ログの表示
 
