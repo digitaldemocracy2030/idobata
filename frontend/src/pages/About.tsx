@@ -16,15 +16,6 @@ const About = () => {
       ) : (
         <MarkdownRenderer markdown={siteConfig?.aboutMessage || ""} />
       )}
-
-      <div className="text-center mt-12">
-        <a
-          href="https://xxparty-policy.com"
-          className="text-sm text-neutral-500 hover:text-neutral-700"
-        >
-          © xxparty-policy.com
-        </a>
-      </div>
     </div>
   );
 };
