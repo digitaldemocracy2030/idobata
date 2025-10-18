@@ -1,5 +1,7 @@
 # idobata プロジェクト概要
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/digitaldemocracy2030/idobata)
+
 ## 重要なドキュメント
 
 - [プロジェクト概要](./README.md) (本ドキュメント)
