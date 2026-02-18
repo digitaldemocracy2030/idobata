@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import BreadcrumbView from "../components/common/BreadcrumbView";
 import { Button } from "../components/ui/button";
 import { useAuth } from "../contexts/AuthContext";
 
 const MyPage: React.FC = () => {
-  const { user, setDisplayName, uploadProfileImage, loading, error } =
+  const { user, setDisplayName, setProfileImagePath, loading, error } =
     useAuth();
   const [newDisplayName, setNewDisplayName] = useState(user.displayName || "");
   const [isSaving, setIsSaving] = useState(false);
@@ -12,10 +12,9 @@ const MyPage: React.FC = () => {
   useEffect(() => {
     setNewDisplayName(user.displayName || "");
   }, [user.displayName]);
-  const [isUploading, setIsUploading] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [avatarSaveSuccess, setAvatarSaveSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,21 +32,15 @@ const MyPage: React.FC = () => {
     setIsSaving(false);
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
+  const avatars = Array.from({ length: 6 }, (_, i) => `/images/avatars/avatar${i + 1}.png`);
 
-    const file = e.target.files[0];
-    setIsUploading(true);
+  const handleSelectAvatar = (path: string) => {
     setSaveError(null);
-
-    const success = await uploadProfileImage(file);
-    if (!success) {
-      setSaveError(
-        "画像のアップロードに失敗しました。もう一度お試しください。"
-      );
+    const ok = setProfileImagePath(path);
+    setAvatarSaveSuccess(ok);
+    if (!ok) {
+      setSaveError("プロフィール画像の保存に失敗しました。もう一度お試しください。");
     }
-
-    setIsUploading(false);
   };
 
   if (loading) {
@@ -124,7 +117,7 @@ const MyPage: React.FC = () => {
       {/* プロフィール画像セクション */}
       <div className="mb-16">
         <p className="text-gray-600 mb-4">プロフィール画像</p>
-        <div className="flex flex-col items-start gap-2">
+        <div className="flex flex-col items-start gap-3">
           <div className="w-24 h-24 bg-gray-100 rounded-full overflow-hidden border">
             {user.profileImageUrl ? (
               <img
@@ -154,22 +147,28 @@ const MyPage: React.FC = () => {
               </div>
             )}
           </div>
-          <div className="flex items-center gap-2">
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/gif"
-              className="hidden"
-              onChange={handleImageUpload}
-              ref={fileInputRef}
-            />
-            <Button
-              onClick={() => fileInputRef.current?.click()}
-              className="h-8 px-5 rounded-lg border-blue-600 bg-white hover:bg-blue-50 hover:text-blue-600 text-blue-600 text-xs font-bold tracking-[0.025em] flex items-center gap-2"
-              variant="outline"
-            >
-              {isUploading ? "アップロード中..." : "画像を変更"}
-            </Button>
+          <div className="text-sm text-gray-600">以下から画像を選択してください</div>
+          <div className="grid grid-cols-3 gap-3">
+            {avatars.map((src) => {
+              const selected = user.profileImageUrl === src;
+              return (
+                <button
+                  type="button"
+                  key={src}
+                  onClick={() => handleSelectAvatar(src)}
+                  className={`w-20 h-20 rounded-full overflow-hidden border transition ring-offset-2 focus:outline-none ${
+                    selected ? "ring-2 ring-blue-500" : "hover:ring-2 hover:ring-gray-300"
+                  }`}
+                  aria-label={`アバター ${src}`}
+                >
+                  <img src={src} alt="アバター" className="w-full h-full object-cover" />
+                </button>
+              );
+            })}
           </div>
+          {avatarSaveSuccess && (
+            <div className="bg-green-100 text-green-700 p-2 rounded">保存されました</div>
+          )}
         </div>
       </div>
     </div>
