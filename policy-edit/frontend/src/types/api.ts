@@ -15,6 +15,7 @@ export interface ChatMessageRequest {
   fileContent?: string | null;
   userName?: string | null;
   filePath?: string | null;
+  searchAllFiles?: boolean;
 }
 
 export interface ChatMessageResponse {
