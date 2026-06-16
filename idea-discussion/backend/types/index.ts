@@ -14,24 +14,33 @@ export interface ITheme extends BaseDocument {
 
 export interface ISharpQuestion extends BaseDocument {
   themeId: Types.ObjectId;
-  content: string;
+  questionText: string;
   tagLine?: string;
   tags?: string[];
-  order?: number;
+  sourceProblemIds?: Types.ObjectId[];
+  clusteringResults?: Record<string, unknown>;
 }
 
 export interface IProblem extends BaseDocument {
   themeId: Types.ObjectId;
-  content: string;
-  source: string;
-  extractedFrom?: Types.ObjectId;
+  statement: string;
+  sourceOriginId: Types.ObjectId;
+  sourceType: string;
+  originalSnippets?: string[];
+  sourceMetadata?: Record<string, unknown>;
+  version: number;
+  embeddingGenerated?: boolean;
 }
 
 export interface ISolution extends BaseDocument {
   themeId: Types.ObjectId;
-  content: string;
-  source: string;
-  extractedFrom?: Types.ObjectId;
+  statement: string;
+  sourceOriginId: Types.ObjectId;
+  sourceType: string;
+  originalSnippets?: string[];
+  sourceMetadata?: Record<string, unknown>;
+  version: number;
+  embeddingGenerated?: boolean;
 }
 
 export interface IChatMessage {

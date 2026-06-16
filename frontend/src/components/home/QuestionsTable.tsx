@@ -14,6 +14,7 @@ interface Question {
   description?: string;
   participantCount?: number;
   commentCount?: number;
+  href?: string;
 }
 
 interface QuestionsTableProps {
@@ -44,10 +45,13 @@ const QuestionsTable = ({ questions }: QuestionsTableProps) => {
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {questions.map((question) => {
+              const linkTo =
+                question.href ??
+                `/themes/${question.themeId}/questions/${question.id}`;
               return (
                 <Link
                   key={question.id}
-                  to={`/themes/${question.themeId}/questions/${question.id}`}
+                  to={linkTo}
                   className="question-item block"
                 >
                   <Card className="md:h-[60px] h-auto p-0 border border-blue-400 rounded-lg hover:shadow-sm transition-all duration-200 bg-blue-50">

@@ -75,6 +75,9 @@ export class HttpClient {
         ...headers,
       },
     };
+    if (method === "GET") {
+      options.cache = "no-store";
+    }
 
     if (data) {
       options.body = JSON.stringify(data);

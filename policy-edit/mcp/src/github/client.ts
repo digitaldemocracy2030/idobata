@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import path from "node:path";
 import { App } from "@octokit/app";
 import { restEndpointMethods } from "@octokit/plugin-rest-endpoint-methods";
 import type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods"; // Use the documented type export
@@ -19,7 +18,20 @@ let installationOctokit: InstallationOctokit | null = null;
 // tokenExpiration is removed as getInstallationOctokit likely handles token refresh.
 
 function getPrivateKey(): string {
-  const keyPath = "/app/secrets/github-key.pem"; // Fixed path inside the container
+  const keyFromEnv = process.env.GITHUB_APP_PRIVATE_KEY;
+  if (typeof keyFromEnv === "string" && keyFromEnv.trim() !== "") {
+    logger.info("Using GitHub App private key from env var.");
+    return keyFromEnv;
+  }
+
+  const keyFromEnvBase64 = process.env.GITHUB_APP_PRIVATE_KEY_BASE64;
+  if (typeof keyFromEnvBase64 === "string" && keyFromEnvBase64.trim() !== "") {
+    logger.info("Using GitHub App private key from base64 env var.");
+    return Buffer.from(keyFromEnvBase64, "base64").toString("utf8");
+  }
+
+  const keyPath =
+    process.env.GITHUB_APP_PRIVATE_KEY_PATH ?? "/app/secrets/github-key.pem";
   try {
     logger.info(`Reading private key from file: ${keyPath}`);
     return fs.readFileSync(keyPath, "utf8");

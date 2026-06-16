@@ -13,6 +13,7 @@ interface FeaturedQuestion {
   themeId?: string;
   tags?: string[];
   tagLine?: string;
+  href?: string;
 }
 
 interface FeaturedQuestionsSectionProps {
@@ -104,20 +105,18 @@ const FeaturedQuestionsSection = ({
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {questions.map((question) => {
+              const linkTo =
+                question.href ??
+                (question.themeId
+                  ? `/themes/${question.themeId}/questions/${question.id}`
+                  : `/sharp-questions/${question.id}`);
               return (
                 <div
                   key={question.id}
                   className="featured-card flex-none w-[280px] h-[300px] snap-center"
                 >
                   <Card className="border p-4 border-blue-400 rounded-lg hover:shadow-sm transition-all duration-200 bg-white overflow-hidden h-full">
-                    <Link
-                      to={
-                        question.themeId
-                          ? `/themes/${question.themeId}/questions/${question.id}`
-                          : `/sharp-questions/${question.id}`
-                      }
-                      className="block h-full"
-                    >
+                    <Link to={linkTo} className="block h-full">
                       <div className="flex flex-col h-full">
                         <div className="flex-1 p-0">
                           <h3 className="font-bold text-base text-gray-900 mb-3 leading-tight">

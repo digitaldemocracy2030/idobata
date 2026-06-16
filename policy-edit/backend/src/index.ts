@@ -1,12 +1,4 @@
-// --- DEBUG: Print GitHub Env Vars ---
-console.log("--- GitHub Environment Variables ---");
-console.log("GITHUB_APP_ID:", process.env.GITHUB_APP_ID);
-console.log("GITHUB_INSTALLATION_ID:", process.env.GITHUB_INSTALLATION_ID);
-console.log("GITHUB_TARGET_OWNER:", process.env.GITHUB_TARGET_OWNER);
-console.log("GITHUB_TARGET_REPO:", process.env.GITHUB_TARGET_REPO);
-console.log("------------------------------------");
 import cors from "cors";
-// --- END DEBUG ---
 import express from "express";
 import { CORS_ORIGIN, PORT } from "./config.js";
 import chatRoutes from "./routes/chat.js";

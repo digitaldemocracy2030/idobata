@@ -8,7 +8,7 @@ const sharpQuestionSchema = new Schema<ISharpQuestion>(
       required: true,
       ref: "Theme",
     },
-    content: {
+    questionText: {
       type: String,
       required: true,
     },
@@ -20,9 +20,16 @@ const sharpQuestionSchema = new Schema<ISharpQuestion>(
       type: [String],
       default: [],
     },
-    order: {
-      type: Number,
-      required: false,
+    sourceProblemIds: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Problem",
+      },
+    ],
+    clusteringResults: {
+      type: Map,
+      of: Object,
+      default: {},
     },
   },
   { timestamps: true }

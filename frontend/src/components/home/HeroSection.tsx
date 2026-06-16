@@ -5,6 +5,11 @@ import { Button } from "../ui/button";
 import { Select } from "../ui/select";
 
 interface HeroSectionProps {
+  latestThemes?: {
+    _id: string;
+    title: string;
+    description?: string;
+  }[];
   latestQuestions?: {
     _id: string;
     questionText: string;
@@ -13,24 +18,40 @@ interface HeroSectionProps {
   }[];
 }
 
-const HeroSection = ({ latestQuestions = [] }: HeroSectionProps) => {
+const HeroSection = ({
+  latestThemes = [],
+  latestQuestions = [],
+}: HeroSectionProps) => {
   const [selectedQuestion, setSelectedQuestion] = useState("");
   const navigate = useNavigate();
+  const hasQuestions = latestQuestions.length > 0;
 
   const handleStartDialogue = () => {
-    if (selectedQuestion) {
+    if (!selectedQuestion) return;
+    if (hasQuestions) {
       const question = latestQuestions.find((q) => q._id === selectedQuestion);
       if (question?.themeId) {
         navigate(`/themes/${question.themeId}/questions/${selectedQuestion}`);
       }
+      return;
+    }
+
+    const theme = latestThemes.find((t) => t._id === selectedQuestion);
+    if (theme) {
+      navigate(`/themes/${theme._id}`);
     }
   };
 
   // Format options for the select dropdown
-  const questionOptions = latestQuestions.map((q) => ({
-    value: q._id,
-    label: q.tagLine || `${q.questionText.substring(0, 50)}...`,
-  }));
+  const questionOptions = hasQuestions
+    ? latestQuestions.map((q) => ({
+        value: q._id,
+        label: q.tagLine || `${q.questionText.substring(0, 50)}...`,
+      }))
+    : latestThemes.map((theme) => ({
+        value: theme._id,
+        label: theme.title,
+      }));
 
   return (
     <div className="relative py-12 overflow-hidden rounded-b-3xl">
