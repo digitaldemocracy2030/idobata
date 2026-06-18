@@ -89,13 +89,14 @@ services:
       - POLICY_CORS_ORIGIN=${POLICY_CORS_ORIGIN}
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres-policy:5432/${POSTGRES_DB:-policy_db}
     depends_on:
-      - postgres-policy
+      postgres-policy:
+        condition: service_healthy
     # Run the production start command
     command: npm start
 
   postgres-policy:
     container_name: postgres-policy-dev
-    image: postgres:latest
+    image: postgres:17
     ports:
       - "5433:5432" # Expose to host port 5433 to avoid conflict if local 5432 is used
     environment:
