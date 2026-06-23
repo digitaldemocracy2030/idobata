@@ -92,12 +92,32 @@ docker-compose up --build -d frontend idea-backend mongo
 
 ### Policy Edit のみ起動
 
-`policy-edit` のフロントエンドとバックエンドのみを起動する場合（データベースは使用しません）：
+`policy-edit` のフロントエンド、バックエンド、および PostgreSQL を起動する場合：
 
 ```bash
 # 必要なセットアップ: Policy Edit セットアップ
-docker-compose up --build -d policy-frontend policy-backend
+docker-compose up --build -d policy-frontend policy-backend postgres-policy
 ```
+
+### Policy Edit のデータベース migration
+
+`policy-backend` は PostgreSQL を使用します。初回起動時、または `interaction_logs` などのテーブルが存在しないエラーが出る場合は migration を実行してください。
+
+```bash
+cd policy-edit/backend
+npm install
+DATABASE_URL=postgresql://postgres:password@localhost:5433/policy_db npm run db:migrate
+cd ../..
+docker-compose restart policy-backend
+```
+
+migration 後、テーブル作成を以下で確認できます。
+
+```bash
+docker-compose exec postgres-policy psql -U postgres -d policy_db -c '\dt'
+```
+
+`Failed to log interaction: relation "interaction_logs" does not exist` が出る場合は、上記 migration が完了しているかを確認してください。
 
 ## アプリケーションへのアクセス
 
