@@ -4,7 +4,7 @@ import Problem from "../models/Problem.js";
 import QuestionLink from "../models/QuestionLink.js";
 import SharpQuestion from "../models/SharpQuestion.js";
 import Solution from "../models/Solution.js";
-import { RECOMMENDED_MODELS, callLLM } from "./llmService.js";
+import { PRO_LLM_MODEL, callLLM } from "./llmService.js";
 
 export async function getDebateAnalysis(questionId) {
   return DebateAnalysis.findOne({
@@ -138,7 +138,7 @@ ${markdownContent}
     const completion = await callLLM(
       [{ role: "user", content: debatePrompt }],
       true,
-      "google/gemini-2.5-pro-preview-03-25"
+      PRO_LLM_MODEL
     );
 
     if (!completion) {

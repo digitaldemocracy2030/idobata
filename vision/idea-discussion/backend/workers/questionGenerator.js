@@ -1,6 +1,6 @@
 import Problem from "../models/Problem.js";
 import SharpQuestion from "../models/SharpQuestion.js";
-import { callLLM } from "../services/llmService.js";
+import { PRO_LLM_MODEL, callLLM } from "../services/llmService.js";
 import { linkQuestionToAllItems } from "./linkingWorker.js"; // Import the linking function
 
 async function generateSharpQuestions(themeId) {
@@ -49,11 +49,7 @@ Generate 6 question objects in total within the "questions" array.
 
     // 3. Call LLM
     console.log("[QuestionGenerator] Calling LLM to generate questions...");
-    const llmResponse = await callLLM(
-      messages,
-      true,
-      "google/gemini-2.5-pro-preview-03-25"
-    ); // Request JSON output with specific model
+    const llmResponse = await callLLM(messages, true, PRO_LLM_MODEL); // Request JSON output with specific model
 
     if (
       !llmResponse ||

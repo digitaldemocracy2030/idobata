@@ -9,20 +9,28 @@ const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.OPENROUTER_API_KEY || "mock-api-key",
 });
+
+// Model IDs are configurable via environment variables so they can be swapped
+// without code changes when a provider deprecates a model.
+const DEFAULT_LLM_MODEL = process.env.LLM_MODEL || "google/gemini-2.5-flash";
+const PRO_LLM_MODEL = process.env.LLM_PRO_MODEL || "google/gemini-2.5-pro";
+const VISUAL_LLM_MODEL =
+  process.env.LLM_VISUAL_MODEL || "anthropic/claude-sonnet-4";
+
 /**
  * Call an LLM model via OpenRouter API
  * @param {Array} messages - Array of message objects with role and content properties
  * @param {boolean} jsonOutput - Whether to request JSON output from the LLM
- * @param {string} model - The model ID to use (defaults to google/gemini-2.0-flash-001)
+ * @param {string} model - The model ID to use (defaults to the LLM_MODEL env var)
  * @returns {string|Object} - Returns parsed JSON object if jsonOutput=true, otherwise string content
  */
 async function callLLM(
   messages,
   jsonOutput = false,
-  model = "google/gemini-2.0-flash-001"
+  model = DEFAULT_LLM_MODEL
 ) {
   const options = {
-    model: model, // Default to gemini-2.0-flash-001, but allow override
+    model: model,
     messages: messages,
   };
   if (jsonOutput) {
@@ -109,15 +117,19 @@ async function testLLM(model) {
 
 // List of available models that work well with OpenRouter
 const RECOMMENDED_MODELS = {
-  "gemini-flash": "google/gemini-2.0-flash-001",
-  "gemini-pro": "google/gemini-2.0-pro-001",
-  "gemini-pro-vision": "google/gemini-pro-vision",
-  "claude-3-opus": "anthropic/claude-3-opus:20240229",
-  "claude-3-sonnet": "anthropic/claude-3-sonnet:20240229",
-  "claude-3-haiku": "anthropic/claude-3-haiku:20240307",
+  "gemini-flash": "google/gemini-2.5-flash",
+  "gemini-pro": "google/gemini-2.5-pro",
+  "claude-sonnet": "anthropic/claude-sonnet-4",
   "gpt-4-turbo": "openai/gpt-4-turbo-preview",
   "gpt-4": "openai/gpt-4",
   "gpt-3.5-turbo": "openai/gpt-3.5-turbo",
 };
 
-export { callLLM, testLLM, RECOMMENDED_MODELS };
+export {
+  callLLM,
+  testLLM,
+  RECOMMENDED_MODELS,
+  DEFAULT_LLM_MODEL,
+  PRO_LLM_MODEL,
+  VISUAL_LLM_MODEL,
+};

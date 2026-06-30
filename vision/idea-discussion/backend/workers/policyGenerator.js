@@ -4,7 +4,7 @@ import Problem from "../models/Problem.js";
 import QuestionLink from "../models/QuestionLink.js";
 import SharpQuestion from "../models/SharpQuestion.js";
 import Solution from "../models/Solution.js";
-import { callLLM } from "../services/llmService.js";
+import { PRO_LLM_MODEL, callLLM } from "../services/llmService.js";
 
 async function generatePolicyDraft(questionId) {
   console.log(
@@ -121,11 +121,7 @@ Please provide the output as a JSON object with "title" and "content" keys. When
 
     // 4. Call LLM
     console.log("[PolicyGenerator] Calling LLM to generate policy draft...");
-    const llmResponse = await callLLM(
-      messages,
-      true,
-      "google/gemini-2.5-pro-preview-03-25"
-    ); // Request JSON output with specific model
+    const llmResponse = await callLLM(messages, true, PRO_LLM_MODEL); // Request JSON output with specific model
 
     if (
       !llmResponse ||

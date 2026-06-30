@@ -59,7 +59,7 @@
     4. 生成された重要論点がユーザー画面に表示される
     - より詳しい操作手順は [vision/idea-discussion/README.md](../vision/idea-discussion/README.md) を参照してください。
 
-> **AI チャットが 500 エラーになる場合**：利用する LLM モデルが提供終了している可能性があります。[トラブルシューティング](#トラブルシューティング) の「AI チャットが応答しない」を参照してください。
+> **AI チャットが 500 エラーになる場合**：利用する LLM モデルが提供終了している可能性があります。`.env` の `LLM_MODEL` で利用可能なモデルに差し替えてください（詳細は [トラブルシューティング](#トラブルシューティング)）。
 
 いどばた政策も含めて試したい場合は、後述の [Policy Edit セットアップ](#policy-edit-セットアップ) の「お試し（モック）構成」を参照してください。GitHub App を用意しなくてもダミー鍵＋モック設定で起動できます。
 
@@ -95,7 +95,10 @@
     > `.env.template` には `GITHUB_*` などの変数も含まれますが、**いどばたビジョン単体では GitHub 関連の設定は不要**です（docker-compose では渡していますが idea-backend は使用しません）。
 
 2.  **使用する LLM モデルについて:**
-    AI チャットや論点抽出に使う LLM モデルは、現状 `vision/idea-discussion/backend/services/llmService.js` の中で `google/gemini-2.0-flash-001` がデフォルトとしてハードコードされています。OpenRouter 側でこのモデルが提供終了している場合は `404 No endpoints found` となり AI 機能が動かないため、その際は同ファイルのモデル ID を OpenRouter で利用可能な現行モデルに変更してください。
+    AI チャットや論点抽出に使う LLM モデルは、`.env` の環境変数で上書きできます（省略時は現行の既定モデルを使用）。OpenRouter 側でモデルが提供終了して `404 No endpoints found` になった場合は、[OpenRouter のモデル一覧](https://openrouter.ai/models) で利用可能なモデル ID に差し替えてください。
+    - `LLM_MODEL`: チャット・抽出など標準処理のモデル（既定: `google/gemini-2.5-flash`）
+    - `LLM_PRO_MODEL`: 論点・レポート・政策ドラフト生成など重い処理のモデル（既定: `google/gemini-2.5-pro`）
+    - `LLM_VISUAL_MODEL`: ビジュアルレポート生成のモデル（既定: `anthropic/claude-sonnet-4`）
 
 ### Policy Edit セットアップ
 
@@ -195,7 +198,7 @@ docker compose exec postgres-policy psql -U postgres -d policy_db -c '\dt'
 ## トラブルシューティング
 
 - **AI チャットが応答しない / 500 エラーになる**
-  利用中の LLM モデルが OpenRouter で提供終了していると `404 No endpoints found` となり、チャットや論点抽出など AI 機能全体が失敗します。`vision/idea-discussion/backend/services/llmService.js` のモデル ID を、OpenRouter で現在利用可能なモデルに変更してください。
+  利用中の LLM モデルが OpenRouter で提供終了していると `404 No endpoints found` となり、チャットや論点抽出など AI 機能全体が失敗します。`.env` の `LLM_MODEL` / `LLM_PRO_MODEL` / `LLM_VISUAL_MODEL` を、[OpenRouter で現在利用可能なモデル](https://openrouter.ai/models) に変更してください。
 - **`policy-backend` のイメージビルドが失敗する**
   `policy/backend/Dockerfile` がビルド時に `policy/backend/secrets/github-key.pem` を要求します。鍵が無いとビルドが止まるため、お試し時は上記「お試し（モック）構成」のダミー鍵を配置してください。
 - **`postgres-policy` が起動しない / `interaction_logs` のエラーが出る**

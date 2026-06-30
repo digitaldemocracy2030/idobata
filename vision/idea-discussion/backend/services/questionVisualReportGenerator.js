@@ -4,7 +4,7 @@ import QuestionLink from "../models/QuestionLink.js";
 import QuestionVisualReport from "../models/QuestionVisualReport.js";
 import SharpQuestion from "../models/SharpQuestion.js";
 import Solution from "../models/Solution.js";
-import { RECOMMENDED_MODELS, callLLM } from "./llmService.js";
+import { VISUAL_LLM_MODEL, callLLM } from "./llmService.js";
 
 export async function getVisualReport(questionId) {
   return QuestionVisualReport.findOne({
@@ -148,7 +148,7 @@ ${markdownContent}
     const completion = await callLLM(
       [{ role: "user", content: visualPrompt }],
       false,
-      "anthropic/claude-3.7-sonnet"
+      VISUAL_LLM_MODEL
     );
 
     if (!completion) {
