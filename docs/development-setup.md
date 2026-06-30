@@ -17,7 +17,7 @@
 - **vision/idea-discussion/backend**: アイデア議論のためのバックエンド（Node.js）
 - **vision/admin**: いどばたビジョンの管理画面（React + TypeScript）
 - **vision/python-service**: 埋め込み生成のための Python サービス
-- **policy**: ポリシー編集（いどばた政策）のフロントエンド（React + TypeScript）とバックエンド（Node.js）、MCP サーバー（`policy/frontend`, `policy/backend`, `policy/mcp`）
+- **policy**: ポリシー編集（いどばた政策）のフロントエンド（React + TypeScript）とバックエンド（Node.js）（`policy/frontend`, `policy/backend`）。GitHub への通信（ファイルのコミットや PR の作成・更新）はバックエンド内で直接実行されます
 - **MongoDB**: データベース
 
 ## 前提条件

@@ -20,10 +20,6 @@
     "policy/frontend": {
       "entry": ["src/main.tsx"],
       "project": "**/*.{js,ts,jsx,tsx}"
-    },
-    "policy/mcp": {
-      "entry": ["src/main.ts"],
-      "project": "**/*.{js,ts,jsx,tsx}"
     }
   },
   "ignore": [

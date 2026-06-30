@@ -1,27 +1,25 @@
 import { Result, err, ok } from "neverthrow";
 import OpenAI from "openai";
 import { OPENROUTER_API_KEY } from "../config.js";
-import { McpClientError } from "../types/errors.js";
+import {
+  type ToolInfo,
+  executeTool,
+  getToolDefinitions,
+} from "../tools/index.js";
+import { ToolExecutionError } from "../types/errors.js";
 import { logger } from "../utils/logger.js";
-import { McpClient } from "./client.js";
 
-export class IdobataMcpServiceError extends Error {
+export class PolicyChatServiceError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "IdobataMcpServiceError";
+    this.name = "PolicyChatServiceError";
   }
 }
 
-interface McpTool {
-  name: string;
-  description?: string;
-  input_schema: Record<string, unknown>;
-}
-
-function convertMcpToolsToOpenAI(
-  mcpTools: McpTool[]
+function convertToolsToOpenAI(
+  toolInfos: ToolInfo[]
 ): OpenAI.Chat.ChatCompletionTool[] {
-  return mcpTools.map((tool) => ({
+  return toolInfos.map((tool) => ({
     type: "function",
     function: {
       name: tool.name,
@@ -40,9 +38,7 @@ const openai = new OpenAI({
   apiKey: OPENROUTER_API_KEY,
 });
 
-export class IdobataMcpService {
-  constructor(private mcpClient: McpClient) {}
-
+export class PolicyChatService {
   async processQuery(
     query: string,
     history: OpenAI.Chat.ChatCompletionMessageParam[] = [],
@@ -50,12 +46,8 @@ export class IdobataMcpService {
     fileContent?: string,
     userName?: string,
     filePath?: string
-  ): Promise<Result<string, IdobataMcpServiceError | McpClientError>> {
-    if (!this.mcpClient.initialized) {
-      return err(new IdobataMcpServiceError("MCP client is not connected"));
-    }
-
-    const tools = this.mcpClient.tools;
+  ): Promise<Result<string, PolicyChatServiceError | ToolExecutionError>> {
+    const tools = getToolDefinitions();
 
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
       {
@@ -106,7 +98,7 @@ export class IdobataMcpService {
     });
 
     try {
-      const openaiTools = convertMcpToolsToOpenAI(tools);
+      const openaiTools = convertToolsToOpenAI(tools);
 
       const response = await openai.chat.completions.create({
         model: "google/gemini-2.5-pro-preview-03-25",
@@ -134,7 +126,7 @@ export class IdobataMcpService {
 
           for (const toolCall of message.tool_calls) {
             const toolName = toolCall.function.name;
-            let toolArgs = {};
+            let toolArgs: Record<string, unknown> = {};
 
             try {
               toolArgs = JSON.parse(toolCall.function.arguments);
@@ -153,10 +145,7 @@ export class IdobataMcpService {
 
             logger.debug(`Calling tool ${toolName} with args:`, toolArgs);
 
-            const toolResult = await this.mcpClient.callTool(
-              toolName,
-              toolArgs
-            );
+            const toolResult = await executeTool(toolName, toolArgs);
             if (toolResult.isErr()) {
               logger.error(`Error calling tool ${toolName}:`, toolResult.error);
               messages.push({
@@ -165,11 +154,10 @@ export class IdobataMcpService {
                 content: `Error executing tool: ${toolResult.error.message}`,
               });
             } else {
-              const result = toolResult.value as { content?: unknown };
               messages.push({
                 tool_call_id: toolCall.id,
                 role: "tool",
-                content: JSON.stringify(result.content || result),
+                content: toolResult.value,
               });
             }
           }
@@ -196,7 +184,7 @@ export class IdobataMcpService {
     } catch (error) {
       logger.error("Error processing query:", error);
       return err(
-        new IdobataMcpServiceError(
+        new PolicyChatServiceError(
           `Failed to process query: ${error instanceof Error ? error.message : "Unknown error"}`
         )
       );

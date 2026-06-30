@@ -5,10 +5,10 @@ export class ValidationError extends Error {
   }
 }
 
-export class McpClientError extends Error {
+export class ToolExecutionError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "McpClientError";
+    this.name = "ToolExecutionError";
   }
 }
 
@@ -16,12 +16,5 @@ export class DatabaseError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "DatabaseError";
-  }
-}
-
-export class EnvironmentError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "EnvironmentError";
   }
 }

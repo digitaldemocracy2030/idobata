@@ -53,8 +53,7 @@ idobata プロジェクトは、
 │             └── python-service  （埋め込み生成サービス）
 └── policy    # いどばた政策
               ├── frontend（フロントエンド）
-              ├── backend（バックエンド）
-              └── mcp（GitHub通信用MCP）
+              └── backend（バックエンド。GitHub通信もbackend内で直接実行）
 ```
 
 - **いどばたビジョン**の各コンポーネントは`vision`ディレクトリ内に配置されています
@@ -74,8 +73,7 @@ idobata プロジェクトは、
 │             │             └── backend（いどばたビジョンのバックエンド）
 │             └── python-service
 └── policy    # いどばた政策
-              ├── backend（いどばた政策のバックエンド）
-              └── mcp（いどばた政策のGitHub通信用MCP）
+              └── backend（いどばた政策のバックエンド。GitHub通信もbackend内で直接実行）
 ```
 
 - フロントエンドと Admin 機能は統合され、一つのインターフェースから両方のモジュールにアクセスできるようになります

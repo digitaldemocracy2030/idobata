@@ -20,6 +20,16 @@ export const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 export const GITHUB_REPO_OWNER = process.env.GITHUB_REPO_OWNER;
 export const GITHUB_REPO_NAME = process.env.GITHUB_REPO_NAME;
 
+// GitHub App / contribution settings (used to commit changes and manage PRs)
+export const GITHUB_APP_ID = process.env.GITHUB_APP_ID;
+export const GITHUB_INSTALLATION_ID = process.env.GITHUB_INSTALLATION_ID;
+export const GITHUB_TARGET_OWNER = process.env.GITHUB_TARGET_OWNER;
+export const GITHUB_TARGET_REPO = process.env.GITHUB_TARGET_REPO;
+export const GITHUB_BASE_BRANCH = process.env.GITHUB_BASE_BRANCH || "main";
+export const GITHUB_API_BASE_URL = process.env.GITHUB_API_BASE_URL;
+export const GITHUB_PRIVATE_KEY_PATH =
+  process.env.GITHUB_PRIVATE_KEY_PATH || "/app/secrets/github-key.pem";
+
 // CORS settings
 export const CORS_ORIGIN =
   process.env.POLICY_CORS_ORIGIN || "http://localhost:5174";

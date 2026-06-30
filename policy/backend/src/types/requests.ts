@@ -12,8 +12,3 @@ export interface ChatMessageRequest {
 export interface ChatMessageResponse {
   response: string;
 }
-
-export interface ConnectMcpServerResponse {
-  success: boolean;
-  message: string;
-}
