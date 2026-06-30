@@ -1,12 +1,11 @@
 {
   "name": "idobata-policy-editor-backend",
   "version": "1.0.0",
-  "description": "Backend for GitHub repository browser with MCP-enabled chatbot",
+  "description": "Backend for GitHub repository browser with chatbot and direct GitHub tool execution",
   "main": "build/index.js",
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "build:mcp": "cd ../mcp && npm run build",
     "start": "node build/index.js",
     "typecheck": "tsc --noEmit",
     "dev": "nodemon",
@@ -17,7 +16,8 @@
     "db:migrate": "node --loader ts-node/esm src/db/migrate.ts"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.9.0",
+    "@octokit/app": "^15.1.6",
+    "@octokit/rest": "^21.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "drizzle-orm": "^0.43.1",

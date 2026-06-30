@@ -1,8 +1,8 @@
 ## ショートカット（自分のよく使うものを登録すると便利）
 default: containers-start
-lint: policy-edit-frontend-lint policy-edit-backend-lint policy-edit-mcp-lint frontend-lint idea-discussion-backend-lint admin-lint
-format: policy-edit-frontend-format policy-edit-backend-format policy-edit-mcp-format frontend-format idea-discussion-backend-format admin-format
-test: policy-edit-frontend-test policy-edit-backend-test policy-edit-mcp-test frontend-test idea-discussion-backend-test admin-test
+lint: policy-edit-frontend-lint policy-edit-backend-lint frontend-lint idea-discussion-backend-lint admin-lint
+format: policy-edit-frontend-format policy-edit-backend-format frontend-format idea-discussion-backend-format admin-format
+test: policy-edit-frontend-test policy-edit-backend-test frontend-test idea-discussion-backend-test admin-test
 
 # ターゲット定義（makefile は薄いラッパーとして使う。複雑な処理を書かずシンプルに保つこと）
 containers-start:
@@ -40,15 +40,6 @@ policy-edit-backend-format:
 
 policy-edit-backend-test:
 	cd policy/backend && npm run test
-
-policy-edit-mcp-lint:
-	cd policy/mcp && npm run lint
-
-policy-edit-mcp-format:
-	cd policy/mcp && npm run format
-
-policy-edit-mcp-test:
-	cd policy/mcp && npm run test
 
 frontend-lint:
 	cd vision/frontend && npm run lint

@@ -10,7 +10,6 @@
   "workspaces": [
     "policy/backend",
     "policy/frontend",
-    "policy/mcp",
     "vision/idea-discussion/backend",
     "vision/frontend",
     "vision/admin"

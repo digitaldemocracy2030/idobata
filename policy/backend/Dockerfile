@@ -1,25 +1,11 @@
-# Stage 1: Build MCP Server
-FROM node:20-alpine AS mcp-builder
-WORKDIR /app
-# Copy root package files and relevant workspace package.json files
-COPY package.json package-lock.json ./
-COPY ./policy/mcp/package.json ./policy/mcp/
-COPY ./policy/backend/package.json ./policy/backend/
-# Install ALL dependencies (including dev) needed for build, based on root lock file
-RUN npm install --workspace=github-contribution-mcp
-RUN npm install --workspace=idobata-policy-editor-backend
-
-WORKDIR /app/policy/mcp
-# Copy the mcp source code
-COPY ./policy/mcp ./
-# Build mcp
-RUN npm run build
-
-# Stage 2: Build Backend Server
+# Stage 1: Build Backend Server
 FROM node:20-alpine AS backend-builder
 WORKDIR /app
-# Copy installed node_modules from the first stage
-COPY --from=mcp-builder /app/node_modules ./node_modules
+# Copy root package files and the backend workspace package.json
+COPY package.json package-lock.json ./
+COPY ./policy/backend/package.json ./policy/backend/
+# Install ALL dependencies (including dev) needed for build, based on root lock file
+RUN npm install --workspace=idobata-policy-editor-backend
 
 WORKDIR /app/policy/backend
 # Copy the backend source code
@@ -27,19 +13,19 @@ COPY ./policy/backend ./
 # Build backend
 RUN npm run build
 
-# Stage 3: Final Production Image
+# Stage 2: Final Production Image
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Copy installed node_modules from the first stage
-COPY --from=mcp-builder /app/node_modules ./node_modules
+# Copy installed node_modules from the builder stage.
+# Root holds hoisted dependencies; the backend workspace keeps its own
+# (non-hoisted) dependencies such as express v4 under its local node_modules.
+COPY --from=backend-builder /app/node_modules ./node_modules
+COPY --from=backend-builder /app/policy/backend/node_modules ./policy/backend/node_modules
 
-# Copy built artifacts from builders
-COPY --from=mcp-builder /app/policy/mcp/dist ./policy/mcp/dist/
+# Copy built artifacts from the builder
 COPY --from=backend-builder /app/policy/backend/build ./policy/backend/build/
 
-# Set environment variable for MCP server path within the container
-ENV MCP_SERVER_PATH=/app/policy/mcp/dist/main.js
 # Set NODE_ENV to production
 ENV NODE_ENV=production
 

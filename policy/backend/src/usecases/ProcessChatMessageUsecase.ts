@@ -2,26 +2,29 @@ import { Result, err, ok } from "neverthrow";
 import { db } from "../db/index.js";
 import { interactionLogs } from "../db/schema.js";
 import {
-  IdobataMcpService,
-  IdobataMcpServiceError,
-} from "../mcp/idobataMcpService.js";
+  PolicyChatService,
+  PolicyChatServiceError,
+} from "../services/policyChatService.js";
 import {
   DatabaseError,
-  McpClientError,
+  ToolExecutionError,
   ValidationError,
 } from "../types/errors.js";
 import { ChatMessageRequest, ChatMessageResponse } from "../types/requests.js";
 import { logger } from "../utils/logger.js";
 
 export class ProcessChatMessageUsecase {
-  constructor(private idobataMcpService: IdobataMcpService) {}
+  constructor(private policyChatService: PolicyChatService) {}
 
   async execute(
     request: ChatMessageRequest
   ): Promise<
     Result<
       ChatMessageResponse,
-      ValidationError | IdobataMcpServiceError | McpClientError | DatabaseError
+      | ValidationError
+      | PolicyChatServiceError
+      | ToolExecutionError
+      | DatabaseError
     >
   > {
     const validationResult = this.validateInput(request);
@@ -29,17 +32,17 @@ export class ProcessChatMessageUsecase {
       return err(validationResult.error);
     }
 
-    const mcpResult = await this.processMcpQuery(request);
-    if (mcpResult.isErr()) {
-      return err(mcpResult.error);
+    const chatResult = await this.processChatQuery(request);
+    if (chatResult.isErr()) {
+      return err(chatResult.error);
     }
 
-    const logResult = await this.logInteraction(request, mcpResult.value);
+    const logResult = await this.logInteraction(request, chatResult.value);
     if (logResult.isErr()) {
       logger.error("Failed to log interaction:", logResult.error);
     }
 
-    return ok({ response: mcpResult.value });
+    return ok({ response: chatResult.value });
   }
 
   private validateInput(
@@ -76,10 +79,10 @@ export class ProcessChatMessageUsecase {
     return ok(request);
   }
 
-  private async processMcpQuery(
+  private async processChatQuery(
     request: ChatMessageRequest
-  ): Promise<Result<string, IdobataMcpServiceError | McpClientError>> {
-    const result = await this.idobataMcpService.processQuery(
+  ): Promise<Result<string, PolicyChatServiceError | ToolExecutionError>> {
+    const result = await this.policyChatService.processQuery(
       request.message,
       request.history || [],
       request.branchId,
