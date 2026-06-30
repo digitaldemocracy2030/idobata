@@ -13,9 +13,11 @@
 
 このプロジェクトは以下のコンポーネントで構成されています：
 
-- **ルートレベルの frontend**: idea-discussion 用のフロントエンドとして機能しています。将来的に policy-edit のフロントエンドと統合することを見据えて、トップレベルに配置されています。TypeScript をサポートし、JSX と TSX の両方のファイル形式を扱えます。（かつて idea-discussion/frontend だったものです）
-- **idea-discussion/backend**: アイデア議論のためのバックエンド（Node.js）
-- **policy-edit**: ポリシー編集のためのフロントエンド（React + TypeScript）とバックエンド（Node.js）
+- **vision/frontend**: idea-discussion（いどばたビジョン）用のフロントエンドとして機能しています。TypeScript をサポートし、JSX と TSX の両方のファイル形式を扱えます。
+- **vision/idea-discussion/backend**: アイデア議論のためのバックエンド（Node.js）
+- **vision/admin**: いどばたビジョンの管理画面（React + TypeScript）
+- **vision/python-service**: 埋め込み生成のための Python サービス
+- **policy**: ポリシー編集（いどばた政策）のフロントエンド（React + TypeScript）とバックエンド（Node.js）、MCP サーバー（`policy/frontend`, `policy/backend`, `policy/mcp`）
 - **MongoDB**: データベース
 
 ## 前提条件
@@ -63,11 +65,11 @@
 
 2.  **GitHub App 秘密鍵の配置:**
     `policy-edit` バックエンドが GitHub API と連携するために、GitHub App からダウンロードした秘密鍵ファイル（`.pem`形式）が必要です。
-    - `policy-edit/backend/` ディレクトリ内に `secrets` ディレクトリを作成します。
-    - ダウンロードした秘密鍵ファイルを `github-key.pem` という名前で `policy-edit/backend/secrets/` ディレクトリ内に配置してください。
+    - `policy/backend/` ディレクトリ内に `secrets` ディレクトリを作成します。
+    - ダウンロードした秘密鍵ファイルを `github-key.pem` という名前で `policy/backend/secrets/` ディレクトリ内に配置してください。
     ```bash
-    mkdir -p policy-edit/backend/secrets
-    cp /path/to/your/downloaded-private-key.pem policy-edit/backend/secrets/github-key.pem
+    mkdir -p policy/backend/secrets
+    cp /path/to/your/downloaded-private-key.pem policy/backend/secrets/github-key.pem
     ```
     _(注意: `/path/to/your/downloaded-private-key.pem` は、ダウンロードした秘密鍵ファイルの実際のパスに置き換えてください。)_
 
@@ -87,7 +89,7 @@ docker-compose up --build -d
 
 ```bash
 # 必要なセットアップ: Idea Discussion セットアップ
-docker-compose up --build -d frontend idea-backend mongo
+docker-compose up --build -d frontend idea-backend mongo admin
 ```
 
 ### Policy Edit のみ起動
@@ -104,7 +106,7 @@ docker-compose up --build -d policy-frontend policy-backend postgres-policy
 `policy-backend` は PostgreSQL を使用します。初回起動時、または `interaction_logs` などのテーブルが存在しないエラーが出る場合は migration を実行してください。
 
 ```bash
-cd policy-edit/backend
+cd policy/backend
 npm install
 DATABASE_URL=postgresql://postgres:password@localhost:5433/policy_db npm run db:migrate
 cd ../..
@@ -124,7 +126,7 @@ docker-compose exec postgres-policy psql -U postgres -d policy_db -c '\dt'
 - **Idea Discussion フロントエンド:** [http://localhost:5173](http://localhost:5173)
 - **Policy Edit フロントエンド:** [http://localhost:5174](http://localhost:5174)
 - **Policy Edit 管理者ページ:** [http://localhost:5175/](http://localhost:5175/)
-  - 管理者作成の設定が必要です。[../admin/README.md](../admin/README.md)
+  - 管理者作成の設定が必要です。[../vision/admin/README.md](../vision/admin/README.md)
 
 ## ログの表示
 

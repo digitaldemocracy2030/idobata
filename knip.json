@@ -1,27 +1,27 @@
 {
   "$schema": "https://unpkg.com/knip@latest/schema.json",
   "workspaces": {
-    "admin": {
+    "vision/admin": {
       "entry": ["src/main.tsx"],
       "project": "**/*.{js,ts,jsx,tsx}"
     },
-    "frontend": {
+    "vision/frontend": {
       "entry": ["src/main.tsx"],
       "project": "**/*.{js,ts,jsx,tsx}"
     },
-    "idea-discussion/backend": {
+    "vision/idea-discussion/backend": {
       "entry": ["server.js"],
       "project": "**/*.{js,ts,jsx,tsx}"
     },
-    "policy-edit/backend": {
+    "policy/backend": {
       "entry": ["src/index.ts"],
       "project": "**/*.{js,ts,jsx,tsx}"
     },
-    "policy-edit/frontend": {
+    "policy/frontend": {
       "entry": ["src/main.tsx"],
       "project": "**/*.{js,ts,jsx,tsx}"
     },
-    "policy-edit/mcp": {
+    "policy/mcp": {
       "entry": ["src/main.ts"],
       "project": "**/*.{js,ts,jsx,tsx}"
     }
