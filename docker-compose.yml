@@ -3,12 +3,12 @@ services:
     container_name: idea-backend-dev
     build:
       context: . # Change context to the root directory
-      dockerfile: ./idea-discussion/backend/Dockerfile # Specify Dockerfile path relative to new context
+      dockerfile: ./vision/idea-discussion/backend/Dockerfile # Specify Dockerfile path relative to new context
       target: development # Build the development stage
     volumes:
-      - ./idea-discussion/backend:/app/idea-discussion/backend # Mount source code for hot-reload
+      - ./vision/idea-discussion/backend:/app/vision/idea-discussion/backend # Mount source code for hot-reload
       # Exclude node_modules from the host mount to use the container's node_modules
-      - /app/idea-discussion/backend/node_modules
+      - /app/vision/idea-discussion/backend/node_modules
     ports:
       - "3000:3000" # Expose backend API port
     depends_on:
@@ -39,7 +39,7 @@ services:
     image: node:20-alpine # Use a base image, Vite runs on host via volume mount
     working_dir: /app
     volumes:
-      - ./policy-edit/frontend:/app
+      - ./policy/frontend:/app
       # Add node_modules volume
       - /app/node_modules
     ports:
@@ -77,7 +77,7 @@ services:
     container_name: policy-backend-dev
     build:
       context: . # Change context to the root directory
-      dockerfile: ./policy-edit/backend/Dockerfile # Specify Dockerfile path relative to new context
+      dockerfile: ./policy/backend/Dockerfile # Specify Dockerfile path relative to new context
       target: production # Build the production stage
     ports:
       - "3001:3001" # Expose backend API port
@@ -117,7 +117,7 @@ services:
     image: node:20-slim
     working_dir: /app
     volumes:
-      - ./frontend:/app
+      - ./vision/frontend:/app
       # Add node_modules volume
       - /app/node_modules
     ports:
@@ -145,7 +145,7 @@ services:
     image: node:20-alpine
     working_dir: /app
     volumes:
-      - ./admin:/app
+      - ./vision/admin:/app
       - /app/node_modules
     ports:
       - "5175:5175"
@@ -162,13 +162,13 @@ services:
   python-service:
     container_name: idobata-python-service
     build:
-      context: ./python-service
+      context: ./vision/python-service
     ports:
       - "8000:8000" # Expose port for debugging
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY} # Pass from host environment
     volumes:
-      - ./python-service:/app # Mount source code for development
+      - ./vision/python-service:/app # Mount source code for development
       - chroma_data:/data/chroma # ChromaDB data persistence
 
   nginx:

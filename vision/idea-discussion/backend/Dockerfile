@@ -4,14 +4,14 @@ WORKDIR /app
 
 # Copy root package files and relevant workspace package.json files
 COPY package.json package-lock.json ./
-COPY ./idea-discussion/backend/package.json ./idea-discussion/backend/
+COPY ./vision/idea-discussion/backend/package.json ./vision/idea-discussion/backend/
 
 # Install ALL dependencies (including dev) needed for build
 RUN npm install --workspace=idobata-idea-discussion-backend
 
-WORKDIR /app/idea-discussion/backend
+WORKDIR /app/vision/idea-discussion/backend
 # Copy the backend source code
-COPY ./idea-discussion/backend ./
+COPY ./vision/idea-discussion/backend ./
 # Build backend if needed (uncomment if you have a build step)
 # RUN npm run build
 
@@ -23,12 +23,12 @@ WORKDIR /app
 COPY --from=backend-builder /app/node_modules ./node_modules
 
 # Copy backend source code
-COPY ./idea-discussion/backend ./idea-discussion/backend
+COPY ./vision/idea-discussion/backend ./vision/idea-discussion/backend
 
 # Set environment variables
 ENV NODE_ENV=production
 
-WORKDIR /app/idea-discussion/backend
+WORKDIR /app/vision/idea-discussion/backend
 EXPOSE 3000
 CMD ["npm", "start"]
 
@@ -43,6 +43,6 @@ COPY --from=backend-builder /app/node_modules ./node_modules
 ENV NODE_ENV=development
 ENV PATH /app/node_modules/.bin:$PATH
 
-WORKDIR /app/idea-discussion/backend
+WORKDIR /app/vision/idea-discussion/backend
 EXPOSE 3000
 CMD ["npm", "run", "dev"]
