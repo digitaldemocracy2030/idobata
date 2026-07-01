@@ -4,7 +4,7 @@ import QuestionLink from "../models/QuestionLink.js";
 import ReportExample from "../models/ReportExample.js";
 import SharpQuestion from "../models/SharpQuestion.js";
 import Solution from "../models/Solution.js";
-import { callLLM } from "../services/llmService.js";
+import { PRO_LLM_MODEL, callLLM } from "../services/llmService.js";
 
 async function generateReportExample(questionId) {
   console.log(
@@ -104,11 +104,7 @@ Please provide the output as a JSON object with "introduction" and "issues" keys
     ];
 
     console.log("[ReportGenerator] Calling LLM to generate report example...");
-    const llmResponse = await callLLM(
-      messages,
-      true,
-      "google/gemini-2.5-pro-preview-03-25"
-    );
+    const llmResponse = await callLLM(messages, true, PRO_LLM_MODEL);
 
     if (
       !llmResponse ||

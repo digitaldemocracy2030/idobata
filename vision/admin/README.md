@@ -14,11 +14,13 @@
 
 ## 初期セットアップ
 
+通常は Docker Compose でまとめて起動します（[../../docs/development-setup.md](../../docs/development-setup.md) を参照）。この管理画面のみを個別に起動する場合の手順は以下のとおりです。
+
 ### 前提条件
 
-- Node.js (v14 以上)
-- npm または yarn
-- MongoDB (バックエンドで使用)
+- Node.js (v20 以上)
+- npm
+- いどばたビジョンのバックエンド（`vision/idea-discussion/backend`）と MongoDB が起動していること
 
 ### インストール手順
 
@@ -31,11 +33,11 @@ git clone [リポジトリURL]
 2. 依存関係のインストール
 
 ```
-cd admin
+cd vision/admin
 npm install
 ```
 
-3. 開発サーバーの起動
+3. 開発サーバーの起動（既定ポート: 5175）
 
 ```
 npm run dev
@@ -82,7 +84,7 @@ curl -X POST http://localhost:3000/api/auth/initialize -H "Content-Type: applica
 ### プロジェクト構造
 
 ```
-admin/
+vision/admin/
 ├── public/          # 静的ファイル
 ├── src/             # ソースコード
 │   ├── components/  # UIコンポーネント

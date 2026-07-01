@@ -33,6 +33,11 @@ export const getAllThemes = async (req, res) => {
         title: theme.title,
         description: theme.description || "",
         slug: theme.slug,
+        isActive: theme.isActive,
+        customPrompt: theme.customPrompt,
+        disableNewComment: theme.disableNewComment,
+        createdAt: theme.createdAt,
+        updatedAt: theme.updatedAt,
         keyQuestionCount,
         commentCount,
       });

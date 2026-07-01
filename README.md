@@ -9,6 +9,32 @@
 - [開発環境構築ガイド](./docs/development-setup.md) (開発者向け)
 - [コントリビューションガイド](./docs/CONTRIBUTING.md) (開発者向け)
 
+## クイックスタート
+
+ローカルで手早く動かす場合は、[開発環境構築ガイド](./docs/development-setup.md) の「クイックスタート（お試し最小構成）」を参照してください。**いどばたビジョンは OpenRouter の API キーだけで起動できます。**
+
+```bash
+cp .env.template .env   # OPENROUTER_API_KEY と JWT_SECRET を設定
+docker compose up --build -d frontend idea-backend mongo admin
+```
+
+## ディレクトリ構成
+
+本リポジトリは **いどばたビジョン**（`vision/`）と **いどばた政策**（`policy/`）の 2 つの独立したモジュールで構成されるモノレポです。
+
+```
+.
+├── vision/   # いどばたビジョン（意見収集・論点抽出）
+│   ├── frontend/          # ユーザー画面
+│   ├── admin/             # 管理画面
+│   ├── idea-discussion/   # バックエンド（Node.js / Express, MongoDB）
+│   └── python-service/    # 埋め込み生成サービス（Python）
+├── policy/   # いどばた政策（施策案の改善提案・PR 化）
+│   ├── frontend/          # フロントエンド
+│   └── backend/           # バックエンド（Node.js, PostgreSQL）。GitHub 連携はバックエンド内で直接実行
+└── docs/     # 開発者向けドキュメント
+```
+
 ## プロジェクトの概要
 
 **idobata**は、

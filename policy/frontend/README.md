@@ -1,54 +1,39 @@
-# React + TypeScript + Vite
+# いどばた政策 フロントエンド
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+「いどばた政策」のフロントエンドです。Web 上に公開された施策案（Markdown）を閲覧し、AI と対話しながら改善提案を作成して GitHub の Pull Request として提出するためのユーザー画面を提供します。
 
-Currently, two official plugins are available:
+React + TypeScript + Vite で構築されています。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 起動方法
 
-## Expanding the ESLint configuration
+通常はリポジトリルートの Docker Compose でまとめて起動します。詳細は [../../docs/development-setup.md](../../docs/development-setup.md) を参照してください。
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+# リポジトリルートで
+docker compose up --build -d policy-frontend policy-backend postgres-policy
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+このフロントエンドのみを個別に起動する場合:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+cd policy/frontend
+npm install
+npm run dev   # 既定ポート: 5174（Docker 経由の場合）
 ```
+
+## 主な環境変数
+
+`.env`（リポジトリルートの `.env.template` をコピー）で設定します。フロントエンドからは `VITE_` プレフィックスの変数が参照されます。
+
+- `VITE_API_BASE_URL`: バックエンド API の URL（`POLICY_FRONTEND_API_BASE_URL` から渡されます）
+- `VITE_USE_MOCK_GITHUB_CLIENT`: `true` にすると実際の GitHub API を呼ばずモッククライアントを使用します。GitHub App を用意せず UI を試す「お試し構成」に便利です
+- `VITE_GITHUB_REPO_OWNER` / `VITE_GITHUB_REPO_NAME`: 対象リポジトリ（`GITHUB_TARGET_OWNER` / `GITHUB_TARGET_REPO` から渡されます）
+- `VITE_SITE_NAME`、`VITE_SITE_LOGO_URL`、`VITE_COLOR_*` など: サイト名・ロゴ・カラーテーマのカスタマイズ
+- `VITE_POLICY_CHAT_WELCOME_MESSAGE`: チャット開始時の挨拶メッセージ
+
+利用可能な変数の一覧と説明はリポジトリルートの `.env.template` を参照してください。
+
+## 設計上の注意
+
+- このフロントエンドの GitHub クライアントは**読み取り専用**です。文言の変更はローカルで即時反映されるのではなく、バックエンド経由で**新しいブランチへのコミット → Pull Request 提案**という形で行われます。
+- GitHub への通信（コミットや PR 作成・更新）はバックエンド（`policy/backend`）内で直接実行されます。

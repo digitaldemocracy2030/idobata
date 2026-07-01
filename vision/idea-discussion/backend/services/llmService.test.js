@@ -54,7 +54,7 @@ describe("llmService", () => {
 
       expect(mockCreate).toHaveBeenCalledTimes(1);
       expect(mockCreate).toHaveBeenCalledWith({
-        model: "google/gemini-2.0-flash-001", // Default model
+        model: "google/gemini-2.5-flash", // Default model
         messages: messages,
       });
       expect(response).toBe("Test response");
@@ -71,7 +71,7 @@ describe("llmService", () => {
 
       expect(mockCreate).toHaveBeenCalledTimes(1);
       expect(mockCreate).toHaveBeenCalledWith({
-        model: "google/gemini-2.0-flash-001",
+        model: "google/gemini-2.5-flash",
         messages: [
           {
             role: "user",
@@ -169,7 +169,7 @@ describe("llmService", () => {
 
       expect(mockCreate).toHaveBeenCalledTimes(1);
       expect(mockCreate).toHaveBeenCalledWith({
-        model: "google/gemini-2.0-flash-001", // Default model for testLLM
+        model: "google/gemini-2.5-flash", // Default model for testLLM
         messages: [{ role: "user", content: "Hello!" }],
       });
       expect(result).toBe(mockResponseContent);
