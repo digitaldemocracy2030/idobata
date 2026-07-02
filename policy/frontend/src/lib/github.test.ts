@@ -1,7 +1,15 @@
+import { ok } from "neverthrow";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { type GitHubDirectoryItem, type GitHubFile } from "./github";
 import { GitHubClient } from "./github/GitHubClient";
-import type { IGitHubClient } from "./github/IGitHubClient";
+import type {
+  GitHubFile as GitHubFileType,
+  IGitHubClient,
+} from "./github/IGitHubClient";
+import {
+  ScopedGitHubClient,
+  normalizeTargetPath,
+} from "./github/ScopedGitHubClient";
 
 // global.fetch をモック
 const mockFetch = vi.fn();
@@ -299,5 +307,116 @@ describe("GitHubClient", () => {
 
       global.TextDecoder = originalTextDecoder;
     });
+  });
+});
+
+describe("normalizeTargetPath", () => {
+  it("returns empty string for undefined/empty", () => {
+    expect(normalizeTargetPath(undefined)).toBe("");
+    expect(normalizeTargetPath("")).toBe("");
+  });
+
+  it("strips leading and trailing slashes", () => {
+    expect(normalizeTargetPath("/docs/policies/")).toBe("docs/policies");
+    expect(normalizeTargetPath("docs/policies")).toBe("docs/policies");
+  });
+});
+
+describe("ScopedGitHubClient", () => {
+  const owner = "test-owner";
+  const repo = "test-repo";
+  const basePath = "docs/policies";
+
+  const makeFile = (path: string): GitHubFileType => ({
+    name: path.split("/").pop() || "",
+    path,
+    sha: "sha",
+    size: 1,
+    url: "",
+    html_url: "",
+    git_url: "",
+    download_url: null,
+    type: "file",
+    content: "",
+    encoding: "base64",
+    _links: { self: "", git: "", html: "" },
+  });
+
+  it("prefixes the requested path with the base path", async () => {
+    const inner: IGitHubClient = {
+      fetchContent: vi.fn().mockResolvedValue(ok(makeFile(`${basePath}/a.md`))),
+      decodeBase64Content: vi.fn(),
+    };
+    const client = new ScopedGitHubClient(inner, basePath);
+
+    await client.fetchContent(owner, repo, "a.md", "main");
+
+    expect(inner.fetchContent).toHaveBeenCalledWith(
+      owner,
+      repo,
+      `${basePath}/a.md`,
+      "main"
+    );
+  });
+
+  it("uses the base path itself when the relative path is empty", async () => {
+    const inner: IGitHubClient = {
+      fetchContent: vi.fn().mockResolvedValue(ok([])),
+      decodeBase64Content: vi.fn(),
+    };
+    const client = new ScopedGitHubClient(inner, basePath);
+
+    await client.fetchContent(owner, repo, "");
+
+    expect(inner.fetchContent).toHaveBeenCalledWith(
+      owner,
+      repo,
+      basePath,
+      undefined
+    );
+  });
+
+  it("strips the base path from returned file paths", async () => {
+    const inner: IGitHubClient = {
+      fetchContent: vi.fn().mockResolvedValue(ok(makeFile(`${basePath}/a.md`))),
+      decodeBase64Content: vi.fn(),
+    };
+    const client = new ScopedGitHubClient(inner, basePath);
+
+    const result = await client.fetchContent(owner, repo, "a.md");
+
+    expect(result.isOk()).toBe(true);
+    if (result.isOk() && !Array.isArray(result.value)) {
+      expect(result.value.path).toBe("a.md");
+    }
+  });
+
+  it("strips the base path from returned directory items", async () => {
+    const items: GitHubDirectoryItem[] = [
+      {
+        name: "a.md",
+        path: `${basePath}/a.md`,
+        sha: "sha",
+        size: 1,
+        url: "",
+        html_url: "",
+        git_url: "",
+        download_url: null,
+        type: "file",
+        _links: { self: "", git: "", html: "" },
+      },
+    ];
+    const inner: IGitHubClient = {
+      fetchContent: vi.fn().mockResolvedValue(ok(items)),
+      decodeBase64Content: vi.fn(),
+    };
+    const client = new ScopedGitHubClient(inner, basePath);
+
+    const result = await client.fetchContent(owner, repo, "");
+
+    expect(result.isOk()).toBe(true);
+    if (result.isOk() && Array.isArray(result.value)) {
+      expect(result.value[0].path).toBe("a.md");
+    }
   });
 });

@@ -11,5 +11,9 @@ export type {
 export { GitHubClient } from "./GitHubClient";
 export { CachedGitHubClient } from "./CachedGitHubClient";
 export { MockGitHubClient } from "./MockGitHubClient";
+export {
+  ScopedGitHubClient,
+  normalizeTargetPath,
+} from "./ScopedGitHubClient";
 export { createGitHubClient } from "./factory";
 export { decodeBase64Content } from "./GitHubClient";

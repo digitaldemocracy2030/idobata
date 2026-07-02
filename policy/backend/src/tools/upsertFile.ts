@@ -1,5 +1,6 @@
 import { GITHUB_TARGET_OWNER, GITHUB_TARGET_REPO } from "../config.js";
 import { getAuthenticatedOctokit } from "../github/client.js";
+import { resolveTargetPath } from "../github/paths.js";
 import { ensureBranchExists } from "../github/utils.js";
 import { logger } from "../utils/logger.js";
 import { trimTrailingContentSeparators } from "../utils/stringUtils.js";
@@ -64,7 +65,9 @@ export async function handleUpsertFile(
   const { filePath, branchName, content, commitMessage } = params;
   const owner = GITHUB_TARGET_OWNER ?? "";
   const repo = GITHUB_TARGET_REPO ?? "";
-  const fullPath = filePath.startsWith("/") ? filePath.substring(1) : filePath;
+  // Scope the (folder-relative) path to GITHUB_TARGET_PATH so writes cannot
+  // escape the configured subdirectory.
+  const fullPath = resolveTargetPath(filePath);
 
   logger.info("Handling upsert_file_and_commit request", {
     owner,

@@ -53,6 +53,8 @@ services:
       # Map GITHUB_TARGET_* from .env to VITE_GITHUB_* for the frontend
       - VITE_GITHUB_REPO_OWNER=${GITHUB_TARGET_OWNER}
       - VITE_GITHUB_REPO_NAME=${GITHUB_TARGET_REPO}
+      # Restrict browsing/editing to a subdirectory (empty = whole repo)
+      - VITE_GITHUB_TARGET_PATH=${GITHUB_TARGET_PATH}
       - VITE_POLICY_FRONTEND_ALLOWED_HOSTS=${VITE_POLICY_FRONTEND_ALLOWED_HOSTS}
       # GitHub Mock Client Configuration
       - VITE_USE_MOCK_GITHUB_CLIENT=${VITE_USE_MOCK_GITHUB_CLIENT}
