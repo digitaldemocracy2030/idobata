@@ -4,6 +4,7 @@ interface ImportMetaEnv {
     readonly VITE_API_BASE_URL?: string
     readonly VITE_GITHUB_REPO_OWNER: string
     readonly VITE_GITHUB_REPO_NAME: string
+    readonly VITE_GITHUB_TARGET_PATH?: string
     readonly VITE_SITE_NAME: string
     readonly VITE_SITE_LOGO_URL: string
     readonly VITE_FAVICON_URL?: string

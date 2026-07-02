@@ -113,6 +113,7 @@
     - `GITHUB_TARGET_OWNER`: 対象リポジトリのオーナー名 (バックエンド・フロントエンドで使用)
     - `GITHUB_TARGET_REPO`: 対象リポジトリ名 (バックエンド・フロントエンドで使用)
     - `GITHUB_BASE_BRANCH`: 対象リポジトリのベースブランチ名 (バックエンドで使用)
+    - `GITHUB_TARGET_PATH`: いどばた政策の閲覧・編集対象をリポジトリ内の特定サブフォルダに限定したい場合に設定します（例: `docs/policies`）。空の場合はリポジトリ全体が対象です。バックエンド（書き込み・PR）とフロントエンド（閲覧）の双方に適用されます。
     - `POLICY_FRONTEND_API_BASE_URL`: フロントエンドがアクセスするバックエンド API の URL（通常は `http://localhost:3001`）
     - `VITE_USE_MOCK_GITHUB_CLIENT`: `true` にするとフロントエンドが実際の GitHub API を呼ばずモッククライアントを使用します。お試し時は `true` を推奨します。
 

@@ -26,6 +26,11 @@ export const GITHUB_INSTALLATION_ID = process.env.GITHUB_INSTALLATION_ID;
 export const GITHUB_TARGET_OWNER = process.env.GITHUB_TARGET_OWNER;
 export const GITHUB_TARGET_REPO = process.env.GITHUB_TARGET_REPO;
 export const GITHUB_BASE_BRANCH = process.env.GITHUB_BASE_BRANCH || "main";
+// Restrict read/write operations to this subdirectory of the target repo.
+// Empty (default) means the whole repository is targeted.
+export const GITHUB_TARGET_PATH = (process.env.GITHUB_TARGET_PATH || "")
+  .trim()
+  .replace(/^\/+|\/+$/g, "");
 export const GITHUB_API_BASE_URL = process.env.GITHUB_API_BASE_URL;
 export const GITHUB_PRIVATE_KEY_PATH =
   process.env.GITHUB_PRIVATE_KEY_PATH || "/app/secrets/github-key.pem";
